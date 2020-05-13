@@ -22,6 +22,9 @@ SET time_zone = "+00:00";
 -- Base de données : `plafor`
 --
 
+CREATE DATABASE `plafor` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `plafor`;
+
 -- --------------------------------------------------------
 
 --
@@ -54,8 +57,11 @@ CREATE TABLE `user` (
 -- Déchargement des données de la table `user`
 --
 
+-- Le hachage par défaut du mot de passe admin est '$2y$12$vzMjlepZ8iODjC1Y1scl/OLkRuZe7za6Cx6srHr7iQ49z7e3BmtgG', malheureusement le mot de passe correspondant est inconnu
+-- Donc pour l'instant je le remplace avec '$2y$10$tUB5R1MGgbO.zD//WArnceTY8IgnFkVVsudIdHBxIrEXJ2z3WBvcK' (OrifInfo2009)
+
 INSERT INTO `user` (`id`, `fk_user_type`, `username`, `password`, `archive`, `date_creation`) VALUES
-(1, 1, 'admin', '$2y$12$vzMjlepZ8iODjC1Y1scl/OLkRuZe7za6Cx6srHr7iQ49z7e3BmtgG', 0, '2020-03-30 08:33:55');
+(1, 1, 'admin', '$2y$10$tUB5R1MGgbO.zD//WArnceTY8IgnFkVVsudIdHBxIrEXJ2z3WBvcK', 0, '2020-03-30 08:33:55');
 
 -- --------------------------------------------------------
 
