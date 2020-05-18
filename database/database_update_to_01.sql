@@ -4,54 +4,95 @@
 -- Create table `aquisition_level` with needed values
 --
 
-CREATE TABLE `plafor`.`acquisition_level` ( `id` INT NOT NULL AUTO_INCREMENT , `name` VARCHAR(20) NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+CREATE TABLE `plafor`.`acquisition_level` (
+    `id` INT NOT NULL AUTO_INCREMENT ,
+    `name` VARCHAR(20) NOT NULL ,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
 
-INSERT INTO `aquisition_level` (`id`, `name`) VALUES ('1', 'Expliqué'), ('2', 'Exercé'), ('3', 'Autonome');
-
---
--- Create table `competence_domain`
---
-
-CREATE TABLE `plafor`.`competence_domain` ( `id` INT NOT NULL AUTO_INCREMENT , `fk_acquisition_level` INT NOT NULL , `name` VARCHAR(45) NOT NULL , `description` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+INSERT INTO `plafor`.`acquisition_level` (`id`, `name`) VALUES ('1', 'Expliqué'), ('2', 'Exercé'), ('3', 'Autonome');
 
 --
 -- Create table `objective`
 --
 
-CREATE TABLE `plafor`.`objective` ( `id` INT NOT NULL AUTO_INCREMENT , `name` VARCHAR(45) NOT NULL , `description` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+CREATE TABLE `plafor`.`objective` (
+    `id` INT NOT NULL AUTO_INCREMENT ,
+    `fk_operational_competence` INT NOT NULL ,
+    `fk_acquisition_level` INT NOT NULL,
+    `name` VARCHAR(45) NOT NULL ,
+    `description` TEXT NOT NULL ,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
 
 --
--- Create table `objective_list`
+-- Create table `operational_competence`
 --
 
-CREATE TABLE `plafor`.`objective_list` ( `id` INT NOT NULL AUTO_INCREMENT , `fk_objective` INT NOT NULL , `fk_competence_domain` INT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+CREATE TABLE `plafor`.`operational_competence` (
+    `id` INT NOT NULL AUTO_INCREMENT ,
+    `professional` TEXT NOT NULL ,
+    `methodologic` TEXT NOT NULL ,
+    `social` TEXT NOT NULL ,
+    `personal` TEXT NOT NULL ,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
 
 --
--- Create table `plan_formation`
+-- Create table `course_plan`
 --
 
-CREATE TABLE `plafor`.`plan_formation` ( `id` INT NOT NULL AUTO_INCREMENT , `name` VARCHAR(45) NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+CREATE TABLE `plafor`.`course_plan` (
+    `id` INT NOT NULL AUTO_INCREMENT ,
+    `name` VARCHAR(45) NOT NULL ,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
 
 --
--- Create table `formation`
+-- Create table `user_course`
 --
 
-CREATE TABLE `plafor`.`formation` ( `id` INT NOT NULL AUTO_INCREMENT , `fk_user` INT NOT NULL , `fk_plan_formation` INT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+CREATE TABLE `plafor`.`user_course` ( 
+    `id` INT NOT NULL AUTO_INCREMENT ,
+    `fk_user` INT NOT NULL ,
+    `fk_course_plan` INT NOT NULL ,
+    `fk_statut` INT NOT NULL ,
+    `begin_date` DATE NOT NULL ,
+    `end_date` DATE NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
 
 --
--- Create table `competence_list`
+-- Create table `user_course_statut` with needed values
 --
 
-CREATE TABLE `plafor`.`competence_list` ( `id` INT NOT NULL AUTO_INCREMENT , `fk_plan_formation` INT NOT NULL , `fk_competence_domain` INT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+CREATE TABLE `plafor`.`user_course_statut` (
+    `id` INT NOT NULL AUTO_INCREMENT ,
+    `name` VARCHAR(20) NOT NULL ,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
+
+INSERT INTO `plafor`.`user_course_statut` (`id`, `name`) VALUES ('1', 'En cours'), ('2', 'Réussi'), ('3', 'Échouée'), ('4', 'Suspendue'), ('5', 'Abandonnée');
+
+--
+-- Create table `competence_domain`
+--
+
+CREATE TABLE `plafor`.`competence_domain` (
+    `id` INT NOT NULL AUTO_INCREMENT ,
+    `fk_course_plan` INT NOT NULL ,
+    `name` VARCHAR(45) NOT NULL ,
+    `description` TEXT NOT NULL ,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
 
 --
 -- Add relations
 --
 
-ALTER TABLE competence_domain ADD CONSTRAINT constraint_acquisition_level FOREIGN KEY (fk_acquisition_level) REFERENCES acquisition_level(id);
-ALTER TABLE objective_list ADD CONSTRAINT constraint_objective FOREIGN KEY (fk_objective) REFERENCES objective(id);
-ALTER TABLE objective_list ADD CONSTRAINT constraint_competence_domain FOREIGN KEY (fk_competence_domain) REFERENCES competence_domain(id);
-ALTER TABLE competence_list ADD CONSTRAINT constraint_competence_list_domain FOREIGN KEY (fk_competence_domain) REFERENCES competence_domain(id);
-ALTER TABLE competence_list ADD CONSTRAINT constraint_plan_formation FOREIGN KEY (fk_plan_formation) REFERENCES plan_formation(id);
-ALTER TABLE formation ADD CONSTRAINT constraint_user FOREIGN KEY (fk_user) REFERENCES user(id);
-ALTER TABLE formation ADD CONSTRAINT constraint_formation FOREIGN KEY (fk_plan_formation) REFERENCES plan_formation(id);
+ALTER TABLE `plafor`.`competence_domain` ADD CONSTRAINT `constraint_competence_domain_course_plan` FOREIGN KEY (`fk_course_plan`) REFERENCES `course_plan` (`id`);
+ALTER TABLE `plafor`.`user_course` ADD CONSTRAINT `constraint_user` FOREIGN KEY (`fk_user`) REFERENCES `user` (`id`);
+ALTER TABLE `plafor`.`user_course` ADD CONSTRAINT `constraint_user_course_plan` FOREIGN KEY (`fk_course_plan`) REFERENCES `course_plan` (`id`);
+ALTER TABLE `plafor`.`user_course` ADD CONSTRAINT `constraint_statut` FOREIGN KEY (`fk_statut`) REFERENCES `user_course_statut` (`id`);
+ALTER TABLE `plafor`.`objective` ADD CONSTRAINT `constraint_operational_competence` FOREIGN KEY (`fk_operational_competence`) REFERENCES `operational_competence` (`id`);
+ALTER TABLE `plafor`.`objective` ADD CONSTRAINT `constraint_acquisition_level` FOREIGN KEY (`fk_acquisition_level`) REFERENCES `acquisition_level` (`id`);
