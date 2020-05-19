@@ -31,6 +31,7 @@ CREATE TABLE `plafor`.`objective` (
 
 CREATE TABLE `plafor`.`operational_competence` (
     `id` INT NOT NULL AUTO_INCREMENT ,
+    `fk_competence_domain` INT NOT NULL,
     `professional` TEXT NOT NULL ,
     `methodologic` TEXT NOT NULL ,
     `social` TEXT NOT NULL ,
@@ -56,23 +57,23 @@ CREATE TABLE `plafor`.`user_course` (
     `id` INT NOT NULL AUTO_INCREMENT ,
     `fk_user` INT NOT NULL ,
     `fk_course_plan` INT NOT NULL ,
-    `fk_statut` INT NOT NULL ,
-    `begin_date` DATE NOT NULL ,
-    `end_date` DATE NOT NULL,
+    `fk_status` INT NOT NULL ,
+    `date_begin` DATE NOT NULL ,
+    `date_end` DATE NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB;
 
 --
--- Create table `user_course_statut` with needed values
+-- Create table `user_course_status` with needed values
 --
 
-CREATE TABLE `plafor`.`user_course_statut` (
+CREATE TABLE `plafor`.`user_course_status` (
     `id` INT NOT NULL AUTO_INCREMENT ,
     `name` VARCHAR(20) NOT NULL ,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB;
 
-INSERT INTO `plafor`.`user_course_statut` (`id`, `name`) VALUES ('1', 'En cours'), ('2', 'Réussi'), ('3', 'Échouée'), ('4', 'Suspendue'), ('5', 'Abandonnée');
+INSERT INTO `plafor`.`user_course_status` (`id`, `name`) VALUES ('1', 'En cours'), ('2', 'Réussi'), ('3', 'Échouée'), ('4', 'Suspendue'), ('5', 'Abandonnée');
 
 --
 -- Create table `competence_domain`
@@ -93,6 +94,7 @@ CREATE TABLE `plafor`.`competence_domain` (
 ALTER TABLE `plafor`.`competence_domain` ADD CONSTRAINT `constraint_competence_domain_course_plan` FOREIGN KEY (`fk_course_plan`) REFERENCES `course_plan` (`id`);
 ALTER TABLE `plafor`.`user_course` ADD CONSTRAINT `constraint_user` FOREIGN KEY (`fk_user`) REFERENCES `user` (`id`);
 ALTER TABLE `plafor`.`user_course` ADD CONSTRAINT `constraint_user_course_plan` FOREIGN KEY (`fk_course_plan`) REFERENCES `course_plan` (`id`);
-ALTER TABLE `plafor`.`user_course` ADD CONSTRAINT `constraint_statut` FOREIGN KEY (`fk_statut`) REFERENCES `user_course_statut` (`id`);
+ALTER TABLE `plafor`.`user_course` ADD CONSTRAINT `constraint_status` FOREIGN KEY (`fk_status`) REFERENCES `user_course_status` (`id`);
 ALTER TABLE `plafor`.`objective` ADD CONSTRAINT `constraint_operational_competence` FOREIGN KEY (`fk_operational_competence`) REFERENCES `operational_competence` (`id`);
 ALTER TABLE `plafor`.`objective` ADD CONSTRAINT `constraint_acquisition_level` FOREIGN KEY (`fk_acquisition_level`) REFERENCES `acquisition_level` (`id`);
+ALTER TABLE `plafor`.`operational_competence` ADD CONSTRAINT `constraint_domain_operational` FOREIGN KEY (`fk_competence_domain`) REFERENCES `competence_domain` (`id`);

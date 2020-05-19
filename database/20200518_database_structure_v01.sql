@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le :  lun. 18 mai 2020 à 09:41
+-- Généré le :  mar. 19 mai 2020 à 13:40
 -- Version du serveur :  10.4.6-MariaDB
 -- Version de PHP :  7.3.9
 
@@ -101,6 +101,7 @@ CREATE TABLE `objective` (
 
 CREATE TABLE `operational_competence` (
   `id` int(11) NOT NULL,
+  `fk_competence_domain` int(11) NOT NULL,
   `professional` text NOT NULL,
   `methodologic` text NOT NULL,
   `social` text NOT NULL,
@@ -139,27 +140,27 @@ CREATE TABLE `user_course` (
   `id` int(11) NOT NULL,
   `fk_user` int(11) NOT NULL,
   `fk_course_plan` int(11) NOT NULL,
-  `fk_statut` int(11) NOT NULL,
-  `begin_date` date NOT NULL,
-  `end_date` date NOT NULL
+  `fk_status` int(11) NOT NULL,
+  `date_begin` date NOT NULL,
+  `date_end` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `user_course_statut`
+-- Structure de la table `user_course_status`
 --
 
-CREATE TABLE `user_course_statut` (
+CREATE TABLE `user_course_status` (
   `id` int(11) NOT NULL,
   `name` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Déchargement des données de la table `user_course_statut`
+-- Déchargement des données de la table `user_course_status`
 --
 
-INSERT INTO `user_course_statut` (`id`, `name`) VALUES
+INSERT INTO `user_course_status` (`id`, `name`) VALUES
 (1, 'En cours'),
 (2, 'Réussi'),
 (3, 'Échouée'),
@@ -228,7 +229,8 @@ ALTER TABLE `objective`
 -- Index pour la table `operational_competence`
 --
 ALTER TABLE `operational_competence`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `constraint_domain_operational` (`fk_competence_domain`);
 
 --
 -- Index pour la table `user`
@@ -244,12 +246,12 @@ ALTER TABLE `user_course`
   ADD PRIMARY KEY (`id`),
   ADD KEY `constraint_user` (`fk_user`),
   ADD KEY `constraint_user_course_plan` (`fk_course_plan`),
-  ADD KEY `constraint_statut` (`fk_statut`);
+  ADD KEY `constraint_status` (`fk_status`);
 
 --
--- Index pour la table `user_course_statut`
+-- Index pour la table `user_course_status`
 --
-ALTER TABLE `user_course_statut`
+ALTER TABLE `user_course_status`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -305,9 +307,9 @@ ALTER TABLE `user_course`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `user_course_statut`
+-- AUTO_INCREMENT pour la table `user_course_status`
 --
-ALTER TABLE `user_course_statut`
+ALTER TABLE `user_course_status`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
@@ -334,6 +336,12 @@ ALTER TABLE `objective`
   ADD CONSTRAINT `constraint_operational_competence` FOREIGN KEY (`fk_operational_competence`) REFERENCES `operational_competence` (`id`);
 
 --
+-- Contraintes pour la table `operational_competence`
+--
+ALTER TABLE `operational_competence`
+  ADD CONSTRAINT `constraint_domain_operational` FOREIGN KEY (`fk_competence_domain`) REFERENCES `competence_domain` (`id`);
+
+--
 -- Contraintes pour la table `user`
 --
 ALTER TABLE `user`
@@ -343,7 +351,7 @@ ALTER TABLE `user`
 -- Contraintes pour la table `user_course`
 --
 ALTER TABLE `user_course`
-  ADD CONSTRAINT `constraint_statut` FOREIGN KEY (`fk_statut`) REFERENCES `user_course_statut` (`id`),
+  ADD CONSTRAINT `constraint_status` FOREIGN KEY (`fk_status`) REFERENCES `user_course_status` (`id`),
   ADD CONSTRAINT `constraint_user` FOREIGN KEY (`fk_user`) REFERENCES `user` (`id`),
   ADD CONSTRAINT `constraint_user_course_plan` FOREIGN KEY (`fk_course_plan`) REFERENCES `course_plan` (`id`);
 COMMIT;
