@@ -43,11 +43,12 @@
         <task id="18" name="Clônage et installation du dépôt Plafor" color="#00ff00" meeting="false" start="2020-05-13" duration="1" complete="0" thirdDate="2020-05-04" thirdDate-constraint="0" expand="true"/>
         <task id="20" name="Création base de données" color="#00ff00" meeting="false" start="2020-05-14" duration="2" complete="0" thirdDate="2020-05-04" thirdDate-constraint="0" expand="true">
             <depend id="26" type="2" difference="0" hardness="Strong"/>
-            <depend id="27" type="2" difference="0" hardness="Strong"/>
         </task>
         <task id="25" name="Création Diagramme Gantt" color="#ff0000" meeting="false" start="2020-05-14" duration="2" complete="0" thirdDate="2020-05-04" thirdDate-constraint="0" expand="true"/>
-        <task id="26" name="Réalistion du diagramme de navigation entre les écrans" color="#ff0000" meeting="false" start="2020-05-19" duration="1" complete="0" thirdDate="2020-05-04" thirdDate-constraint="0" expand="true"/>
-        <task id="27" name="Conception fenêtres" color="#ff0000" meeting="false" start="2020-05-19" duration="1" complete="0" thirdDate="2020-05-04" thirdDate-constraint="0" expand="true"/>
+        <task id="26" name="Réalistion du diagramme de navigation entre les écrans" color="#ff0000" meeting="false" start="2020-05-19" duration="1" complete="0" thirdDate="2020-05-04" thirdDate-constraint="0" expand="true">
+            <depend id="27" type="2" difference="0" hardness="Strong"/>
+        </task>
+        <task id="27" name="Conception fenêtres" color="#ff0000" meeting="false" start="2020-05-20" duration="3" complete="0" thirdDate="2020-05-04" thirdDate-constraint="0" expand="true"/>
         <task id="0" name="Ajouter plans formation" color="#8cb6ce" meeting="false" start="2020-05-27" duration="1" complete="0" thirdDate="2020-05-14" thirdDate-constraint="0" expand="true">
             <depend id="3" type="2" difference="0" hardness="Strong"/>
         </task>

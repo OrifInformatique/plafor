@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le :  mar. 19 mai 2020 à 13:40
+-- Généré le :  mer. 20 mai 2020 à 08:58
 -- Version du serveur :  10.4.6-MariaDB
 -- Version de PHP :  7.3.9
 
@@ -55,6 +55,13 @@ CREATE TABLE `ci_sessions` (
   `data` blob NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Déchargement des données de la table `ci_sessions`
+--
+
+INSERT INTO `ci_sessions` (`id`, `ip_address`, `timestamp`, `data`) VALUES
+('031abi1r1gi9t0msr5kj96euki01pvgr', '::1', 1589954778, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538393935343737383b6c6f676765645f696e7c623a303b61667465725f6c6f67696e5f72656469726563747c733a32343a22687474703a2f2f6c6f63616c686f73742f706c61666f722f223b);
+
 -- --------------------------------------------------------
 
 --
@@ -64,6 +71,7 @@ CREATE TABLE `ci_sessions` (
 CREATE TABLE `competence_domain` (
   `id` int(11) NOT NULL,
   `fk_course_plan` int(11) NOT NULL,
+  `symbol` varchar(10) NOT NULL,
   `name` varchar(45) NOT NULL,
   `description` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -76,7 +84,9 @@ CREATE TABLE `competence_domain` (
 
 CREATE TABLE `course_plan` (
   `id` int(11) NOT NULL,
-  `name` varchar(45) NOT NULL
+  `formation_number` varchar(5) NOT NULL,
+  `official_name` varchar(100) NOT NULL,
+  `date_begin` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -89,6 +99,8 @@ CREATE TABLE `objective` (
   `id` int(11) NOT NULL,
   `fk_operational_competence` int(11) NOT NULL,
   `fk_acquisition_level` int(11) NOT NULL,
+  `symbol` varchar(10) NOT NULL,
+  `taxonomy` int(5) NOT NULL,
   `name` varchar(45) NOT NULL,
   `description` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -102,7 +114,6 @@ CREATE TABLE `objective` (
 CREATE TABLE `operational_competence` (
   `id` int(11) NOT NULL,
   `fk_competence_domain` int(11) NOT NULL,
-  `professional` text NOT NULL,
   `methodologic` text NOT NULL,
   `social` text NOT NULL,
   `personal` text NOT NULL
