@@ -15,7 +15,7 @@
         <day-types>
             <day-type id="0"/>
             <day-type id="1"/>
-            <default-week id="1" name="default" sun="1" mon="0" tue="0" wed="0" thu="0" fri="1" sat="1"/>
+            <default-week id="1" name="default" sun="1" mon="0" tue="0" wed="0" thu="0" fri="0" sat="1"/>
             <only-show-weekends value="false"/>
             <overriden-day-types/>
             <days/>
@@ -41,24 +41,26 @@
             <depend id="20" type="2" difference="0" hardness="Strong"/>
         </task>
         <task id="18" name="Clônage et installation du dépôt Plafor" color="#00ff00" meeting="false" start="2020-05-13" duration="1" complete="0" thirdDate="2020-05-04" thirdDate-constraint="0" expand="true"/>
-        <task id="20" name="Création base de données" color="#00ff00" meeting="false" start="2020-05-14" duration="2" complete="0" thirdDate="2020-05-04" thirdDate-constraint="0" expand="true">
+        <task id="20" name="Création base de données" color="#00ff00" meeting="false" start="2020-05-14" duration="3" complete="0" thirdDate="2020-05-04" thirdDate-constraint="0" expand="true">
             <depend id="26" type="2" difference="0" hardness="Strong"/>
         </task>
-        <task id="25" name="Création Diagramme Gantt" color="#ff0000" meeting="false" start="2020-05-14" duration="2" complete="0" thirdDate="2020-05-04" thirdDate-constraint="0" expand="true"/>
+        <task id="25" name="Création Diagramme Gantt" color="#ff0000" meeting="false" start="2020-05-14" duration="3" complete="0" thirdDate="2020-05-04" thirdDate-constraint="0" expand="true"/>
         <task id="26" name="Réalistion du diagramme de navigation entre les écrans" color="#ff0000" meeting="false" start="2020-05-19" duration="1" complete="0" thirdDate="2020-05-04" thirdDate-constraint="0" expand="true">
             <depend id="27" type="2" difference="0" hardness="Strong"/>
         </task>
-        <task id="27" name="Conception fenêtres" color="#ff0000" meeting="false" start="2020-05-20" duration="3" complete="0" thirdDate="2020-05-04" thirdDate-constraint="0" expand="true"/>
-        <task id="0" name="Ajouter plans formation" color="#8cb6ce" meeting="false" start="2020-05-27" duration="1" complete="0" thirdDate="2020-05-14" thirdDate-constraint="0" expand="true">
+        <task id="27" name="Conception fenêtres" color="#ff0000" meeting="false" start="2020-05-20" duration="3" complete="0" thirdDate="2020-05-04" thirdDate-constraint="0" expand="true">
+            <depend id="0" type="2" difference="0" hardness="Strong"/>
+        </task>
+        <task id="0" name="Ajouter plans formation" color="#8cb6ce" meeting="false" start="2020-05-25" duration="2" complete="0" thirdDate="2020-05-14" thirdDate-constraint="0" expand="true">
             <depend id="3" type="2" difference="0" hardness="Strong"/>
         </task>
-        <task id="3" name="Interfaces admin plans formation" color="#8cb6ce" meeting="false" start="2020-05-28" duration="1" complete="0" thirdDate="2020-05-14" thirdDate-constraint="0" expand="true">
+        <task id="3" name="Interfaces admin plans formation" color="#8cb6ce" meeting="false" start="2020-05-27" duration="2" complete="0" thirdDate="2020-05-14" thirdDate-constraint="0" expand="true">
             <depend id="4" type="2" difference="0" hardness="Strong"/>
         </task>
-        <task id="4" name="Lier apprenti avec plan(s) de formation" color="#8cb6ce" meeting="false" start="2020-06-01" duration="1" complete="0" thirdDate="2020-05-14" thirdDate-constraint="0" expand="true">
+        <task id="4" name="Lier apprenti avec plan(s) de formation" color="#8cb6ce" meeting="false" start="2020-05-29" duration="2" complete="0" thirdDate="2020-05-14" thirdDate-constraint="0" expand="true">
             <depend id="5" type="2" difference="0" hardness="Strong"/>
         </task>
-        <task id="5" name="Implémentation du suivi des objectifs des apprentis" color="#8cb6ce" meeting="false" start="2020-06-02" duration="1" complete="0" thirdDate="2020-05-14" thirdDate-constraint="0" expand="true"/>
+        <task id="5" name="Implémentation du suivi des objectifs des apprentis" color="#8cb6ce" meeting="false" start="2020-06-02" duration="2" complete="0" thirdDate="2020-05-14" thirdDate-constraint="0" expand="true"/>
     </tasks>
     <resources/>
     <allocations/>
