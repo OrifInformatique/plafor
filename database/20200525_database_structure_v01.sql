@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le :  mer. 20 mai 2020 à 08:58
+-- Généré le :  lun. 25 mai 2020 à 15:46
 -- Version du serveur :  10.4.6-MariaDB
 -- Version de PHP :  7.3.9
 
@@ -60,7 +60,10 @@ CREATE TABLE `ci_sessions` (
 --
 
 INSERT INTO `ci_sessions` (`id`, `ip_address`, `timestamp`, `data`) VALUES
-('031abi1r1gi9t0msr5kj96euki01pvgr', '::1', 1589954778, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538393935343737383b6c6f676765645f696e7c623a303b61667465725f6c6f67696e5f72656469726563747c733a32343a22687474703a2f2f6c6f63616c686f73742f706c61666f722f223b);
+('031abi1r1gi9t0msr5kj96euki01pvgr', '::1', 1589960976, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538393936303937363b6c6f676765645f696e7c623a303b61667465725f6c6f67696e5f72656469726563747c733a32343a22687474703a2f2f6c6f63616c686f73742f706c61666f722f223b),
+('mglkblta9ui5kpl89um6opf0dblpo71t', '::1', 1589960976, 0x5f5f63695f6c6173745f726567656e65726174657c693a313538393936303937363b6c6f676765645f696e7c623a313b61667465725f6c6f67696e5f72656469726563747c733a32343a22687474703a2f2f6c6f63616c686f73742f706c61666f722f223b757365725f69647c693a313b757365726e616d657c733a353a2261646d696e223b757365725f6163636573737c693a343b),
+('qg6m0vv2i05d0uripsfi36iscu079ck8', '::1', 1590386915, 0x5f5f63695f6c6173745f726567656e65726174657c693a313539303338363930393b6c6f676765645f696e7c623a303b61667465725f6c6f67696e5f72656469726563747c733a32343a22687474703a2f2f6c6f63616c686f73742f706c61666f722f223b),
+('jf0fq2pd0no1ljultmammc3fc0p3e3si', '::1', 1590403930, 0x5f5f63695f6c6173745f726567656e65726174657c693a313539303430333932343b6c6f676765645f696e7c623a313b61667465725f6c6f67696e5f72656469726563747c733a32343a22687474703a2f2f6c6f63616c686f73742f706c61666f722f223b757365725f69647c693a313b757365726e616d657c733a353a2261646d696e223b757365725f6163636573737c693a343b);
 
 -- --------------------------------------------------------
 
@@ -72,9 +75,25 @@ CREATE TABLE `competence_domain` (
   `id` int(11) NOT NULL,
   `fk_course_plan` int(11) NOT NULL,
   `symbol` varchar(10) NOT NULL,
-  `name` varchar(45) NOT NULL,
-  `description` text NOT NULL
+  `name` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Déchargement des données de la table `competence_domain`
+--
+
+INSERT INTO `competence_domain` (`id`, `fk_course_plan`, `symbol`, `name`) VALUES
+(1, 1, 'A', 'Saisie, interprétation et mise\r\nen œuvre des exigences des\r\napplications'),
+(2, 1, 'B', 'Développement d’applications en tenant compte des\r\ncaractéristiques de qualité'),
+(3, 1, 'C', 'Création et maintenance de\r\ndonnées ainsi que de leurs\r\nstructures\r\n'),
+(4, 1, 'D', ' Mise en service d’appareils TIC'),
+(5, 1, 'E', 'Travail sur des projets'),
+(6, 2, 'A', 'Mise en service d’appareils TIC'),
+(7, 2, 'B', 'Mise en service de serveurs et réseaux'),
+(8, 2, 'C', 'Garantie de l’exploitation TIC '),
+(9, 2, 'D', 'Assistance aux utilisateurs'),
+(10, 2, 'E', 'Développement d’applications en tenant compte des\r\ncaractéristiques de qualité'),
+(11, 2, 'F', 'Travaux dans le cadre de projets');
 
 -- --------------------------------------------------------
 
@@ -88,6 +107,14 @@ CREATE TABLE `course_plan` (
   `official_name` varchar(100) NOT NULL,
   `date_begin` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Déchargement des données de la table `course_plan`
+--
+
+INSERT INTO `course_plan` (`id`, `formation_number`, `official_name`, `date_begin`) VALUES
+(1, '88601', '\r\nInformaticien/-ne CFC\r\nDéveloppement d\'applications', '2013-11-01'),
+(2, '88602', '\r\nInformaticien/-ne CFC\r\nInformatique d\'entreprise', '2013-11-01');
 
 -- --------------------------------------------------------
 
@@ -114,9 +141,11 @@ CREATE TABLE `objective` (
 CREATE TABLE `operational_competence` (
   `id` int(11) NOT NULL,
   `fk_competence_domain` int(11) NOT NULL,
-  `methodologic` text NOT NULL,
-  `social` text NOT NULL,
-  `personal` text NOT NULL
+  `name` varchar(100) DEFAULT NULL,
+  `symbol` varchar(10) NOT NULL,
+  `methodologic` text DEFAULT NULL,
+  `social` text DEFAULT NULL,
+  `personal` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -285,13 +314,13 @@ ALTER TABLE `acquisition_level`
 -- AUTO_INCREMENT pour la table `competence_domain`
 --
 ALTER TABLE `competence_domain`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT pour la table `course_plan`
 --
 ALTER TABLE `course_plan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT pour la table `objective`
