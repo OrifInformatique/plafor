@@ -20,7 +20,7 @@ class Admin extends MY_Controller
         parent::__construct();
 
         // Load required items
-        $this->load->library('form_validation')->model(['course_plan_model']);
+        $this->load->library('form_validation')->model(['course_plan_model','competence_domain_model','operational_competence_model','objective_model']);
 
         // Assign form_validation CI instance to this
         $this->form_validation->CI =& $this;
@@ -118,13 +118,322 @@ class Admin extends MY_Controller
                 $this->display_view('admin/course_plan/delete', $output);
                 break;
             case 1: // Delete course plan
-                if ($_SESSION['course_plan_id'] != $course_plan->id) {
-                    $this->course_plan_model->delete($course_plan_id, TRUE);
-                }
+                $this->course_plan_model->delete($course_plan_id, TRUE);
                 redirect('admin/list_course_plan');
             default: // Do nothing
                 redirect('admin/list_course_plan');
         }
     }
     
+    
+    /**
+     * Displays the list of course plans
+     *
+     * @return void
+     */
+    public function list_competence_domain()
+    {
+        $competence_domains = $this->competence_domain_model->get_all();
+
+        $output = array(
+            'competence_domains' => $competence_domains
+        );
+        $this->display_view('admin/competence_domain/list', $output);
+    }
+
+    /**
+     * Adds or modify a course plan
+     *
+     * @param integer $competence_domain_id = The id of the course plan to modify, leave blank to create a new one
+     * @return void
+     */
+    public function save_competence_domain($competence_domain_id = 0)
+    {
+		if (count($_POST) > 0) {
+			$competence_domain_id = $this->input->post('id');
+                        $rules = array(
+                            array(
+                              'field' => 'symbol',
+                              'label' => 'lang:field_competence_domain_symbol',
+                              'rules' => 'required|max_length['.SYMBOL_MAX_LENGTH.']',
+                            ),
+                            array(
+                              'field' => 'name',
+                              'label' => 'lang:field_competence_domain_name',
+                              'rules' => 'required|max_length['.COMPETENCE_DOMAIN_NAME_MAX_LENGTH.']',
+                            )
+                        );
+			$this->form_validation->set_rules($rules);
+			if ($this->form_validation->run()) {
+				$competence_domain = array(
+					'symbol' => $this->input->post('symbol'),
+					'name' => $this->input->post('name'),
+                                        'fk_course_plan' => $this->input->post('course_plan')
+				);
+				if ($competence_domain_id > 0) {
+					$this->competence_domain_model->update($competence_domain_id, $competence_domain);
+				} else {
+					$this->competence_domain_model->insert($competence_domain);
+				}
+				redirect('admin/list_competence_domain');
+                                exit();
+			}
+		}
+
+        $output = array(
+            'title' => $this->lang->line('title_competence_domain_'.((bool)$competence_domain_id ? 'update' : 'new')),
+            'competence_domain' => $this->competence_domain_model->get($competence_domain_id),
+            'course_plans' => $this->course_plan_model->dropdown('official_name')
+	);
+        
+        $this->display_view('admin/competence_domain/save', $output);
+    }
+
+    /**
+     * Deletes a course plan depending on $action
+     *
+     * @param integer $competence_domain_id = ID of the competence_domain to affect
+     * @param integer $action = Action to apply on the course plan:
+     *  - 0 for displaying the confirmation
+     *  - 1 for deactivating (soft delete)
+     *  - 2 for deleting (hard delete)
+     * @return void
+     */
+    public function delete_competence_domain($competence_domain_id, $action = 0)
+    {
+        $competence_domain = $this->competence_domain_model->get($competence_domain_id);
+        if (is_null($competence_domain)) {
+            redirect('admin/competence_domain/list');
+        }
+
+        switch($action) {
+            case 0: // Display confirmation
+                $output = array(
+                    'competence_domain' => $competence_domain,
+                    'title' => lang('title_competence_domain_delete')
+                );
+                $this->display_view('admin/competence_domain/delete', $output);
+                break;
+            case 1: // Delete course plan
+                $this->competence_domain_model->delete($competence_domain_id, TRUE);
+                redirect('admin/list_competence_domain');
+            default: // Do nothing
+                redirect('admin/list_competence_domain');
+        }
+    }
+    
+    /**
+     * Displays the list of course plans
+     *
+     * @return void
+     */
+    public function list_operational_competence()
+    {
+        $operational_competences = $this->operational_competence_model->get_all();
+
+        $output = array(
+            'operational_competences' => $operational_competences
+        );
+        $this->display_view('admin/operational_competence/list', $output);
+    }
+
+    /**
+     * Adds or modify a course plan
+     *
+     * @param integer $operational_competence_id = The id of the course plan to modify, leave blank to create a new one
+     * @return void
+     */
+    public function save_operational_competence($operational_competence_id = 0)
+    {
+		if (count($_POST) > 0) {
+			$operational_competence_id = $this->input->post('id');
+                        $rules = array(
+                            array(
+                              'field' => 'symbol',
+                              'label' => 'lang:field_operational_competence_symbol',
+                              'rules' => 'required|max_length['.SYMBOL_MAX_LENGTH.']',
+                            ),
+                            array(
+                              'field' => 'name',
+                              'label' => 'lang:field_operational_name',
+                              'rules' => 'required|max_length['.OPERATIONAL_COMPETENCE_NAME_MAX_LENGTH.']',
+                            ),
+                            array(
+                              'field' => 'methodologic',
+                              'label' => 'lang:field_operational_methodologic',
+                              'rules' => 'required|max_length['.SQL_TEXT_MAX_LENGTH.']',
+                            ),
+                            array(
+                              'field' => 'social',
+                              'label' => 'lang:field_operational_social',
+                              'rules' => 'required|max_length['.SQL_TEXT_MAX_LENGTH.']',
+                            ),
+                            array(
+                              'field' => 'personal',
+                              'label' => 'lang:field_operational_personal',
+                              'rules' => 'required|max_length['.SQL_TEXT_MAX_LENGTH.']',
+                            ),
+                        );
+			$this->form_validation->set_rules($rules);
+			if ($this->form_validation->run()) {
+				$operational_competence = array(
+					'symbol' => $this->input->post('symbol'),
+					'name' => $this->input->post('name'),
+					'methodologic' => $this->input->post('methodologic'),
+					'social' => $this->input->post('social'),
+					'personal' => $this->input->post('personal'),
+                                        'fk_competence_domain' => $this->input->post('competence_domain')
+				);
+				if ($operational_competence_id > 0) {
+					$this->operational_competence_model->update($operational_competence_id, $operational_competence);
+				} else {
+					$this->operational_competence_model->insert($operational_competence);
+				}
+				redirect('admin/list_operational_competence');
+                                exit();
+			}
+		}
+
+        $output = array(
+            'title' => $this->lang->line('title_operational_competence_'.((bool)$operational_competence_id ? 'update' : 'new')),
+            'operational_competence' => $this->operational_competence_model->get($operational_competence_id),
+            'competence_domains' => $this->competence_domain_model->dropdown('name')
+	);
+
+        $this->display_view('admin/operational_competence/save', $output);
+    }
+
+    /**
+     * Deletes a course plan depending on $action
+     *
+     * @param integer $operational_competence_id = ID of the operational_competence to affect
+     * @param integer $action = Action to apply on the course plan:
+     *  - 0 for displaying the confirmation
+     *  - 1 for deactivating (soft delete)
+     *  - 2 for deleting (hard delete)
+     * @return void
+     */
+    public function delete_operational_competence($operational_competence_id, $action = 0)
+    {
+        $operational_competence = $this->operational_competence_model->get($operational_competence_id);
+        if (is_null($operational_competence)) {
+            redirect('admin/operational_competence/list');
+        }
+
+        switch($action) {
+            case 0: // Display confirmation
+                $output = array(
+                    'operational_competence' => $operational_competence,
+                    'title' => lang('title_operational_competence_delete')
+                );
+                $this->display_view('admin/operational_competence/delete', $output);
+                break;
+            case 1: // Delete course plan
+                $this->operational_competence_model->delete($operational_competence_id, TRUE);
+                redirect('admin/list_operational_competence');
+            default: // Do nothing
+                redirect('admin/list_operational_competence');
+        }
+    }
+    
+    /**
+     * Displays the list of course plans
+     *
+     * @return void
+     */
+    public function list_objective()
+    {
+        $objectives = $this->objective_model->get_all();
+
+        $output = array(
+            'objectives' => $objectives
+        );
+        $this->display_view('admin/objective/list', $output);
+    }
+
+    /**
+     * Adds or modify a course plan
+     *
+     * @param integer $objective_id = The id of the course plan to modify, leave blank to create a new one
+     * @return void
+     */
+    public function save_objective($objective_id = 0)
+    {
+		if (count($_POST) > 0) {
+			$objective_id = $this->input->post('id');
+                        $rules = array(
+                            array(
+                              'field' => 'symbol',
+                              'label' => 'lang:field_objective_symbol',
+                              'rules' => 'required|max_length['.SYMBOL_MAX_LENGTH.']',
+                            ),
+                            array(
+                              'field' => 'taxonomy',
+                              'label' => 'lang:field_objective_taxonomy',
+                              'rules' => 'required|max_length['.TAXONOMY_MAX_VALUE.']',
+                            ),array(
+                              'field' => 'name',
+                              'label' => 'lang:field_objective_name',
+                              'rules' => 'required|max_length['.OBJECTIVE_NAME_MAX_LENGTH.']',
+                            )
+                        );
+			$this->form_validation->set_rules($rules);
+			if ($this->form_validation->run()) {
+				$objective = array(
+					'symbol' => $this->input->post('symbol'),
+					'taxonomy' => $this->input->post('taxonomy'),
+					'name' => $this->input->post('name'),
+                                        'fk_operational_competence' => $this->input->post('operational_competence')
+				);
+				if ($objective_id > 0) {
+					$this->objective_model->update($objective_id, $objective);
+				} else {
+					$this->objective_model->insert($objective);
+				}
+				redirect('admin/list_objective');
+                                exit();
+			}
+		}
+
+        $output = array(
+            'title' => $this->lang->line('title_objective_'.((bool)$objective_id ? 'update' : 'new')),
+            'objective' => $this->objective_model->get($objective_id),
+            'operational_competences' => $this->operational_competence_model->dropdown('name')
+	);
+
+        $this->display_view('admin/objective/save', $output);
+    }
+
+    /**
+     * Deletes a course plan depending on $action
+     *
+     * @param integer $objective_id = ID of the objective to affect
+     * @param integer $action = Action to apply on the course plan:
+     *  - 0 for displaying the confirmation
+     *  - 1 for deactivating (soft delete)
+     *  - 2 for deleting (hard delete)
+     * @return void
+     */
+    public function delete_objective($objective_id, $action = 0)
+    {
+        $objective = $this->objective_model->get($objective_id);
+        if (is_null($objective)) {
+            redirect('admin/objective/list');
+        }
+
+        switch($action) {
+            case 0: // Display confirmation
+                $output = array(
+                    'objective' => $objective,
+                    'title' => lang('title_objective_delete')
+                );
+                $this->display_view('admin/objective/delete', $output);
+                break;
+            case 1: // Delete course plan
+                $this->objective_model->delete($objective_id, TRUE);
+                redirect('admin/list_objective');
+            default: // Do nothing
+                redirect('admin/list_objective');
+        }
+    }
 }
