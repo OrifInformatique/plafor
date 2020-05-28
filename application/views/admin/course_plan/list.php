@@ -31,7 +31,7 @@
         <tbody id="course_planslist">
             <?php foreach($course_plans as $course_plan) { ?>
                 <tr>
-                    <td><a href="<?= base_url('admin/save_course_plan/'.$course_plan->id); ?>"><span class="font-weight-bold"><?= $course_plan->formation_number?></span><?= $course_plan->official_name; ?></td>
+                    <td><a href="<?= base_url('admin/save_course_plan/'.$course_plan->id); ?>"><?= $course_plan->official_name; ?></td>
                     <td><a href="<?= base_url('admin/delete_course_plan/'.$course_plan->id); ?>" class="close">×</td>
                 </tr>
             <?php } ?>
