@@ -1,20 +1,18 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 /**
- * Objective is used to save the objectives available, and link them with
- * Operational_competence entries
+ * Aquisition_level is used to list the possible aquisition level of every 
+ * user (apprentice) of any objective so it can be keep
  * 
  * @author      Orif (UlSi, ViDi)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c) Orif (https://www.orif.ch)
  */
-class objective_model extends MY_Model
+class aquisition_level_model extends MY_Model
 {
     /* Set MY_Model variables */
-    protected $_table = 'objective';
+    protected $_table = 'aquisition_level';
     protected $primary_key = 'id';
     protected $protected_attributes = ['id'];
-    protected $belongs_to = ['operational_competence'=> ['primary_key' => 'fk_operational_competence',
-                                            'model' => 'operational_competence_model']];
     /* protected $soft_delete = TRUE; */
     /* protected $soft_delete_key = 'archive'; */
 

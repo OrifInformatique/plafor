@@ -11,7 +11,7 @@
     <div class="row">
         <ul class="nav nav-pills">
             <li class="nav-item">
-                <a href="<?= base_url('apprentice/list_apprentice/') ?>" class="nav-link"><?= lang('admin_apprentices'); ?></a>
+                <a href="<?= base_url('apprentice/list_apprentice/') ?>" class="nav-link active"><?= lang('admin_apprentices'); ?></a>
             </li>
             <li class="nav-item">
                 <a href="<?= base_url('admin/list_course_plan/') ?>" class="nav-link"><?= lang('admin_course_plans'); ?></a>
@@ -23,39 +23,28 @@
                 <a href="<?= base_url('admin/list_operational_competence/') ?>" class="nav-link"><?= lang('admin_operational_competences'); ?></a>
             </li>
             <li class="nav-item">
-                <a href="<?= base_url('admin/list_objective/') ?>" class="nav-link active"><?= lang('admin_objectives'); ?></a>
+                <a href="<?= base_url('admin/list_objective/') ?>" class="nav-link"><?= lang('admin_objectives'); ?></a>
             </li>
         </ul>
   </div>
     <div class="row">
         <div class="col">
-            <h1 class="title-section"><?= lang('title_objective_list'); ?></h1>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-3 text-left">
-            <a href="<?= base_url('admin/save_objective'); ?>" class="btn btn-primary">
-                <?= lang('btn_add_m'); ?>
-            </a>
+            <h1 class="title-section"><?= lang('title_apprentice_list'); ?></h1>
         </div>
     </div>
     <div class="row mt-2">
         <table class="table table-hover">
         <thead>
             <tr>
-                <th><?= lang('field_objective_name'); ?></th>
-                <th></th>
-                <th></th>
-                <th></th>
+                <th><?= lang('field_apprentice_username'); ?></th>
+                <th><?= lang('field_followed_courses'); ?></th>
             </tr>
         </thead>
-        <tbody id="objectiveslist">
-            <?php foreach($objectives as $objective) { ?>
+        <tbody id="apprenticeslist">
+            <?php foreach($apprentices as $apprentice) { ?>
                 <tr>
-                    <td><a href="<?= base_url('aprentice/view_objective/'.$objective->id); ?>"><span class="font-weight-bold"><?= $objective->symbol?></span> <?= $objective->name; ?></td>
-                    <td><a href="<?= base_url('apprentice/view_objective')?>"><?= lang('btn_details')?></a></td>
-                    <td><a href="<?= base_url('admin/save_objective/'.$objective->id); ?>"><?= lang('btn_update')?></a></td>
-                    <td><a href="<?= base_url('admin/delete_objective/'.$objective->id); ?>" class="close">×</td>
+                    <td><a href="<?= base_url('apprentice/view_apprentice/'.$apprentice->id); ?>"><?= $apprentice->username; ?></td>
+                    <td><a href="<?= base_url('apprentice/view_apprentice/')?>"><?= $apprentice->date_creation; ?></a></td>
                 </tr>
             <?php } ?>
         </tbody>

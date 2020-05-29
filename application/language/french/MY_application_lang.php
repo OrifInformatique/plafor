@@ -8,7 +8,7 @@
  */
 
 // Application name
-$lang['app_title']                      = 'Section informatique<br />Package de base';
+$lang['app_title']                      = 'Plateforme <br />Suivie des formations';
 
 // Page titles
 $lang['page_prefix']                    = 'Pack base';
@@ -22,6 +22,8 @@ $lang['btn_cancel']                     = 'Annuler';
 $lang['btn_add_m']                      = 'Nouveau';
 $lang['btn_add_f']                      = 'Nouvelle';
 $lang['btn_save']                       = 'Enregistrer';
+$lang['btn_update']                     = 'Modifier';  
+$lang['btn_details']                    = 'Détails';
 $lang['btn_disable']                    = 'Désactiver';
 $lang['btn_reactivate']                 = 'Réactiver';
 $lang['btn_delete']                     = 'Supprimer';
@@ -36,6 +38,10 @@ $lang['yes']                            = 'Oui';
 $lang['no']                             = 'Non';
 
 // Page titles
+$lang['title_apprentice_list']           = 'Liste des apprentis';
+$lang['title_apprentice_update']         = 'Modifier un apprenti';
+$lang['title_apprentice_new']            = 'Ajouter un apprenti';
+$lang['title_apprentice_delete']         = 'Supprimer un apprenti';
 $lang['title_course_plan_list']         = 'Liste des plans de formation';
 $lang['title_course_plan_update']       = 'Modifier un plan de formation';
 $lang['title_course_plan_new']          = 'Ajouter un plan de formation';
@@ -58,6 +64,9 @@ $lang['title_objective_new']            = 'Ajouter un objectif';
 $lang['title_objective_delete']         = 'Supprimer un objectif';
 
 // Fields labels
+$lang['field_apprentice_username']      = 'Nom de l\'apprenti';
+$lang['field_apprentice_date_creation'] = 'Date de création de l\'apprenti';
+$lang['field_followed_courses']         = 'Formation(s) suivie(s)';
 $lang['field_course_plan_formation_number']
                                         = 'Numéro du plan de formation';
 $lang['field_course_plan_official_name']
@@ -84,6 +93,13 @@ $lang['field_objective_operational_competence']
 $lang['field_objective_symbol']         = 'Symbole de l\'objectif';
 $lang['field_objective_taxonomy']       = 'Taxonomie de l\'objectif';
 $lang['field_objective_name']           = 'Nom de l\'objectif';
+
+// Admin texts
+$lang['admin_apprentices']              = 'Apprentis';
+$lang['admin_course_plans']             = 'Plans de formations';
+$lang['admin_competence_domains']       = 'Domaines de compétences';
+$lang['admin_objectives']               = 'Objectifs';
+$lang['admin_operational_competences']  = 'Compétences opérationnelles';
 
 // Error messages
 $lang['msg_err_course_plan_not_exist']  = 'Le plan de formation sélectionné n\'existe pas';

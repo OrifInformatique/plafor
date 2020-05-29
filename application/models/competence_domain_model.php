@@ -1,7 +1,7 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 /**
- * User is used to give access to the application.
- * User_type is used to give different access rights (defining an access level).
+ * Competence_domain is used to save the competence domains available, and link them with
+ * Course_plan entries
  * 
  * @author      Orif (UlSi, ViDi)
  * @link        https://github.com/OrifInformatique

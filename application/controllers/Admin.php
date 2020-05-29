@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 /**
- * User Administraton
+ * Plafor Administraton
  *
  * @author      Orif (ToRe)
  * @link        https://github.com/OrifInformatique
@@ -26,6 +26,15 @@ class Admin extends MY_Controller
         $this->form_validation->CI =& $this;
     }
 
+    /**
+    * Menu for admin privileges
+    */
+    public function index()
+    {
+      $this->list_course_plan();
+    }
+
+    
     /**
      * Displays the list of course plans
      *
@@ -131,13 +140,23 @@ class Admin extends MY_Controller
      *
      * @return void
      */
-    public function list_competence_domain()
+    public function list_competence_domain($id_course_plan = null)
     {
-        $competence_domains = $this->competence_domain_model->get_all();
-
+        if($id_course_plan == null){
+            $competence_domains = $this->competence_domain_model->get_all();
+        }else{
+            $course_plan = $this->course_plan_model->get($id_course_plan);
+            $competence_domains = $this->competence_domain_model->get_many_by('fk_course_plan', $course_plan->id);
+        }
+            
         $output = array(
             'competence_domains' => $competence_domains
         );
+        
+        if(is_numeric($id_course_plan)){
+            $output[] = ['course_plan' => $course_plan];
+        }
+        
         $this->display_view('admin/competence_domain/list', $output);
     }
 
@@ -227,13 +246,23 @@ class Admin extends MY_Controller
      *
      * @return void
      */
-    public function list_operational_competence()
+    public function list_operational_competence($id_competence_domain = null)
     {
-        $operational_competences = $this->operational_competence_model->get_all();
-
+        if($id_competence_domain == null){
+            $operational_competences = $this->operational_competence_model->get_all();
+        }else{
+            $competence_domain = $this->competence_domain_model->get($id_competence_domain);
+            $operational_competences = $this->operational_competence_model->get_many_by('fk_competence_domain',$competence_domain->id);
+        }
+        
         $output = array(
             'operational_competences' => $operational_competences
         );
+        
+        if(is_numeric($id_competence_domain)){
+            $output[] = ['competence_domain' => $competence_domain];
+        }
+        
         $this->display_view('admin/operational_competence/list', $output);
     }
 
@@ -341,13 +370,23 @@ class Admin extends MY_Controller
      *
      * @return void
      */
-    public function list_objective()
+    public function list_objective($id_operational_competence = null)
     {
-        $objectives = $this->objective_model->get_all();
-
+        if($id_operational_competence == null){
+            $objectives = $this->objective_model->get_all();
+        }else{
+            $operational_competence = $this->operational_competence_model->get($id_operational_competence);
+            $objectives = $this->objective_model->get_many_by('fk_operational_competence',$operational_competence->id);
+        }
+            
         $output = array(
             'objectives' => $objectives
         );
+        
+        if(is_numeric($id_operational_competence)){
+            $output[] = ['operational_competence',$operational_competence];
+        }
+        
         $this->display_view('admin/objective/list', $output);
     }
 

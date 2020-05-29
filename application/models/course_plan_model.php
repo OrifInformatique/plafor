@@ -1,7 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 /**
- * User is used to give access to the application.
- * User_type is used to give different access rights (defining an access level).
+ * Course_plan is used to save the courses available
  * 
  * @author      Orif (UlSi, ViDi)
  * @link        https://github.com/OrifInformatique

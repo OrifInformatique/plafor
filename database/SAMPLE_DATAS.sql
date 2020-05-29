@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le :  mer. 27 mai 2020 à 15:07
+-- Généré le :  ven. 29 mai 2020 à 09:47
 -- Version du serveur :  10.4.6-MariaDB
 -- Version de PHP :  7.3.9
 
@@ -302,8 +302,8 @@ INSERT INTO `user_course_status` (`id`, `name`) VALUES
 
 INSERT INTO `user_type` (`id`, `name`, `access_level`) VALUES
 (1, 'Administrateur', 4),
-(2, 'Enregistré', 2),
-(3, 'Invité', 1);
+(2, 'Formateur', 2),
+(3, 'Apprenti', 1);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
