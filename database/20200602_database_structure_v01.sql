@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le :  mer. 27 mai 2020 à 15:08
+-- Généré le :  mar. 02 juin 2020 à 08:06
 -- Version du serveur :  10.4.6-MariaDB
 -- Version de PHP :  7.3.9
 
@@ -46,19 +46,6 @@ CREATE TABLE `acquisition_status` (
   `fk_objective` int(11) NOT NULL,
   `fk_user` int(11) NOT NULL,
   `fk_acquisition_level` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `ci_sessions`
---
-
-CREATE TABLE `ci_sessions` (
-  `id` varchar(128) NOT NULL,
-  `ip_address` varchar(45) NOT NULL,
-  `timestamp` int(10) UNSIGNED NOT NULL DEFAULT 0,
-  `data` blob NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -188,12 +175,6 @@ ALTER TABLE `acquisition_status`
   ADD KEY `constraint_acquisition_statut_level` (`fk_acquisition_level`),
   ADD KEY `constraint_objective_acquisition_statut` (`fk_objective`),
   ADD KEY `constraint_user_acquisition_statut` (`fk_user`);
-
---
--- Index pour la table `ci_sessions`
---
-ALTER TABLE `ci_sessions`
-  ADD KEY `ci_sessions_timestamp` (`timestamp`);
 
 --
 -- Index pour la table `competence_domain`

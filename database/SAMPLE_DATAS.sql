@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le :  ven. 29 mai 2020 à 09:47
+-- Généré le :  mar. 02 juin 2020 à 08:05
 -- Version du serveur :  10.4.6-MariaDB
 -- Version de PHP :  7.3.9
 
@@ -283,7 +283,9 @@ INSERT INTO `operational_competence` (`id`, `fk_competence_domain`, `name`, `sym
 
 INSERT INTO `user` (`id`, `fk_user_type`, `username`, `password`, `archive`, `date_creation`) VALUES
 (1, 1, 'admin', '$2y$10$tUB5R1MGgbO.zD//WArnceTY8IgnFkVVsudIdHBxIrEXJ2z3WBvcK', 0, '2020-03-30 08:33:55'),
-(2, 2, 'Test', '$2y$10$m0gUwFakcEURjwTI9oXpbOCo7dgRE5wVdzmHVcEDIjXXc5Jlm2neS', 0, '2020-05-27 06:10:22');
+(2, 2, 'Test', '$2y$10$m0gUwFakcEURjwTI9oXpbOCo7dgRE5wVdzmHVcEDIjXXc5Jlm2neS', 0, '2020-05-27 06:10:22'),
+(3, 3, 'TestApprenti', '$2y$10$NNVxL6V70orQ.dnWOEoaauXUhXgRztKRqwRMPVHBbS5AgYnGKqNx2', 0, '2020-05-29 09:15:13'),
+(4, 3, 'TestApprentiArchive', '$2y$10$99rUcKM10ipdv0XNyQKKAuObxRHn2t/l/fH3aC/aBJUi5AQ9ZZh8q', 1, '2020-05-29 11:22:37');
 
 --
 -- Déchargement des données de la table `user_course_status`

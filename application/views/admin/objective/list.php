@@ -53,7 +53,7 @@
             <?php foreach($objectives as $objective) { ?>
                 <tr>
                     <td><a href="<?= base_url('aprentice/view_objective/'.$objective->id); ?>"><span class="font-weight-bold"><?= $objective->symbol?></span> <?= $objective->name; ?></td>
-                    <td><a href="<?= base_url('apprentice/view_objective')?>"><?= lang('btn_details')?></a></td>
+                    <td><a href="<?= base_url('apprentice/view_objective/').$objective->id?>"><?= lang('btn_details')?></a></td>
                     <td><a href="<?= base_url('admin/save_objective/'.$objective->id); ?>"><?= lang('btn_update')?></a></td>
                     <td><a href="<?= base_url('admin/delete_objective/'.$objective->id); ?>" class="close">×</td>
                 </tr>

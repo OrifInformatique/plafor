@@ -53,7 +53,7 @@
             <?php foreach($operational_competences as $operational_competence) { ?>
                 <tr>
                     <td><a href="<?= base_url('admin/list_objective/'.$operational_competence->id); ?>"><span class="font-weight-bold"><?= $operational_competence->symbol?></span> <?= $operational_competence->name; ?></td>
-                    <td><a href="<?= base_url('apprentice/view_operational_competence')?>"><?= lang('btn_details')?></a></td>
+                    <td><a href="<?= base_url('apprentice/view_operational_competence/').$operational_competence->id?>"><?= lang('btn_details')?></a></td>
                     <td><a href="<?= base_url('admin/save_operational_competence/'.$operational_competence->id); ?>"><?= lang('btn_update')?></a></td>
                     <td><a href="<?= base_url('admin/delete_operational_competence/'.$operational_competence->id); ?>" class="close">×</td>
                 </tr>

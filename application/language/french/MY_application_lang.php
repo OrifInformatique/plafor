@@ -37,11 +37,16 @@ $lang['msg_err_access_denied_message']  = 'Vous n\'êtes pas autorisé à accéd
 $lang['yes']                            = 'Oui';
 $lang['no']                             = 'Non';
 
+// User levels
+$lang['title_administrator']            = 'Administrateur';
+$lang['title_trainer']                  = 'Formateur';
+$lang['title_apprentice']               = 'Apprenti';
+
 // Page titles
-$lang['title_apprentice_list']           = 'Liste des apprentis';
-$lang['title_apprentice_update']         = 'Modifier un apprenti';
-$lang['title_apprentice_new']            = 'Ajouter un apprenti';
-$lang['title_apprentice_delete']         = 'Supprimer un apprenti';
+$lang['title_apprentice_list']          = 'Liste des apprentis';
+$lang['title_apprentice_update']        = 'Modifier un apprenti';
+$lang['title_apprentice_new']           = 'Ajouter un apprenti';
+$lang['title_apprentice_delete']        = 'Supprimer un apprenti';
 $lang['title_course_plan_list']         = 'Liste des plans de formation';
 $lang['title_course_plan_update']       = 'Modifier un plan de formation';
 $lang['title_course_plan_new']          = 'Ajouter un plan de formation';
@@ -63,25 +68,50 @@ $lang['title_objective_update']         = 'Modifier un objectif';
 $lang['title_objective_new']            = 'Ajouter un objectif';
 $lang['title_objective_delete']         = 'Supprimer un objectif';
 
+// Details labels
+$lang['details_apprentice']             = 'Détail de l\'apprenti';
+$lang['details_course_plan']            = 'Détail du plan de formation';
+$lang['details_competence_domain']      = 'Détail du domaine de compétence';
+$lang['details_operational_competence'] = 'Détail de la compétence opérationnelle';
+$lang['details_objective']              = 'Détail de l\'objectif';
+
+
 // Fields labels
 $lang['field_apprentice_username']      = 'Nom de l\'apprenti';
 $lang['field_apprentice_date_creation'] = 'Date de création de l\'apprenti';
 $lang['field_followed_courses']         = 'Formation(s) suivie(s)';
+$lang['field_linked_competence_domains']= 'Domaines de compétences liés';
+$lang['field_linked_operational_competence']
+                                        = 'Compétences opérationnelles liés';
 $lang['field_course_plan_formation_number']
                                         = 'Numéro du plan de formation';
+$lang['field_course_plans_formation_numbers']
+                                        = 'Numéros des plans de formations';
 $lang['field_course_plan_official_name']
                                         = 'Nom du plan de formation';
+$lang['field_course_plans_official_names']
+                                        = 'Noms des plans de formation';
+$lang['field_course_plans_official_names']
+                                        = 'Noms des plans de formation';
 $lang['field_course_plan_date_begin']   = 'Date de création du plan de formation';
+$lang['field_course_plans_dates_begin'] = 'Dates de création des plans de formation';
 $lang['field_competence_domain_course_plan']
                                         = 'Plan de formation lié au domaine de compétence';
 $lang['field_competence_domain_symbol'] = 'Symbole du domaine de compétence';
+$lang['field_competence_domains_symbols']
+                                        = 'Symbole des domaines de compétences';
 $lang['field_competence_domain_name']   = 'Nom du domaine de compétence';
+$lang['field_competence_domains_names'] = 'Noms des domaines de compétences';
 $lang['field_operational_competence_domain']
                                         = 'Domaine de compétence lié à la compétence opérationnelle';
 $lang['field_operational_competence_name']
                                         = 'Nom de la compétence opérationnelle';
+$lang['field_operational_competences_names']
+                                        = 'Noms des compétences opérationnelles';
 $lang['field_operational_competence_symbol']
                                         = 'Symbole de la compétence opérationnelle';
+$lang['field_operational_competences_symbols']
+                                        = 'Symboles des compétences opérationnelles';
 $lang['field_operational_competence_methodologic']
                                         = 'Compétence méthodologique';
 $lang['field_operational_competence_social']
@@ -90,9 +120,12 @@ $lang['field_operational_competence_personal']
                                         = 'Compétence personnelle';
 $lang['field_objective_operational_competence']
                                         = 'Compétence opérationnelle liée à l\'objectif';
-$lang['field_objective_symbol']         = 'Symbole de l\'objectif';
+$lang['field_objective_symbol']         = 'Symboles de l\' objectif';
+$lang['field_objectives_symbols']         = 'Symbole des objectif';
 $lang['field_objective_taxonomy']       = 'Taxonomie de l\'objectif';
+$lang['field_objectives_taxonomies']       = 'Taxonomie des objectifs';
 $lang['field_objective_name']           = 'Nom de l\'objectif';
+$lang['field_objectives_names']           = 'Nom des objectifs';
 
 // Admin texts
 $lang['admin_apprentices']              = 'Apprentis';
@@ -120,3 +153,5 @@ $lang['operational_competence_delete_explanation']
 $lang['objective']                      = 'Objectif';
 $lang['objective_delete']               = 'Supprimer cet objectif';
 $lang['objective_delete_explanation']   = 'Toutes les informations concernant cet objectif seront supprimées.';
+
+$lang['course_status']                  = 'Status des formations';

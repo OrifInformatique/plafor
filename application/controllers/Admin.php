@@ -20,7 +20,7 @@ class Admin extends MY_Controller
         parent::__construct();
 
         // Load required items
-        $this->load->library('form_validation')->model(['course_plan_model','competence_domain_model','operational_competence_model','objective_model']);
+        $this->load->library('form_validation')->model(['user/user_model','course_plan_model','user_course_model','competence_domain_model','operational_competence_model','objective_model']);
 
         // Assign form_validation CI instance to this
         $this->form_validation->CI =& $this;
@@ -40,14 +40,38 @@ class Admin extends MY_Controller
      *
      * @return void
      */
-    public function list_course_plan()
+    public function list_course_plan($id_apprentice = null)
     {
-        $course_plans = $this->course_plan_model->get_all();
+        if($id_apprentice == null){
+            $course_plans = $this->course_plan_model->get_all();
+        }else{
+            $userCourses = $this->user_course_model->get_many_by('fk_user',$id_apprentice);
+            
+            $coursesId = array();
+            
+            foreach ($userCourses as $userCourse){
+                $coursesId[] = $userCourse->fk_course_plan;
+            }
+            
+            $course_plans = $this->course_plan_model->get_many($coursesId);
+        }
+        
+        $output = array(
+            'course_plans' => $course_plans
+        );
+        
+        if(is_numeric($id_apprentice)){
+            $output[] = ['course_plans' => $course_plans];
+        }
+        
+        $this->display_view('admin/course_plan/list', $output);
+        
+        /*$course_plans = $this->course_plan_model->get_all();
 
         $output = array(
             'course_plans' => $course_plans
         );
-        $this->display_view('admin/course_plan/list', $output);
+        $this->display_view('admin/course_plan/list', $output);*/
     }
 
     /**

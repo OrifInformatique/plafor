@@ -44,7 +44,16 @@
             <?php foreach($apprentices as $apprentice) { ?>
                 <tr>
                     <td><a href="<?= base_url('apprentice/view_apprentice/'.$apprentice->id); ?>"><?= $apprentice->username; ?></td>
-                    <td><a href="<?= base_url('apprentice/view_apprentice/')?>"><?= $apprentice->date_creation; ?></a></td>
+                    <td><a href="<?= base_url('admin/list_course_plan/'.$apprentice->id)?>"><?php 
+                        $linkedCourses = "";
+                        
+                        foreach($courses as $course){
+                            foreach ($apprentices as $apprentice) {
+                                $linkedCourses .= ($course->fk_user == $apprentice->id?$coursesList[$course->fk_course_plan-1]->official_name.",":"");
+                            } 
+                        }; 
+                        echo rtrim($linkedCourses,",");
+                        ?></a></td>
                 </tr>
             <?php } ?>
         </tbody>
