@@ -1,18 +1,22 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 /**
- * User_course_status is used to list the possible status of a course's avancement
- * so any course's status can be keep
+ * Comment is used to link a comment from a user (formator level) to another user (apprentice level) on a objective
  * 
  * @author      Orif (UlSi, ViDi, ToRé)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c) Orif (https://www.orif.ch)
  */
-class user_course_status_model extends MY_Model
+class comment_model extends MY_Model
 {
     /* Set MY_Model variables */
-    protected $_table = 'user_course_status';
+    protected $_table = 'comment';
     protected $primary_key = 'id';
     protected $protected_attributes = ['id'];
+    protected $belongs_to = ['formator_apprentice'=> ['primary_key' => 'fk_formator_apprentice',
+                                'model' => 'formator_apprentice_model'],
+                            'acquisition_status' => ['primary_key' => 'fk_acquisition_status',
+                                'model' => 'acquisition_status_model']
+                            ];
     /* protected $soft_delete = TRUE; */
     /* protected $soft_delete_key = 'archive'; */
 

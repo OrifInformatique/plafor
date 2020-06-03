@@ -3,7 +3,7 @@
  * Competence_domain is used to save the competence domains available, and link them with
  * Course_plan entries
  * 
- * @author      Orif (UlSi, ViDi)
+ * @author      Orif (UlSi, ViDi, ToRé)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c) Orif (https://www.orif.ch)
  */

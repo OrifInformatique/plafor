@@ -39,34 +39,45 @@ $lang['no']                             = 'Non';
 
 // User levels
 $lang['title_administrator']            = 'Administrateur';
-$lang['title_trainer']                  = 'Formateur';
+$lang['title_formator']                  = 'Formateur';
 $lang['title_apprentice']               = 'Apprenti';
+
+// User Course Status
+$lang['title_in_progress']              = 'En cours';
+$lang['title_successful']               = 'Réussi';
+$lang['title_failed']                   = 'Échouée';
+$lang['title_suspended']                = 'Suspendue';
+$lang['title_abandoned']                = 'Abandonnée';
 
 // Page titles
 $lang['title_apprentice_list']          = 'Liste des apprentis';
-$lang['title_apprentice_update']        = 'Modifier un apprenti';
+$lang['title_apprentice_update']        = 'Modifier l\'apprenti';
 $lang['title_apprentice_new']           = 'Ajouter un apprenti';
 $lang['title_apprentice_delete']        = 'Supprimer un apprenti';
 $lang['title_course_plan_list']         = 'Liste des plans de formation';
-$lang['title_course_plan_update']       = 'Modifier un plan de formation';
+$lang['title_course_plan_update']       = 'Modifier le plan de formation';
 $lang['title_course_plan_new']          = 'Ajouter un plan de formation';
-$lang['title_course_plan_delete']       = 'Supprimer un plan de formation';
+$lang['title_course_plan_delete']       = 'Supprimer le plan de formation';
 $lang['title_competence_domain_list']   = 'Liste des domaines de compétence';
-$lang['title_competence_domain_update'] = 'Modifier un domaine de compétence';
+$lang['title_competence_domain_update'] = 'Modifier le domaine de compétence';
 $lang['title_competence_domain_new']    = 'Ajouter un domaine de compétence';
-$lang['title_competence_domain_delete'] = 'Supprimer un domaine de compétence';
+$lang['title_competence_domain_delete'] = 'Supprimer le domaine de compétence';
 $lang['title_operational_competence_list']
                                         = 'Liste des compétences opérationnelles';
 $lang['title_operational_competence_update']
-                                        = 'Modifier une compétence opérationnelle';
+                                        = 'Modifier la compétence opérationnelle';
 $lang['title_operational_competence_new']
                                         = 'Ajouter une compétence opérationnelle';
 $lang['title_operational_competence_delete']
-                                        = 'Supprimer une compétence opérationnelle';
+                                        = 'Supprimer la compétence opérationnelle';
 $lang['title_objective_list']           = 'Liste des objectifs';
-$lang['title_objective_update']         = 'Modifier un objectif';
+$lang['title_objective_update']         = 'Modifier l\'objectif';
 $lang['title_objective_new']            = 'Ajouter un objectif';
-$lang['title_objective_delete']         = 'Supprimer un objectif';
+$lang['title_objective_delete']         = 'Supprimer l\'objectif';
+$lang['title_user_course_list']         = 'Liste des formations liées';
+$lang['title_user_course_update']       = 'Modifer la formation liée';
+$lang['title_user_course_new']          = 'Ajouter une formation liée';
+$lang['title_user_course_delete']       = 'Supprimer la formation liée';
 
 // Details labels
 $lang['details_apprentice']             = 'Détail de l\'apprenti';
@@ -74,6 +85,7 @@ $lang['details_course_plan']            = 'Détail du plan de formation';
 $lang['details_competence_domain']      = 'Détail du domaine de compétence';
 $lang['details_operational_competence'] = 'Détail de la compétence opérationnelle';
 $lang['details_objective']              = 'Détail de l\'objectif';
+$lang['details_user_course']            = 'Détail de la formation de l\'apprenti';
 
 
 // Fields labels
@@ -121,11 +133,16 @@ $lang['field_operational_competence_personal']
 $lang['field_objective_operational_competence']
                                         = 'Compétence opérationnelle liée à l\'objectif';
 $lang['field_objective_symbol']         = 'Symboles de l\' objectif';
-$lang['field_objectives_symbols']         = 'Symbole des objectif';
+$lang['field_objectives_symbols']       = 'Symbole des objectif';
 $lang['field_objective_taxonomy']       = 'Taxonomie de l\'objectif';
-$lang['field_objectives_taxonomies']       = 'Taxonomie des objectifs';
+$lang['field_objectives_taxonomies']    = 'Taxonomie des objectifs';
 $lang['field_objective_name']           = 'Nom de l\'objectif';
-$lang['field_objectives_names']           = 'Nom des objectifs';
+$lang['field_objectives_names']         = 'Nom des objectifs';
+$lang['field_user_course_date_begin']   = 'Date du début de la formation';
+$lang['field_user_course_date_end']     = 'Date de fin de la formation';
+$lang['field_user_course_course_plan']  = 'Formation';
+$lang['field_user_course_status']       = 'Statut de la formation';
+$lang['field_id']                       = 'Identifiant';
 
 // Admin texts
 $lang['admin_apprentices']              = 'Apprentis';
@@ -153,5 +170,9 @@ $lang['operational_competence_delete_explanation']
 $lang['objective']                      = 'Objectif';
 $lang['objective_delete']               = 'Supprimer cet objectif';
 $lang['objective_delete_explanation']   = 'Toutes les informations concernant cet objectif seront supprimées.';
-
+$lang['user_course']                    = 'Formation liée';
+$lang['user_course_delete']             = 'Supprimer cette formation liée';
+$lang['user_course_delete_explanation'] = 'Toutes les informations concernant cette formation liée seront supprimées.';
+$lang['apprentice']                     = 'Apprenti';
 $lang['course_status']                  = 'Status des formations';
+$lang['status']                         = 'Statut de la formation';

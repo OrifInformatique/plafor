@@ -97,7 +97,7 @@ class Admin extends MY_Controller
                             ),array(
                               'field' => 'date_begin',
                               'label' => 'lang:field_course_plan_official_name',
-                              'rules' => 'required',
+                              'rules' => 'required|required',
                             )
                         );
 			$this->form_validation->set_rules($rules);

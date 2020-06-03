@@ -3,7 +3,7 @@
  * Operational_competence is used to save the opetational competences available, and link them with
  * Competence_domain entries
  * 
- * @author      Orif (UlSi, ViDi)
+ * @author      Orif (UlSi, ViDi, ToRé)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c) Orif (https://www.orif.ch)
  */

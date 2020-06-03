@@ -3,7 +3,7 @@
  * Aquisition_level is used to list the possible aquisition level of every 
  * user (apprentice) of any objective so it can be keep
  * 
- * @author      Orif (UlSi, ViDi)
+ * @author      Orif (UlSi, ViDi, ToRé)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c) Orif (https://www.orif.ch)
  */

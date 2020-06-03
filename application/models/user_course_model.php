@@ -3,7 +3,7 @@
  * User_course is used to link a user (apprentice level) with any course and to 
  * keep the course's status as well as its begin and end date
  * 
- * @author      Orif (UlSi, ViDi)
+ * @author      Orif (UlSi, ViDi, ToRé)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c) Orif (https://www.orif.ch)
  */

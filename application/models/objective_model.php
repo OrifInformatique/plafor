@@ -3,7 +3,7 @@
  * Objective is used to save the objectives available, and link them with
  * Operational_competence entries
  * 
- * @author      Orif (UlSi, ViDi)
+ * @author      Orif (UlSi, ViDi, ToRé)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c) Orif (https://www.orif.ch)
  */
