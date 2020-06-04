@@ -1,6 +1,19 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
+            <p class="bg-primary text-white"><?=$this->lang->line('details_course_plan')?></p>
+        </div>
+        <div class="col-md-6">
+            <p class="font-weight-bold"><?=$this->lang->line('field_course_plan_formation_number')?></p>
+            <a href="<?= base_url('apprentice/view_course_plan/'.$course_plan->id)?>"><?=$course_plan->formation_number?></a>
+        </div>
+        <div class="col-md-6">
+            <p class="font-weight-bold"><?=$this->lang->line('field_course_plan_official_name')?></p>
+            <a href="<?= base_url('apprentice/view_course_plan/'.$course_plan->id)?>"><?=$course_plan->official_name?></a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
             <p class="bg-primary text-white"><?=$this->lang->line('details_competence_domain')?></p>
         </div>
         <div class="col-md-6">

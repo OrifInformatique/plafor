@@ -128,11 +128,13 @@ class Apprentice extends MY_Controller
                     'label' => 'lang:field_user_course_date_begin',
                     'rules' => 'required',
                 ),
+                /*
                 array(
                     'field' => 'date_end',
                     'label' => 'lang:field_user_course_date_end',
                     'rules' => 'required',
                 ),
+                */
             );
             
             $this->form_validation->set_rules($rules);
@@ -314,7 +316,7 @@ class Apprentice extends MY_Controller
         
         $objectives = $this->objective_model->get_many_by('fk_operational_competence',$operational_competence_id);
         $competence_domain = $this->competence_domain_model->get($operational_competence->fk_competence_domain);
-        $course_plan = $this->course_plan_model->get_by($competence_domain->id);
+        $course_plan = $this->course_plan_model->get($competence_domain->fk_course_plan);
         
         $output = array(
             'operational_competence' => $operational_competence,
@@ -348,7 +350,8 @@ class Apprentice extends MY_Controller
         $output = array(
             'objective' => $objective,
             'operational_competence' => $operational_competence,
-            'objective' => $objective
+            'competence_domain' => $competence_domain,
+            'course_plan' => $course_plan
         );
         
         $this->display_view('admin/objective/view',$output);
