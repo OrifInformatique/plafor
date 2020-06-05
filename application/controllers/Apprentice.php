@@ -47,6 +47,10 @@ class Apprentice extends MY_Controller
      */
     public function list_apprentice($formator_id = null)
     {
+        if(is_null($formator_id) && $_SESSION['user_access'] < ACCESS_LVL_ADMIN){
+            redirect("apprentice");
+        }
+        
         //if($formator_id == null){
             $apprentice_level = $this->user_type_model->get_by('access_level', ACCESS_LVL_APPRENTICE);
             $apprentices = $this->user_model->get_many_by('fk_user_type', $apprentice_level->id);
@@ -230,18 +234,33 @@ class Apprentice extends MY_Controller
     public function link_apprentice($id_apprentice = null){
         $apprentice = $this->user_model->get($id_apprentice);
         
-        if($_SESSION['access_level'] < ACCESS_LVL_ADMIN || $apprentice == null
+        if($_SESSION['user_access'] < ACCESS_LVL_ADMIN
+        || $apprentice == null
         || $apprentice->fk_user_type != $this->user_type_model->
         get_by('name',$this->lang->line('title_apprentice'))->id){
             redirect(base_url());
         }
         
-        $formators = $this->user->type_model->get_many_by('fk_user_type',$this->user_type_model->
-        get_by('name',$this->lang->line('title_formator'))->id)->dropdown('username');
+        // It seems that the MY_model dropdown method can't return a filtered result
+        // so here we get every users that are formator, then we create a array
+        // with the matching constitution
+        
+        //$this->db->select('id, username');
+        
+        //$formatorsRaw = $this->db->get_where('user',array('fk_user_type' =>ACCESS_LVL_FORMATOR))->result();
+        
+        $formatorsRaw = $this->user_model->get_many_by('fk_user_type',$this->user_type_model->get_by('access_level',ACCESS_LVL_FORMATOR)->id);
+        
+        $formators = array();
+        
+        foreach ($formatorsRaw as $formator){
+            $formators[$formator->id] = $formator->username;
+        }
         
         $output = array(
             'apprentice' => $apprentice,
-            'formators' => $formators
+            'formators' => $formators,
+            'apprentice_link' => '',
         );
         
         $this->display_view('apprentice/link',$output);

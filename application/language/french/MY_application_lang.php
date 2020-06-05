@@ -142,6 +142,7 @@ $lang['field_user_course_date_begin']   = 'Date du début de la formation';
 $lang['field_user_course_date_end']     = 'Date de fin de la formation';
 $lang['field_user_course_course_plan']  = 'Formation';
 $lang['field_user_course_status']       = 'Statut de la formation';
+$lang['field_formator_link']            = 'Formateur lié';
 $lang['field_id']                       = 'Identifiant';
 
 // Admin texts
