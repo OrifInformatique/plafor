@@ -18,7 +18,7 @@ class Apprentice extends MY_Controller
 
         // Load required items
         $this->load->library('form_validation')->
-        model(['user/user_model','user/user_type_model','course_plan_model','user_course_model','user_course_status_model','competence_domain_model','operational_competence_model','objective_model']);
+        model(['user/user_model','user/user_type_model','formator_apprentice_model','course_plan_model','user_course_model','user_course_status_model','competence_domain_model','operational_competence_model','objective_model']);
         
         // Assign form_validation CI instance to this
         $this->form_validation->CI =& $this;
@@ -232,6 +232,7 @@ class Apprentice extends MY_Controller
     }
     
     public function link_apprentice($id_apprentice = null){
+        
         $apprentice = $this->user_model->get($id_apprentice);
         
         if($_SESSION['user_access'] < ACCESS_LVL_ADMIN
@@ -239,15 +240,48 @@ class Apprentice extends MY_Controller
         || $apprentice->fk_user_type != $this->user_type_model->
         get_by('name',$this->lang->line('title_apprentice'))->id){
             redirect(base_url());
+            exit();
         }
         
         // It seems that the MY_model dropdown method can't return a filtered result
         // so here we get every users that are formator, then we create a array
         // with the matching constitution
         
-        //$this->db->select('id, username');
-        
-        //$formatorsRaw = $this->db->get_where('user',array('fk_user_type' =>ACCESS_LVL_FORMATOR))->result();
+        if(count($_POST) > 0){
+            $id_apprentice = $this->input->post('id');
+            $rules = array(
+                array(
+                    'field' => 'apprentice',
+                    'label' => 'field_apprentice_username',
+                    'rules' => 'required|numeric'
+                ),
+                array(
+                    'field' => 'formator',
+                    'label' => 'field_formator_link',
+                    'rules' => 'required|numeric'
+                ),
+            );
+            
+            $this->form_validation->set_rules($rules);
+            
+            if($this->form_validation->run()){
+                echo var_dump($_POST);
+                
+                $apprentice_link = array(
+                    'fk_formator' => $this->input->post('formator'),
+                    'fk_apprentice' => $this->input->post('apprentice'),
+                );
+                
+                if($id_apprentice > 0){
+                    echo $this->formator_apprentice_model->update($id_apprentice,$apprentice_link);
+                }else{
+                    echo $this->formator_apprentice_model->insert($apprentice_link);
+                }
+                exit();
+                redirect('apprentice');
+                exit();
+            }
+        }
         
         $formatorsRaw = $this->user_model->get_many_by('fk_user_type',$this->user_type_model->get_by('access_level',ACCESS_LVL_FORMATOR)->id);
         
