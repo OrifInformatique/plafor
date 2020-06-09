@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le :  mer. 03 juin 2020 à 15:40
+-- Généré le :  mar. 09 juin 2020 à 16:04
 -- Version du serveur :  10.4.6-MariaDB
 -- Version de PHP :  7.3.9
 
@@ -56,10 +56,10 @@ CREATE TABLE `acquisition_status` (
 
 CREATE TABLE `comment` (
   `id` int(11) NOT NULL,
-  `fk_formator_apprentice` int(11) NOT NULL,
+  `fk_trainer` int(11) NOT NULL,
   `fk_acquisition_status` int(11) NOT NULL,
   `comment` text NOT NULL,
-  `date` datetime NOT NULL DEFAULT current_timestamp()
+  `date_creation` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -86,18 +86,6 @@ CREATE TABLE `course_plan` (
   `formation_number` varchar(5) NOT NULL,
   `official_name` varchar(100) NOT NULL,
   `date_begin` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `formator_apprentice`
---
-
-CREATE TABLE `formator_apprentice` (
-  `id` int(11) NOT NULL,
-  `fk_formator` int(11) NOT NULL,
-  `fk_apprentice` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -208,7 +196,7 @@ ALTER TABLE `acquisition_status`
 ALTER TABLE `comment`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_acquisition_status` (`fk_acquisition_status`),
-  ADD KEY `fk_formator_apprentice` (`fk_formator_apprentice`) USING BTREE;
+  ADD KEY `fk_trainer` (`fk_trainer`);
 
 --
 -- Index pour la table `competence_domain`
@@ -222,14 +210,6 @@ ALTER TABLE `competence_domain`
 --
 ALTER TABLE `course_plan`
   ADD PRIMARY KEY (`id`);
-
---
--- Index pour la table `formator_apprentice`
---
-ALTER TABLE `formator_apprentice`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_trainer` (`fk_formator`,`fk_apprentice`),
-  ADD KEY `fk_apprentice` (`fk_apprentice`);
 
 --
 -- Index pour la table `objective`
@@ -302,12 +282,6 @@ ALTER TABLE `course_plan`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `formator_apprentice`
---
-ALTER TABLE `formator_apprentice`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT pour la table `objective`
 --
 ALTER TABLE `objective`
@@ -360,20 +334,13 @@ ALTER TABLE `acquisition_status`
 --
 ALTER TABLE `comment`
   ADD CONSTRAINT `comment_ibfk_1` FOREIGN KEY (`fk_acquisition_status`) REFERENCES `acquisition_status` (`id`),
-  ADD CONSTRAINT `comment_ibfk_2` FOREIGN KEY (`fk_formator_apprentice`) REFERENCES `formator_apprentice` (`id`);
+  ADD CONSTRAINT `comment_ibfk_2` FOREIGN KEY (`fk_trainer`) REFERENCES `user` (`id`);
 
 --
 -- Contraintes pour la table `competence_domain`
 --
 ALTER TABLE `competence_domain`
   ADD CONSTRAINT `constraint_competence_domain_course_plan` FOREIGN KEY (`fk_course_plan`) REFERENCES `course_plan` (`id`);
-
---
--- Contraintes pour la table `formator_apprentice`
---
-ALTER TABLE `formator_apprentice`
-  ADD CONSTRAINT `formator_apprentice_ibfk_1` FOREIGN KEY (`fk_formator`) REFERENCES `user` (`id`),
-  ADD CONSTRAINT `formator_apprentice_ibfk_2` FOREIGN KEY (`fk_apprentice`) REFERENCES `user` (`id`);
 
 --
 -- Contraintes pour la table `objective`

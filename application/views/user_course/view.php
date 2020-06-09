@@ -23,11 +23,13 @@
             <p class="font-weight-bold"><?= $this->lang->line('course_plan') ?></p>
             <a href="<?= base_url('apprentice/view_course_plan/'.$course_plan->id)?>"><span class="font-weight-bold"><?=$course_plan->formation_number?> </span><?=$course_plan->official_name?></a>
         </div>
+        <?php if($_SESSION['user_access'] == ACCESS_LVL_ADMIN): ?>
         <div class="row">
             <div class="col-md-12">
                 <a class="btn btn-primary text-white" href="<?= base_url('apprentice/save_user_course/'.$apprentice->id."/".$user_course->id)?>"><?= $this->lang->line('title_user_course_update') ?></a>
                 <a class="btn btn-danger text-white" href="<?= base_url('apprentice/delete_user_course/'.$user_course->id)?>"><?= $this->lang->line('title_user_course_delete') ?></a>
             </div>
         </div>
+        <?php endif; ?>
     </div>
 </div>

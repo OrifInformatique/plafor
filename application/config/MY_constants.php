@@ -22,5 +22,5 @@ define('SQL_TEXT_MAX_LENGTH',65535);
 
 /* Access levels */
 define('ACCESS_LVL_APPRENTICE', 1);
-define('ACCESS_LVL_FORMATOR', 2);
+define('ACCESS_LVL_TRAINER', 2);
 define('ACCESS_LVL_ADMIN', 4);

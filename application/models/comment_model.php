@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 /**
- * Comment is used to link a comment from a user (formator level) to another user (apprentice level) on a objective
+ * Comment is used to link a comment from a user (trainer level) to another user (apprentice level) on a objective
  * 
  * @author      Orif (UlSi, ViDi, ToRé)
  * @link        https://github.com/OrifInformatique
@@ -12,8 +12,8 @@ class comment_model extends MY_Model
     protected $_table = 'comment';
     protected $primary_key = 'id';
     protected $protected_attributes = ['id'];
-    protected $belongs_to = ['formator_apprentice'=> ['primary_key' => 'fk_formator_apprentice',
-                                'model' => 'formator_apprentice_model'],
+    protected $belongs_to = ['trainer_apprentice'=> ['primary_key' => 'fk_trainer_apprentice',
+                                'model' => 'trainer_apprentice_model'],
                             'acquisition_status' => ['primary_key' => 'fk_acquisition_status',
                                 'model' => 'acquisition_status_model']
                             ];

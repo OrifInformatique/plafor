@@ -38,7 +38,6 @@
             <tr>
                 <th><?= lang('field_apprentice_username'); ?></th>
                 <th><?= lang('field_followed_courses'); ?></th>
-                <?php if($_SESSION['user_access'] == ACCESS_LVL_ADMIN){ ?><th></th><?php } ?>
             </tr>
         </thead>
         <tbody id="apprenticeslist">
@@ -53,7 +52,6 @@
                         } 
                         echo rtrim($linkedCourses,",");
                         ?></a></td>
-                    <?php if($_SESSION['user_access'] == ACCESS_LVL_ADMIN) { ?><td><a href="<?= base_url('apprentice/link_apprentice/'.$apprentice->id) ?>">Lier à un formateur</a></td><?php } ?>
                 </tr>
             <?php } ?>
         </tbody>

@@ -39,7 +39,7 @@ $lang['no']                             = 'Non';
 
 // User levels
 $lang['title_administrator']            = 'Administrateur';
-$lang['title_formator']                  = 'Formateur';
+$lang['title_trainer']                 = 'Formateur';
 $lang['title_apprentice']               = 'Apprenti';
 
 // User Course Status
@@ -54,6 +54,10 @@ $lang['title_apprentice_list']          = 'Liste des apprentis';
 $lang['title_apprentice_update']        = 'Modifier l\'apprenti';
 $lang['title_apprentice_new']           = 'Ajouter un apprenti';
 $lang['title_apprentice_delete']        = 'Supprimer un apprenti';
+$lang['title_trainer_list']             = 'Liste des formateurs';
+$lang['title_trainer_update']           = 'Modifier le formateur';
+$lang['title_trainer_new']              = 'Ajouter un formateur';
+$lang['title_trainer_delete']           = 'Supprimer un formateur';
 $lang['title_course_plan_list']         = 'Liste des plans de formation';
 $lang['title_course_plan_update']       = 'Modifier le plan de formation';
 $lang['title_course_plan_new']          = 'Ajouter un plan de formation';
@@ -78,6 +82,10 @@ $lang['title_user_course_list']         = 'Liste des formations liées';
 $lang['title_user_course_update']       = 'Modifer la formation liée';
 $lang['title_user_course_new']          = 'Ajouter une formation liée';
 $lang['title_user_course_delete']       = 'Supprimer la formation liée';
+$lang['title_apprentice_link_list']     = 'Liste des formateurs liés';
+$lang['title_apprentice_link_update']   = 'Modifer le formateur lié';
+$lang['title_apprentice_link_new']      = 'Ajouter un formateur lié';
+$lang['title_apprentice_link_delete']   = 'Supprimer le formateur lié';
 
 // Details labels
 $lang['details_apprentice']             = 'Détail de l\'apprenti';
@@ -142,7 +150,8 @@ $lang['field_user_course_date_begin']   = 'Date du début de la formation';
 $lang['field_user_course_date_end']     = 'Date de fin de la formation';
 $lang['field_user_course_course_plan']  = 'Formation';
 $lang['field_user_course_status']       = 'Statut de la formation';
-$lang['field_formator_link']            = 'Formateur lié';
+$lang['field_trainer_link']             = 'Formateur(s) lié(s)';
+$lang['field_trainers_name']             = 'Nom des formateurs';
 $lang['field_id']                       = 'Identifiant';
 
 // Admin texts

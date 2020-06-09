@@ -18,7 +18,7 @@ class Apprentice extends MY_Controller
 
         // Load required items
         $this->load->library('form_validation')->
-        model(['user/user_model','user/user_type_model','formator_apprentice_model','course_plan_model','user_course_model','user_course_status_model','competence_domain_model','operational_competence_model','objective_model']);
+        model(['user/user_model','user/user_type_model','trainer_apprentice_model','course_plan_model','user_course_model','user_course_status_model','competence_domain_model','operational_competence_model','objective_model']);
         
         // Assign form_validation CI instance to this
         $this->form_validation->CI =& $this;
@@ -35,7 +35,7 @@ class Apprentice extends MY_Controller
         redirect(base_url('apprentice/list_apprentice'));
       }else if($_SESSION['user_access'] == ACCESS_LVL_APPRENTICE){
           redirect(base_url('apprentice/view_apprentice/'.$_SESSION['user_id']));
-      }else if($_SESSION['user_access'] == ACCESS_LVL_FORMATOR){
+      }else if($_SESSION['user_access'] == ACCESS_LVL_TRAINER){
           redirect(base_url('apprentice/list_apprentice/'.$_SESSION['user_id']));
       }
     }
@@ -45,19 +45,19 @@ class Apprentice extends MY_Controller
      *
      * @return void
      */
-    public function list_apprentice($formator_id = null)
+    public function list_apprentice($trainer_id = null)
     {
-        if(is_null($formator_id) && $_SESSION['user_access'] < ACCESS_LVL_ADMIN){
+        if(is_null($trainer_id) && $_SESSION['user_access'] < ACCESS_LVL_ADMIN){
             redirect("apprentice");
         }
         
-        //if($formator_id == null){
+        //if($trainer_id == null){
             $apprentice_level = $this->user_type_model->get_by('access_level', ACCESS_LVL_APPRENTICE);
             $apprentices = $this->user_model->get_many_by('fk_user_type', $apprentice_level->id);
             $coursesList = $this->course_plan_model->get_all();
             $courses = $this->user_course_model->get_all();
         //}else{
-        //        $apprentices = $this->user_model->get_many_by(array('id' => $formator_id));
+        //        $apprentices = $this->user_model->get_many_by(array('id' => $trainer_id));
             
         //}
         
@@ -79,7 +79,6 @@ class Apprentice extends MY_Controller
     public function view_apprentice($apprentice_id = null)
     {
         $apprentice = $this->user_model->get($apprentice_id);
-        //$level = $this->user_type_model->get_all();
         
         if($apprentice->fk_user_type != $this->user_type_model->get_by('name',$this->lang->line('title_apprentice'))->id){
             redirect(base_url('apprentice/list_apprentice'));
@@ -90,8 +89,13 @@ class Apprentice extends MY_Controller
         $user_course_status = $this->user_course_status_model->get_all();
         $course_plans = $this->course_plan_model->get_all();
         
+        $trainers = $this->user_model->get_many_by('fk_user_type',$this->user_type_model->get_by('name',$this->lang->line('title_trainer'))->id);
+        $links = $this->trainer_apprentice_model->get_many_by('fk_apprentice',$apprentice_id);
+        
         $output = array(
             'apprentice' => $apprentice,
+            'trainers' => $trainers,
+            'links' => $links,
             'user_courses' => $user_courses,
             'user_course_status' => $user_course_status,
             'course_plans' => $course_plans
@@ -230,8 +234,14 @@ class Apprentice extends MY_Controller
                 redirect('apprentice/list_apprentice');
         }
     }
-    
-    public function link_apprentice($id_apprentice = null){
+    /**
+     * Create a link between a apprentice and a trainer, or change the trainer
+     * linked on the selected trainer_apprentice SQL entry
+     * 
+     * @param INT (SQL PRIMARY KEY) $id_apprentice
+     * @param INT (SQL PRIMARY KEY) $id_link
+     */
+    public function save_apprentice_link($id_apprentice = null, $id_link = 0){
         
         $apprentice = $this->user_model->get($id_apprentice);
         
@@ -244,7 +254,7 @@ class Apprentice extends MY_Controller
         }
         
         // It seems that the MY_model dropdown method can't return a filtered result
-        // so here we get every users that are formator, then we create a array
+        // so here we get every users that are trainer, then we create a array
         // with the matching constitution
         
         if(count($_POST) > 0){
@@ -256,8 +266,8 @@ class Apprentice extends MY_Controller
                     'rules' => 'required|numeric'
                 ),
                 array(
-                    'field' => 'formator',
-                    'label' => 'field_formator_link',
+                    'field' => 'trainer',
+                    'label' => 'field_trainer_link',
                     'rules' => 'required|numeric'
                 ),
             );
@@ -268,33 +278,35 @@ class Apprentice extends MY_Controller
                 echo var_dump($_POST);
                 
                 $apprentice_link = array(
-                    'fk_formator' => $this->input->post('formator'),
+                    'fk_trainer' => $this->input->post('trainer'),
                     'fk_apprentice' => $this->input->post('apprentice'),
                 );
                 
-                if($id_apprentice > 0){
-                    echo $this->formator_apprentice_model->update($id_apprentice,$apprentice_link);
+                if($id_link > 0){
+                    echo $this->trainer_apprentice_model->update($id_apprentice,$apprentice_link);
                 }else{
-                    echo $this->formator_apprentice_model->insert($apprentice_link);
+                    echo $this->trainer_apprentice_model->insert($apprentice_link);
                 }
-                exit();
+                
                 redirect('apprentice');
                 exit();
             }
         }
         
-        $formatorsRaw = $this->user_model->get_many_by('fk_user_type',$this->user_type_model->get_by('access_level',ACCESS_LVL_FORMATOR)->id);
+        $trainersRaw = $this->user_model->get_many_by('fk_user_type',$this->user_type_model->get_by('access_level',ACCESS_LVL_TRAINER)->id);
         
-        $formators = array();
+        $trainers = array();
         
-        foreach ($formatorsRaw as $formator){
-            $formators[$formator->id] = $formator->username;
+        foreach ($trainersRaw as $trainer){
+            $trainers[$trainer->id] = $trainer->username;
         }
+        
+        $link = $this->trainer_apprentice_model->get($id_link);
         
         $output = array(
             'apprentice' => $apprentice,
-            'formators' => $formators,
-            'apprentice_link' => '',
+            'trainers' => $trainers,
+            'link' => $link,
         );
         
         $this->display_view('apprentice/link',$output);
