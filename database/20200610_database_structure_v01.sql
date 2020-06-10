@@ -3,10 +3,11 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le :  mar. 09 juin 2020 à 16:04
+-- Généré le :  mer. 10 juin 2020 à 15:38
 -- Version du serveur :  10.4.6-MariaDB
 -- Version de PHP :  7.3.9
 
+SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
 START TRANSACTION;
@@ -72,7 +73,8 @@ CREATE TABLE `competence_domain` (
   `id` int(11) NOT NULL,
   `fk_course_plan` int(11) NOT NULL,
   `symbol` varchar(10) NOT NULL,
-  `name` varchar(100) NOT NULL
+  `name` varchar(100) NOT NULL,
+  `archive` tinyint(4) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -85,7 +87,8 @@ CREATE TABLE `course_plan` (
   `id` int(11) NOT NULL,
   `formation_number` varchar(5) NOT NULL,
   `official_name` varchar(100) NOT NULL,
-  `date_begin` date NOT NULL
+  `date_begin` date NOT NULL,
+  `archive` tinyint(4) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -99,7 +102,8 @@ CREATE TABLE `objective` (
   `fk_operational_competence` int(11) NOT NULL,
   `symbol` varchar(10) NOT NULL,
   `taxonomy` int(5) NOT NULL,
-  `name` varchar(350) NOT NULL
+  `name` varchar(350) NOT NULL,
+  `archive` tinyint(4) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -115,7 +119,8 @@ CREATE TABLE `operational_competence` (
   `symbol` varchar(10) NOT NULL,
   `methodologic` text DEFAULT NULL,
   `social` text DEFAULT NULL,
-  `personal` text DEFAULT NULL
+  `personal` text DEFAULT NULL,
+  `archive` tinyint(4) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -145,7 +150,8 @@ CREATE TABLE `user_course` (
   `fk_course_plan` int(11) NOT NULL,
   `fk_status` int(11) NOT NULL,
   `date_begin` date NOT NULL,
-  `date_end` date NOT NULL
+  `date_end` date NOT NULL,
+  `archive` tinyint(4) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -367,6 +373,7 @@ ALTER TABLE `user_course`
   ADD CONSTRAINT `constraint_status` FOREIGN KEY (`fk_status`) REFERENCES `user_course_status` (`id`),
   ADD CONSTRAINT `constraint_user` FOREIGN KEY (`fk_user`) REFERENCES `user` (`id`),
   ADD CONSTRAINT `constraint_user_course_plan` FOREIGN KEY (`fk_course_plan`) REFERENCES `course_plan` (`id`);
+SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

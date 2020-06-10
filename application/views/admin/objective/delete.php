@@ -7,14 +7,14 @@
                 <div>
                     <h1><?= lang('objective').' "'.$objective->name.'"' ?></h1>
                     <h4><?= lang('what_to_do')?></h4>
-                    <div class = "alert alert-info" ><?= lang('objective_delete_explanation')?></div>
+                    <div class = "alert alert-info" ><?= lang('objective_disable_explanation')?></div>
                 </div>
                 <div class="text-right">
-                    <a href="<?= base_url('admin/objective/list'); ?>" class="btn btn-default">
+                    <a href="<?= base_url('apprentice/objective/list'); ?>" class="btn btn-default">
                         <?= lang('btn_cancel'); ?>
                     </a>
                     <a href="<?= base_url(uri_string().'/1'); ?>" class="btn btn-danger">
-                        <?= lang('btn_hard_delete'); ?>
+                        <?= lang('btn_disable'); ?>
                     </a>
                 </div>
             </div>

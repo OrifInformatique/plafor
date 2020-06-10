@@ -150,8 +150,8 @@ class Admin extends MY_Controller
                 );
                 $this->display_view('admin/course_plan/delete', $output);
                 break;
-            case 1: // Delete course plan
-                $this->course_plan_model->delete($course_plan_id, TRUE);
+            case 1: // Deactivate (soft delete) course plan
+                $this->course_plan_model->delete($course_plan_id, FALSE);
                 redirect('admin/list_course_plan');
             default: // Do nothing
                 redirect('admin/list_course_plan');
@@ -257,8 +257,8 @@ class Admin extends MY_Controller
                 );
                 $this->display_view('admin/competence_domain/delete', $output);
                 break;
-            case 1: // Delete course plan
-                $this->competence_domain_model->delete($competence_domain_id, TRUE);
+            case 1: // Deactivate (soft delete) competence domain
+                $this->competence_domain_model->delete($competence_domain_id, FALSE);
                 redirect('admin/list_competence_domain');
             default: // Do nothing
                 redirect('admin/list_competence_domain');
@@ -381,8 +381,8 @@ class Admin extends MY_Controller
                 );
                 $this->display_view('admin/operational_competence/delete', $output);
                 break;
-            case 1: // Delete course plan
-                $this->operational_competence_model->delete($operational_competence_id, TRUE);
+            case 1: // Deactivate (soft delete) operational competence
+                $this->operational_competence_model->delete($operational_competence_id, FALSE);
                 redirect('admin/list_operational_competence');
             default: // Do nothing
                 redirect('admin/list_operational_competence');
@@ -492,8 +492,8 @@ class Admin extends MY_Controller
                 );
                 $this->display_view('admin/objective/delete', $output);
                 break;
-            case 1: // Delete course plan
-                $this->objective_model->delete($objective_id, TRUE);
+            case 1: // Deactivate (soft delete) objective
+                $this->objective_model->delete($objective_id, FALSE);
                 redirect('admin/list_objective');
             default: // Do nothing
                 redirect('admin/list_objective');

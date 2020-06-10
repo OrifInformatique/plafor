@@ -15,8 +15,8 @@ class objective_model extends MY_Model
     protected $protected_attributes = ['id'];
     protected $belongs_to = ['operational_competence'=> ['primary_key' => 'fk_operational_competence',
                                             'model' => 'operational_competence_model']];
-    /* protected $soft_delete = TRUE; */
-    /* protected $soft_delete_key = 'archive'; */
+    protected $soft_delete = TRUE;
+    protected $soft_delete_key = 'archive';
 
     /**
      * Constructor

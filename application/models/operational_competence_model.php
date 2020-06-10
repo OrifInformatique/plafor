@@ -15,8 +15,10 @@ class operational_competence_model extends MY_Model
     protected $protected_attributes = ['id'];
     protected $belongs_to = ['competence_domain'=> ['primary_key' => 'fk_competence_domain',
                                             'model' => 'competence_domain_model']];
-    /* protected $soft_delete = TRUE; */
-    /* protected $soft_delete_key = 'archive'; */
+    protected $has_many = ['objectives' => ['primary_key' => 'fk_operational_competence',
+                                'model' => 'Objective_model']];
+    protected $soft_delete = TRUE;
+    protected $soft_delete_key = 'archive';
 
     /**
      * Constructor

@@ -15,8 +15,10 @@ class competence_domain_model extends MY_Model
     protected $protected_attributes = ['id'];
     protected $belongs_to = ['course_plan'=> ['primary_key' => 'fk_course_plan',
                                             'model' => 'course_plan_model']];
-    /* protected $soft_delete = TRUE; */
-    /* protected $soft_delete_key = 'archive'; */
+    protected $has_many = ['operational_competence' => ['primary_key' => 'fk_competence_domain',
+                                'model' => 'Pperational_competence_model']];
+    protected $soft_delete = TRUE;
+    protected $soft_delete_key = 'archive';
 
     /**
      * Constructor
