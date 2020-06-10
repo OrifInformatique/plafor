@@ -207,6 +207,15 @@ class Apprentice extends MY_Controller
         $this->display_view('user_course/view',$output);
     }
     
+    /**
+     * Deletes a user_course depending on $action
+     *
+     * @param integer $user_course_id = ID of the user_course to affect
+     * @param integer $action = Action to apply on the course plan:
+     *  - 0 for displaying the confirmation
+     *  - 1 for deleting (hard delete)
+     * @return void
+     */
     public function delete_user_course($user_course_id, $action = 0){
         $user_course = $this->user_course_model->get($user_course_id);
         $course_plan = $this->course_plan_model->get($user_course->fk_course_plan);
@@ -234,6 +243,7 @@ class Apprentice extends MY_Controller
                 redirect('apprentice/list_apprentice');
         }
     }
+    
     /**
      * Create a link between a apprentice and a trainer, or change the trainer
      * linked on the selected trainer_apprentice SQL entry
@@ -310,6 +320,41 @@ class Apprentice extends MY_Controller
         );
         
         $this->display_view('apprentice/link',$output);
+    }
+    
+    /**
+     * Deletes a trainer_apprentice link depending on $action
+     *
+     * @param integer $link_id = ID of the trainer_apprentice_link to affect
+     * @param integer $action = Action to apply on the trainer_apprentice link :
+     *  - 0 for displaying the confirmation
+     *  - 1 for deleting (hard delete)
+     * @return void
+     */
+    public function delete_apprentice_link($link_id, $action = 0){
+        $link = $this->trainer_apprentice_model->get($link_id);
+        $apprentice = $this->user_model->get($link->fk_apprentice);
+        $trainer = $this->user_model->get($link->fk_trainer);
+        if (is_null($link)) {
+            redirect('apprentice/list_apprentice');
+        }
+
+        switch($action) {
+            case 0: // Display confirmation
+                $output = array(
+                    'link' => $link,
+                    'apprentice' => $apprentice,
+                    'trainer' => $trainer,
+                    'title' => lang('title_apprentice_link_delete')
+                );
+                $this->display_view('apprentice/delete', $output);
+                break;
+            case 1: // Delete apprentice link
+                $this->trainer_apprentice_model->delete($link_id, TRUE);
+                redirect('apprentice/list_apprentice/'.$apprentice->id);
+            default: // Do nothing
+                redirect('apprentice/list_apprentice/'.$apprentice->id);
+        }
     }
     
     /**

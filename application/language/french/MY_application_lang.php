@@ -95,7 +95,6 @@ $lang['details_operational_competence'] = 'Détail de la compétence opérationn
 $lang['details_objective']              = 'Détail de l\'objectif';
 $lang['details_user_course']            = 'Détail de la formation de l\'apprenti';
 
-
 // Fields labels
 $lang['field_apprentice_username']      = 'Nom de l\'apprenti';
 $lang['field_apprentice_date_creation'] = 'Date de création de l\'apprenti';
@@ -183,6 +182,11 @@ $lang['objective_delete_explanation']   = 'Toutes les informations concernant ce
 $lang['user_course']                    = 'Formation liée';
 $lang['user_course_delete']             = 'Supprimer cette formation liée';
 $lang['user_course_delete_explanation'] = 'Toutes les informations concernant cette formation liée seront supprimées.';
+$lang['apprentice_link']                = 'Apprenti et formateur lié';
+$lang['apprentice_link_delete']         = 'Supprimer le lien entre cette apprenti et ce formateur';
+$lang['apprentice_link_delete_explanation']
+                                        = 'Toutes les informations concernant le lien entre cette apprenti et ce formateur seront supprimées.';
 $lang['apprentice']                     = 'Apprenti';
+$lang['trainer']                        = 'Formateur';
 $lang['course_status']                  = 'Status des formations';
 $lang['status']                         = 'Statut de la formation';

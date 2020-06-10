@@ -15,6 +15,9 @@
     <div class="row">
         <div class="col-md-12">
             <p class="bg-primary text-white"><?=$this->lang->line('field_trainer_link')?></p>
+            <a class="btn btn-primary text-white" href="<?= base_url('apprentice/save_apprentice_link/'.$apprentice->id)?>"><?= $this->lang->line('title_apprentice_link_new') ?></a>
+        </div>
+        <div class="col-md-12">
             <table class="table table-hover">
             <thead>
                 <tr>
