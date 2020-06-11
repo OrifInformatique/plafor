@@ -64,7 +64,7 @@
                 </tr>
             </thead>
             <tbody><?php
-            foreach ($objectives as $objective){
+            foreach ($operational_competence->objectives as $objective){
                 ?><tr>
                     <td><a class="font-weight-bold" href="<?= base_url('apprentice/view_objective/'.$objective->id)?>"><?=$objective->symbol?></a></td>
                     <td><a href="<?= base_url('apprentice/view_objective/'.$objective->id)?>"><?=$objective->taxonomy?></a></td>

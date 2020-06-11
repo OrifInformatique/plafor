@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le :  mer. 10 juin 2020 à 15:38
+-- Généré le :  jeu. 11 juin 2020 à 09:31
 -- Version du serveur :  10.4.6-MariaDB
 -- Version de PHP :  7.3.9
 
@@ -34,19 +34,6 @@ USE `plafor`;
 CREATE TABLE `acquisition_level` (
   `id` int(11) NOT NULL,
   `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `acquisition_status`
---
-
-CREATE TABLE `acquisition_status` (
-  `id` int(11) NOT NULL,
-  `fk_objective` int(11) NOT NULL,
-  `fk_user` int(11) NOT NULL,
-  `fk_acquisition_level` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -141,22 +128,6 @@ CREATE TABLE `user` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `user_course`
---
-
-CREATE TABLE `user_course` (
-  `id` int(11) NOT NULL,
-  `fk_user` int(11) NOT NULL,
-  `fk_course_plan` int(11) NOT NULL,
-  `fk_status` int(11) NOT NULL,
-  `date_begin` date NOT NULL,
-  `date_end` date NOT NULL,
-  `archive` tinyint(4) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
 -- Structure de la table `user_course_status`
 --
 
@@ -186,15 +157,6 @@ CREATE TABLE `user_type` (
 --
 ALTER TABLE `acquisition_level`
   ADD PRIMARY KEY (`id`);
-
---
--- Index pour la table `acquisition_status`
---
-ALTER TABLE `acquisition_status`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `constraint_acquisition_statut_level` (`fk_acquisition_level`),
-  ADD KEY `constraint_objective_acquisition_statut` (`fk_objective`),
-  ADD KEY `constraint_user_acquisition_statut` (`fk_user`);
 
 --
 -- Index pour la table `comment`
@@ -239,15 +201,6 @@ ALTER TABLE `user`
   ADD KEY `fk_user_user_type1_idx` (`fk_user_type`);
 
 --
--- Index pour la table `user_course`
---
-ALTER TABLE `user_course`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `constraint_user` (`fk_user`),
-  ADD KEY `constraint_user_course_plan` (`fk_course_plan`),
-  ADD KEY `constraint_status` (`fk_status`);
-
---
 -- Index pour la table `user_course_status`
 --
 ALTER TABLE `user_course_status`
@@ -262,12 +215,6 @@ ALTER TABLE `user_type`
 --
 -- AUTO_INCREMENT pour les tables déchargées
 --
-
---
--- AUTO_INCREMENT pour la table `acquisition_status`
---
-ALTER TABLE `acquisition_status`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT pour la table `comment`
@@ -306,12 +253,6 @@ ALTER TABLE `user`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `user_course`
---
-ALTER TABLE `user_course`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT pour la table `user_course_status`
 --
 ALTER TABLE `user_course_status`
@@ -326,14 +267,6 @@ ALTER TABLE `user_type`
 --
 -- Contraintes pour les tables déchargées
 --
-
---
--- Contraintes pour la table `acquisition_status`
---
-ALTER TABLE `acquisition_status`
-  ADD CONSTRAINT `constraint_acquisition_statut_level` FOREIGN KEY (`fk_acquisition_level`) REFERENCES `acquisition_level` (`id`),
-  ADD CONSTRAINT `constraint_objective_acquisition_statut` FOREIGN KEY (`fk_objective`) REFERENCES `objective` (`id`),
-  ADD CONSTRAINT `constraint_user_acquisition_statut` FOREIGN KEY (`fk_user`) REFERENCES `user` (`id`);
 
 --
 -- Contraintes pour la table `comment`
@@ -365,14 +298,6 @@ ALTER TABLE `operational_competence`
 --
 ALTER TABLE `user`
   ADD CONSTRAINT `fk_user_user_type1` FOREIGN KEY (`fk_user_type`) REFERENCES `user_type` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
--- Contraintes pour la table `user_course`
---
-ALTER TABLE `user_course`
-  ADD CONSTRAINT `constraint_status` FOREIGN KEY (`fk_status`) REFERENCES `user_course_status` (`id`),
-  ADD CONSTRAINT `constraint_user` FOREIGN KEY (`fk_user`) REFERENCES `user` (`id`),
-  ADD CONSTRAINT `constraint_user_course_plan` FOREIGN KEY (`fk_course_plan`) REFERENCES `course_plan` (`id`);
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
 

@@ -38,7 +38,7 @@
                 </tr>
             </thead>
             <tbody><?php
-            foreach ($operational_competences as $operational_competence){
+            foreach ($competence_domain->operational_competences as $operational_competence){
                 ?><tr>
                     <td><a class="font-weight-bold" href="<?= base_url('apprentice/view_operational_competence/'.$operational_competence->id)?>"><?=$operational_competence->symbol?></a></td>
                     <td><a href="<?= base_url('apprentice/view_operational_competence/'.$operational_competence->id)?>"><?=$operational_competence->name?></a></td><?php

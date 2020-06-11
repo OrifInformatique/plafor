@@ -365,18 +365,15 @@ class Apprentice extends MY_Controller
      */
     public function view_course_plan($course_plan_id = null)
     {
-        $course_plan = $this->course_plan_model->get($course_plan_id);
+        $course_plan = $this->course_plan_model->with_all()->get($course_plan_id);
         
         if($course_plan == null){
             redirect(base_url('apprentice/list_course_plan'));
             exit();
         }
         
-        $competence_domains = $this->competence_domain_model->get_many_by('fk_course_plan',$course_plan_id);
-        
         $output = array(
             'course_plan' => $course_plan,
-            'competence_domains' => $competence_domains
         );
         
         $this->display_view('admin/course_plan/view',$output);
@@ -390,20 +387,16 @@ class Apprentice extends MY_Controller
      */
     public function view_competence_domain($competence_domain_id = null)
     {
-        $competence_domain = $this->competence_domain_model->get($competence_domain_id);
+        $competence_domain = $this->competence_domain_model->with_all()->get($competence_domain_id);
         
         if($competence_domain == null){
             redirect(base_url('admin/list_competence_domain'));
             exit();
         }
         
-        $course_plan = $this->course_plan_model->get($competence_domain->fk_course_plan);
-        $operational_competences = $this->operational_competence_model->get_many_by('fk_competence_domain',$competence_domain_id);
-        
         $output = array(
-            'course_plan' => $course_plan,
+            'course_plan' => $competence_domain->course_plan,
             'competence_domain' => $competence_domain,
-            'operational_competences' => $operational_competences
         );
         
         $this->display_view('admin/competence_domain/view',$output);
@@ -417,21 +410,19 @@ class Apprentice extends MY_Controller
      */
     public function view_operational_competence($operational_competence_id = null)
     {
-        $operational_competence = $this->operational_competence_model->get($operational_competence_id);
+        $operational_competence = $this->operational_competence_model->with_all()->get($operational_competence_id);
         
         if($operational_competence == null){
             redirect(base_url('admin/list_operational_competence'));
             exit();
         }
         
-        $objectives = $this->objective_model->get_many_by('fk_operational_competence',$operational_competence_id);
         $competence_domain = $this->competence_domain_model->get($operational_competence->fk_competence_domain);
         $course_plan = $this->course_plan_model->get($competence_domain->fk_course_plan);
         
         $output = array(
             'operational_competence' => $operational_competence,
-            'objectives' => $objectives,
-            'competence_domain' => $competence_domain,
+            'competence_domain' => $operational_competence->competence_domain,
             'course_plan' => $course_plan
         );
         
@@ -446,7 +437,7 @@ class Apprentice extends MY_Controller
      */
     public function view_objective($objective_id = null)
     {
-        $objective = $this->objective_model->get($objective_id);
+        $objective = $this->objective_model->with_all()->get($objective_id);
         
         if($objective == null){
             redirect(base_url('admin/list_objective'));
@@ -459,7 +450,7 @@ class Apprentice extends MY_Controller
         
         $output = array(
             'objective' => $objective,
-            'operational_competence' => $operational_competence,
+            'operational_competence' => $objective->operational_competence,
             'competence_domain' => $competence_domain,
             'course_plan' => $course_plan
         );

@@ -29,7 +29,7 @@
                 </tr>
             </thead>
             <tbody><?php
-            foreach ($competence_domains as $competence_domain){
+            foreach ($course_plan->competence_domains as $competence_domain){
                 ?><tr>
                     <td><a class="font-weight-bold" href="<?= base_url('apprentice/view_competence_domain/'.$competence_domain->id)?>"><?=$competence_domain->symbol?></a></td>
                     <td><a href="<?= base_url('apprentice/view_competence_domain/'.$competence_domain->id)?>"><?=$competence_domain->name?></a></td><?php

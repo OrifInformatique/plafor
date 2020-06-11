@@ -10,7 +10,7 @@
                     <div class = "alert alert-info" ><?= lang('objective_disable_explanation')?></div>
                 </div>
                 <div class="text-right">
-                    <a href="<?= base_url('apprentice/objective/list'); ?>" class="btn btn-default">
+                    <a href="<?= base_url('apprentice/list_objective'); ?>" class="btn btn-default">
                         <?= lang('btn_cancel'); ?>
                     </a>
                     <a href="<?= base_url(uri_string().'/1'); ?>" class="btn btn-danger">

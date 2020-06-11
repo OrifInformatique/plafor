@@ -65,13 +65,6 @@ class Admin extends MY_Controller
         }
         
         $this->display_view('admin/course_plan/list', $output);
-        
-        /*$course_plans = $this->course_plan_model->get_all();
-
-        $output = array(
-            'course_plans' => $course_plans
-        );
-        $this->display_view('admin/course_plan/list', $output);*/
     }
 
     /**
@@ -137,9 +130,9 @@ class Admin extends MY_Controller
      */
     public function delete_course_plan($course_plan_id, $action = 0)
     {
-        $course_plan = $this->course_plan_model->get($course_plan_id);
+        $course_plan = $this->course_plan_model->with_all()->get($course_plan_id);
         if (is_null($course_plan)) {
-            redirect('admin/course_plan/list');
+            redirect('admin/list_course_plan');
         }
 
         switch($action) {
@@ -151,8 +144,28 @@ class Admin extends MY_Controller
                 $this->display_view('admin/course_plan/delete', $output);
                 break;
             case 1: // Deactivate (soft delete) course plan
+                
+                foreach ($course_plan->competence_domains as $competence_domain){
+                    $competenceDomainIds[] = $competence_domain->id;
+                }
+                
+                $competenceDomainId = implode(',',$competenceDomainIds);
+                
+                $operational_competences = $this->operational_competence_model->with_all()->get_many_by('fk_competence_domain IN ('.$competenceDomainId.')');
+                 
+                foreach ($operational_competences as $operational_competence){
+                    foreach ($operational_competence->objectives as $objective){
+                        $objectiveIds[] = $objective->id;
+                    }
+                }
+                $objectiveId = implode(',',$objectiveIds);
+                
+                $this->objective_model->delete_by('id IN ('.$objectiveId.')');
+                $this->operational_competence_model->delete_by('fk_competence_domain IN ('.$competenceDomainId.')');
+                $this->competence_domain_model->delete_by('fk_course_plan='.$course_plan_id);
                 $this->course_plan_model->delete($course_plan_id, FALSE);
                 redirect('admin/list_course_plan');
+                break;
             default: // Do nothing
                 redirect('admin/list_course_plan');
         }
@@ -244,7 +257,7 @@ class Admin extends MY_Controller
      */
     public function delete_competence_domain($competence_domain_id, $action = 0)
     {
-        $competence_domain = $this->competence_domain_model->get($competence_domain_id);
+        $competence_domain = $this->competence_domain_model->with_all()->get($competence_domain_id);
         if (is_null($competence_domain)) {
             redirect('admin/competence_domain/list');
         }
@@ -258,8 +271,18 @@ class Admin extends MY_Controller
                 $this->display_view('admin/competence_domain/delete', $output);
                 break;
             case 1: // Deactivate (soft delete) competence domain
+            
+                foreach ($competence_domain->operational_competences as $operational_competence){
+                    $operationalCompetenceIds[] = $operational_competence->id;
+                }
+                
+                $operationalCompetenceId = implode(',',$operationalCompetenceIds);
+                
+                $this->objective_model->delete_by('fk_operational_competence IN ('.$operationalCompetenceId.')');
+                $this->operational_competence_model->delete_by('fk_competence_domain='.$competence_domain_id);
                 $this->competence_domain_model->delete($competence_domain_id, FALSE);
                 redirect('admin/list_competence_domain');
+                break;
             default: // Do nothing
                 redirect('admin/list_competence_domain');
         }
@@ -314,17 +337,17 @@ class Admin extends MY_Controller
                             array(
                               'field' => 'methodologic',
                               'label' => 'lang:field_operational_methodologic',
-                              'rules' => 'required|max_length['.SQL_TEXT_MAX_LENGTH.']',
+                              'rules' => 'max_length['.SQL_TEXT_MAX_LENGTH.']',
                             ),
                             array(
                               'field' => 'social',
                               'label' => 'lang:field_operational_social',
-                              'rules' => 'required|max_length['.SQL_TEXT_MAX_LENGTH.']',
+                              'rules' => 'max_length['.SQL_TEXT_MAX_LENGTH.']',
                             ),
                             array(
                               'field' => 'personal',
                               'label' => 'lang:field_operational_personal',
-                              'rules' => 'required|max_length['.SQL_TEXT_MAX_LENGTH.']',
+                              'rules' => 'max_length['.SQL_TEXT_MAX_LENGTH.']',
                             ),
                         );
 			$this->form_validation->set_rules($rules);
@@ -382,8 +405,10 @@ class Admin extends MY_Controller
                 $this->display_view('admin/operational_competence/delete', $output);
                 break;
             case 1: // Deactivate (soft delete) operational competence
+                $this->objective_model->delete_by('fk_operational_competence='.$operational_competence_id);
                 $this->operational_competence_model->delete($operational_competence_id, FALSE);
                 redirect('admin/list_operational_competence');
+                break;
             default: // Do nothing
                 redirect('admin/list_operational_competence');
         }
@@ -495,6 +520,7 @@ class Admin extends MY_Controller
             case 1: // Deactivate (soft delete) objective
                 $this->objective_model->delete($objective_id, FALSE);
                 redirect('admin/list_objective');
+                break;
             default: // Do nothing
                 redirect('admin/list_objective');
         }

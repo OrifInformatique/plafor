@@ -20,8 +20,6 @@ class user_course_model extends MY_Model
                             'status' => ['primary_key' => 'fk_status',
                                 'model' => 'status_model']
                             ];
-    protected $soft_delete = TRUE;
-    protected $soft_delete_key = 'archive';
 
     /**
      * Constructor

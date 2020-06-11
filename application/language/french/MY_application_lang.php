@@ -167,26 +167,29 @@ $lang['msg_err_course_plan_not_unique'] = 'Ce plan de formation est déjà utili
 // Other texts
 $lang['course_plan']                    = 'Plan de formation';
 $lang['course_plan_delete']             = 'Supprimer ce plan de formation';
-$lang['course_plan_delete_explanation'] = 'Toutes les informations concernant ce plan de formation seront supprimées.';
+$lang['course_plan_delete_explanation'] = 'Toutes les informations concernant ce plan de formation (domaines de compétences, compétences oppérationnelles et objectifs) seront supprimées.';
 $lang['course_plan_disable']            = 'Désactiver ce plan de formation';
 $lang['course_plan_disable_explanation']
-                                        = 'Toutes les informations concernant ce plan de formation seront désactivées.';
+                                        = 'Toutes les informations concernant ce plan de formation (domaines de compétences, compétences oppérationnelles et objectifs) seront désactivées.';
 $lang['competence_domain']              = 'Domaine de compétence';
 $lang['competence_domain_delete']       = 'Supprimer ce domaine de compétence';
 $lang['competence_domain_delete_explanation']
-                                        = 'Toutes les informations concernant ce domaine de compétence seront supprimées.';
+                                        = 'Toutes les informations concernant ce domaine de compétence (symbole, nom, compétences oppérationnelles et objectifs) seront supprimées.';
 $lang['competence_domain_disable']      = 'Désactiver ce domaine de compétence';
 $lang['competence_domain_disable_explanation']
-                                        = 'Toutes les informations concernant ce domaine de compétence seront désactivées.';
+                                        = 'Toutes les informations concernant ce domaine de compétence (symbole, nom, compétences oppérationnelles et objectifs) seront désactivées.';
 $lang['operational_competence']         = 'Compétence opérationnelle';
 $lang['operational_competence_delete']  = 'Supprimer cette compétence opérationnelle';
 $lang['operational_competence_delete_explanation']
-                                        = 'Toutes les informations concernant cette compétence opérationnelle seront supprimées.';
+                                        = 'Toutes les informations concernant cette compétence opérationnelle (nom, symbole, compétences, objectifs) seront supprimées.';
+$lang['operational_competence_disable'] = 'Désactiver cette compétence opérationnelle';
+$lang['operational_competence_disable_explanation']
+                                        = 'Toutes les informations concernant cette compétence opérationnelle (nom, symbole, compétences, objectifs) seront désactivées.';
 $lang['objective']                      = 'Objectif';
 $lang['objective_delete']               = 'Supprimer cet objectif';
-$lang['objective_delete_explanation']   = 'Toutes les informations concernant cet objectif seront supprimées.';
+$lang['objective_delete_explanation']   = 'Toutes les informations concernant cet objectif (symbole, taxonomie, nom) seront supprimées.';
 $lang['objective_disable']              = 'Désactiver cet objectif';
-$lang['objective_disable_explanation']  = 'Toutes les informations concernant cet objectif seront désactivées.';
+$lang['objective_disable_explanation']  = 'Toutes les informations concernant cet objectif (symbole, taxonomie, nom) seront désactivées.';
 $lang['user_course']                    = 'Formation liée';
 $lang['user_course_delete']             = 'Supprimer cette formation liée';
 $lang['user_course_delete_explanation'] = 'Toutes les informations concernant cette formation liée seront supprimées.';
