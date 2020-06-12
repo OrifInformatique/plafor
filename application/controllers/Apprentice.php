@@ -14,11 +14,17 @@ class Apprentice extends MY_Controller
      */
     public function __construct()
     {
+        /* Define controller access level */
+        $this->access_level = $this->config->item('access_lvl_apprentice');
+        
         parent::__construct();
 
         // Load required items
         $this->load->library('form_validation')->
-        model(['user/user_model','user/user_type_model','trainer_apprentice_model','course_plan_model','user_course_model','user_course_status_model','competence_domain_model','operational_competence_model','objective_model']);
+        model(['user/user_model','user/user_type_model','trainer_apprentice_model',
+        'course_plan_model','user_course_model','user_course_status_model',
+        'competence_domain_model','operational_competence_model','objective_model'
+        ,'acquisition_status_model']);
         
         // Assign form_validation CI instance to this
         $this->form_validation->CI =& $this;
@@ -159,7 +165,34 @@ class Apprentice extends MY_Controller
                 if($id_user_course > 0){
                     echo $this->user_course_model->update($id_user_course, $user_course);
                 }else{
-                    echo $this->user_course_model->insert($user_course);
+                    $id_user_course = $this->user_course_model->insert($user_course);
+                    
+                    $course_plan = $this->course_plan_model->with_all()->get($user_course['fk_course_plan']);
+                    
+                    foreach ($course_plan->competence_domains as $competence_domain){
+                        $competenceDomainIds[] = $competence_domain->id;
+                    }
+
+                    $competenceDomainId = implode(',',$competenceDomainIds);
+
+                    $operational_competences = $this->operational_competence_model->with_all()->get_many_by('fk_competence_domain IN ('.$competenceDomainId.')');
+
+                    foreach ($operational_competences as $operational_competence){
+                        foreach ($operational_competence->objectives as $objective){
+                            $objectiveIds[] = $objective->id;
+                        }
+                    }
+                    
+                    foreach ($objectiveIds as $objectiveId){
+                        
+                        $acquisition_status = array(
+                            'fk_objective' => $objectiveId,
+                            'fk_user_course' => $id_user_course,
+                            'fk_acquisition_level' => 1
+                        );
+                        
+                        $this->acquisition_status_model->insert($acquisition_status);
+                    }
                 }
                 
                 redirect('apprentice/view_apprentice/'.$id_apprentice);
@@ -355,6 +388,27 @@ class Apprentice extends MY_Controller
             default: // Do nothing
                 redirect('apprentice/list_apprentice/'.$apprentice->id);
         }
+    }
+    
+    public function view_acquisition_status($acquisition_status_id){
+        $acquisition_status = $this->acquisition_status_model->with_all()->get($acquisition_status_id);
+        
+        if($acquisition_status == null){
+            redirect(base_url('apprentice'));
+            exit();
+        }
+        
+        $user_course = $this->user_course_model->with_all()->get($acquisition_status->user_course->id);
+        
+        
+        $output = array(
+            'acquisition_status' => $acquisition_status,
+            'user_course' => $user_course,
+        );
+        
+        //echo var_dump($output);
+        
+        $this->display_view('acquisition_status/view',$output);
     }
     
     /**

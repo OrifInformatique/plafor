@@ -86,6 +86,12 @@ $lang['title_apprentice_link_list']     = 'Liste des formateurs liés';
 $lang['title_apprentice_link_update']   = 'Modifer le formateur lié';
 $lang['title_apprentice_link_new']      = 'Ajouter un formateur lié';
 $lang['title_apprentice_link_delete']   = 'Supprimer le formateur lié';
+$lang['title_acquisition_status_list']  = 'Liste des statut d\'acquisition';
+$lang['title_acquisition_status_update']
+                                        = 'Modifer le statut d\'acquisition';
+$lang['title_acquisition_status_new']   = 'Ajouter un statut d\'acquisition';
+$lang['title_acquisition_status_delete']
+                                        = 'Supprimer le statut d\'acquisition';
 
 // Details labels
 $lang['details_apprentice']             = 'Détail de l\'apprenti';
@@ -94,6 +100,7 @@ $lang['details_competence_domain']      = 'Détail du domaine de compétence';
 $lang['details_operational_competence'] = 'Détail de la compétence opérationnelle';
 $lang['details_objective']              = 'Détail de l\'objectif';
 $lang['details_user_course']            = 'Détail de la formation de l\'apprenti';
+$lang['details_acquisition_status']     = 'Détail du statut d\'acquisition';
 
 // Fields labels
 $lang['field_apprentice_username']      = 'Nom de l\'apprenti';
@@ -150,7 +157,8 @@ $lang['field_user_course_date_end']     = 'Date de fin de la formation';
 $lang['field_user_course_course_plan']  = 'Formation';
 $lang['field_user_course_status']       = 'Statut de la formation';
 $lang['field_trainer_link']             = 'Formateur(s) lié(s)';
-$lang['field_trainers_name']             = 'Nom des formateurs';
+$lang['field_trainers_name']            = 'Nom des formateurs';
+$lang['field_acquisition_level']        = 'Niveau d\'acquisition';                   
 $lang['field_id']                       = 'Identifiant';
 
 // Admin texts
@@ -203,6 +211,13 @@ $lang['apprentice_link_delete_explanation']
 $lang['apprentice_link_disable']        = 'Désactiver le lien entre cette apprenti et ce formateur';
 $lang['apprentice_link_disable_explanation']
                                         = 'Toutes les informations concernant le lien entre cette apprenti et ce formateur seront désactivées.';
+$lang['acquisition_status']             = 'Statut d\'acquisition';
+$lang['acquisition_status_delete']      = 'Supprimer le statut d\'acquisition';
+$lang['acquisition_status_delete_explanation']
+                                        = 'Toutes les informations concernant le statut d\'acquisition seront supprimées.';
+$lang['acquisition_status_disable']     = 'Désactiver le statut d\'acquisition';
+$lang['acquisition_status_disable_explanation']
+                                        = 'Toutes les informations concernant le statut d\'acquisition seront désactivées.';
 $lang['apprentice']                     = 'Apprenti';
 $lang['trainer']                        = 'Formateur';
 $lang['course_status']                  = 'Status des formations';

@@ -18,8 +18,10 @@ class user_course_model extends MY_Model
                             'course_plan' => ['primary_key' => 'fk_course_plan',
                                 'model' => 'course_plan_model'],
                             'status' => ['primary_key' => 'fk_status',
-                                'model' => 'status_model']
+                                'model' => 'acquisition_status_model']
                             ];
+    /* protected $has_many = ['acquistion_status' => ['primary_key' => 'fk_user_course',
+                                'model' => 'acquisition_status_model']]; */
 
     /**
      * Constructor

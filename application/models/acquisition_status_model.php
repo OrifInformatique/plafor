@@ -7,18 +7,18 @@
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c) Orif (https://www.orif.ch)
  */
-class aquisition_status_model extends MY_Model
+class acquisition_status_model extends MY_Model
 {
     /* Set MY_Model variables */
-    protected $_table = 'aquisition_status';
+    protected $_table = 'acquisition_status';
     protected $primary_key = 'id';
     protected $protected_attributes = ['id'];
     protected $belongs_to = ['objective' => ['primary_key' => 'fk_objective',
                                 'model' => 'objective_model'],
-                            'user'=> ['primary_key' => 'fk_user',
-                                'model' => 'user_model'],
-                            'aquisition_level' => ['primary_key' => 'fk_aquisition_level',
-                                'model' => 'aquisition_level_model']
+                            'user_course'=> ['primary_key' => 'fk_user_course',
+                                'model' => 'user_course_model'],
+                            'acquisition_level' => ['primary_key' => 'fk_acquisition_level',
+                                'model' => 'acquisition_level_model']
                             ];
     /* protected $soft_delete = TRUE; */
     /* protected $soft_delete_key = 'archive'; */

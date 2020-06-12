@@ -7,10 +7,10 @@
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c) Orif (https://www.orif.ch)
  */
-class aquisition_level_model extends MY_Model
+class acquisition_level_model extends MY_Model
 {
     /* Set MY_Model variables */
-    protected $_table = 'aquisition_level';
+    protected $_table = 'acquisition_level';
     protected $primary_key = 'id';
     protected $protected_attributes = ['id'];
     /* protected $soft_delete = TRUE; */
