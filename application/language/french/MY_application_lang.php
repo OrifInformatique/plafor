@@ -156,10 +156,15 @@ $lang['field_user_course_date_begin']   = 'Date du début de la formation';
 $lang['field_user_course_date_end']     = 'Date de fin de la formation';
 $lang['field_user_course_course_plan']  = 'Formation';
 $lang['field_user_course_status']       = 'Statut de la formation';
+$lang['field_user_course_objectives_status']
+                                        = 'Statuts d\'acquisition des objectifs';
 $lang['field_trainer_link']             = 'Formateur(s) lié(s)';
 $lang['field_trainers_name']            = 'Nom des formateurs';
 $lang['field_acquisition_level']        = 'Niveau d\'acquisition';                   
 $lang['field_id']                       = 'Identifiant';
+$lang['field_symbol']                   = 'Symbole';
+$lang['field_taxonomy']                 = 'Taxonomie';
+
 
 // Admin texts
 $lang['admin_apprentices']              = 'Apprentis';

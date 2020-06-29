@@ -24,7 +24,7 @@ class Apprentice extends MY_Controller
         model(['user/user_model','user/user_type_model','trainer_apprentice_model',
         'course_plan_model','user_course_model','user_course_status_model',
         'competence_domain_model','operational_competence_model','objective_model'
-        ,'acquisition_status_model']);
+        ,'acquisition_status_model','acquisition_level_model']);
         
         // Assign form_validation CI instance to this
         $this->form_validation->CI =& $this;
@@ -222,8 +222,11 @@ class Apprentice extends MY_Controller
     public function view_user_course($id_user_course = null){
         $user_course = $this->user_course_model->get($id_user_course);
         $apprentice = $this->user_model->get($user_course->fk_user);
-        $status = $this->user_course_status_model->get($user_course->fk_status);
+        $user_course_status = $this->user_course_status_model->get($user_course->fk_status);
         $course_plan = $this->course_plan_model->get($user_course->fk_course_plan);
+        $trainers_apprentice = $this->trainer_apprentice_model->get_many_by('fk_apprentice',$apprentice->id);
+        $acquisition_status = $this->acquisition_status_model->with_all()->get_many_by('fk_user_course',$id_user_course);
+        $acquisition_levels = $this->acquisition_level_model->get_all();
         
         if($user_course == null){
             redirect('apprentice/list_apprentice');
@@ -233,8 +236,11 @@ class Apprentice extends MY_Controller
         $output = array(
             'user_course' => $user_course,
             'apprentice' => $apprentice,
-            'status' => $status,
-            'course_plan' => $course_plan
+            'user_course_status' => $user_course_status,
+            'course_plan' => $course_plan,
+            'trainers_apprentice' => $trainers_apprentice,
+            'acquisition_status' => $acquisition_status,
+            'acquisition_levels' => $acquisition_levels
         );
         
         $this->display_view('user_course/view',$output);
@@ -405,8 +411,6 @@ class Apprentice extends MY_Controller
             'acquisition_status' => $acquisition_status,
             'user_course' => $user_course,
         );
-        
-        //echo var_dump($output);
         
         $this->display_view('acquisition_status/view',$output);
     }
