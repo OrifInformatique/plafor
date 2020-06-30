@@ -86,12 +86,16 @@ $lang['title_apprentice_link_list']     = 'Liste des formateurs liés';
 $lang['title_apprentice_link_update']   = 'Modifer le formateur lié';
 $lang['title_apprentice_link_new']      = 'Ajouter un formateur lié';
 $lang['title_apprentice_link_delete']   = 'Supprimer le formateur lié';
-$lang['title_acquisition_status_list']  = 'Liste des statut d\'acquisition';
+$lang['title_acquisition_status_list']  = 'Liste des statuts d\'acquisition';
 $lang['title_acquisition_status_update']
                                         = 'Modifer le statut d\'acquisition';
 $lang['title_acquisition_status_new']   = 'Ajouter un statut d\'acquisition';
 $lang['title_acquisition_status_delete']
                                         = 'Supprimer le statut d\'acquisition';
+$lang['title_comment_list']             = 'Liste des commentaires';
+$lang['title_comment_update']           = 'Modifer le commentaire';
+$lang['title_comment_new']              = 'Ajouter un commentaire';
+$lang['title_comment_delete']           = 'Supprimer le commentaire';
 
 // Details labels
 $lang['details_apprentice']             = 'Détail de l\'apprenti';
@@ -158,13 +162,16 @@ $lang['field_user_course_course_plan']  = 'Formation';
 $lang['field_user_course_status']       = 'Statut de la formation';
 $lang['field_user_course_objectives_status']
                                         = 'Statuts d\'acquisition des objectifs';
+$lang['field_comment']                  = 'Commentaire';
+$lang['field_comment_creater']          = 'Créateur du commentaire';
+$lang['field_comment_date_creation']    = 'Date de création du commentaire';
 $lang['field_trainer_link']             = 'Formateur(s) lié(s)';
 $lang['field_trainers_name']            = 'Nom des formateurs';
 $lang['field_acquisition_level']        = 'Niveau d\'acquisition';                   
 $lang['field_id']                       = 'Identifiant';
 $lang['field_symbol']                   = 'Symbole';
 $lang['field_taxonomy']                 = 'Taxonomie';
-
+$lang['field_linked_comments']          = 'Commentaires liés';
 
 // Admin texts
 $lang['admin_apprentices']              = 'Apprentis';

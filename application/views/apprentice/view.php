@@ -37,7 +37,7 @@
                     <td><a href="<?= base_url('apprentice/list_apprentice/'.$trainer->id); ?>"><?= $trainer->username; ?></a></th>
                     <?php if($_SESSION['user_access']): ?>
                     <th><a href="<?= base_url('apprentice/save_apprentice_link/'.$apprentice->id.'/'.$link->id) ?>"><?= $this->lang->line('title_apprentice_link_update'); ?></a></th>
-                    <th><a href="<?= base_url('apprentice/delete_apprentice_link/'.$link->id) ?>"><?= $this->lang->line('title_apprentice_link_delete');?></a></th>
+                    <th><a href="<?= base_url('admin/delete_apprentice_link/'.$link->id) ?>"><?= $this->lang->line('title_apprentice_link_delete');?></a></th>
                     <?php endif; ?>
                 </tr><?php
                     endif;
