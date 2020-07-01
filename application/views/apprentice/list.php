@@ -48,7 +48,9 @@
                         $linkedCourses = "";
                         
                         foreach ($courses as $course){
-                            $linkedCourses .= ($course->fk_user == $apprentice->id?$coursesList[$course->fk_course_plan-1]->official_name.",":"");
+                            foreach($coursesList as $courseList){
+                                $linkedCourses .= ($course->fk_user == $apprentice->id && $courseList->id == $course->fk_course_plan ?$courseList->official_name.",":"");
+                            }
                         } 
                         echo rtrim($linkedCourses,",");
                         ?></a></td>

@@ -53,19 +53,21 @@ class Apprentice extends MY_Controller
      */
     public function list_apprentice($trainer_id = null)
     {
-        if(is_null($trainer_id) && $_SESSION['user_access'] < ACCESS_LVL_ADMIN){
+        if(is_null($trainer_id) && $_SESSION['user_access'] < ACCESS_LVL_TRAINER){
             redirect("apprentice");
         }
         
-        //if($trainer_id == null){
+        if($trainer_id == null || $_SESSION['user_access'] == ACCESS_LVL_ADMIN){
             $apprentice_level = $this->user_type_model->get_by('access_level', ACCESS_LVL_APPRENTICE);
             $apprentices = $this->user_model->get_many_by('fk_user_type', $apprentice_level->id);
-            $coursesList = $this->course_plan_model->get_all();
-            $courses = $this->user_course_model->get_all();
-        //}else{
-        //        $apprentices = $this->user_model->get_many_by(array('id' => $trainer_id));
-            
-        //}
+        }else{
+            $linked_apprentices = $this->trainer_apprentice_model->get_many_by('fk_trainer',$trainer_id);
+            $apprentices_id = array_column($linked_apprentices, 'fk_apprentice');
+            $apprentices = $this->user_model->get_many_by(array('id' => $apprentices_id));
+        }
+        
+        $coursesList = $this->course_plan_model->get_all();
+        $courses = $this->user_course_model->get_all();
         
         $output = array(
             'apprentices' => $apprentices,
@@ -169,19 +171,11 @@ class Apprentice extends MY_Controller
                     
                     $course_plan = $this->course_plan_model->with_all()->get($user_course['fk_course_plan']);
                     
-                    foreach ($course_plan->competence_domains as $competence_domain){
-                        $competenceDomainIds[] = $competence_domain->id;
-                    }
-
-                    $competenceDomainId = implode(',',$competenceDomainIds);
-
-                    $operational_competences = $this->operational_competence_model->with_all()->get_many_by('fk_competence_domain IN ('.$competenceDomainId.')');
-
-                    foreach ($operational_competences as $operational_competence){
-                        foreach ($operational_competence->objectives as $objective){
-                            $objectiveIds[] = $objective->id;
-                        }
-                    }
+                    $competenceDomainIds = array_column($course_plan->competence_domains, 'id');
+                    
+                    $operational_competences = $this->operational_competence_model->with_all()->get_many_by('fk_competence_domain',$competenceDomainIds);
+                    
+                    $objectiveIds = array_column($operational_competences->objectives,'id');
                     
                     foreach ($objectiveIds as $objectiveId){
                         

@@ -47,11 +47,7 @@ class Admin extends MY_Controller
         }else{
             $userCourses = $this->user_course_model->get_many_by('fk_user',$id_apprentice);
             
-            $coursesId = array();
-            
-            foreach ($userCourses as $userCourse){
-                $coursesId[] = $userCourse->fk_course_plan;
-            }
+            $coursesId = array_column($userCourses, 'fk_course_plan');
             
             $course_plans = $this->course_plan_model->get_many($coursesId);
         }
@@ -145,29 +141,31 @@ class Admin extends MY_Controller
                 break;
             case 1: // Deactivate (soft delete) course plan
                 
-                foreach ($course_plan->competence_domains as $competence_domain){
-                    $competenceDomainIds[] = $competence_domain->id;
+                $competenceDomainIds = array_column($course_plan->competence_domains, 'id');
+                
+                $operational_competences = $this->operational_competence_model->with_all()->get_many_by('fk_competence_domain',$competenceDomainIds);
+                
+                $operationalCompetencesIds = array_column($operational_competences, 'id');
+                
+                $objectiveIds = array();
+                foreach($operational_competences as $operational_competence){
+                    array_push($objectiveIds,array_column($operational_competence->objectives, 'id'));
                 }
                 
-                $competenceDomainId = implode(',',$competenceDomainIds);
+                $objectiveIds = array_merge(...$objectiveIds);
                 
-                $operational_competences = $this->operational_competence_model->with_all()->get_many_by('fk_competence_domain IN ('.$competenceDomainId.')');
-                 
-                foreach ($operational_competences as $operational_competence){
-                    foreach ($operational_competence->objectives as $objective){
-                        $objectiveIds[] = $objective->id;
-                    }
-                }
-                $objectiveId = implode(',',$objectiveIds);
+                $this->objective_model->delete_many($objectiveIds);
                 
-                $this->objective_model->delete_by('id IN ('.$objectiveId.')');
-                $this->operational_competence_model->delete_by('fk_competence_domain IN ('.$competenceDomainId.')');
-                $this->competence_domain_model->delete_by('fk_course_plan='.$course_plan_id);
+                $this->operational_competence_model->delete_many($operationalCompetencesIds);
+                
+                $this->competence_domain_model->delete_many($competenceDomainIds);
+                
                 $this->course_plan_model->delete($course_plan_id, FALSE);
                 redirect('admin/list_course_plan');
                 break;
             default: // Do nothing
                 redirect('admin/list_course_plan');
+                break;
         }
     }
     
@@ -272,13 +270,9 @@ class Admin extends MY_Controller
                 break;
             case 1: // Deactivate (soft delete) competence domain
             
-                foreach ($competence_domain->operational_competences as $operational_competence){
-                    $operationalCompetenceIds[] = $operational_competence->id;
-                }
+                $operationalCompetenceIds = array_column($competence_domain,'id');
                 
-                $operationalCompetenceId = implode(',',$operationalCompetenceIds);
-                
-                $this->objective_model->delete_by('fk_operational_competence IN ('.$operationalCompetenceId.')');
+                $this->objective_model->delete_by('fk_operational_competence',$operationalCompetenceIds);
                 $this->operational_competence_model->delete_by('fk_competence_domain='.$competence_domain_id);
                 $this->competence_domain_model->delete($competence_domain_id, FALSE);
                 redirect('admin/list_competence_domain');

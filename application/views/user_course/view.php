@@ -24,11 +24,9 @@
             <a href="<?= base_url('apprentice/view_course_plan/'.$course_plan->id)?>"><span class="font-weight-bold"><?=$course_plan->formation_number?> </span><?=$course_plan->official_name?></a>
         </div>
     </div>
-    <?php $trainers_id = array();
-        foreach($trainers_apprentice as $trainer_apprentice):
-            $trainers_id[] = $trainer_apprentice['fk_trainer'];
-        endforeach;
-
+    <?php
+        $trainersId = array_column($trainers_apprentice, 'fk_trainer');
+        
         if(($_SESSION['user_access'] == ACCESS_LVL_ADMIN)
         || ($_SESSION['user_access'] == ACCESS_LVL_TRAINER && in_array($_SESSION['user_id'], $trainersId))
         || ($_SESSION['user_access'] == ACCESS_LVL_APPRENTICE && $user_course->fk_user == $apprentice->id)): ?>
