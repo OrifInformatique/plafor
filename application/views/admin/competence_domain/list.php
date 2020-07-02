@@ -32,6 +32,7 @@
             <h1 class="title-section"><?= lang('title_competence_domain_list'); ?></h1>
         </div>
     </div>
+    <?php if($_SESSION['user_access'] == ACCESS_LVL_ADMIN): ?>
     <div class="row">
         <div class="col-sm-3 text-left">
             <a href="<?= base_url('admin/save_competence_domain'); ?>" class="btn btn-primary">
@@ -39,14 +40,17 @@
             </a>
         </div>
     </div>
+    <?php endif; ?>
     <div class="row mt-2">
         <table class="table table-hover">
         <thead>
             <tr>
                 <th><?= lang('field_competence_domain_name'); ?></th>
                 <th></th>
+                <?php if($_SESSION['user_access'] == ACCESS_LVL_ADMIN): ?>
                 <th></th>
                 <th></th>
+                <?php endif; ?>
             </tr>
         </thead>
         <tbody id="competence_domainslist">
@@ -54,8 +58,10 @@
                 <tr>
                     <td><a href="<?= base_url('admin/list_operational_competence/'.$competence_domain->id); ?>"><span class="font-weight-bold"><?= $competence_domain->symbol?></span> <?= $competence_domain->name; ?></td>
                     <td><a href="<?= base_url('apprentice/view_competence_domain/'.$competence_domain->id)?>"><?= lang('btn_details')?></a></td>
+                    <?php if($_SESSION['user_access'] == ACCESS_LVL_ADMIN): ?>
                     <td><a href="<?= base_url('admin/save_competence_domain/'.$competence_domain->id); ?>"><?= lang('btn_update')?></a></td>
                     <td><a href="<?= base_url('admin/delete_competence_domain/'.$competence_domain->id); ?>" class="close">×</td>
+                    <?php endif; ?>
                 </tr>
             <?php } ?>
         </tbody>

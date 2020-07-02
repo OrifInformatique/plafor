@@ -32,6 +32,7 @@
             <h1 class="title-section"><?= lang('title_operational_competence_list'); ?></h1>
         </div>
     </div>
+    <?php if($_SESSION['user_access'] == ACCESS_LVL_ADMIN): ?>
     <div class="row">
         <div class="col-sm-3 text-left">
             <a href="<?= base_url('admin/save_operational_competence'); ?>" class="btn btn-primary">
@@ -39,14 +40,17 @@
             </a>
         </div>
     </div>
+    <?php endif; ?>
     <div class="row mt-2">
         <table class="table table-hover">
         <thead>
             <tr>
                 <th><?= lang('field_operational_competence_name'); ?></th>
                 <th></th>
+                <?php if($_SESSION['user_access'] == ACCESS_LVL_ADMIN): ?>
                 <th></th>
                 <th></th>
+                <?php endif; ?>
             </tr>
         </thead>
         <tbody id="operational_competenceslist">
@@ -54,8 +58,10 @@
                 <tr>
                     <td><a href="<?= base_url('admin/list_objective/'.$operational_competence->id); ?>"><span class="font-weight-bold"><?= $operational_competence->symbol?></span> <?= $operational_competence->name; ?></td>
                     <td><a href="<?= base_url('apprentice/view_operational_competence/').$operational_competence->id?>"><?= lang('btn_details')?></a></td>
+                    <?php if($_SESSION['user_access'] == ACCESS_LVL_ADMIN): ?>
                     <td><a href="<?= base_url('admin/save_operational_competence/'.$operational_competence->id); ?>"><?= lang('btn_update')?></a></td>
                     <td><a href="<?= base_url('admin/delete_operational_competence/'.$operational_competence->id); ?>" class="close">×</td>
+                    <?php endif; ?>
                 </tr>
             <?php } ?>
         </tbody>

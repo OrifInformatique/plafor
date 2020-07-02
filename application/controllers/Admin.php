@@ -15,7 +15,7 @@ class Admin extends MY_Controller
     public function __construct()
     {
         /* Define controller access level */
-        $this->access_level = $this->config->item('access_lvl_admin');
+        $this->access_level = ACCESS_LVL_ADMIN;
 
         parent::__construct();
 
@@ -591,4 +591,179 @@ class Admin extends MY_Controller
                 redirect('admin/list_objective');
         }
     }
+    
+    /**
+     * Form to create a link between a apprentice and a course plan
+     * 
+     * @param int (SQL PRIMARY KEY) $id_user_course
+     */
+    public function save_user_course($id_apprentice = null,$id_user_course = 0){
+        
+        $apprentice = $this->user_model->get($id_apprentice);
+        $user_course = $this->user_course_model->get($id_user_course);
+        
+        if($id_apprentice == null || $apprentice->fk_user_type != $this->user_type_model->get_by('name',$this->lang->line('title_apprentice'))->id){
+            redirect(base_url('apprentice/list_apprentice'));
+            exit();
+        }
+        
+        if(count($_POST) > 0){
+            $rules = array(
+                array(
+                    'field' => 'course_plan',
+                    'label' => 'lang:course_plan',
+                    'rules' => 'required|numeric',
+                ),
+                array(
+                    'field' => 'status',
+                    'label' => 'lang:status',
+                    'rules' => 'required|numeric',
+                ),
+                array(
+                    'field' => 'date_begin',
+                    'label' => 'lang:field_user_course_date_begin',
+                    'rules' => 'required',
+                ),
+                /*
+                array(
+                    'field' => 'date_end',
+                    'label' => 'lang:field_user_course_date_end',
+                    'rules' => 'required',
+                ),
+                */
+            );
+            
+            $this->form_validation->set_rules($rules);
+            
+            if($this->form_validation->run()){
+                $user_course = array(
+                    'fk_user' => $id_apprentice,
+                    'fk_course_plan' => $this->input->post('course_plan'),
+                    'fk_status' => $this->input->post('status'),
+                    'date_begin' => $this->input->post('date_begin'),
+                    'date_end' => $this->input->post('date_end'),
+                );
+                
+                if($id_user_course > 0){
+                    echo $this->user_course_model->update($id_user_course, $user_course);
+                }else{
+                    $id_user_course = $this->user_course_model->insert($user_course);
+                    
+                    $course_plan = $this->course_plan_model->with_all()->get($user_course['fk_course_plan']);
+                    
+                    $competenceDomainIds = array_column($course_plan->competence_domains, 'id');
+                    
+                    $operational_competences = $this->operational_competence_model->with_all()->get_many_by('fk_competence_domain',$competenceDomainIds);
+                    
+                    $objectiveIds = array_column($operational_competences->objectives,'id');
+                    
+                    foreach ($objectiveIds as $objectiveId){
+                        
+                        $acquisition_status = array(
+                            'fk_objective' => $objectiveId,
+                            'fk_user_course' => $id_user_course,
+                            'fk_acquisition_level' => 1
+                        );
+                        
+                        $this->acquisition_status_model->insert($acquisition_status);
+                    }
+                }
+                
+                redirect('apprentice/view_apprentice/'.$id_apprentice);
+                exit();
+            }
+        }
+        
+        $course_plans = $this->course_plan_model->dropdown('official_name');
+        $status = $this->user_course_status_model->dropdown('name');
+        
+        $output = array(
+            'title' => $this->lang->line('title_course_plan_link'),
+            'course_plans' => $course_plans,
+            'user_course'   => $user_course,
+            'status' => $status,
+            'apprentice' => $apprentice
+        );
+        
+        $this->display_view('user_course/save',$output);
+    }
+    
+    /**
+     * Create a link between a apprentice and a trainer, or change the trainer
+     * linked on the selected trainer_apprentice SQL entry
+     * 
+     * @param INT (SQL PRIMARY KEY) $id_apprentice
+     * @param INT (SQL PRIMARY KEY) $id_link
+     */
+    public function save_apprentice_link($id_apprentice = null, $id_link = 0){
+        
+        $apprentice = $this->user_model->get($id_apprentice);
+        
+        if($_SESSION['user_access'] < ACCESS_LVL_ADMIN
+        || $apprentice == null
+        || $apprentice->fk_user_type != $this->user_type_model->
+        get_by('name',$this->lang->line('title_apprentice'))->id){
+            redirect(base_url());
+            exit();
+        }
+        
+        // It seems that the MY_model dropdown method can't return a filtered result
+        // so here we get every users that are trainer, then we create a array
+        // with the matching constitution
+        
+        if(count($_POST) > 0){
+            $id_apprentice = $this->input->post('id');
+            $rules = array(
+                array(
+                    'field' => 'apprentice',
+                    'label' => 'field_apprentice_username',
+                    'rules' => 'required|numeric'
+                ),
+                array(
+                    'field' => 'trainer',
+                    'label' => 'field_trainer_link',
+                    'rules' => 'required|numeric'
+                ),
+            );
+            
+            $this->form_validation->set_rules($rules);
+            
+            if($this->form_validation->run()){
+                echo var_dump($_POST);
+                
+                $apprentice_link = array(
+                    'fk_trainer' => $this->input->post('trainer'),
+                    'fk_apprentice' => $this->input->post('apprentice'),
+                );
+                
+                if($id_link > 0){
+                    echo $this->trainer_apprentice_model->update($id_apprentice,$apprentice_link);
+                }else{
+                    echo $this->trainer_apprentice_model->insert($apprentice_link);
+                }
+                
+                redirect('apprentice');
+                exit();
+            }
+        }
+        
+        $trainersRaw = $this->user_model->get_many_by('fk_user_type',$this->user_type_model->get_by('access_level',ACCESS_LVL_TRAINER)->id);
+        
+        $trainers = array();
+        
+        foreach ($trainersRaw as $trainer){
+            $trainers[$trainer->id] = $trainer->username;
+        }
+        
+        $link = $this->trainer_apprentice_model->get($id_link);
+        
+        $output = array(
+            'apprentice' => $apprentice,
+            'trainers' => $trainers,
+            'link' => $link,
+        );
+        
+        $this->display_view('apprentice/link',$output);
+    }
+    
 }

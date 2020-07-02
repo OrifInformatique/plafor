@@ -26,7 +26,7 @@ $update = !is_null($link);
         'id' => 'apprentice_link_form',
         'name' => 'apprentice_link_form'
     );
-    echo form_open('apprentice/save_apprentice_link/'.$apprentice->id, $attributes, [
+    echo form_open('admin/save_apprentice_link/'.$apprentice->id, $attributes, [
         'id' => $apprentice->id ?? 0
     ]);
     ?>

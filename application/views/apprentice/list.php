@@ -8,6 +8,7 @@
  */
 ?>
 <div class="container">
+    <?php if($_SESSION['user_access'] == ACCESS_LVL_ADMIN): ?>
     <div class="row">
         <ul class="nav nav-pills">
             <li class="nav-item">
@@ -26,7 +27,9 @@
                 <a href="<?= base_url('admin/list_objective/') ?>" class="nav-link"><?= lang('admin_objectives'); ?></a>
             </li>
         </ul>
-  </div>
+    </div>
+    <?php $isAdmin = true; ?>
+    <?php endif; ?>
     <div class="row">
         <div class="col">
             <h1 class="title-section"><?= lang('title_apprentice_list'); ?></h1>
@@ -44,7 +47,7 @@
             <?php foreach($apprentices as $apprentice) { ?>
                 <tr>
                     <td><a href="<?= base_url('apprentice/view_apprentice/'.$apprentice->id); ?>"><?= $apprentice->username; ?></td>
-                    <td><a href="<?= base_url('admin/list_course_plan/'.$apprentice->id)?>"><?php 
+                    <td><?php if(isset($isAdmin)): ?><a href="<?= base_url('admin/list_course_plan/'.$apprentice->id)?>"><?php endif; ?><?php 
                         $linkedCourses = "";
                         
                         foreach ($courses as $course){
@@ -53,7 +56,7 @@
                             }
                         } 
                         echo rtrim($linkedCourses,",");
-                        ?></a></td>
+                        ?><?php if(isset($isAdmin)): ?></a><?php endif; ?></td>
                 </tr>
             <?php } ?>
         </tbody>

@@ -59,7 +59,7 @@
     <?php if($_SESSION['user_access'] == ACCESS_LVL_ADMIN): ?>
     <div class="row">
         <div class="col-md-12">
-            <a class="btn btn-primary text-white" href="<?= base_url('apprentice/save_user_course/'.$apprentice->id."/".$user_course->id)?>"><?= $this->lang->line('title_user_course_update') ?></a>
+            <a class="btn btn-primary text-white" href="<?= base_url('admin/save_user_course/'.$apprentice->id."/".$user_course->id)?>"><?= $this->lang->line('title_user_course_update') ?></a>
             <a class="btn btn-danger text-white" href="<?= base_url('admin/delete_user_course/'.$user_course->id)?>"><?= $this->lang->line('title_user_course_delete') ?></a>
         </div>
     </div>
