@@ -172,11 +172,10 @@ class Apprentice extends MY_Controller
                     foreach ($course_plan->competence_domains as $competence_domain){
                         $competenceDomainIds[] = $competence_domain->id;
                     }
-
-                    $competenceDomainId = implode(',',$competenceDomainIds);
-
-                    $operational_competences = $this->operational_competence_model->with_all()->get_many_by('fk_competence_domain IN ('.$competenceDomainId.')');
-
+                    
+                    $operational_competences = $this->operational_competence_model->with_all()->get_many_by('fk_competence_domain',$competenceDomainIds);
+                    
+                    $objectiveIds = array();
                     foreach ($operational_competences as $operational_competence){
                         foreach ($operational_competence->objectives as $objective){
                             $objectiveIds[] = $objective->id;
@@ -184,7 +183,6 @@ class Apprentice extends MY_Controller
                     }
                     
                     foreach ($objectiveIds as $objectiveId){
-                        
                         $acquisition_status = array(
                             'fk_objective' => $objectiveId,
                             'fk_user_course' => $id_user_course,
@@ -194,7 +192,6 @@ class Apprentice extends MY_Controller
                         $this->acquisition_status_model->insert($acquisition_status);
                     }
                 }
-                
                 redirect('apprentice/view_apprentice/'.$id_apprentice);
                 exit();
             }
