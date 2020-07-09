@@ -174,7 +174,7 @@ class Apprentice extends MY_Controller
                     }
                     
                     $operational_competences = $this->operational_competence_model->with_all()->get_many_by('fk_competence_domain',$competenceDomainIds);
-                    echo var_dump($competenceDomainIds);
+                    
                     $objectiveIds = array();
                     foreach ($operational_competences as $operational_competence){
                         foreach ($operational_competence->objectives as $objective){
@@ -190,10 +190,9 @@ class Apprentice extends MY_Controller
                         );
                         
                         $this->acquisition_status_model->insert($acquisition_status);
-                        echo "cas_2";
                     }
                 }
-                //redirect('apprentice/view_apprentice/'.$id_apprentice);
+                redirect('apprentice/view_apprentice/'.$id_apprentice);
                 exit();
             }
         }
