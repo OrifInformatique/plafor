@@ -26,7 +26,7 @@
     </div>
     <?php $trainers_id = array();
         foreach($trainers_apprentice as $trainer_apprentice):
-            $trainers_id[] = $trainer_apprentice['fk_trainer'];
+            $trainers_id[] = $trainer_apprentice->fk_trainer;
         endforeach;
 
         if(($_SESSION['user_access'] == ACCESS_LVL_ADMIN)
