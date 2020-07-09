@@ -274,7 +274,6 @@ INSERT INTO `trainer_apprentice` (`id`, `fk_trainer`, `fk_apprentice`) VALUES
 --
 
 INSERT INTO `user` (`id`, `fk_user_type`, `username`, `password`, `archive`, `date_creation`) VALUES
-(1, 1, 'admin', '$2y$10$tUB5R1MGgbO.zD//WArnceTY8IgnFkVVsudIdHBxIrEXJ2z3WBvcK', 0, '2020-07-09 06:11:05'),
 (2, 2, 'FormateurDev', '$2y$10$Q3H8WodgKonQ60SIcu.eWuVKXmxqBw1X5hMpZzwjRKyCTB1H1l.pe', 0, '2020-07-09 11:15:24'),
 (3, 2, 'FormateurSysteme', '$2y$10$v8qCvWlas8DvVkOxY6k4JufPAxFvJxYRLU0tMMbSJYNQjos27RHMK', 0, '2020-07-09 11:15:47'),
 (4, 3, 'ApprentiDev', '$2y$10$6TLaMd5ljshybxANKgIYGOjY0Xur9EgdzcEPy1bgy2b8uyWYeVoEm', 0, '2020-07-09 11:16:05'),
@@ -290,7 +289,7 @@ INSERT INTO `user_course` (`id`, `fk_user`, `fk_course_plan`, `fk_status`, `date
 (1, 4, 1, 1, '2020-07-09', '0000-00-00'),
 (2, 5, 3, 1, '2020-07-09', '0000-00-00'),
 (3, 7, 4, 1, '2020-07-09', '0000-00-00');
-SET FOREIGN_KEY_CHECKS=1;
+SET FOREIGN_KEY_CHECKS=0;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
