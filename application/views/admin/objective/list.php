@@ -56,7 +56,7 @@
         <tbody id="objectiveslist">
             <?php foreach($objectives as $objective) { ?>
                 <tr>
-                    <td><a href="<?= base_url('aprentice/view_objective/'.$objective->id); ?>"><span class="font-weight-bold"><?= $objective->symbol?></span> <?= $objective->name; ?></td>
+                    <td><a href="<?= base_url('apprentice/view_objective/'.$objective->id); ?>"><span class="font-weight-bold"><?= $objective->symbol?></span> <?= $objective->name; ?></td>
                     <td><a href="<?= base_url('apprentice/view_objective/').$objective->id?>"><?= lang('btn_details')?></a></td>
                     <?php if($_SESSION['user_access'] == ACCESS_LVL_ADMIN): ?>
                     <td><a href="<?= base_url('admin/save_objective/'.$objective->id); ?>"><?= lang('btn_update')?></a></td>

@@ -34,7 +34,7 @@ class Admin extends MY_Controller
       $this->list_course_plan();
     }
 
-    
+
     /**
      * Displays the list of course plans
      *
@@ -46,20 +46,20 @@ class Admin extends MY_Controller
             $course_plans = $this->course_plan_model->get_all();
         }else{
             $userCourses = $this->user_course_model->get_many_by('fk_user',$id_apprentice);
-            
+
             $coursesId = array_column($userCourses, 'fk_course_plan');
-            
+
             $course_plans = $this->course_plan_model->get_many($coursesId);
         }
-        
+
         $output = array(
             'course_plans' => $course_plans
         );
-        
+
         if(is_numeric($id_apprentice)){
             $output[] = ['course_plans' => $course_plans];
         }
-        
+
         $this->display_view('admin/course_plan/list', $output);
     }
 
@@ -140,36 +140,58 @@ class Admin extends MY_Controller
                 $this->display_view('admin/course_plan/delete', $output);
                 break;
             case 1: // Deactivate (soft delete) course plan
-                
+
                 $competenceDomainIds = array_column($course_plan->competence_domains, 'id');
-                
+
                 $operational_competences = $this->operational_competence_model->with_all()->get_many_by('fk_competence_domain',$competenceDomainIds);
-                
+
                 $operationalCompetencesIds = array_column($operational_competences, 'id');
-                
+
                 $objectiveIds = array();
                 foreach($operational_competences as $operational_competence){
                     array_push($objectiveIds,array_column($operational_competence->objectives, 'id'));
                 }
-                
+
                 $objectiveIds = array_merge(...$objectiveIds);
-                
+
                 $this->objective_model->delete_many($objectiveIds);
-                
+
                 $this->operational_competence_model->delete_many($operationalCompetencesIds);
-                
+
                 $this->competence_domain_model->delete_many($competenceDomainIds);
-                
+
                 $this->course_plan_model->delete($course_plan_id, FALSE);
                 redirect('admin/list_course_plan');
-                break;
+
+			case 2: // Hard delete course plan
+				$competenceDomainIds = array_column($course_plan->competence_domains, 'id');
+				$operationalCompetences = $this->operational_competence_model->with_all()->get_many_by('fk_competence_domain', $competenceDomainIds);
+				$operCompIds = array_column($operationalCompetences, 'id');
+				$objectiveIds = [];
+
+				foreach ($operationalCompetences as $operationalCompetence) {
+					$objectiveIds = array_merge($objectiveIds, array_column($operationalCompetence->objectives, 'id'));
+				}
+
+				foreach ($objectiveIds as $objectiveId) {
+					$this->objective_model->delete($objectiveId, TRUE);
+				}
+				foreach ($operCompIds as $operCompId) {
+					$this->operational_competence_model->delete($operCompId, TRUE);
+				}
+				foreach ($competenceDomainIds as $competenceDomainId) {
+					$this->competence_domain_model->delete($competenceDomainId, TRUE);
+				}
+				$this->course_plan_model->delete($course_plan_id, TRUE);
+                redirect('admin/list_course_plan');
+
             default: // Do nothing
                 redirect('admin/list_course_plan');
                 break;
         }
     }
-    
-    
+
+
     /**
      * Displays the list of course plans
      *
@@ -183,15 +205,15 @@ class Admin extends MY_Controller
             $course_plan = $this->course_plan_model->get($id_course_plan);
             $competence_domains = $this->competence_domain_model->get_many_by('fk_course_plan', $course_plan->id);
         }
-            
+
         $output = array(
             'competence_domains' => $competence_domains
         );
-        
+
         if(is_numeric($id_course_plan)){
             $output[] = ['course_plan' => $course_plan];
         }
-        
+
         $this->display_view('admin/competence_domain/list', $output);
     }
 
@@ -239,7 +261,7 @@ class Admin extends MY_Controller
             'competence_domain' => $this->competence_domain_model->get($competence_domain_id),
             'course_plans' => $this->course_plan_model->dropdown('official_name')
 	);
-        
+
         $this->display_view('admin/competence_domain/save', $output);
     }
 
@@ -269,19 +291,32 @@ class Admin extends MY_Controller
                 $this->display_view('admin/competence_domain/delete', $output);
                 break;
             case 1: // Deactivate (soft delete) competence domain
-            
-                $operationalCompetenceIds = array_column($competence_domain,'id');
-                
+
+                $operationalCompetenceIds = array_column($this->operational_competence_model->get_many_by('fk_competence_domain', $competence_domain_id), 'id');
+
                 $this->objective_model->delete_by('fk_operational_competence',$operationalCompetenceIds);
                 $this->operational_competence_model->delete_by('fk_competence_domain='.$competence_domain_id);
                 $this->competence_domain_model->delete($competence_domain_id, FALSE);
                 redirect('admin/list_competence_domain');
-                break;
+
+			case 2: // Hard delete
+				$operCompIds = array_column($this->operational_competence_model->get_many_by('fk_competence_domain', $competence_domain_id), 'id');
+				$objectiveIds = array_column($this->objective_model->get_many_by('fk_operational_competence', $operCompIds), 'id');
+
+				foreach ($objectiveIds as $objectiveId) {
+					$this->objective_model->delete($objectiveId, TRUE);
+				}
+				foreach ($operCompIds as $operCompId) {
+					$this->operational_competence_model->delete($operCompId, TRUE);
+				}
+				$this->competence_domain_model->delete($competence_domain_id, TRUE);
+				redirect('admin/list_competence_domain');
+
             default: // Do nothing
                 redirect('admin/list_competence_domain');
         }
     }
-    
+
     /**
      * Displays the list of course plans
      *
@@ -295,15 +330,12 @@ class Admin extends MY_Controller
             $competence_domain = $this->competence_domain_model->get($id_competence_domain);
             $operational_competences = $this->operational_competence_model->get_many_by('fk_competence_domain',$competence_domain->id);
         }
-        
+
         $output = array(
-            'operational_competences' => $operational_competences
+			'operational_competences' => $operational_competences,
+			'id_competence_domain' => $id_competence_domain
         );
-        
-        if(is_numeric($id_competence_domain)){
-            $output[] = ['competence_domain' => $competence_domain];
-        }
-        
+
         $this->display_view('admin/operational_competence/list', $output);
     }
 
@@ -317,33 +349,33 @@ class Admin extends MY_Controller
     {
 		if (count($_POST) > 0) {
 			$operational_competence_id = $this->input->post('id');
-                        $rules = array(
-                            array(
-                              'field' => 'symbol',
-                              'label' => 'lang:field_operational_competence_symbol',
-                              'rules' => 'required|max_length['.SYMBOL_MAX_LENGTH.']',
-                            ),
-                            array(
-                              'field' => 'name',
-                              'label' => 'lang:field_operational_name',
-                              'rules' => 'required|max_length['.OPERATIONAL_COMPETENCE_NAME_MAX_LENGTH.']',
-                            ),
-                            array(
-                              'field' => 'methodologic',
-                              'label' => 'lang:field_operational_methodologic',
-                              'rules' => 'max_length['.SQL_TEXT_MAX_LENGTH.']',
-                            ),
-                            array(
-                              'field' => 'social',
-                              'label' => 'lang:field_operational_social',
-                              'rules' => 'max_length['.SQL_TEXT_MAX_LENGTH.']',
-                            ),
-                            array(
-                              'field' => 'personal',
-                              'label' => 'lang:field_operational_personal',
-                              'rules' => 'max_length['.SQL_TEXT_MAX_LENGTH.']',
-                            ),
-                        );
+			$rules = array(
+				array(
+					'field' => 'symbol',
+					'label' => 'lang:field_operational_competence_symbol',
+					'rules' => 'required|max_length['.SYMBOL_MAX_LENGTH.']',
+				),
+				array(
+					'field' => 'name',
+					'label' => 'lang:field_operational_name',
+					'rules' => 'required|max_length['.OPERATIONAL_COMPETENCE_NAME_MAX_LENGTH.']',
+				),
+				array(
+					'field' => 'methodologic',
+					'label' => 'lang:field_operational_methodologic',
+					'rules' => 'max_length['.SQL_TEXT_MAX_LENGTH.']',
+				),
+				array(
+					'field' => 'social',
+					'label' => 'lang:field_operational_social',
+					'rules' => 'max_length['.SQL_TEXT_MAX_LENGTH.']',
+				),
+				array(
+					'field' => 'personal',
+					'label' => 'lang:field_operational_personal',
+					'rules' => 'max_length['.SQL_TEXT_MAX_LENGTH.']',
+				),
+			);
 			$this->form_validation->set_rules($rules);
 			if ($this->form_validation->run()) {
 				$operational_competence = array(
@@ -352,7 +384,7 @@ class Admin extends MY_Controller
 					'methodologic' => $this->input->post('methodologic'),
 					'social' => $this->input->post('social'),
 					'personal' => $this->input->post('personal'),
-                                        'fk_competence_domain' => $this->input->post('competence_domain')
+					'fk_competence_domain' => $this->input->post('competence_domain')
 				);
 				if ($operational_competence_id > 0) {
 					$this->operational_competence_model->update($operational_competence_id, $operational_competence);
@@ -368,7 +400,7 @@ class Admin extends MY_Controller
             'title' => $this->lang->line('title_operational_competence_'.((bool)$operational_competence_id ? 'update' : 'new')),
             'operational_competence' => $this->operational_competence_model->get($operational_competence_id),
             'competence_domains' => $this->competence_domain_model->dropdown('name')
-	);
+		);
 
         $this->display_view('admin/operational_competence/save', $output);
     }
@@ -401,13 +433,19 @@ class Admin extends MY_Controller
             case 1: // Deactivate (soft delete) operational competence
                 $this->objective_model->delete_by('fk_operational_competence='.$operational_competence_id);
                 $this->operational_competence_model->delete($operational_competence_id, FALSE);
-                redirect('admin/list_operational_competence');
-                break;
+				redirect('admin/list_operational_competence');
+			case 2: // Hard delete
+				$objectiveIds = array_column($this->objective_model->get_many_by('fk_operational_competence', $operational_competence_id), 'id');
+
+				foreach ($objectiveIds as $objectiveId) {
+					$this->objective_model->delete($objectiveId, TRUE);
+				}
+				$this->operational_competence_model->delete($operational_competence_id, TRUE);
             default: // Do nothing
                 redirect('admin/list_operational_competence');
         }
     }
-    
+
     /**
      * Deletes a trainer_apprentice link depending on $action
      *
@@ -442,7 +480,7 @@ class Admin extends MY_Controller
                 redirect('apprentice/list_apprentice/'.$apprentice->id);
         }
     }
-    
+
     /**
      * Deletes a user_course depending on $action
      *
@@ -479,7 +517,7 @@ class Admin extends MY_Controller
                 redirect('apprentice/list_apprentice');
         }
     }
-    
+
     /**
      * Displays the list of course plans
      *
@@ -493,15 +531,15 @@ class Admin extends MY_Controller
             $operational_competence = $this->operational_competence_model->get($id_operational_competence);
             $objectives = $this->objective_model->get_many_by('fk_operational_competence',$operational_competence->id);
         }
-            
+
         $output = array(
             'objectives' => $objectives
         );
-        
+
         if(is_numeric($id_operational_competence)){
             $output[] = ['operational_competence',$operational_competence];
         }
-        
+
         $this->display_view('admin/objective/list', $output);
     }
 
@@ -586,27 +624,29 @@ class Admin extends MY_Controller
             case 1: // Deactivate (soft delete) objective
                 $this->objective_model->delete($objective_id, FALSE);
                 redirect('admin/list_objective');
-                break;
+			case 2: // Hard delete
+				$this->objective_model->delete($objective_id, TRUE);
+				redirect('admin/list_objective');
             default: // Do nothing
                 redirect('admin/list_objective');
         }
     }
-    
+
     /**
      * Form to create a link between a apprentice and a course plan
-     * 
+     *
      * @param int (SQL PRIMARY KEY) $id_user_course
      */
     public function save_user_course($id_apprentice = null,$id_user_course = 0){
-        
+
         $apprentice = $this->user_model->get($id_apprentice);
         $user_course = $this->user_course_model->get($id_user_course);
-        
+
         if($id_apprentice == null || $apprentice->fk_user_type != $this->user_type_model->get_by('name',$this->lang->line('title_apprentice'))->id){
             redirect(base_url('apprentice/list_apprentice'));
             exit();
         }
-        
+
         if(count($_POST) > 0){
             $rules = array(
                 array(
@@ -632,9 +672,9 @@ class Admin extends MY_Controller
                 ),
                 */
             );
-            
+
             $this->form_validation->set_rules($rules);
-            
+
             if($this->form_validation->run()){
                 $user_course = array(
                     'fk_user' => $id_apprentice,
@@ -643,40 +683,40 @@ class Admin extends MY_Controller
                     'date_begin' => $this->input->post('date_begin'),
                     'date_end' => $this->input->post('date_end'),
                 );
-                
+
                 if($id_user_course > 0){
                     echo $this->user_course_model->update($id_user_course, $user_course);
                 }else{
                     $id_user_course = $this->user_course_model->insert($user_course);
-                    
+
                     $course_plan = $this->course_plan_model->with_all()->get($user_course['fk_course_plan']);
-                    
+
                     $competenceDomainIds = array_column($course_plan->competence_domains, 'id');
-                    
+
                     $operational_competences = $this->operational_competence_model->with_all()->get_many_by('fk_competence_domain',$competenceDomainIds);
-                    
+
                     $objectiveIds = array_column($operational_competences->objectives,'id');
-                    
+
                     foreach ($objectiveIds as $objectiveId){
-                        
+
                         $acquisition_status = array(
                             'fk_objective' => $objectiveId,
                             'fk_user_course' => $id_user_course,
                             'fk_acquisition_level' => 1
                         );
-                        
+
                         $this->acquisition_status_model->insert($acquisition_status);
                     }
                 }
-                
+
                 redirect('apprentice/view_apprentice/'.$id_apprentice);
                 exit();
             }
         }
-        
+
         $course_plans = $this->course_plan_model->dropdown('official_name');
         $status = $this->user_course_status_model->dropdown('name');
-        
+
         $output = array(
             'title' => $this->lang->line('title_course_plan_link'),
             'course_plans' => $course_plans,
@@ -684,21 +724,21 @@ class Admin extends MY_Controller
             'status' => $status,
             'apprentice' => $apprentice
         );
-        
+
         $this->display_view('user_course/save',$output);
     }
-    
+
     /**
      * Create a link between a apprentice and a trainer, or change the trainer
      * linked on the selected trainer_apprentice SQL entry
-     * 
+     *
      * @param INT (SQL PRIMARY KEY) $id_apprentice
      * @param INT (SQL PRIMARY KEY) $id_link
      */
     public function save_apprentice_link($id_apprentice = null, $id_link = 0){
-        
+
         $apprentice = $this->user_model->get($id_apprentice);
-        
+
         if($_SESSION['user_access'] < ACCESS_LVL_ADMIN
         || $apprentice == null
         || $apprentice->fk_user_type != $this->user_type_model->
@@ -706,11 +746,11 @@ class Admin extends MY_Controller
             redirect(base_url());
             exit();
         }
-        
+
         // It seems that the MY_model dropdown method can't return a filtered result
         // so here we get every users that are trainer, then we create a array
         // with the matching constitution
-        
+
         if(count($_POST) > 0){
             $id_apprentice = $this->input->post('id');
             $rules = array(
@@ -725,45 +765,45 @@ class Admin extends MY_Controller
                     'rules' => 'required|numeric'
                 ),
             );
-            
+
             $this->form_validation->set_rules($rules);
-            
+
             if($this->form_validation->run()){
                 echo var_dump($_POST);
-                
+
                 $apprentice_link = array(
                     'fk_trainer' => $this->input->post('trainer'),
                     'fk_apprentice' => $this->input->post('apprentice'),
                 );
-                
+
                 if($id_link > 0){
                     echo $this->trainer_apprentice_model->update($id_apprentice,$apprentice_link);
                 }else{
                     echo $this->trainer_apprentice_model->insert($apprentice_link);
                 }
-                
+
                 redirect('apprentice');
                 exit();
             }
         }
-        
+
         $trainersRaw = $this->user_model->get_many_by('fk_user_type',$this->user_type_model->get_by('access_level',ACCESS_LVL_TRAINER)->id);
-        
+
         $trainers = array();
-        
+
         foreach ($trainersRaw as $trainer){
             $trainers[$trainer->id] = $trainer->username;
         }
-        
+
         $link = $this->trainer_apprentice_model->get($id_link);
-        
+
         $output = array(
             'apprentice' => $apprentice,
             'trainers' => $trainers,
             'link' => $link,
         );
-        
+
         $this->display_view('apprentice/link',$output);
     }
-    
+
 }

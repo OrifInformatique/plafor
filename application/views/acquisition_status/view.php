@@ -40,7 +40,7 @@
                             if($trainer->id == $comment->fk_trainer):
                         ?>
                         <th><?= $trainer->username; ?></th>
-                        <?php 
+                        <?php
                             endif;
                         endforeach;
                         ?>
@@ -52,4 +52,3 @@
         </div>
     </div>
 </div>
-<pre><?= var_dump($trainers)?></pre>
