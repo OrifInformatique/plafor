@@ -22,12 +22,13 @@ $lang['btn_cancel']                     = 'Annuler';
 $lang['btn_add_m']                      = 'Nouveau';
 $lang['btn_add_f']                      = 'Nouvelle';
 $lang['btn_save']                       = 'Enregistrer';
-$lang['btn_update']                     = 'Modifier';  
+$lang['btn_update']                     = 'Modifier';
 $lang['btn_details']                    = 'Détails';
 $lang['btn_disable']                    = 'Désactiver';
 $lang['btn_reactivate']                 = 'Réactiver';
 $lang['btn_delete']                     = 'Supprimer';
 $lang['btn_hard_delete']                = 'Supprimer définitivement';
+$lang['btn_show_disabled']			    = 'Afficher les éléments désactivés';
 
 // Messages
 $lang['msg_err_access_denied_header']   = 'Accès interdit';
@@ -167,7 +168,7 @@ $lang['field_comment_creater']          = 'Créateur du commentaire';
 $lang['field_comment_date_creation']    = 'Date de création du commentaire';
 $lang['field_trainer_link']             = 'Formateur(s) lié(s)';
 $lang['field_trainers_name']            = 'Nom des formateurs';
-$lang['field_acquisition_level']        = 'Niveau d\'acquisition';                   
+$lang['field_acquisition_level']        = 'Niveau d\'acquisition';
 $lang['field_id']                       = 'Identifiant';
 $lang['field_symbol']                   = 'Symbole';
 $lang['field_taxonomy']                 = 'Taxonomie';

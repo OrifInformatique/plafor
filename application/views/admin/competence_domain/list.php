@@ -32,15 +32,21 @@
             <h1 class="title-section"><?= lang('title_competence_domain_list'); ?></h1>
         </div>
     </div>
-    <?php if($_SESSION['user_access'] == ACCESS_LVL_ADMIN): ?>
     <div class="row">
+    	<?php if($_SESSION['user_access'] == ACCESS_LVL_ADMIN): ?>
         <div class="col-sm-3 text-left">
             <a href="<?= base_url('admin/save_competence_domain'); ?>" class="btn btn-primary">
                 <?= lang('btn_add_m'); ?>
             </a>
         </div>
+		<?php endif; ?>
+		<div class="col-sm-3 offset-6">
+			<?=form_checkbox('toggle_deleted', '', $with_archived, [
+				'id' => 'toggle_deleted', 'class' => 'form-check-input'
+			]);?>
+			<?=form_label(lang('btn_show_disabled'), 'toggle_deleted', ['class' => 'form-check-label']);?>
+		</div>
     </div>
-    <?php endif; ?>
     <div class="row mt-2">
         <table class="table table-hover">
         <thead>
@@ -73,7 +79,7 @@
 $(document).ready(function(){
     $('#toggle_deleted').change(e => {
         let checked = e.currentTarget.checked;
-        $.post('<?=base_url();?>admin/list_competence_domain/'+(+checked), {}, data => {
+        $.post('<?=base_url();?>admin/list_competence_domain/0/'+(+checked), {}, data => {
             $('#competence_domainslist').empty();
             $('#competence_domainslist')[0].innerHTML = $(data).find('#competence_domainslist')[0].innerHTML;
         });

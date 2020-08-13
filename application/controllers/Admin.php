@@ -108,7 +108,7 @@ class Admin extends MY_Controller
         $output = array(
             'title' => $this->lang->line('title_course_plan_'.((bool)$course_plan_id ? 'update' : 'new')),
             'course_plan' => $this->course_plan_model->get($course_plan_id),
-	);
+		);
 
         $this->display_view('admin/course_plan/save', $output);
     }
@@ -140,46 +140,58 @@ class Admin extends MY_Controller
                 break;
             case 1: // Deactivate (soft delete) course plan
 
-                $competenceDomainIds = array_column($course_plan->competence_domains, 'id');
+				$competenceDomainIds = array_column($course_plan->competence_domains, 'id');
 
-                $operational_competences = $this->operational_competence_model->with_all()->get_many_by('fk_competence_domain',$competenceDomainIds);
+				// Empty arrays will produce SQL errors, so only non-empty arrays will work
+				if (!empty($competenceDomainIds)) {
+					$operational_competences = $this->operational_competence_model->with_all()
+						->get_many_by('fk_competence_domain',$competenceDomainIds);
+					if (!empty($operational_competences)) {
+						$operationalCompetencesIds = array_column($operational_competences, 'id');
 
-                $operationalCompetencesIds = array_column($operational_competences, 'id');
+						$objectiveIds = array();
+						foreach($operational_competences as $operational_competence){
+							array_push($objectiveIds,array_column($operational_competence->objectives, 'id'));
+						}
+						$objectiveIds = array_merge(...$objectiveIds);
 
-                $objectiveIds = array();
-                foreach($operational_competences as $operational_competence){
-                    array_push($objectiveIds,array_column($operational_competence->objectives, 'id'));
-                }
+						$this->objective_model->delete_many($objectiveIds);
 
-                $objectiveIds = array_merge(...$objectiveIds);
+						$this->operational_competence_model->delete_many($operationalCompetencesIds);
+					}
 
-                $this->objective_model->delete_many($objectiveIds);
-
-                $this->operational_competence_model->delete_many($operationalCompetencesIds);
-
-                $this->competence_domain_model->delete_many($competenceDomainIds);
+					$this->competence_domain_model->delete_many($competenceDomainIds);
+				}
 
                 $this->course_plan_model->delete($course_plan_id, FALSE);
                 redirect('admin/list_course_plan');
 
 			case 2: // Hard delete course plan
 				$competenceDomainIds = array_column($course_plan->competence_domains, 'id');
-				$operationalCompetences = $this->operational_competence_model->with_all()->get_many_by('fk_competence_domain', $competenceDomainIds);
-				$operCompIds = array_column($operationalCompetences, 'id');
-				$objectiveIds = [];
 
-				foreach ($operationalCompetences as $operationalCompetence) {
-					$objectiveIds = array_merge($objectiveIds, array_column($operationalCompetence->objectives, 'id'));
-				}
+				// Empty arrays will produce SQL errors, so only non-empty arrays will work
+				if (!empty($competenceDomainIds)) {
+					$operationalCompetences = $this->operational_competence_model->with_all()
+						->get_many_by('fk_competence_domain', $competenceDomainIds);
+					if (!empty($operationalCompetences)) {
+						$operCompIds = array_column($operationalCompetences, 'id');
+						$objectiveIds = [];
 
-				foreach ($objectiveIds as $objectiveId) {
-					$this->objective_model->delete($objectiveId, TRUE);
-				}
-				foreach ($operCompIds as $operCompId) {
-					$this->operational_competence_model->delete($operCompId, TRUE);
-				}
-				foreach ($competenceDomainIds as $competenceDomainId) {
-					$this->competence_domain_model->delete($competenceDomainId, TRUE);
+						// Get all objective ids
+						foreach ($operationalCompetences as $operationalCompetence) {
+							$objectiveIds = array_merge($objectiveIds, array_column($operationalCompetence->objectives, 'id'));
+						}
+
+						foreach ($objectiveIds as $objectiveId) {
+							$this->objective_model->delete($objectiveId, TRUE);
+						}
+						foreach ($operCompIds as $operCompId) {
+							$this->operational_competence_model->delete($operCompId, TRUE);
+						}
+					}
+					foreach ($competenceDomainIds as $competenceDomainId) {
+						$this->competence_domain_model->delete($competenceDomainId, TRUE);
+					}
 				}
 				$this->course_plan_model->delete($course_plan_id, TRUE);
                 redirect('admin/list_course_plan');
@@ -194,24 +206,31 @@ class Admin extends MY_Controller
     /**
      * Displays the list of course plans
      *
+	 * @param int $id_course_plan = ID of the course plan whose competence domains are to display
+	 * 		If invalid, will show all competence domains
+	 * @param bool $with_archived = TRUE to show archived competence domains, FALSE otherwise
      * @return void
      */
-    public function list_competence_domain($id_course_plan = null)
+    public function list_competence_domain($id_course_plan = 0, $with_archived = FALSE)
     {
-        if($id_course_plan == null){
-            $competence_domains = $this->competence_domain_model->get_all();
+		$course_plan = $this->course_plan_model->get($id_course_plan);
+		// Store competence domain model in case the user wants archived elements
+		$competence_domain_model =& $this->competence_domain_model;
+
+		if ($with_archived) {
+			$competence_domain_model = $competence_domain_model->with_deleted();
+		}
+
+        if($course_plan == null){
+            $competence_domains = $competence_domain_model->get_all();
         }else{
-            $course_plan = $this->course_plan_model->get($id_course_plan);
-            $competence_domains = $this->competence_domain_model->get_many_by('fk_course_plan', $course_plan->id);
+            $competence_domains = $competence_domain_model->get_many_by('fk_course_plan', $course_plan->id);
         }
 
         $output = array(
-            'competence_domains' => $competence_domains
+			'competence_domains' => $competence_domains,
+			'with_archived' => $with_archived
         );
-
-        if(is_numeric($id_course_plan)){
-            $output[] = ['course_plan' => $course_plan];
-        }
 
         $this->display_view('admin/competence_domain/list', $output);
     }
@@ -259,7 +278,7 @@ class Admin extends MY_Controller
             'title' => $this->lang->line('title_competence_domain_'.((bool)$competence_domain_id ? 'update' : 'new')),
             'competence_domain' => $this->competence_domain_model->get($competence_domain_id),
             'course_plans' => $this->course_plan_model->dropdown('official_name')
-	);
+		);
         $this->display_view('admin/competence_domain/save', $output);
     }
 
@@ -271,11 +290,12 @@ class Admin extends MY_Controller
      *  - 0 for displaying the confirmation
      *  - 1 for deactivating (soft delete)
      *  - 2 for deleting (hard delete)
+	 *  - 3 for reactivating
      * @return void
      */
     public function delete_competence_domain($competence_domain_id, $action = 0)
     {
-        $competence_domain = $this->competence_domain_model->with_all()->get($competence_domain_id);
+        $competence_domain = $this->competence_domain_model->with_deleted()->get($competence_domain_id);
         if (is_null($competence_domain)) {
             redirect('admin/competence_domain/list');
         }
@@ -284,7 +304,8 @@ class Admin extends MY_Controller
             case 0: // Display confirmation
                 $output = array(
                     'competence_domain' => $competence_domain,
-                    'title' => lang('title_competence_domain_delete')
+					'title' => lang('title_competence_domain_delete'),
+					'deleted' => $competence_domain->archive
                 );
                 $this->display_view('admin/competence_domain/delete', $output);
                 break;
@@ -292,22 +313,44 @@ class Admin extends MY_Controller
 
                 $operationalCompetenceIds = array_column($this->operational_competence_model->get_many_by('fk_competence_domain', $competence_domain_id), 'id');
 
-                $this->objective_model->delete_by('fk_operational_competence',$operationalCompetenceIds);
-                $this->operational_competence_model->delete_by('fk_competence_domain='.$competence_domain_id);
+				// Empty arrays will produce SQL errors, so only non-empty arrays will work
+				if (!empty($operationalCompetenceIds)) {
+					$this->objective_model->delete_by('fk_operational_competence',$operationalCompetenceIds);
+					$this->operational_competence_model->delete_by('fk_competence_domain='.$competence_domain_id);
+				}
                 $this->competence_domain_model->delete($competence_domain_id, FALSE);
                 redirect('admin/list_competence_domain');
 
 			case 2: // Hard delete
-				$operCompIds = array_column($this->operational_competence_model->get_many_by('fk_competence_domain', $competence_domain_id), 'id');
-				$objectiveIds = array_column($this->objective_model->get_many_by('fk_operational_competence', $operCompIds), 'id');
+				$operCompIds = $this->operational_competence_model->with_deleted()
+					->get_many_by('fk_competence_domain', $competence_domain_id);
+				$operCompIds = array_column($operCompIds, 'id');
+				// Empty arrays will produce SQL errors, so only non-empty arrays will work
+				if (!empty($operCompIds)) {
+					$objectiveIds = array_column($this->objective_model->with_deleted()->get_many_by('fk_operational_competence', $operCompIds), 'id');
 
-				foreach ($objectiveIds as $objectiveId) {
-					$this->objective_model->delete($objectiveId, TRUE);
-				}
-				foreach ($operCompIds as $operCompId) {
-					$this->operational_competence_model->delete($operCompId, TRUE);
+					foreach ($objectiveIds as $objectiveId) {
+						$this->objective_model->delete($objectiveId, TRUE);
+					}
+					foreach ($operCompIds as $operCompId) {
+						$this->operational_competence_model->delete($operCompId, TRUE);
+					}
 				}
 				$this->competence_domain_model->delete($competence_domain_id, TRUE);
+				redirect('admin/list_competence_domain');
+
+			case 3: // Reactivate
+				$operCompIds = $this->operational_competence_model->with_deleted()
+					->get_many_by('fk_competence_domain', $competence_domain_id);
+				$operCompIds = array_column($operCompIds, 'id');
+				// Empty arrays will produce SQL errors, so only non-empty arrays will work
+				if (!empty($operCompIds)) {
+					$objectiveIds = array_column($this->objective_model->with_deleted()->get_many_by('fk_operational_competence', $operCompIds), 'id');
+
+					if (!empty($objectiveIds)) $this->objective_model->update_many($objectiveIds, ['archive' => FALSE]);
+					$this->operational_competence_model->update_many($operCompIds, ['archive' => FALSE]);
+				}
+				$this->competence_domain_model->update($competence_domain_id, ['archive' => FALSE]);
 				redirect('admin/list_competence_domain');
 
             default: // Do nothing
@@ -585,7 +628,7 @@ class Admin extends MY_Controller
             'title' => $this->lang->line('title_objective_'.((bool)$objective_id ? 'update' : 'new')),
             'objective' => $this->objective_model->get($objective_id),
             'operational_competences' => $this->operational_competence_model->dropdown('name')
-	);
+		);
 
         $this->display_view('admin/objective/save', $output);
     }

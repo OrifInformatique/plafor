@@ -12,10 +12,16 @@
                 <div class="text-right">
                     <a href="<?= base_url('admin/list_competence_domain'); ?>" class="btn btn-default">
                         <?= lang('btn_cancel'); ?>
-                    </a>
+					</a>
+					<?php if ($deleted) { ?>
+                    <a href="<?= base_url(uri_string().'/3'); ?>" class="btn btn-primary">
+                        <?= lang('btn_reactivate'); ?>
+					</a>
+					<?php } else { ?>
                     <a href="<?= base_url(uri_string().'/1'); ?>" class="btn btn-primary">
                         <?= lang('btn_disable'); ?>
-                    </a>
+					</a>
+					<?php } ?>
                     <a href="<?= base_url(uri_string().'/2'); ?>" class="btn btn-danger">
                         <?= lang('btn_delete'); ?>
                     </a>
