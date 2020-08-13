@@ -26,7 +26,7 @@
     </div>
     <?php
         $trainersId = array_column($trainers_apprentice, 'fk_trainer');
-        
+
         if(($_SESSION['user_access'] == ACCESS_LVL_ADMIN)
         || ($_SESSION['user_access'] == ACCESS_LVL_TRAINER && in_array($_SESSION['user_id'], $trainersId))
         || ($_SESSION['user_access'] == ACCESS_LVL_APPRENTICE && $user_course->fk_user == $apprentice->id)): ?>

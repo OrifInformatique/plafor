@@ -34,7 +34,6 @@ class Admin extends MY_Controller
       $this->list_course_plan();
     }
 
-
     /**
      * Displays the list of course plans
      *
@@ -261,7 +260,6 @@ class Admin extends MY_Controller
             'competence_domain' => $this->competence_domain_model->get($competence_domain_id),
             'course_plans' => $this->course_plan_model->dropdown('official_name')
 	);
-
         $this->display_view('admin/competence_domain/save', $output);
     }
 
@@ -316,7 +314,6 @@ class Admin extends MY_Controller
                 redirect('admin/list_competence_domain');
         }
     }
-
     /**
      * Displays the list of course plans
      *
@@ -445,7 +442,6 @@ class Admin extends MY_Controller
                 redirect('admin/list_operational_competence');
         }
     }
-
     /**
      * Deletes a trainer_apprentice link depending on $action
      *
@@ -480,7 +476,6 @@ class Admin extends MY_Controller
                 redirect('apprentice/list_apprentice/'.$apprentice->id);
         }
     }
-
     /**
      * Deletes a user_course depending on $action
      *
@@ -517,7 +512,6 @@ class Admin extends MY_Controller
                 redirect('apprentice/list_apprentice');
         }
     }
-
     /**
      * Displays the list of course plans
      *

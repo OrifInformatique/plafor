@@ -19,7 +19,7 @@ $update = !is_null($link);
             <h1 class="title-section"><?= lang('apprentice_link_'.($update ? 'update' : 'new').'_title'); ?></h1>
         </div>
     </div>
-    
+
     <!-- FORM OPEN -->
     <?php
     $attributes = array(
@@ -45,7 +45,7 @@ $update = !is_null($link);
                 <?= form_label(lang('field_trainer_link'), 'trainer', ['class' => 'form-label']); ?>
                 <br />
                 <?= form_dropdown('trainer',$trainers,$link->id ?? '','id="trainer" class="form-control"')?>
-            </div>   
+            </div>
         <!-- FORM BUTTONS -->
         <div class="row">
             <div class="col text-right">

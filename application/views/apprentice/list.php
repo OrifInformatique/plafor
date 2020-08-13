@@ -47,14 +47,14 @@
             <?php foreach($apprentices as $apprentice) { ?>
                 <tr>
                     <td><a href="<?= base_url('apprentice/view_apprentice/'.$apprentice->id); ?>"><?= $apprentice->username; ?></td>
-                    <td><?php if(isset($isAdmin)): ?><a href="<?= base_url('admin/list_course_plan/'.$apprentice->id)?>"><?php endif; ?><?php 
+                    <td><?php if(isset($isAdmin)): ?><a href="<?= base_url('admin/list_course_plan/'.$apprentice->id)?>"><?php endif; ?><?php
                         $linkedCourses = "";
-                        
+
                         foreach ($courses as $course){
                             foreach($coursesList as $courseList){
                                 $linkedCourses .= ($course->fk_user == $apprentice->id && $courseList->id == $course->fk_course_plan ?$courseList->official_name.",":"");
                             }
-                        } 
+                        }
                         echo rtrim($linkedCourses,",");
                         ?><?php if(isset($isAdmin)): ?></a><?php endif; ?></td>
                 </tr>
