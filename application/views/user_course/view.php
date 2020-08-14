@@ -29,9 +29,9 @@
             $trainers_id[] = $trainer_apprentice->fk_trainer;
         endforeach;
 
-        if(($_SESSION['user_access'] == ACCESS_LVL_ADMIN)
-        || ($_SESSION['user_access'] == ACCESS_LVL_TRAINER && in_array($_SESSION['user_id'], $trainersId))
-        || ($_SESSION['user_access'] == ACCESS_LVL_APPRENTICE && $user_course->fk_user == $apprentice->id)): ?>
+        if(($_SESSION['user_access'] == $this->config->item('access_lvl_admin'))
+        || ($_SESSION['user_access'] == $this->config->item('access_lvl_trainer') && in_array($_SESSION['user_id'], $trainersId))
+        || ($_SESSION['user_access'] == $this->config->item('access_lvl_apprentice') && $user_course->fk_user == $apprentice->id)): ?>
     <div class="row">
         <p class="font-weight-bold"><?= $this->lang->line('field_user_course_objectives_status') ?></p>
         <div class="col-md-12">
@@ -58,7 +58,7 @@
         </div>
     </div>
     <?php endif; ?>
-    <?php if($_SESSION['user_access'] == ACCESS_LVL_ADMIN): ?>
+	<?php if($_SESSION['user_access'] == $this->config->item('access_lvl_admin')): ?>
     <div class="row">
         <div class="col-md-12">
             <a class="btn btn-primary text-white" href="<?= base_url('apprentice/save_user_course/'.$apprentice->id."/".$user_course->id)?>"><?= $this->lang->line('title_user_course_update') ?></a>
