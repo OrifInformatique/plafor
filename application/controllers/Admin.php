@@ -37,27 +37,40 @@ class Admin extends MY_Controller
     /**
      * Displays the list of course plans
      *
+	 * @param int $id_apprentice = ID of the apprentice whose courses are to be listed.
+	 * 		If invalid, will show all courses
+	 * @param bool $with_archived = TRUE to show archived courses, FALSE otherwise
      * @return void
      */
-    public function list_course_plan($id_apprentice = null)
+    public function list_course_plan($id_apprentice = 0, $with_archived = FALSE)
     {
-        if($id_apprentice == null){
-            $course_plans = $this->course_plan_model->get_all();
-        }else{
-            $userCourses = $this->user_course_model->get_many_by('fk_user',$id_apprentice);
+		$apprentice = $this->user_model->get($id_apprentice);
+		$course_plan_model =& $this->course_plan_model;
 
-            $coursesId = array_column($userCourses, 'fk_course_plan');
+		if ($with_archived) {
+			$course_plan_model = $course_plan_model->with_deleted();
+		}
 
-            $course_plans = $this->course_plan_model->get_many($coursesId);
-        }
+		if (is_null($apprentice)) {
+			$course_plans = $this->course_plan_model->get_all();
+		} else {
+            $user_course_model =& $this->user_course_model;
+
+            if ($with_archived) {
+				$user_course_model = $user_course_model->with_deleted();
+            }
+
+            $userCourses = $user_course_model->get_many_by('fk_user', $id_apprentice);
+            $userCourses = array_column($userCourses, 'fk_course_plan');
+
+            $course_plans = $course_plan_model->get_many($userCourses);
+		}
 
         $output = array(
-            'course_plans' => $course_plans
+			'course_plans' => $course_plans,
+			'with_archived' => $with_archived,
+			'id' => $id_apprentice
         );
-
-        if(is_numeric($id_apprentice)){
-            $output[] = ['course_plans' => $course_plans];
-        }
 
         $this->display_view('admin/course_plan/list', $output);
     }
@@ -121,26 +134,31 @@ class Admin extends MY_Controller
      *  - 0 for displaying the confirmation
      *  - 1 for deactivating (soft delete)
      *  - 2 for deleting (hard delete)
+	 *  - 3 for reactivating
      * @return void
      */
     public function delete_course_plan($course_plan_id, $action = 0)
     {
-        $course_plan = $this->course_plan_model->with_all()->get($course_plan_id);
+        $course_plan = $this->course_plan_model->with_deleted()->get($course_plan_id);
         if (is_null($course_plan)) {
             redirect('admin/list_course_plan');
-        }
+		}
+
+		//$competenceDomainIds = array_column($course_plan->competence_domains, 'id');
+		$competenceDomainIds = $this->competence_domain_model->with_deleted()
+			->get_many_by('fk_course_plan', $course_plan_id);
+		$competenceDomainIds = array_column($competenceDomainIds, 'id');
 
         switch($action) {
             case 0: // Display confirmation
                 $output = array(
                     'course_plan' => $course_plan,
-                    'title' => lang('title_course_plan_delete')
+					'title' => lang('title_course_plan_delete'),
+					'deleted' => $course_plan->archive
                 );
                 $this->display_view('admin/course_plan/delete', $output);
                 break;
             case 1: // Deactivate (soft delete) course plan
-
-				$competenceDomainIds = array_column($course_plan->competence_domains, 'id');
 
 				// Empty arrays will produce SQL errors, so only non-empty arrays will work
 				if (!empty($competenceDomainIds)) {
@@ -167,7 +185,6 @@ class Admin extends MY_Controller
                 redirect('admin/list_course_plan');
 
 			case 2: // Hard delete course plan
-				$competenceDomainIds = array_column($course_plan->competence_domains, 'id');
 
 				// Empty arrays will produce SQL errors, so only non-empty arrays will work
 				if (!empty($competenceDomainIds)) {
@@ -194,7 +211,28 @@ class Admin extends MY_Controller
 					}
 				}
 				$this->course_plan_model->delete($course_plan_id, TRUE);
-                redirect('admin/list_course_plan');
+				redirect('admin/list_course_plan');
+
+			case 3: // Reactivate
+				if (!empty($competenceDomainIds)) {
+					$operationalCompetences = $this->operational_competence_model->with_all()
+						->get_many_by('fk_competence_domain', $competenceDomainIds);
+					if (!empty($operationalCompetences)) {
+						$operCompIds = array_column($operationalCompetences, 'id');
+						$objectiveIds = [];
+
+						// Get all objective ids
+						foreach ($operationalCompetences as $operationalCompetence) {
+							$objectiveIds = array_merge($objectiveIds, array_column($operationalCompetence->objectives, 'id'));
+						}
+
+						$this->objective_model->update_many($objectiveIds, ['archive' => FALSE]);
+						$this->operational_competence_model->update_many($operCompIds, ['archive' => FALSE]);
+					}
+					$this->competence_domain_model->update_many($competenceDomainIds, ['archive' => FALSE]);
+				}
+				$this->course_plan_model->update($course_plan_id, ['archive' => FALSE]);
+				redirect('admin/list_course_plan');
 
             default: // Do nothing
                 redirect('admin/list_course_plan');
@@ -206,7 +244,7 @@ class Admin extends MY_Controller
     /**
      * Displays the list of course plans
      *
-	 * @param int $id_course_plan = ID of the course plan whose competence domains are to display
+	 * @param int $id_course_plan = ID of the course plan whose competence domains are to display.
 	 * 		If invalid, will show all competence domains
 	 * @param bool $with_archived = TRUE to show archived competence domains, FALSE otherwise
      * @return void
@@ -229,7 +267,8 @@ class Admin extends MY_Controller
 
         $output = array(
 			'competence_domains' => $competence_domains,
-			'with_archived' => $with_archived
+			'with_archived' => $with_archived,
+			'id' => $id_course_plan
         );
 
         $this->display_view('admin/competence_domain/list', $output);

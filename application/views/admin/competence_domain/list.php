@@ -79,7 +79,7 @@
 $(document).ready(function(){
     $('#toggle_deleted').change(e => {
         let checked = e.currentTarget.checked;
-        $.post('<?=base_url();?>admin/list_competence_domain/0/'+(+checked), {}, data => {
+        $.post('<?=base_url();?>admin/list_competence_domain/<?=$id?>/'+(+checked), {}, data => {
             $('#competence_domainslist').empty();
             $('#competence_domainslist')[0].innerHTML = $(data).find('#competence_domainslist')[0].innerHTML;
         });
