@@ -47,7 +47,7 @@ class Admin extends MY_Controller
 		$course_plan_model =& $this->course_plan_model;
 
 		if ($with_archived) {
-			$course_plan_model = $course_plan_model->with_deleted();
+			$course_plan_model->with_deleted();
 		}
 
 		$apprentice = $this->user_model->with_deleted()->get($id_apprentice);
@@ -256,7 +256,7 @@ class Admin extends MY_Controller
 		$competence_domain_model =& $this->competence_domain_model;
 
 		if ($with_archived) {
-			$competence_domain_model = $competence_domain_model->with_deleted();
+			$competence_domain_model->with_deleted();
 		}
 
 		$course_plan = $this->course_plan_model->with_deleted()->get($id_course_plan);
@@ -401,20 +401,32 @@ class Admin extends MY_Controller
     /**
      * Displays the list of course plans
      *
+	 * @param int $id_competence_domain = ID of the competence domain whose operational competences are to show.
+	 * 		If invalid, will show all operational competences
+	 * @param bool $with_archived = TRUE to show archived operational competences, FALSE otherwise
      * @return void
      */
-    public function list_operational_competence($id_competence_domain = null)
+    public function list_operational_competence($id_competence_domain = 0, $with_archived = FALSE)
     {
-        if($id_competence_domain == null){
-            $operational_competences = $this->operational_competence_model->get_all();
+		$competenceDomain = $this->competence_domain_model->with_deleted()
+			->get($id_competence_domain);
+
+		$operational_competence_model =& $this->operational_competence_model;
+
+		if ($with_archived) {
+			$operational_competence_model->with_deleted();
+		}
+
+        if($competenceDomain == null){
+            $operational_competences = $operational_competence_model->get_all();
         }else{
-            $competence_domain = $this->competence_domain_model->get($id_competence_domain);
-            $operational_competences = $this->operational_competence_model->get_many_by('fk_competence_domain',$competence_domain->id);
+            $operational_competences = $operational_competence_model->get_many_by('fk_competence_domain',$id_competence_domain);
         }
 
         $output = array(
 			'operational_competences' => $operational_competences,
-			'id_competence_domain' => $id_competence_domain
+			'id' => $id_competence_domain,
+			'with_archived' => $with_archived
         );
 
         $this->display_view('admin/operational_competence/list', $output);
@@ -507,7 +519,8 @@ class Admin extends MY_Controller
             case 0: // Display confirmation
                 $output = array(
                     'operational_competence' => $operational_competence,
-                    'title' => lang('title_operational_competence_delete')
+					'title' => lang('title_operational_competence_delete'),
+					'deleted' => $operational_competence->archive
                 );
                 $this->display_view('admin/operational_competence/delete', $output);
                 break;
@@ -522,6 +535,12 @@ class Admin extends MY_Controller
 					$this->objective_model->delete($objectiveId, TRUE);
 				}
 				$this->operational_competence_model->delete($operational_competence_id, TRUE);
+
+			case 3: // Reactivate
+				$objectiveIds = array_column($this->objective_model->get_many_by('fk_operational_competence', $operational_competence_id), 'id');
+
+				$this->objective_model->update_many($objectiveIds, ['archive' => FALSE]);
+				$this->operational_competence_model->update($operational_competence_id, ['archive' => TRUE]);
             default: // Do nothing
                 redirect('admin/list_operational_competence');
         }
@@ -609,7 +628,7 @@ class Admin extends MY_Controller
 		$objective_model =& $this->objective_model;
 
 		if ($with_archived) {
-			$objective_model = $objective_model->with_deleted();
+			$objective_model->with_deleted();
 		}
 
 		$operationalCompetence = $this->operational_competence_model->with_deleted()->get($id_operational_competence);
