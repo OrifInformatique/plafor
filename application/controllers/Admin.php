@@ -44,12 +44,13 @@ class Admin extends MY_Controller
      */
     public function list_course_plan($id_apprentice = 0, $with_archived = FALSE)
     {
-		$apprentice = $this->user_model->get($id_apprentice);
 		$course_plan_model =& $this->course_plan_model;
 
 		if ($with_archived) {
 			$course_plan_model = $course_plan_model->with_deleted();
 		}
+
+		$apprentice = $this->user_model->with_deleted()->get($id_apprentice);
 
 		if (is_null($apprentice)) {
 			$course_plans = $this->course_plan_model->get_all();
@@ -251,13 +252,14 @@ class Admin extends MY_Controller
      */
     public function list_competence_domain($id_course_plan = 0, $with_archived = FALSE)
     {
-		$course_plan = $this->course_plan_model->get($id_course_plan);
 		// Store competence domain model in case the user wants archived elements
 		$competence_domain_model =& $this->competence_domain_model;
 
 		if ($with_archived) {
 			$competence_domain_model = $competence_domain_model->with_deleted();
 		}
+
+		$course_plan = $this->course_plan_model->with_deleted()->get($id_course_plan);
 
         if($course_plan == null){
             $competence_domains = $competence_domain_model->get_all();
@@ -597,24 +599,33 @@ class Admin extends MY_Controller
     /**
      * Displays the list of course plans
      *
+	 * @param int $id_operational_competence = ID of the operation whose objectives are to show.
+	 * 		If invalid, displays all objectives
+	 * @param bool $with_archived = TRUE to display archived objectives, FALSE otherwise
      * @return void
      */
-    public function list_objective($id_operational_competence = null)
+    public function list_objective($id_operational_competence = 0, $with_archived = FALSE)
     {
-        if($id_operational_competence == null){
-            $objectives = $this->objective_model->get_all();
+		$objective_model =& $this->objective_model;
+
+		if ($with_archived) {
+			$objective_model = $objective_model->with_deleted();
+		}
+
+		$operationalCompetence = $this->operational_competence_model->with_deleted()->get($id_operational_competence);
+
+        if($operationalCompetence == null){
+            $objectives = $objective_model->get_all();
         }else{
             $operational_competence = $this->operational_competence_model->get($id_operational_competence);
-            $objectives = $this->objective_model->get_many_by('fk_operational_competence',$operational_competence->id);
+            $objectives = $objective_model->get_many_by('fk_operational_competence',$operational_competence->id);
         }
 
         $output = array(
-            'objectives' => $objectives
+			'objectives' => $objectives,
+			'with_archived' => $with_archived,
+			'id' => $id_operational_competence
         );
-
-        if(is_numeric($id_operational_competence)){
-            $output[] = ['operational_competence',$operational_competence];
-        }
 
         $this->display_view('admin/objective/list', $output);
     }
@@ -680,11 +691,12 @@ class Admin extends MY_Controller
      *  - 0 for displaying the confirmation
      *  - 1 for deactivating (soft delete)
      *  - 2 for deleting (hard delete)
+	 *  - 3 for reactivating
      * @return void
      */
     public function delete_objective($objective_id, $action = 0)
     {
-        $objective = $this->objective_model->get($objective_id);
+        $objective = $this->objective_model->with_deleted()->get($objective_id);
         if (is_null($objective)) {
             redirect('admin/objective/list');
         }
@@ -693,7 +705,8 @@ class Admin extends MY_Controller
             case 0: // Display confirmation
                 $output = array(
                     'objective' => $objective,
-                    'title' => lang('title_objective_delete')
+					'title' => lang('title_objective_delete'),
+					'deleted' => $objective->archive
                 );
                 $this->display_view('admin/objective/delete', $output);
                 break;
@@ -702,6 +715,9 @@ class Admin extends MY_Controller
                 redirect('admin/list_objective');
 			case 2: // Hard delete
 				$this->objective_model->delete($objective_id, TRUE);
+				redirect('admin/list_objective');
+			case 3:
+				$this->objective_model->update($objective_id, ['archive' => FALSE]);
 				redirect('admin/list_objective');
             default: // Do nothing
                 redirect('admin/list_objective');
