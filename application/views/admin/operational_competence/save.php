@@ -11,7 +11,7 @@ $update = !is_null($operational_competence);
         'class' => 'form-control',
         'id' => 'operational_competence_symbol'
     );
-    
+
     $data_name = array(
         'name' => 'name',
         'value' => $operational_competence_name ?? $operational_competence->name ?? '',
@@ -19,7 +19,7 @@ $update = !is_null($operational_competence);
         'class' => 'form-control',
         'id' => 'operational_competence_name'
     );
-    
+
     $data_methodologic = array(
         'name' => 'methodologic',
         'value' => $operational_competence_methodologic ?? $operational_competence->methodologic ?? '',
@@ -27,7 +27,7 @@ $update = !is_null($operational_competence);
         'class' => 'form-control',
         'id' => 'operational_competence_methodologic'
     );
-    
+
     $data_social = array(
         'name' => 'social',
         'value' => $operational_competence_social ?? $operational_competence->social ?? '',
@@ -35,7 +35,7 @@ $update = !is_null($operational_competence);
         'class' => 'form-control',
         'id' => 'operational_competence_social'
     );
-    
+
     $data_personal = array(
         'name' => 'personal',
         'value' => $operational_competence_personal ?? $operational_competence->personal ?? '',
@@ -51,7 +51,7 @@ $update = !is_null($operational_competence);
             <h1 class="title-section"><?= lang('operational_competence_'.($update ? 'update' : 'new').'_title'); ?></h1>
         </div>
     </div>
-    
+
     <!-- FORM OPEN -->
     <?php
     $attributes = array(
@@ -86,11 +86,16 @@ $update = !is_null($operational_competence);
                 <?= form_textarea($data_personal); ?>
             </div>
         </div>
-                    
+
         <!-- FORM BUTTONS -->
         <div class="row">
             <div class="col text-right">
                 <a class="btn btn-default" href="<?= base_url('admin/list_operational_competence'); ?>"><?= lang('btn_cancel'); ?></a>
+				<?php if($operational_competence && $operational_competence->archive) { ?>
+				<a href="<?=base_url('admin/delete_operational_competence/'.$operational_competence->id.'/3')?>" class="btn btn-primary">
+					<?=lang('btn_reactivate')?>
+				</a>
+				<?php } ?>
                 <?= form_submit('save', lang('btn_save'), ['class' => 'btn btn-primary']); ?>
             </div>
         </div>

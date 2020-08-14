@@ -13,11 +13,7 @@
                     <a href="<?= base_url('admin/list_course_plan'); ?>" class="btn btn-default">
                         <?= lang('btn_cancel'); ?>
                     </a>
-					<?php if ($deleted) { ?>
-                    <a href="<?= base_url(uri_string().'/3'); ?>" class="btn btn-primary">
-                        <?= lang('btn_reactivate'); ?>
-                    </a>
-					<?php } else { ?>
+					<?php if (!$deleted) { ?>
                     <a href="<?= base_url(uri_string().'/1'); ?>" class="btn btn-primary">
                         <?= lang('btn_disable'); ?>
                     </a>

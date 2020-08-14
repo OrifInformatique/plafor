@@ -121,7 +121,7 @@ class Admin extends MY_Controller
 
         $output = array(
             'title' => $this->lang->line('title_course_plan_'.((bool)$course_plan_id ? 'update' : 'new')),
-            'course_plan' => $this->course_plan_model->get($course_plan_id),
+            'course_plan' => $this->course_plan_model->with_deleted()->get($course_plan_id),
 		);
 
         $this->display_view('admin/course_plan/save', $output);
@@ -233,7 +233,7 @@ class Admin extends MY_Controller
 					$this->competence_domain_model->update_many($competenceDomainIds, ['archive' => FALSE]);
 				}
 				$this->course_plan_model->update($course_plan_id, ['archive' => FALSE]);
-				redirect('admin/list_course_plan');
+				redirect('admin/save_course_plan/'.$course_plan);
 
             default: // Do nothing
                 redirect('admin/list_course_plan');
@@ -317,8 +317,8 @@ class Admin extends MY_Controller
 
         $output = array(
             'title' => $this->lang->line('title_competence_domain_'.((bool)$competence_domain_id ? 'update' : 'new')),
-            'competence_domain' => $this->competence_domain_model->get($competence_domain_id),
-            'course_plans' => $this->course_plan_model->dropdown('official_name')
+            'competence_domain' => $this->competence_domain_model->with_deleted()->get($competence_domain_id),
+			'course_plans' => $this->course_plan_model->dropdown('official_name')
 		);
         $this->display_view('admin/competence_domain/save', $output);
     }
@@ -392,7 +392,7 @@ class Admin extends MY_Controller
 					$this->operational_competence_model->update_many($operCompIds, ['archive' => FALSE]);
 				}
 				$this->competence_domain_model->update($competence_domain_id, ['archive' => FALSE]);
-				redirect('admin/list_competence_domain');
+				redirect('admin/save_competence_domain/'.$competence_domain_id);
 
             default: // Do nothing
                 redirect('admin/list_competence_domain');
@@ -491,7 +491,7 @@ class Admin extends MY_Controller
 
         $output = array(
             'title' => $this->lang->line('title_operational_competence_'.((bool)$operational_competence_id ? 'update' : 'new')),
-            'operational_competence' => $this->operational_competence_model->get($operational_competence_id),
+            'operational_competence' => $this->operational_competence_model->with_deleted()->get($operational_competence_id),
             'competence_domains' => $this->competence_domain_model->dropdown('name')
 		);
 
@@ -510,9 +510,9 @@ class Admin extends MY_Controller
      */
     public function delete_operational_competence($operational_competence_id, $action = 0)
     {
-        $operational_competence = $this->operational_competence_model->get($operational_competence_id);
+        $operational_competence = $this->operational_competence_model->with_deleted()->get($operational_competence_id);
         if (is_null($operational_competence)) {
-            redirect('admin/operational_competence/list');
+            redirect('admin/list_operational_competence');
         }
 
         switch($action) {
@@ -539,8 +539,10 @@ class Admin extends MY_Controller
 			case 3: // Reactivate
 				$objectiveIds = array_column($this->objective_model->get_many_by('fk_operational_competence', $operational_competence_id), 'id');
 
-				$this->objective_model->update_many($objectiveIds, ['archive' => FALSE]);
-				$this->operational_competence_model->update($operational_competence_id, ['archive' => TRUE]);
+				if (!empty($objectiveIds)) $this->objective_model->update_many($objectiveIds, ['archive' => FALSE]);
+				$this->operational_competence_model->update($operational_competence_id, ['archive' => FALSE]);
+
+				redirect('admin/save_operational_competence/'.$operational_competence_id);
             default: // Do nothing
                 redirect('admin/list_operational_competence');
         }
@@ -695,7 +697,7 @@ class Admin extends MY_Controller
 
         $output = array(
             'title' => $this->lang->line('title_objective_'.((bool)$objective_id ? 'update' : 'new')),
-            'objective' => $this->objective_model->get($objective_id),
+            'objective' => $this->objective_model->with_deleted()->get($objective_id),
             'operational_competences' => $this->operational_competence_model->dropdown('name')
 		);
 
@@ -737,7 +739,7 @@ class Admin extends MY_Controller
 				redirect('admin/list_objective');
 			case 3:
 				$this->objective_model->update($objective_id, ['archive' => FALSE]);
-				redirect('admin/list_objective');
+				redirect('admin/save_objective/'.$objective_id);
             default: // Do nothing
                 redirect('admin/list_objective');
         }

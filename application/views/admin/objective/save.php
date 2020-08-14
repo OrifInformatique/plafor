@@ -11,7 +11,7 @@ $update = !is_null($objective);
         'class' => 'form-control',
         'id' => 'objective_symbol'
     );
-    
+
     $data_taxonomy = array(
         'name' => 'taxonomy',
         'value' => $objective_taxonomy ?? $objective->taxonomy ?? '',
@@ -20,7 +20,7 @@ $update = !is_null($objective);
         'class' => 'form-control',
         'id' => 'objective_taxonomy'
     );
-    
+
     $data_name = array(
         'name' => 'name',
         'value' => $objective_name ?? $objective->name ?? '',
@@ -36,7 +36,7 @@ $update = !is_null($objective);
             <h1 class="title-section"><?= lang('objective_'.($update ? 'update' : 'new').'_title'); ?></h1>
         </div>
     </div>
-    
+
     <!-- FORM OPEN -->
     <?php
     $attributes = array(
@@ -67,11 +67,16 @@ $update = !is_null($objective);
                 <?= form_input($data_name); ?>
             </div>
         </div>
-                    
+
         <!-- FORM BUTTONS -->
         <div class="row">
             <div class="col text-right">
                 <a class="btn btn-default" href="<?= base_url('admin/list_objective'); ?>"><?= lang('btn_cancel'); ?></a>
+				<?php if($objective && $objective->archive) { ?>
+				<a href="<?=base_url('admin/delete_objective/'.$objective->id.'/3')?>" class="btn btn-primary">
+					<?=lang('btn_reactivate')?>
+				</a>
+				<?php } ?>
                 <?= form_submit('save', lang('btn_save'), ['class' => 'btn btn-primary']); ?>
             </div>
         </div>

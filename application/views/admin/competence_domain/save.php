@@ -11,7 +11,7 @@ $update = !is_null($competence_domain);
         'class' => 'form-control',
         'id' => 'competence_domain_symbol'
     );
-    
+
     $data_name = array(
         'name' => 'name',
         'value' => $competence_domain_name ?? $competence_domain->name ?? '',
@@ -26,7 +26,7 @@ $update = !is_null($competence_domain);
             <h1 class="title-section"><?= lang('competence_domain_'.($update ? 'update' : 'new').'_title'); ?></h1>
         </div>
     </div>
-    
+
     <!-- FORM OPEN -->
     <?php
     $attributes = array(
@@ -55,11 +55,16 @@ $update = !is_null($competence_domain);
                 <?= form_input($data_name); ?>
             </div>
         </div>
-                    
+
         <!-- FORM BUTTONS -->
         <div class="row">
             <div class="col text-right">
-                <a class="btn btn-default" href="<?= base_url('admin/list_competence_domain'); ?>"><?= lang('btn_cancel'); ?></a>
+				<a class="btn btn-default" href="<?= base_url('admin/list_competence_domain'); ?>"><?= lang('btn_cancel'); ?></a>
+				<?php if($competence_domain && $competence_domain->archive) { ?>
+				<a href="<?=base_url('admin/delete_competence_domain/'.$competence_domain->id.'/3')?>" class="btn btn-primary">
+					<?=lang('btn_reactivate')?>
+				</a>
+				<?php } ?>
                 <?= form_submit('save', lang('btn_save'), ['class' => 'btn btn-primary']); ?>
             </div>
         </div>
