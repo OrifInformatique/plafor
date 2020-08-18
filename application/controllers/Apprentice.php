@@ -120,7 +120,7 @@ class Apprentice extends MY_Controller
         $apprentice = $this->user_model->get($id_apprentice);
         $user_course = $this->user_course_model->get($id_user_course);
 
-        if($id_apprentice == null || $apprentice->fk_user_type != $this->user_type_model->get_by('name',$this->lang->line('title_apprentice'))->id){
+        if($apprentice == null || $apprentice->fk_user_type != $this->user_type_model->get_by('name',$this->lang->line('title_apprentice'))->id){
             redirect(base_url('apprentice/list_apprentice'));
             exit();
         }
@@ -218,17 +218,17 @@ class Apprentice extends MY_Controller
      */
     public function view_user_course($id_user_course = null){
         $user_course = $this->user_course_model->get($id_user_course);
+        if($user_course == null){
+            redirect('apprentice/list_apprentice');
+            exit();
+		}
+
         $apprentice = $this->user_model->get($user_course->fk_user);
         $user_course_status = $this->user_course_status_model->get($user_course->fk_status);
         $course_plan = $this->course_plan_model->get($user_course->fk_course_plan);
         $trainers_apprentice = $this->trainer_apprentice_model->get_many_by('fk_apprentice',$apprentice->id);
         $acquisition_status = $this->acquisition_status_model->with_all()->get_many_by('fk_user_course',$id_user_course);
         $acquisition_levels = $this->acquisition_level_model->get_all();
-
-        if($user_course == null){
-            redirect('apprentice/list_apprentice');
-            exit();
-        }
 
         $output = array(
             'user_course' => $user_course,
