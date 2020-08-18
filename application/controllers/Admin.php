@@ -60,10 +60,6 @@ class Admin extends MY_Controller
             'course_plans' => $course_plans
         );
 
-        if(is_numeric($id_apprentice)){
-            $output[] = ['course_plans' => $course_plans];
-        }
-
         $this->display_view('admin/course_plan/list', $output);
     }
 
@@ -190,10 +186,6 @@ class Admin extends MY_Controller
             'competence_domains' => $competence_domains
         );
 
-        if(is_numeric($id_course_plan)){
-            $output[] = ['course_plan' => $course_plan];
-        }
-
         $this->display_view('admin/competence_domain/list', $output);
     }
 
@@ -305,10 +297,6 @@ class Admin extends MY_Controller
         $output = array(
             'operational_competences' => $operational_competences
         );
-
-        if(is_numeric($id_competence_domain)){
-            $output[] = ['competence_domain' => $competence_domain];
-        }
 
         $this->display_view('admin/operational_competence/list', $output);
     }
@@ -503,10 +491,6 @@ class Admin extends MY_Controller
         $output = array(
             'objectives' => $objectives
         );
-
-        if(is_numeric($id_operational_competence)){
-            $output[] = ['operational_competence',$operational_competence];
-        }
 
         $this->display_view('admin/objective/list', $output);
     }
