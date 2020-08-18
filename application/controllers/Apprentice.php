@@ -55,6 +55,9 @@ class Apprentice extends MY_Controller
      */
     public function list_apprentice($trainer_id = null)
     {
+		if ($_SESSION['user_access'] == ACCESS_LVL_APPRENTICE) {
+			redirect('apprentice');
+		}
         if(is_null($trainer_id) && $_SESSION['user_access'] < ACCESS_LVL_ADMIN){
             redirect("apprentice");
         }
@@ -86,6 +89,10 @@ class Apprentice extends MY_Controller
      */
     public function view_apprentice($apprentice_id = null)
     {
+		if($_SESSION['user_access'] == ACCESS_LVL_APPRENTICE && $apprentice_id != $_SESSION['user_id']) {
+			redirect('apprentice');
+		}
+
         $apprentice = $this->user_model->get($apprentice_id);
 
         if($apprentice->fk_user_type != $this->user_type_model->get_by('name',$this->lang->line('title_apprentice'))->id){
@@ -120,6 +127,9 @@ class Apprentice extends MY_Controller
      * @return void
      */
     public function save_user_course($id_apprentice = null,$id_user_course = 0){
+		if($_SESSION['user_access'] == ACCESS_LVL_APPRENTICE && $id_apprentice != $_SESSION['user_id']) {
+			redirect('apprentice');
+		}
 
         $apprentice = $this->user_model->get($id_apprentice);
         $user_course = $this->user_course_model->get($id_user_course);
@@ -228,7 +238,10 @@ class Apprentice extends MY_Controller
             exit();
 		}
 
-        $apprentice = $this->user_model->get($user_course->fk_user);
+		$apprentice = $this->user_model->get($user_course->fk_user);
+		if($_SESSION['user_access'] == ACCESS_LVL_APPRENTICE && $apprentice->id != $_SESSION['user_id']) {
+			redirect('apprentice');
+		}
         $user_course_status = $this->user_course_status_model->get($user_course->fk_status);
         $course_plan = $this->course_plan_model->get($user_course->fk_course_plan);
         $trainers_apprentice = $this->trainer_apprentice_model->get_many_by('fk_apprentice',$apprentice->id);
@@ -339,7 +352,15 @@ class Apprentice extends MY_Controller
         if($acquisition_status == null){
             redirect(base_url('apprentice'));
             exit();
-        }
+		}
+
+		if($_SESSION['user_access'] == ACCESS_LVL_APPRENTICE) {
+			// Probably no need to check with $user_course outside of an apprentice
+			$user_course = $this->user_course_model->get($acquisition_status->fk_user_course);
+			if ($user_course->fk_user != $_SESSION['user_id']) {
+				redirect('apprentice');
+			}
+		}
 
 		$comments = $this->comment_model->get_many_by('fk_acquisition_status',$acquisition_status_id);
 		// No reason to check access level, only users with the right one can add a comment
