@@ -1,7 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 $update = !is_null($operational_competence);
-?>
-<?php
+
     // For some reasons, you can only set a type to input made with form_input if done with only a array as param, may need to be checked for later uses.
 
     $data_symbol = array(
@@ -11,7 +10,7 @@ $update = !is_null($operational_competence);
         'class' => 'form-control',
         'id' => 'operational_competence_symbol'
     );
-    
+
     $data_name = array(
         'name' => 'name',
         'value' => $operational_competence_name ?? $operational_competence->name ?? '',
@@ -19,7 +18,7 @@ $update = !is_null($operational_competence);
         'class' => 'form-control',
         'id' => 'operational_competence_name'
     );
-    
+
     $data_methodologic = array(
         'name' => 'methodologic',
         'value' => $operational_competence_methodologic ?? $operational_competence->methodologic ?? '',
@@ -27,7 +26,7 @@ $update = !is_null($operational_competence);
         'class' => 'form-control',
         'id' => 'operational_competence_methodologic'
     );
-    
+
     $data_social = array(
         'name' => 'social',
         'value' => $operational_competence_social ?? $operational_competence->social ?? '',
@@ -35,7 +34,7 @@ $update = !is_null($operational_competence);
         'class' => 'form-control',
         'id' => 'operational_competence_social'
     );
-    
+
     $data_personal = array(
         'name' => 'personal',
         'value' => $operational_competence_personal ?? $operational_competence->personal ?? '',
@@ -51,7 +50,7 @@ $update = !is_null($operational_competence);
             <h1 class="title-section"><?= lang('operational_competence_'.($update ? 'update' : 'new').'_title'); ?></h1>
         </div>
     </div>
-    
+
     <!-- FORM OPEN -->
     <?php
     $attributes = array(
@@ -86,7 +85,7 @@ $update = !is_null($operational_competence);
                 <?= form_textarea($data_personal); ?>
             </div>
         </div>
-                    
+
         <!-- FORM BUTTONS -->
         <div class="row">
             <div class="col text-right">
