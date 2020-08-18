@@ -49,6 +49,8 @@ class Apprentice extends MY_Controller
     /**
      * Displays the list of apprentice
      *
+	 * @param int $trainer_id = ID of the trainer to select the apprentices of.
+	 * 		If null, selects all apprentices. Does nothing for now
      * @return void
      */
     public function list_apprentice($trainer_id = null)
@@ -79,8 +81,8 @@ class Apprentice extends MY_Controller
     /**
      * Show details of the selected apprentice
      *
-     * @param int (SQL PRIMARY KEY) $apprentice_id
-     *
+     * @param int $apprentice_id = ID of the apprentice to view
+     * @return void
      */
     public function view_apprentice($apprentice_id = null)
     {
@@ -113,7 +115,9 @@ class Apprentice extends MY_Controller
     /**
      * Form to create a link between a apprentice and a course plan
      *
-     * @param int (SQL PRIMARY KEY) $id_user_course
+	 * @param int $id_apprentice = ID of the apprentice to give a course plan to
+     * @param int $id_user_course = ID of the user to modify. If 0, adds a new user course
+     * @return void
      */
     public function save_user_course($id_apprentice = null,$id_user_course = 0){
 
@@ -214,7 +218,8 @@ class Apprentice extends MY_Controller
     /**
      * Show a user course's details
      *
-     * @param int (SQL PRIMARY KEY) $id_user_course
+     * @param int $id_user_course = ID of the user course to view
+     * @return void
      */
     public function view_user_course($id_user_course = null){
         $user_course = $this->user_course_model->get($id_user_course);
@@ -247,8 +252,9 @@ class Apprentice extends MY_Controller
      * Create a link between a apprentice and a trainer, or change the trainer
      * linked on the selected trainer_apprentice SQL entry
      *
-     * @param INT (SQL PRIMARY KEY) $id_apprentice
-     * @param INT (SQL PRIMARY KEY) $id_link
+     * @param int $id_apprentice = ID of the apprentice to add the link to or change the link of
+     * @param int $id_link = ID of the link to modify. If 0, adds a new link
+     * @return void
      */
     public function save_apprentice_link($id_apprentice = null, $id_link = 0){
 
@@ -324,7 +330,8 @@ class Apprentice extends MY_Controller
     /**
      * Show details of the selected acquisition status
      *
-     * @param int (SQL PRIMARY KEY) $acquisition_status_id
+     * @param int $acquisition_status_id = ID of the acquisition status to view
+     * @return void
      */
     public function view_acquisition_status($acquisition_status_id = null){
         $acquisition_status = $this->acquisition_status_model->with_all()->get($acquisition_status_id);
@@ -346,6 +353,12 @@ class Apprentice extends MY_Controller
         $this->display_view('acquisition_status/view',$output);
     }
 
+	/**
+	 * Adds a comment on an acquisition status
+	 *
+	 * @param int $acquisition_status_id = ID of the acquisition status to add the comment on
+	 * @return void
+	 */
     public function add_comment($acquisition_status_id = null){
         $acquisition_status = $this->acquisition_status_model->get($acquisition_status_id);
 
@@ -387,8 +400,8 @@ class Apprentice extends MY_Controller
     /**
      * Show details of the selected course plan
      *
-     * @param int (SQL PRIMARY KEY) $course_plan_id
-     *
+     * @param int $course_plan_id = ID of the course plan to view
+     * @return void
      */
     public function view_course_plan($course_plan_id = null)
     {
@@ -409,8 +422,8 @@ class Apprentice extends MY_Controller
     /**
      * Show details of the selected competence domain
      *
-     * @param int (SQL PRIMARY KEY) $competence_domain_id
-     *
+     * @param int $competence_domain_id = ID of the competence domain to view
+     * @return void
      */
     public function view_competence_domain($competence_domain_id = null)
     {
@@ -432,8 +445,8 @@ class Apprentice extends MY_Controller
     /**
      * Show details of the selected operational competence
      *
-     * @param int (SQL PRIMARY KEY) $operational_competence_id
-     *
+     * @param int $operational_competence_id = ID of the operational competence to view
+     * @return void
      */
     public function view_operational_competence($operational_competence_id = null)
     {
@@ -459,8 +472,8 @@ class Apprentice extends MY_Controller
     /**
      * Show details of the selected objective
      *
-     * @param int (SQL PRIMARY KEY) $objective_id
-     *
+     * @param int $objective_id = ID of the objective to view
+     * @return void
      */
     public function view_objective($objective_id = null)
     {

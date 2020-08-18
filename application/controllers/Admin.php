@@ -38,6 +38,8 @@ class Admin extends MY_Controller
     /**
      * Displays the list of course plans
      *
+	 * @param int|null $id_apprentice ID of the apprentice to select the course plans of.
+	 * 		If null, selects all course plans
      * @return void
      */
     public function list_course_plan($id_apprentice = null)
@@ -171,6 +173,8 @@ class Admin extends MY_Controller
     /**
      * Displays the list of course plans
      *
+	 * @param int|null $id_course_plan = ID of the course plan to select the competence domains of.
+	 * 		If null, selects all competence domains
      * @return void
      */
     public function list_competence_domain($id_course_plan = null)
@@ -283,6 +287,8 @@ class Admin extends MY_Controller
     /**
      * Displays the list of course plans
      *
+	 * @param int|null $id_competence_domain = ID of the competence domain to select the operation competences of.
+	 * 		If null, selects all operational competences
      * @return void
      */
     public function list_operational_competence($id_competence_domain = null)
@@ -477,6 +483,8 @@ class Admin extends MY_Controller
     /**
      * Displays the list of course plans
      *
+	 * @param int|null $id_operational_competence = ID of the operational competence to select the objectives of.
+	 * 		If null, selects all objectives.
      * @return void
      */
     public function list_objective($id_operational_competence = null)
