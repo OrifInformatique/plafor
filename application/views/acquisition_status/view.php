@@ -32,18 +32,19 @@
                     </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($comments as $comment): ?>
+				<?php
+				$trainersSorted = [];
+				foreach ($trainers as $trainer) {
+					$trainersSorted[$trainer->id] = $trainer;
+				}
+				foreach ($comments as $comment):
+				?>
                     <tr>
                         <td><?= $comment->comment; ?></td>
-                        <?php
-                        foreach($trainers as $trainer):
-                            if($trainer->id == $comment->fk_trainer):
-                        ?>
+						<?php
+						if (isset($trainersSorted[$comment->fk_trainer])): ?>
                         <th><?= $trainer->username; ?></th>
-                        <?php 
-                            endif;
-                        endforeach;
-                        ?>
+						<?php endif; ?>
                         <td><?= $comment->date_creation; ?></td>
                     </tr>
                 <?php endforeach; ?>
