@@ -47,15 +47,12 @@ class Admin extends MY_Controller
         if($id_apprentice == null){
             $course_plans = $this->course_plan_model->get_all();
         }else{
-            $userCourses = $this->user_course_model->get_many_by('fk_user',$id_apprentice);
+			$userCourses = $this->user_course_model->get_many_by('fk_user',$id_apprentice);
+			$course_plans = [];
 
-            $coursesId = array();
-
-            foreach ($userCourses as $userCourse){
-                $coursesId[] = $userCourse->fk_course_plan;
-            }
-
-            $course_plans = $this->course_plan_model->get_many($coursesId);
+			foreach ($userCourses as $userCourse) {
+				$course_plans[] = $this->course_plan_model->get($userCourse->fk_course_plan);
+			}
         }
 
         $output = array(
