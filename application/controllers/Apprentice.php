@@ -303,18 +303,25 @@ class Apprentice extends MY_Controller
             $this->form_validation->set_rules($rules);
 
             if($this->form_validation->run()){
-                echo var_dump($_POST);
-
                 $apprentice_link = array(
                     'fk_trainer' => $this->input->post('trainer'),
                     'fk_apprentice' => $this->input->post('apprentice'),
-                );
+				);
+				// This is used to prevent an apprentice from being linked to the same person twice
+				$old_link = $this->trainer_apprentice_model->get_by($apprentice_link);
 
-                if($id_link > 0){
-                    echo $this->trainer_apprentice_model->update($id_apprentice,$apprentice_link);
-                }else{
-                    echo $this->trainer_apprentice_model->insert($apprentice_link);
-                }
+				if ($id_link > 0) {
+					if (!is_null($old_link)) {
+						// Delete the old link instead of deleting the one being changed
+						// It's easier that way
+						$this->trainer_apprentice_model->delete($id_link);
+					} else {
+						$this->trainer_apprentice_model->update($id_apprentice,$apprentice_link);
+					}
+				} elseif (is_null($old_link)) {
+					// Don't insert a new link that is the same as an old one
+					$this->trainer_apprentice_model->insert($apprentice_link);
+				}
 
                 redirect('apprentice');
                 exit();

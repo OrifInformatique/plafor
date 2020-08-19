@@ -20,7 +20,11 @@ class Admin extends MY_Controller
         parent::__construct();
 
         // Load required items
-        $this->load->library('form_validation')->model(['user/user_model','course_plan_model','user_course_model','user_course_status_model','competence_domain_model','operational_competence_model','objective_model']);
+        $this->load->library('form_validation')->model([
+			'user/user_model','course_plan_model','user_course_model',
+			'user_course_status_model','competence_domain_model',
+			'operational_competence_model','objective_model', 'trainer_apprentice_model'
+		]);
 
         // Assign form_validation CI instance to this
         $this->form_validation->CI =& $this;
