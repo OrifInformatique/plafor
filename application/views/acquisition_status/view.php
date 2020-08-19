@@ -4,17 +4,17 @@
             <p class="bg-primary text-white"><?=$this->lang->line('details_acquisition_status')?></p>
         </div><div class="col-md-2">
             <p class="font-weight-bold"><?=$this->lang->line('field_objective_symbol')?></p>
-            <a href="<?= base_url('apprentice/view_objective/'.$acquisition_status->objective->id)?>"><?=$acquisition_status->objective->symbol?></a>
+            <a href="<?= base_url('apprentice/view_objective/'.$objective->id)?>"><?=$objective->symbol?></a>
         </div><div class="col-md-6">
             <p class="font-weight-bold"><?=$this->lang->line('field_objective_name')?></p>
-            <a href="<?= base_url('apprentice/view_objective/'.$acquisition_status->objective->id)?>"><?=$acquisition_status->objective->name?></a>
+            <a href="<?= base_url('apprentice/view_objective/'.$objective->id)?>"><?=$objective->name?></a>
         </div><div class="col-md-2">
             <p class="font-weight-bold"><?=$this->lang->line('field_objective_taxonomy')?></p>
-            <a href="<?= base_url('apprentice/view_objective/'.$acquisition_status->objective->id)?>"><?=$acquisition_status->objective->taxonomy?></a>
+            <a href="<?= base_url('apprentice/view_objective/'.$objective->id)?>"><?=$objective->taxonomy?></a>
         </div>
         <div class="col-md-2">
             <p class="font-weight-bold"><?=$this->lang->line('field_acquisition_level')?></p>
-            <a href="<?= base_url('apprentice/view_objective/'.$acquisition_status->objective->id)?>"><?=$acquisition_status->acquisition_level->name?></a>
+            <a href="<?= base_url('apprentice/save_acquisition_status/'.$acquisition_status->id)?>"><?=$acquisition_level->name?></a>
         </div>
     </div>
     <div class="row">
@@ -40,7 +40,7 @@
                             if($trainer->id == $comment->fk_trainer):
                         ?>
                         <th><?= $trainer->username; ?></th>
-                        <?php 
+                        <?php
                             endif;
                         endforeach;
                         ?>
