@@ -122,7 +122,7 @@ class Apprentice extends MY_Controller
     /**
      * Form to create a link between a apprentice and a course plan
      *
-	 * @param int $id_apprentice = ID of the apprentice to give a course plan to
+	   * @param int $id_apprentice = ID of the apprentice to give a course plan to
      * @param int $id_user_course = ID of the user to modify. If 0, adds a new user course
      * @return void
      */
@@ -248,6 +248,11 @@ class Apprentice extends MY_Controller
         $acquisition_status = $this->acquisition_status_model->with_all()->get_many_by('fk_user_course',$id_user_course);
         $acquisition_levels = $this->acquisition_level_model->get_all();
 
+        if($user_course == null){
+            redirect('apprentice/list_apprentice');
+            exit();
+        }
+
         $output = array(
             'user_course' => $user_course,
             'apprentice' => $apprentice,
@@ -322,7 +327,6 @@ class Apprentice extends MY_Controller
 					// Don't insert a new link that is the same as an old one
 					$this->trainer_apprentice_model->insert($apprentice_link);
 				}
-
                 redirect('apprentice');
                 exit();
             }
@@ -375,18 +379,66 @@ class Apprentice extends MY_Controller
         $output = array(
             'acquisition_status' => $acquisition_status,
             'trainers' => $trainers,
-            'comments' => $comments,
+			'comments' => $comments,
+			'objective' => $objective,
+			'acquisition_level' => $acquisition_level,
         );
 
         $this->display_view('acquisition_status/view',$output);
-    }
+	}
 
 	/**
-	 * Adds a comment on an acquisition status
+	 * Changes an acquisition status for an apprentice
 	 *
-	 * @param int $acquisition_status_id = ID of the acquisition status to add the comment on
+	 * @param int $acquisition_status_id = ID of the acquisition status to change
 	 * @return void
 	 */
+	public function save_acquisition_status($acquisition_status_id = 0) {
+		$acquisitionStatus = $this->acquisition_status_model->get($acquisition_status_id);
+
+		if($_SESSION['user_access'] == ACCESS_LVL_APPRENTICE) {
+			// No need to check with $user_course outside of an apprentice
+			$userCourse = $this->user_course_model->get($acquisitionStatus->fk_user_course);
+			if ($userCourse->fk_user != $_SESSION['user_id']) {
+				redirect('apprentice');
+			}
+		}
+
+		if (is_null($acquisitionStatus)) {
+			redirect('apprentice');
+		}
+
+		$acquisitionLevels = $this->acquisition_level_model->dropdown('name');
+
+		// Check if data was sent
+		if (!empty($_POST)) {
+			$acquisitionLevel = $this->input->post('field_acquisition_level');
+
+			$this->form_validation->set_rules('field_acquisition_level', lang('field_acquisition_level'), [
+				'required',
+				// Automatic list of valid ids
+				'in_list['.implode(',', array_keys($acquisitionLevels)).']',
+			]);
+
+			if ($this->form_validation->run()) {
+				$acquisitionStatus = [
+					'fk_acquisition_level' => $acquisitionLevel
+				];
+				$this->acquisition_status_model->update($acquisition_status_id, $acquisitionStatus);
+
+				redirect('apprentice/view_acquisition_status/'.$acquisition_status_id);
+			}
+		}
+
+		$output = [
+			'acquisition_levels' => $acquisitionLevels,
+			'acquisition_level' => $acquisitionStatus->fk_acquisition_level,
+			'id' => $acquisition_status_id
+		];
+
+		$this->display_view('acquisition_status/save', $output);
+	}
+
     public function add_comment($acquisition_status_id = null){
         $acquisition_status = $this->acquisition_status_model->get($acquisition_status_id);
 
