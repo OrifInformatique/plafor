@@ -31,10 +31,15 @@
                 </tr>
             </thead>
             <tbody>
-            <?php
-            foreach ($links as $link):
-                foreach ($trainers as $trainer):
-                    if($link->fk_trainer == $trainer->id): ?>
+			<?php
+			$trainersSorted = [];
+			foreach ($trainers as $trainer) {
+				$trainersSorted[$trainer->id] = $trainer;
+			}
+			foreach ($links as $link):
+				// In case not all links don't have a valid
+				if (!isset($trainersSorted[$link->fk_trainer])) continue;
+				$trainer = $trainersSorted[$link->fk_trainer];?>
                 <tr>
                     <td><a href="<?= base_url('apprentice/list_apprentice/'.$trainer->id); ?>"><?= $trainer->username; ?></a></th>
                     <?php if($_SESSION['user_access'] >= ACCESS_LVL_TRAINER): ?>
@@ -42,8 +47,6 @@
                     <th><a href="<?= base_url('admin/delete_apprentice_link/'.$link->id) ?>"><?= $this->lang->line('title_apprentice_link_delete');?></a></th>
                     <?php endif; ?>
                 </tr><?php
-                    endif;
-                endforeach;
             endforeach;
             ?>
             </tbody>
