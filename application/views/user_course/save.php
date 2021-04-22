@@ -1,7 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 $update = !is_null($user_course);
-?>
-<?php
+
     // For some reasons, you can only set a type to input made with form_input if done with only a array as param, may need to be checked for later uses.
 
     $data_date_begin = array(
@@ -11,7 +10,7 @@ $update = !is_null($user_course);
         'type' => 'date',
         'id' => 'user_course_date_begin'
     );
-    
+
     $data_date_end = array(
         'name' => 'date_end',
         'value' => $user_course_date_end ?? $user_course->date_end ?? '',
@@ -27,7 +26,7 @@ $update = !is_null($user_course);
             <h1 class="title-section"><?= lang('user_course_'.($update ? 'update' : 'new').'_title'); ?></h1>
         </div>
     </div>
-    
+
     <!-- FORM OPEN -->
     <?php
     $attributes = array(
@@ -63,7 +62,7 @@ $update = !is_null($user_course);
                 <?= form_input($data_date_end); ?>
             </div>
         </div>
-                    
+
         <!-- FORM BUTTONS -->
         <div class="row">
             <div class="col text-right">

@@ -20,8 +20,10 @@
     <div class="row">
         <div class="col-md-12">
             <p class="bg-primary text-white"><?=$this->lang->line('field_linked_comments')?></p>
-        </div>
-        <a href="<?= base_url('apprentice/add_comment/'.$acquisition_status->id); ?>" class="btn btn-primary"><?= $this->lang->line('title_comment_new'); ?></a>
+		</div>
+		<?php if($_SESSION['user_access'] >= ACCESS_LVL_TRAINER) { ?>
+		<a href="<?= base_url('apprentice/add_comment/'.$acquisition_status->id); ?>" class="btn btn-primary"><?= $this->lang->line('title_comment_new'); ?></a>
+		<?php } ?>
         <div class="col-md-12">
             <table class="table table-hover">
                 <thead>
@@ -35,15 +37,13 @@
                 <?php foreach ($comments as $comment): ?>
                     <tr>
                         <td><?= $comment->comment; ?></td>
-                        <?php
+                        <th><?php
                         foreach($trainers as $trainer):
                             if($trainer->id == $comment->fk_trainer):
-                        ?>
-                        <th><?= $trainer->username; ?></th>
-                        <?php
+		                        echo $trainer->username;
                             endif;
                         endforeach;
-                        ?>
+                        ?></th>
                         <td><?= $comment->date_creation; ?></td>
                     </tr>
                 <?php endforeach; ?>

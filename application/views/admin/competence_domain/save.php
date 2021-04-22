@@ -1,7 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 $update = !is_null($competence_domain);
-?>
-<?php
+
     // For some reasons, you can only set a type to input made with form_input if done with only a array as param, may need to be checked for later uses.
 
     $data_symbol = array(
@@ -11,7 +10,7 @@ $update = !is_null($competence_domain);
         'class' => 'form-control',
         'id' => 'competence_domain_symbol'
     );
-    
+
     $data_name = array(
         'name' => 'name',
         'value' => $competence_domain_name ?? $competence_domain->name ?? '',
@@ -26,7 +25,7 @@ $update = !is_null($competence_domain);
             <h1 class="title-section"><?= lang('competence_domain_'.($update ? 'update' : 'new').'_title'); ?></h1>
         </div>
     </div>
-    
+
     <!-- FORM OPEN -->
     <?php
     $attributes = array(
@@ -55,7 +54,7 @@ $update = !is_null($competence_domain);
                 <?= form_input($data_name); ?>
             </div>
         </div>
-                    
+
         <!-- FORM BUTTONS -->
         <div class="row">
             <div class="col text-right">
