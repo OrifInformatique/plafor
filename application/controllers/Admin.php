@@ -14,7 +14,8 @@ class Admin extends MY_Controller
      */
     public function __construct()
     {
-        /* Define controller access level */
+		/* Define controller access level */
+		$this->config->load('user/MY_user_config');
         $this->access_level = $this->config->item('access_lvl_admin');
 
         parent::__construct();
@@ -23,7 +24,8 @@ class Admin extends MY_Controller
         $this->load->library('form_validation')->model([
 			'user/user_model','course_plan_model','user_course_model',
 			'user_course_status_model','competence_domain_model',
-			'operational_competence_model','objective_model', 'trainer_apprentice_model'
+			'operational_competence_model','objective_model',
+			'trainer_apprentice_model'
 		]);
 
         // Assign form_validation CI instance to this
@@ -51,17 +53,24 @@ class Admin extends MY_Controller
         if($id_apprentice == null){
             $course_plans = $this->course_plan_model->get_all();
         }else{
-			$userCourses = $this->user_course_model->get_many_by('fk_user',$id_apprentice);
-			$course_plans = [];
+            $userCourses = $this->user_course_model->get_many_by('fk_user',$id_apprentice);
 
-			foreach ($userCourses as $userCourse) {
-				$course_plans[] = $this->course_plan_model->get($userCourse->fk_course_plan);
-			}
+            $coursesId = array();
+
+            foreach ($userCourses as $userCourse){
+                $coursesId[] = $userCourse->fk_course_plan;
+            }
+
+            $course_plans = $this->course_plan_model->get_many($coursesId);
         }
 
         $output = array(
             'course_plans' => $course_plans
         );
+
+        if(is_numeric($id_apprentice)){
+            $output[] = ['course_plans' => $course_plans];
+        }
 
         $this->display_view('admin/course_plan/list', $output);
     }
@@ -191,6 +200,10 @@ class Admin extends MY_Controller
             'competence_domains' => $competence_domains
         );
 
+        if(is_numeric($id_course_plan)){
+            $output[] = ['course_plan' => $course_plan];
+        }
+
         $this->display_view('admin/competence_domain/list', $output);
     }
 
@@ -237,7 +250,7 @@ class Admin extends MY_Controller
             'title' => $this->lang->line('title_competence_domain_'.((bool)$competence_domain_id ? 'update' : 'new')),
             'competence_domain' => $this->competence_domain_model->get($competence_domain_id),
             'course_plans' => $this->course_plan_model->dropdown('official_name')
-		);
+	);
 
         $this->display_view('admin/competence_domain/save', $output);
     }
@@ -304,7 +317,9 @@ class Admin extends MY_Controller
         $output = array(
             'operational_competences' => $operational_competences
         );
-
+        if(is_numeric($id_competence_domain)){
+            $output[] = ['competence_domain' => $competence_domain];
+        }
         $this->display_view('admin/operational_competence/list', $output);
     }
 
@@ -500,6 +515,10 @@ class Admin extends MY_Controller
         $output = array(
             'objectives' => $objectives
         );
+
+        if(is_numeric($id_operational_competence)){
+            $output[] = ['operational_competence',$operational_competence];
+        }
 
         $this->display_view('admin/objective/list', $output);
     }

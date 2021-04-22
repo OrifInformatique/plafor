@@ -15,6 +15,7 @@ class Apprentice extends MY_Controller
     public function __construct()
     {
         /* Define controller access level */
+		$this->config->load('user/MY_user_config');
         $this->access_level = $this->config->item('access_lvl_apprentice');
 
         parent::__construct();
@@ -37,11 +38,11 @@ class Apprentice extends MY_Controller
     {
       if(empty($_SESSION) || $_SESSION['logged_in'] != true){
           redirect(base_url('user/auth/login'));
-      }else if($_SESSION['user_access'] >= ACCESS_LVL_ADMIN){
+      }else if($_SESSION['user_access'] >= $this->config->item('access_lvl_admin')){
         redirect(base_url('apprentice/list_apprentice'));
-      }else if($_SESSION['user_access'] == ACCESS_LVL_APPRENTICE){
+      }else if($_SESSION['user_access'] == $this->config->item('access_lvl_apprentice')){
           redirect(base_url('apprentice/view_apprentice/'.$_SESSION['user_id']));
-      }else if($_SESSION['user_access'] == ACCESS_LVL_TRAINER){
+      }else if($_SESSION['user_access'] == $this->config->item('access_lvl_trainer')){
           redirect(base_url('apprentice/list_apprentice/'.$_SESSION['user_id']));
       }
     }
@@ -55,29 +56,18 @@ class Apprentice extends MY_Controller
      */
     public function list_apprentice($trainer_id = null)
     {
-		$trainer = $this->user_model->get($trainer_id);
-
-        if($_SESSION['user_access'] < ACCESS_LVL_ADMIN){
+        if(is_null($trainer_id) && $_SESSION['user_access'] < $this->config->item('access_lvl_admin')){
             redirect("apprentice");
         }
 
-		$coursesList = $this->course_plan_model->get_all();
-
-        if(is_null($trainer)){
-            $apprentice_level = $this->user_type_model->get_by('access_level', ACCESS_LVL_APPRENTICE);
+        //if($trainer_id == null){
+            $apprentice_level = $this->user_type_model->get_by('access_level', $this->config->item('access_lvl_apprentice'));
             $apprentices = $this->user_model->get_many_by('fk_user_type', $apprentice_level->id);
             $courses = $this->user_course_model->get_all();
-        }else{
-			$apprenticesIds = $this->trainer_apprentice_model->get_many_by('fk_trainer', $trainer_id);
-			$apprenticesIds = array_column($apprenticesIds, 'fk_apprentice');
-			// Empty arrays produce errors in MySQL `IN()`
-			if (!empty($apprenticesIds)) {
-				$apprentices = $this->user_model->get_many($apprenticesIds);
-				$courses = $this->user_course_model->get_many_by(['fk_user' => $apprenticesIds]);
-			} else {
-				$apprentices = $courses = [];
-			}
-        }
+        //}else{
+        //        $apprentices = $this->user_model->get_many_by(array('id' => $trainer_id));
+
+        //}
 
         $output = array(
             'apprentices' => $apprentices,
@@ -285,26 +275,15 @@ class Apprentice extends MY_Controller
 
         $apprentice = $this->user_model->get($id_apprentice);
 
-        if($_SESSION['user_access'] < ACCESS_LVL_ADMIN
+        if($_SESSION['user_access'] < $this->config->item('access_lvl_admin')
         || $apprentice == null
         || $apprentice->fk_user_type != $this->user_type_model->
         get_by('name',$this->lang->line('title_apprentice'))->id){
             redirect(base_url());
-            exit();
         }
 
-        // It seems that the MY_model dropdown method can't return a filtered result
-        // so here we get every users that are trainer, then we create a array
-        // with the matching constitution
-
         if(count($_POST) > 0){
-            $id_apprentice = $this->input->post('id');
             $rules = array(
-                array(
-                    'field' => 'apprentice',
-                    'label' => 'field_apprentice_username',
-                    'rules' => 'required|numeric'
-                ),
                 array(
                     'field' => 'trainer',
                     'label' => 'field_trainer_link',
@@ -335,11 +314,13 @@ class Apprentice extends MY_Controller
 					$this->trainer_apprentice_model->insert($apprentice_link);
 				}
                 redirect('apprentice');
-                exit();
             }
         }
+        // It seems that the MY_model dropdown method can't return a filtered result
+        // so here we get every users that are trainer, then we create a array
+        // with the matching constitution
 
-        $trainersRaw = $this->user_model->get_many_by('fk_user_type',$this->user_type_model->get_by('access_level',ACCESS_LVL_TRAINER)->id);
+        $trainersRaw = $this->user_model->get_many_by('fk_user_type',$this->user_type_model->get_by('access_level',$this->config->item('access_lvl_trainer'))->id);
 
         $trainers = array();
 
@@ -370,19 +351,10 @@ class Apprentice extends MY_Controller
         if($acquisition_status == null){
             redirect(base_url('apprentice'));
             exit();
-		}
+        }
 
-		if($_SESSION['user_access'] == ACCESS_LVL_APPRENTICE) {
-			// Probably no need to check with $user_course outside of an apprentice
-			$user_course = $this->user_course_model->get($acquisition_status->fk_user_course);
-			if ($user_course->fk_user != $_SESSION['user_id']) {
-				redirect('apprentice');
-			}
-		}
-
-		$comments = $this->comment_model->get_many_by('fk_acquisition_status',$acquisition_status_id);
-		// No reason to check access level, only users with the right one can add a comment
-        $trainers = $this->user_model->get_all();
+        $comments = $this->comment_model->get_many_by('fk_acquisition_status',$acquisition_status_id);
+        $trainers = $this->user_model->get_many_by('fk_user_type',$this->user_type_model->get_by('name',$this->lang->line('title_trainer'))->id);
         $output = array(
             'acquisition_status' => $acquisition_status,
             'trainers' => $trainers,
@@ -449,7 +421,7 @@ class Apprentice extends MY_Controller
     public function add_comment($acquisition_status_id = null){
         $acquisition_status = $this->acquisition_status_model->get($acquisition_status_id);
 
-        if($acquisition_status == null || $_SESSION['user_access'] < ACCESS_LVL_TRAINER){
+        if($acquisition_status == null || $_SESSION['user_access'] != $this->config->item('access_lvl_trainer')){
             redirect(base_url('apprentice'));
             exit();
         }
@@ -558,7 +530,6 @@ class Apprentice extends MY_Controller
 
     /**
      * Show details of the selected objective
-     *
      * @param int $objective_id = ID of the objective to view
      * @return void
      */
