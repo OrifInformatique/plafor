@@ -28,6 +28,7 @@ $lang['btn_disable']                    = 'Désactiver';
 $lang['btn_reactivate']                 = 'Réactiver';
 $lang['btn_delete']                     = 'Supprimer';
 $lang['btn_hard_delete']                = 'Supprimer définitivement';
+$lang['btn_show_disabled']			    = 'Afficher les éléments désactivés';
 
 // Messages
 $lang['msg_err_access_denied_header']   = 'Accès interdit';

@@ -33,11 +33,19 @@
         </div>
     </div>
     <div class="row">
+    	<?php if($_SESSION['user_access'] == ACCESS_LVL_ADMIN): ?>
         <div class="col-sm-3 text-left">
             <a href="<?= base_url('admin/save_objective'); ?>" class="btn btn-primary">
                 <?= lang('btn_add_m'); ?>
             </a>
         </div>
+    	<?php endif; ?>
+		<div class="col-sm-3 offset-6">
+			<?=form_checkbox('toggle_deleted', '', $with_archived, [
+				'id' => 'toggle_deleted', 'class' => 'form-check-input'
+			]);?>
+			<?=form_label(lang('btn_show_disabled'), 'toggle_deleted', ['class' => 'form-check-label']);?>
+		</div>
     </div>
     <div class="row mt-2">
         <table class="table table-hover">
@@ -45,17 +53,21 @@
             <tr>
                 <th><?= lang('field_objective_name'); ?></th>
                 <th></th>
+                <?php if($_SESSION['user_access'] == ACCESS_LVL_ADMIN): ?>
                 <th></th>
                 <th></th>
+                <?php endif; ?>
             </tr>
         </thead>
         <tbody id="objectiveslist">
             <?php foreach($objectives as $objective) { ?>
                 <tr>
-                    <td><a href="<?= base_url('aprentice/view_objective/'.$objective->id); ?>"><span class="font-weight-bold"><?= $objective->symbol?></span> <?= $objective->name; ?></td>
+                    <td><a href="<?= base_url('apprentice/view_objective/'.$objective->id); ?>"><span class="font-weight-bold"><?= $objective->symbol?></span> <?= $objective->name; ?></td>
                     <td><a href="<?= base_url('apprentice/view_objective/').$objective->id?>"><?= lang('btn_details')?></a></td>
+                    <?php if($_SESSION['user_access'] == ACCESS_LVL_ADMIN): ?>
                     <td><a href="<?= base_url('admin/save_objective/'.$objective->id); ?>"><?= lang('btn_update')?></a></td>
                     <td><a href="<?= base_url('admin/delete_objective/'.$objective->id); ?>" class="close">×</td>
+                    <?php endif; ?>
                 </tr>
             <?php } ?>
         </tbody>
@@ -67,7 +79,7 @@
 $(document).ready(function(){
     $('#toggle_deleted').change(e => {
         let checked = e.currentTarget.checked;
-        $.post('<?=base_url();?>admin/list_objective/'+(+checked), {}, data => {
+		$.post('<?=base_url();?>admin/list_objective/<?=$id?>/'+(+checked), {}, data => {
             $('#objectiveslist').empty();
             $('#objectiveslist')[0].innerHTML = $(data).find('#objectiveslist')[0].innerHTML;
         });

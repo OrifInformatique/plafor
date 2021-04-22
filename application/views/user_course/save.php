@@ -33,7 +33,7 @@ $update = !is_null($user_course);
         'id' => 'user_course_form',
         'name' => 'user_course_form'
     );
-    echo form_open('apprentice/save_user_course/'.$apprentice->id, $attributes, [
+    echo form_open('admin/save_user_course/'.$apprentice->id, $attributes, [
         'id' => $apprentice->id ?? 0
     ]);
     ?>

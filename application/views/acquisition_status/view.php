@@ -55,4 +55,3 @@
         </div>
     </div>
 </div>
-<pre><?= var_dump($trainers)?></pre>

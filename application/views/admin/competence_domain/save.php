@@ -58,7 +58,12 @@ $update = !is_null($competence_domain);
         <!-- FORM BUTTONS -->
         <div class="row">
             <div class="col text-right">
-                <a class="btn btn-default" href="<?= base_url('admin/list_competence_domain'); ?>"><?= lang('btn_cancel'); ?></a>
+				<a class="btn btn-default" href="<?= base_url('admin/list_competence_domain'); ?>"><?= lang('btn_cancel'); ?></a>
+				<?php if($competence_domain && $competence_domain->archive) { ?>
+				<a href="<?=base_url('admin/delete_competence_domain/'.$competence_domain->id.'/3')?>" class="btn btn-primary">
+					<?=lang('btn_reactivate')?>
+				</a>
+				<?php } ?>
                 <?= form_submit('save', lang('btn_save'), ['class' => 'btn btn-primary']); ?>
             </div>
         </div>

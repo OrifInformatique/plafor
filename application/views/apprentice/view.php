@@ -14,10 +14,8 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-			<p class="bg-primary text-white"><?=$this->lang->line('field_trainer_link')?></p>
-			<?php if ($_SESSION['user_access'] >= ACCESS_LVL_TRAINER) { ?>
-			<a class="btn btn-primary text-white" href="<?= base_url('apprentice/save_apprentice_link/'.$apprentice->id)?>"><?= $this->lang->line('title_apprentice_link_new') ?></a>
-			<?php } ?>
+            <p class="bg-primary text-white"><?=$this->lang->line('field_trainer_link')?></p>
+            <a class="btn btn-primary text-white" href="<?= base_url('admin/save_apprentice_link/'.$apprentice->id)?>"><?= $this->lang->line('title_apprentice_link_new') ?></a>
         </div>
         <div class="col-md-12">
             <table class="table table-hover">
@@ -42,8 +40,8 @@
 				$trainer = $trainersSorted[$link->fk_trainer];?>
                 <tr>
                     <td><a href="<?= base_url('apprentice/list_apprentice/'.$trainer->id); ?>"><?= $trainer->username; ?></a></th>
-                    <?php if($_SESSION['user_access'] >= ACCESS_LVL_TRAINER): ?>
-                    <th><a href="<?= base_url('apprentice/save_apprentice_link/'.$apprentice->id.'/'.$link->id) ?>"><?= $this->lang->line('title_apprentice_link_update'); ?></a></th>
+                    <?php if($_SESSION['user_access']): ?>
+                    <th><a href="<?= base_url('admin/save_apprentice_link/'.$apprentice->id.'/'.$link->id) ?>"><?= $this->lang->line('title_apprentice_link_update'); ?></a></th>
                     <th><a href="<?= base_url('admin/delete_apprentice_link/'.$link->id) ?>"><?= $this->lang->line('title_apprentice_link_delete');?></a></th>
                     <?php endif; ?>
                 </tr><?php
@@ -56,7 +54,7 @@
     <div class="row">
         <div class="col-md-12">
             <p class="bg-primary text-white"><?=$this->lang->line('field_followed_courses')?></p>
-            <a class="btn btn-primary text-white" href="<?= base_url('apprentice/save_user_course/'.$apprentice->id)?>"><?= $this->lang->line('title_user_course_new') ?></a>
+            <a class="btn btn-primary text-white" href="<?= base_url('admin/save_user_course/'.$apprentice->id)?>"><?= $this->lang->line('title_user_course_new') ?></a>
         </div>
         <div class="col-md-12">
             <table class="table table-hover">

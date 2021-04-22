@@ -24,10 +24,8 @@
             <a href="<?= base_url('apprentice/view_course_plan/'.$course_plan->id)?>"><span class="font-weight-bold"><?=$course_plan->formation_number?> </span><?=$course_plan->official_name?></a>
         </div>
     </div>
-    <?php $trainers_id = array();
-        foreach($trainers_apprentice as $trainer_apprentice):
-            $trainers_id[] = $trainer_apprentice->fk_trainer;
-        endforeach;
+    <?php
+        $trainersId = array_column($trainers_apprentice, 'fk_trainer');
 
         if(($_SESSION['user_access'] == $this->config->item('access_lvl_admin'))
         || ($_SESSION['user_access'] == $this->config->item('access_lvl_trainer') && in_array($_SESSION['user_id'], $trainersId))
@@ -61,7 +59,7 @@
 	<?php if($_SESSION['user_access'] == $this->config->item('access_lvl_admin')): ?>
     <div class="row">
         <div class="col-md-12">
-            <a class="btn btn-primary text-white" href="<?= base_url('apprentice/save_user_course/'.$apprentice->id."/".$user_course->id)?>"><?= $this->lang->line('title_user_course_update') ?></a>
+            <a class="btn btn-primary text-white" href="<?= base_url('admin/save_user_course/'.$apprentice->id."/".$user_course->id)?>"><?= $this->lang->line('title_user_course_update') ?></a>
             <a class="btn btn-danger text-white" href="<?= base_url('admin/delete_user_course/'.$user_course->id)?>"><?= $this->lang->line('title_user_course_delete') ?></a>
         </div>
     </div>
