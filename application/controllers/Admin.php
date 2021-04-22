@@ -44,6 +44,8 @@ class Admin extends MY_Controller
     /**
      * Displays the list of course plans
      *
+	 * @param int|null $id_apprentice ID of the apprentice to select the course plans of.
+	 * 		If null, selects all course plans
      * @return void
      */
     public function list_course_plan($id_apprentice = null)
@@ -83,22 +85,22 @@ class Admin extends MY_Controller
     {
 		if (count($_POST) > 0) {
 			$course_plan_id = $this->input->post('id');
-                        $rules = array(
-                            array(
-                              'field' => 'formation_number',
-                              'label' => 'lang:field_course_plan_formation_number',
-                              'rules' => 'required|max_length['.FORMATION_NUMBER_MAX_LENGTH.']|numeric',
-                            ),
-                            array(
-                              'field' => 'official_name',
-                              'label' => 'lang:field_course_plan_name',
-                              'rules' => 'required|max_length['.OFFICIAL_NAME_MAX_LENGTH.']',
-                            ),array(
-                              'field' => 'date_begin',
-                              'label' => 'lang:field_course_plan_official_name',
-                              'rules' => 'required|required',
-                            )
-                        );
+			$rules = array(
+				array(
+					'field' => 'formation_number',
+					'label' => 'lang:field_course_plan_formation_number',
+					'rules' => 'required|max_length['.FORMATION_NUMBER_MAX_LENGTH.']|numeric',
+				),
+				array(
+					'field' => 'official_name',
+					'label' => 'lang:field_course_plan_name',
+					'rules' => 'required|max_length['.OFFICIAL_NAME_MAX_LENGTH.']',
+				),array(
+					'field' => 'date_begin',
+					'label' => 'lang:field_course_plan_official_name',
+					'rules' => 'required|required',
+				)
+			);
 			$this->form_validation->set_rules($rules);
 			if ($this->form_validation->run()) {
 				$course_plan = array(
@@ -112,14 +114,14 @@ class Admin extends MY_Controller
 					$this->course_plan_model->insert($course_plan);
 				}
 				redirect('admin/list_course_plan');
-                                exit();
+				exit();
 			}
 		}
 
         $output = array(
             'title' => $this->lang->line('title_course_plan_'.((bool)$course_plan_id ? 'update' : 'new')),
             'course_plan' => $this->course_plan_model->get($course_plan_id),
-	);
+		);
 
         $this->display_view('admin/course_plan/save', $output);
     }
@@ -181,6 +183,8 @@ class Admin extends MY_Controller
     /**
      * Displays the list of course plans
      *
+	 * @param int|null $id_course_plan = ID of the course plan to select the competence domains of.
+	 * 		If null, selects all competence domains
      * @return void
      */
     public function list_competence_domain($id_course_plan = null)
@@ -213,24 +217,24 @@ class Admin extends MY_Controller
     {
 		if (count($_POST) > 0) {
 			$competence_domain_id = $this->input->post('id');
-                        $rules = array(
-                            array(
-                              'field' => 'symbol',
-                              'label' => 'lang:field_competence_domain_symbol',
-                              'rules' => 'required|max_length['.SYMBOL_MAX_LENGTH.']',
-                            ),
-                            array(
-                              'field' => 'name',
-                              'label' => 'lang:field_competence_domain_name',
-                              'rules' => 'required|max_length['.COMPETENCE_DOMAIN_NAME_MAX_LENGTH.']',
-                            )
-                        );
+			$rules = array(
+				array(
+					'field' => 'symbol',
+					'label' => 'lang:field_competence_domain_symbol',
+					'rules' => 'required|max_length['.SYMBOL_MAX_LENGTH.']',
+				),
+				array(
+					'field' => 'name',
+					'label' => 'lang:field_competence_domain_name',
+					'rules' => 'required|max_length['.COMPETENCE_DOMAIN_NAME_MAX_LENGTH.']',
+				)
+			);
 			$this->form_validation->set_rules($rules);
 			if ($this->form_validation->run()) {
 				$competence_domain = array(
 					'symbol' => $this->input->post('symbol'),
 					'name' => $this->input->post('name'),
-                                        'fk_course_plan' => $this->input->post('course_plan')
+					'fk_course_plan' => $this->input->post('course_plan')
 				);
 				if ($competence_domain_id > 0) {
 					$this->competence_domain_model->update($competence_domain_id, $competence_domain);
@@ -238,7 +242,7 @@ class Admin extends MY_Controller
 					$this->competence_domain_model->insert($competence_domain);
 				}
 				redirect('admin/list_competence_domain');
-                                exit();
+				exit();
 			}
 		}
 
@@ -297,6 +301,8 @@ class Admin extends MY_Controller
     /**
      * Displays the list of course plans
      *
+	 * @param int|null $id_competence_domain = ID of the competence domain to select the operation competences of.
+	 * 		If null, selects all operational competences
      * @return void
      */
     public function list_operational_competence($id_competence_domain = null)
@@ -311,11 +317,9 @@ class Admin extends MY_Controller
         $output = array(
             'operational_competences' => $operational_competences
         );
-
         if(is_numeric($id_competence_domain)){
             $output[] = ['competence_domain' => $competence_domain];
         }
-
         $this->display_view('admin/operational_competence/list', $output);
     }
 
@@ -329,33 +333,33 @@ class Admin extends MY_Controller
     {
 		if (count($_POST) > 0) {
 			$operational_competence_id = $this->input->post('id');
-                        $rules = array(
-                            array(
-                              'field' => 'symbol',
-                              'label' => 'lang:field_operational_competence_symbol',
-                              'rules' => 'required|max_length['.SYMBOL_MAX_LENGTH.']',
-                            ),
-                            array(
-                              'field' => 'name',
-                              'label' => 'lang:field_operational_name',
-                              'rules' => 'required|max_length['.OPERATIONAL_COMPETENCE_NAME_MAX_LENGTH.']',
-                            ),
-                            array(
-                              'field' => 'methodologic',
-                              'label' => 'lang:field_operational_methodologic',
-                              'rules' => 'max_length['.SQL_TEXT_MAX_LENGTH.']',
-                            ),
-                            array(
-                              'field' => 'social',
-                              'label' => 'lang:field_operational_social',
-                              'rules' => 'max_length['.SQL_TEXT_MAX_LENGTH.']',
-                            ),
-                            array(
-                              'field' => 'personal',
-                              'label' => 'lang:field_operational_personal',
-                              'rules' => 'max_length['.SQL_TEXT_MAX_LENGTH.']',
-                            ),
-                        );
+			$rules = array(
+				array(
+					'field' => 'symbol',
+					'label' => 'lang:field_operational_competence_symbol',
+					'rules' => 'required|max_length['.SYMBOL_MAX_LENGTH.']',
+				),
+				array(
+					'field' => 'name',
+					'label' => 'lang:field_operational_name',
+					'rules' => 'required|max_length['.OPERATIONAL_COMPETENCE_NAME_MAX_LENGTH.']',
+				),
+				array(
+					'field' => 'methodologic',
+					'label' => 'lang:field_operational_methodologic',
+					'rules' => 'max_length['.SQL_TEXT_MAX_LENGTH.']',
+				),
+				array(
+					'field' => 'social',
+					'label' => 'lang:field_operational_social',
+					'rules' => 'max_length['.SQL_TEXT_MAX_LENGTH.']',
+				),
+				array(
+					'field' => 'personal',
+					'label' => 'lang:field_operational_personal',
+					'rules' => 'max_length['.SQL_TEXT_MAX_LENGTH.']',
+				),
+			);
 			$this->form_validation->set_rules($rules);
 			if ($this->form_validation->run()) {
 				$operational_competence = array(
@@ -364,7 +368,7 @@ class Admin extends MY_Controller
 					'methodologic' => $this->input->post('methodologic'),
 					'social' => $this->input->post('social'),
 					'personal' => $this->input->post('personal'),
-                                        'fk_competence_domain' => $this->input->post('competence_domain')
+					'fk_competence_domain' => $this->input->post('competence_domain')
 				);
 				if ($operational_competence_id > 0) {
 					$this->operational_competence_model->update($operational_competence_id, $operational_competence);
@@ -372,7 +376,7 @@ class Admin extends MY_Controller
 					$this->operational_competence_model->insert($operational_competence);
 				}
 				redirect('admin/list_operational_competence');
-                                exit();
+				exit();
 			}
 		}
 
@@ -380,7 +384,7 @@ class Admin extends MY_Controller
             'title' => $this->lang->line('title_operational_competence_'.((bool)$operational_competence_id ? 'update' : 'new')),
             'operational_competence' => $this->operational_competence_model->get($operational_competence_id),
             'competence_domains' => $this->competence_domain_model->dropdown('name')
-	);
+		);
 
         $this->display_view('admin/operational_competence/save', $output);
     }
@@ -495,6 +499,8 @@ class Admin extends MY_Controller
     /**
      * Displays the list of course plans
      *
+	 * @param int|null $id_operational_competence = ID of the operational competence to select the objectives of.
+	 * 		If null, selects all objectives.
      * @return void
      */
     public function list_objective($id_operational_competence = null)
@@ -527,29 +533,29 @@ class Admin extends MY_Controller
     {
 		if (count($_POST) > 0) {
 			$objective_id = $this->input->post('id');
-                        $rules = array(
-                            array(
-                              'field' => 'symbol',
-                              'label' => 'lang:field_objective_symbol',
-                              'rules' => 'required|max_length['.SYMBOL_MAX_LENGTH.']',
-                            ),
-                            array(
-                              'field' => 'taxonomy',
-                              'label' => 'lang:field_objective_taxonomy',
-                              'rules' => 'required|max_length['.TAXONOMY_MAX_VALUE.']',
-                            ),array(
-                              'field' => 'name',
-                              'label' => 'lang:field_objective_name',
-                              'rules' => 'required|max_length['.OBJECTIVE_NAME_MAX_LENGTH.']',
-                            )
-                        );
+			$rules = array(
+				array(
+					'field' => 'symbol',
+					'label' => 'lang:field_objective_symbol',
+					'rules' => 'required|max_length['.SYMBOL_MAX_LENGTH.']',
+				),
+				array(
+					'field' => 'taxonomy',
+					'label' => 'lang:field_objective_taxonomy',
+					'rules' => 'required|max_length['.TAXONOMY_MAX_VALUE.']',
+				),array(
+					'field' => 'name',
+					'label' => 'lang:field_objective_name',
+					'rules' => 'required|max_length['.OBJECTIVE_NAME_MAX_LENGTH.']',
+				)
+			);
 			$this->form_validation->set_rules($rules);
 			if ($this->form_validation->run()) {
 				$objective = array(
 					'symbol' => $this->input->post('symbol'),
 					'taxonomy' => $this->input->post('taxonomy'),
 					'name' => $this->input->post('name'),
-                                        'fk_operational_competence' => $this->input->post('operational_competence')
+					'fk_operational_competence' => $this->input->post('operational_competence')
 				);
 				if ($objective_id > 0) {
 					$this->objective_model->update($objective_id, $objective);
@@ -557,7 +563,7 @@ class Admin extends MY_Controller
 					$this->objective_model->insert($objective);
 				}
 				redirect('admin/list_objective');
-                                exit();
+				exit();
 			}
 		}
 
@@ -565,7 +571,7 @@ class Admin extends MY_Controller
             'title' => $this->lang->line('title_objective_'.((bool)$objective_id ? 'update' : 'new')),
             'objective' => $this->objective_model->get($objective_id),
             'operational_competences' => $this->operational_competence_model->dropdown('name')
-	);
+		);
 
         $this->display_view('admin/objective/save', $output);
     }

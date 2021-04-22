@@ -50,6 +50,8 @@ class Apprentice extends MY_Controller
     /**
      * Displays the list of apprentice
      *
+	 * @param int $trainer_id = ID of the trainer to select the apprentices of.
+	 * 		If null, selects all apprentices. Does nothing for now
      * @return void
      */
     public function list_apprentice($trainer_id = null)
@@ -61,7 +63,6 @@ class Apprentice extends MY_Controller
         //if($trainer_id == null){
             $apprentice_level = $this->user_type_model->get_by('access_level', $this->config->item('access_lvl_apprentice'));
             $apprentices = $this->user_model->get_many_by('fk_user_type', $apprentice_level->id);
-            $coursesList = $this->course_plan_model->get_all();
             $courses = $this->user_course_model->get_all();
         //}else{
         //        $apprentices = $this->user_model->get_many_by(array('id' => $trainer_id));
@@ -80,11 +81,15 @@ class Apprentice extends MY_Controller
     /**
      * Show details of the selected apprentice
      *
-     * @param int (SQL PRIMARY KEY) $apprentice_id
-     *
+     * @param int $apprentice_id = ID of the apprentice to view
+     * @return void
      */
     public function view_apprentice($apprentice_id = null)
     {
+		if($_SESSION['user_access'] == ACCESS_LVL_APPRENTICE && $apprentice_id != $_SESSION['user_id']) {
+			redirect('apprentice');
+		}
+
         $apprentice = $this->user_model->get($apprentice_id);
 
         if($apprentice->fk_user_type != $this->user_type_model->get_by('name',$this->lang->line('title_apprentice'))->id){
@@ -114,14 +119,19 @@ class Apprentice extends MY_Controller
     /**
      * Form to create a link between a apprentice and a course plan
      *
-     * @param int (SQL PRIMARY KEY) $id_user_course
+	   * @param int $id_apprentice = ID of the apprentice to give a course plan to
+     * @param int $id_user_course = ID of the user to modify. If 0, adds a new user course
+     * @return void
      */
     public function save_user_course($id_apprentice = null,$id_user_course = 0){
+		if($_SESSION['user_access'] == ACCESS_LVL_APPRENTICE && $id_apprentice != $_SESSION['user_id']) {
+			redirect('apprentice');
+		}
 
         $apprentice = $this->user_model->get($id_apprentice);
         $user_course = $this->user_course_model->get($id_user_course);
 
-        if($id_apprentice == null || $apprentice->fk_user_type != $this->user_type_model->get_by('name',$this->lang->line('title_apprentice'))->id){
+        if($apprentice == null || $apprentice->fk_user_type != $this->user_type_model->get_by('name',$this->lang->line('title_apprentice'))->id){
             redirect(base_url('apprentice/list_apprentice'));
             exit();
         }
@@ -215,11 +225,20 @@ class Apprentice extends MY_Controller
     /**
      * Show a user course's details
      *
-     * @param int (SQL PRIMARY KEY) $id_user_course
+     * @param int $id_user_course = ID of the user course to view
+     * @return void
      */
     public function view_user_course($id_user_course = null){
         $user_course = $this->user_course_model->get($id_user_course);
-        $apprentice = $this->user_model->get($user_course->fk_user);
+        if($user_course == null){
+            redirect('apprentice/list_apprentice');
+            exit();
+		}
+
+		$apprentice = $this->user_model->get($user_course->fk_user);
+		if($_SESSION['user_access'] == ACCESS_LVL_APPRENTICE && $apprentice->id != $_SESSION['user_id']) {
+			redirect('apprentice');
+		}
         $user_course_status = $this->user_course_status_model->get($user_course->fk_status);
         $course_plan = $this->course_plan_model->get($user_course->fk_course_plan);
         $trainers_apprentice = $this->trainer_apprentice_model->get_many_by('fk_apprentice',$apprentice->id);
@@ -248,8 +267,9 @@ class Apprentice extends MY_Controller
      * Create a link between a apprentice and a trainer, or change the trainer
      * linked on the selected trainer_apprentice SQL entry
      *
-     * @param INT (SQL PRIMARY KEY) $id_apprentice
-     * @param INT (SQL PRIMARY KEY) $id_link
+     * @param int $id_apprentice = ID of the apprentice to add the link to or change the link of
+     * @param int $id_link = ID of the link to modify. If 0, adds a new link
+     * @return void
      */
     public function save_apprentice_link($id_apprentice = null, $id_link = 0){
 
@@ -274,23 +294,28 @@ class Apprentice extends MY_Controller
             $this->form_validation->set_rules($rules);
 
             if($this->form_validation->run()){
-                echo var_dump($_POST);
-
                 $apprentice_link = array(
                     'fk_trainer' => $this->input->post('trainer'),
-                    'fk_apprentice' => $id_apprentice,
-                );
+                    'fk_apprentice' => $this->input->post('apprentice'),
+				);
+				// This is used to prevent an apprentice from being linked to the same person twice
+				$old_link = $this->trainer_apprentice_model->get_by($apprentice_link);
 
-                if($id_link > 0){
-                    echo $this->trainer_apprentice_model->update($id_apprentice,$apprentice_link);
-                }else{
-                    echo $this->trainer_apprentice_model->insert($apprentice_link);
-                }
-
+				if ($id_link > 0) {
+					if (!is_null($old_link)) {
+						// Delete the old link instead of deleting the one being changed
+						// It's easier that way
+						$this->trainer_apprentice_model->delete($id_link);
+					} else {
+						$this->trainer_apprentice_model->update($id_apprentice,$apprentice_link);
+					}
+				} elseif (is_null($old_link)) {
+					// Don't insert a new link that is the same as an old one
+					$this->trainer_apprentice_model->insert($apprentice_link);
+				}
                 redirect('apprentice');
             }
         }
-
         // It seems that the MY_model dropdown method can't return a filtered result
         // so here we get every users that are trainer, then we create a array
         // with the matching constitution
@@ -317,7 +342,8 @@ class Apprentice extends MY_Controller
     /**
      * Show details of the selected acquisition status
      *
-     * @param int (SQL PRIMARY KEY) $acquisition_status_id
+     * @param int $acquisition_status_id = ID of the acquisition status to view
+     * @return void
      */
     public function view_acquisition_status($acquisition_status_id = null){
         $acquisition_status = $this->acquisition_status_model->with_all()->get($acquisition_status_id);
@@ -332,11 +358,65 @@ class Apprentice extends MY_Controller
         $output = array(
             'acquisition_status' => $acquisition_status,
             'trainers' => $trainers,
-            'comments' => $comments,
+			'comments' => $comments,
+			'objective' => $objective,
+			'acquisition_level' => $acquisition_level,
         );
 
         $this->display_view('acquisition_status/view',$output);
-    }
+	}
+
+	/**
+	 * Changes an acquisition status for an apprentice
+	 *
+	 * @param int $acquisition_status_id = ID of the acquisition status to change
+	 * @return void
+	 */
+	public function save_acquisition_status($acquisition_status_id = 0) {
+		$acquisitionStatus = $this->acquisition_status_model->get($acquisition_status_id);
+
+		if($_SESSION['user_access'] == ACCESS_LVL_APPRENTICE) {
+			// No need to check with $user_course outside of an apprentice
+			$userCourse = $this->user_course_model->get($acquisitionStatus->fk_user_course);
+			if ($userCourse->fk_user != $_SESSION['user_id']) {
+				redirect('apprentice');
+			}
+		}
+
+		if (is_null($acquisitionStatus)) {
+			redirect('apprentice');
+		}
+
+		$acquisitionLevels = $this->acquisition_level_model->dropdown('name');
+
+		// Check if data was sent
+		if (!empty($_POST)) {
+			$acquisitionLevel = $this->input->post('field_acquisition_level');
+
+			$this->form_validation->set_rules('field_acquisition_level', lang('field_acquisition_level'), [
+				'required',
+				// Automatic list of valid ids
+				'in_list['.implode(',', array_keys($acquisitionLevels)).']',
+			]);
+
+			if ($this->form_validation->run()) {
+				$acquisitionStatus = [
+					'fk_acquisition_level' => $acquisitionLevel
+				];
+				$this->acquisition_status_model->update($acquisition_status_id, $acquisitionStatus);
+
+				redirect('apprentice/view_acquisition_status/'.$acquisition_status_id);
+			}
+		}
+
+		$output = [
+			'acquisition_levels' => $acquisitionLevels,
+			'acquisition_level' => $acquisitionStatus->fk_acquisition_level,
+			'id' => $acquisition_status_id
+		];
+
+		$this->display_view('acquisition_status/save', $output);
+	}
 
     public function add_comment($acquisition_status_id = null){
         $acquisition_status = $this->acquisition_status_model->get($acquisition_status_id);
@@ -379,8 +459,8 @@ class Apprentice extends MY_Controller
     /**
      * Show details of the selected course plan
      *
-     * @param int (SQL PRIMARY KEY) $course_plan_id
-     *
+     * @param int $course_plan_id = ID of the course plan to view
+     * @return void
      */
     public function view_course_plan($course_plan_id = null)
     {
@@ -401,8 +481,8 @@ class Apprentice extends MY_Controller
     /**
      * Show details of the selected competence domain
      *
-     * @param int (SQL PRIMARY KEY) $competence_domain_id
-     *
+     * @param int $competence_domain_id = ID of the competence domain to view
+     * @return void
      */
     public function view_competence_domain($competence_domain_id = null)
     {
@@ -424,8 +504,8 @@ class Apprentice extends MY_Controller
     /**
      * Show details of the selected operational competence
      *
-     * @param int (SQL PRIMARY KEY) $operational_competence_id
-     *
+     * @param int $operational_competence_id = ID of the operational competence to view
+     * @return void
      */
     public function view_operational_competence($operational_competence_id = null)
     {
@@ -450,9 +530,8 @@ class Apprentice extends MY_Controller
 
     /**
      * Show details of the selected objective
-     *
-     * @param int (SQL PRIMARY KEY) $objective_id
-     *
+     * @param int $objective_id = ID of the objective to view
+     * @return void
      */
     public function view_objective($objective_id = null)
     {

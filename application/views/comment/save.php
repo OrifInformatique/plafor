@@ -1,7 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 $update = !is_null($acquisition_status);
-?>
-<?php
+
     // For some reasons, you can only set a type to input made with form_input if done with only a array as param, may need to be checked for later uses.
 
     $data_comment = array(
@@ -18,7 +17,7 @@ $update = !is_null($acquisition_status);
             <h1 class="title-section"><?= lang('comment_'.($update ? 'update' : 'new').'_title'); ?></h1>
         </div>
     </div>
-    
+
     <!-- FORM OPEN -->
     <?php
     $attributes = array(
@@ -38,7 +37,7 @@ $update = !is_null($acquisition_status);
                 <?= form_textarea($data_comment); ?>
             </div>
         </div>
-                    
+
         <!-- FORM BUTTONS -->
         <div class="row">
             <div class="col text-right">
