@@ -115,9 +115,9 @@ $lang['field_linked_competence_domains']= 'Domaines de compétences liés';
 $lang['field_linked_operational_competence']
                                         = 'Compétences opérationnelles liés';
 $lang['field_course_plan_formation_number']
-                                        = 'Numéro du plan de formation';
+                                        = 'Numéro officiel du plan de formation';
 $lang['field_course_plans_formation_numbers']
-                                        = 'Numéros des plans de formations';
+                                        = 'Numéros officiels des plans de formations';
 $lang['field_course_plan_official_name']
                                         = 'Nom du plan de formation';
 $lang['field_course_plans_official_names']

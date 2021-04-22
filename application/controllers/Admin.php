@@ -14,13 +14,19 @@ class Admin extends MY_Controller
      */
     public function __construct()
     {
-        /* Define controller access level */
-        $this->access_level = ACCESS_LVL_ADMIN;
+		/* Define controller access level */
+		$this->config->load('user/MY_user_config');
+        $this->access_level = $this->config->item('access_lvl_admin');
 
         parent::__construct();
 
         // Load required items
-        $this->load->library('form_validation')->model(['user/user_model','course_plan_model','user_course_model','competence_domain_model','operational_competence_model','objective_model']);
+        $this->load->library('form_validation')->model([
+			'user/user_model','course_plan_model','user_course_model',
+			'user_course_status_model','competence_domain_model',
+			'operational_competence_model','objective_model',
+			'trainer_apprentice_model'
+		]);
 
         // Assign form_validation CI instance to this
         $this->form_validation->CI =& $this;
@@ -34,44 +40,39 @@ class Admin extends MY_Controller
       $this->list_course_plan();
     }
 
+
     /**
      * Displays the list of course plans
      *
-	 * @param int $id_apprentice = ID of the apprentice whose courses are to be listed.
-	 * 		If invalid, will show all courses
-	 * @param bool $with_archived = TRUE to show archived courses, FALSE otherwise
+	 * @param int|null $id_apprentice ID of the apprentice to select the course plans of.
+	 * 		If null, selects all course plans
      * @return void
      */
     public function list_course_plan($id_apprentice = 0, $with_archived = FALSE)
     {
-		$course_plan_model =& $this->course_plan_model;
+        if($id_apprentice == null){
+            $course_plans = $this->course_plan_model->get_all();
+        }else{
+            $userCourses = $this->user_course_model->get_many_by('fk_user',$id_apprentice);
 
-		if ($with_archived) {
-			$course_plan_model->with_deleted();
-		}
+            $coursesId = array();
 
-		$apprentice = $this->user_model->with_deleted()->get($id_apprentice);
-
-		if (is_null($apprentice)) {
-			$course_plans = $this->course_plan_model->get_all();
-		} else {
-            $user_course_model =& $this->user_course_model;
-
-            if ($with_archived) {
-				$user_course_model = $user_course_model->with_deleted();
+            foreach ($userCourses as $userCourse){
+                $coursesId[] = $userCourse->fk_course_plan;
             }
 
-            $userCourses = $user_course_model->get_many_by('fk_user', $id_apprentice);
-            $userCourses = array_column($userCourses, 'fk_course_plan');
-
-            $course_plans = $course_plan_model->get_many($userCourses);
-		}
+            $course_plans = $this->course_plan_model->get_many($coursesId);
+        }
 
         $output = array(
 			'course_plans' => $course_plans,
 			'with_archived' => $with_archived,
 			'id' => $id_apprentice
         );
+
+        if(is_numeric($id_apprentice)){
+            $output[] = ['course_plans' => $course_plans];
+        }
 
         $this->display_view('admin/course_plan/list', $output);
     }
@@ -86,22 +87,22 @@ class Admin extends MY_Controller
     {
 		if (count($_POST) > 0) {
 			$course_plan_id = $this->input->post('id');
-                        $rules = array(
-                            array(
-                              'field' => 'formation_number',
-                              'label' => 'lang:field_course_plan_formation_number',
-                              'rules' => 'required|max_length['.FORMATION_NUMBER_MAX_LENGTH.']|numeric',
-                            ),
-                            array(
-                              'field' => 'official_name',
-                              'label' => 'lang:field_course_plan_name',
-                              'rules' => 'required|max_length['.OFFICIAL_NAME_MAX_LENGTH.']',
-                            ),array(
-                              'field' => 'date_begin',
-                              'label' => 'lang:field_course_plan_official_name',
-                              'rules' => 'required|required',
-                            )
-                        );
+			$rules = array(
+				array(
+					'field' => 'formation_number',
+					'label' => 'lang:field_course_plan_formation_number',
+					'rules' => 'required|max_length['.FORMATION_NUMBER_MAX_LENGTH.']|numeric',
+				),
+				array(
+					'field' => 'official_name',
+					'label' => 'lang:field_course_plan_name',
+					'rules' => 'required|max_length['.OFFICIAL_NAME_MAX_LENGTH.']',
+				),array(
+					'field' => 'date_begin',
+					'label' => 'lang:field_course_plan_official_name',
+					'rules' => 'required|required',
+				)
+			);
 			$this->form_validation->set_rules($rules);
 			if ($this->form_validation->run()) {
 				$course_plan = array(
@@ -115,7 +116,7 @@ class Admin extends MY_Controller
 					$this->course_plan_model->insert($course_plan);
 				}
 				redirect('admin/list_course_plan');
-                                exit();
+				exit();
 			}
 		}
 
@@ -145,7 +146,6 @@ class Admin extends MY_Controller
             redirect('admin/list_course_plan');
 		}
 
-		//$competenceDomainIds = array_column($course_plan->competence_domains, 'id');
 		$competenceDomainIds = $this->competence_domain_model->with_deleted()
 			->get_many_by('fk_course_plan', $course_plan_id);
 		$competenceDomainIds = array_column($competenceDomainIds, 'id');
@@ -160,7 +160,6 @@ class Admin extends MY_Controller
                 $this->display_view('admin/course_plan/delete', $output);
                 break;
             case 1: // Deactivate (soft delete) course plan
-
 				// Empty arrays will produce SQL errors, so only non-empty arrays will work
 				if (!empty($competenceDomainIds)) {
 					$operational_competences = $this->operational_competence_model->with_all()
@@ -245,9 +244,8 @@ class Admin extends MY_Controller
     /**
      * Displays the list of course plans
      *
-	 * @param int $id_course_plan = ID of the course plan whose competence domains are to display.
-	 * 		If invalid, will show all competence domains
-	 * @param bool $with_archived = TRUE to show archived competence domains, FALSE otherwise
+	 * @param int|null $id_course_plan = ID of the course plan to select the competence domains of.
+	 * 		If null, selects all competence domains
      * @return void
      */
     public function list_competence_domain($id_course_plan = 0, $with_archived = FALSE)
@@ -273,6 +271,9 @@ class Admin extends MY_Controller
 			'id' => $id_course_plan
         );
 
+        if(is_numeric($id_course_plan)){
+            $output[] = ['course_plan' => $course_plan];
+        }
         $this->display_view('admin/competence_domain/list', $output);
     }
 
@@ -286,24 +287,24 @@ class Admin extends MY_Controller
     {
 		if (count($_POST) > 0) {
 			$competence_domain_id = $this->input->post('id');
-                        $rules = array(
-                            array(
-                              'field' => 'symbol',
-                              'label' => 'lang:field_competence_domain_symbol',
-                              'rules' => 'required|max_length['.SYMBOL_MAX_LENGTH.']',
-                            ),
-                            array(
-                              'field' => 'name',
-                              'label' => 'lang:field_competence_domain_name',
-                              'rules' => 'required|max_length['.COMPETENCE_DOMAIN_NAME_MAX_LENGTH.']',
-                            )
-                        );
+			$rules = array(
+				array(
+					'field' => 'symbol',
+					'label' => 'lang:field_competence_domain_symbol',
+					'rules' => 'required|max_length['.SYMBOL_MAX_LENGTH.']',
+				),
+				array(
+					'field' => 'name',
+					'label' => 'lang:field_competence_domain_name',
+					'rules' => 'required|max_length['.COMPETENCE_DOMAIN_NAME_MAX_LENGTH.']',
+				)
+			);
 			$this->form_validation->set_rules($rules);
 			if ($this->form_validation->run()) {
 				$competence_domain = array(
 					'symbol' => $this->input->post('symbol'),
 					'name' => $this->input->post('name'),
-                                        'fk_course_plan' => $this->input->post('course_plan')
+					'fk_course_plan' => $this->input->post('course_plan')
 				);
 				if ($competence_domain_id > 0) {
 					$this->competence_domain_model->update($competence_domain_id, $competence_domain);
@@ -311,7 +312,7 @@ class Admin extends MY_Controller
 					$this->competence_domain_model->insert($competence_domain);
 				}
 				redirect('admin/list_competence_domain');
-                                exit();
+				exit();
 			}
 		}
 
@@ -398,12 +399,12 @@ class Admin extends MY_Controller
                 redirect('admin/list_competence_domain');
         }
     }
+
     /**
      * Displays the list of course plans
      *
-	 * @param int $id_competence_domain = ID of the competence domain whose operational competences are to show.
-	 * 		If invalid, will show all operational competences
-	 * @param bool $with_archived = TRUE to show archived operational competences, FALSE otherwise
+	 * @param int|null $id_competence_domain = ID of the competence domain to select the operation competences of.
+	 * 		If null, selects all operational competences
      * @return void
      */
     public function list_operational_competence($id_competence_domain = 0, $with_archived = FALSE)
@@ -428,7 +429,9 @@ class Admin extends MY_Controller
 			'id' => $id_competence_domain,
 			'with_archived' => $with_archived
         );
-
+        if(is_numeric($id_competence_domain)){
+            $output[] = ['competence_domain' => $competence_domain];
+        }
         $this->display_view('admin/operational_competence/list', $output);
     }
 
@@ -485,7 +488,7 @@ class Admin extends MY_Controller
 					$this->operational_competence_model->insert($operational_competence);
 				}
 				redirect('admin/list_operational_competence');
-                                exit();
+				exit();
 			}
 		}
 
@@ -547,6 +550,7 @@ class Admin extends MY_Controller
                 redirect('admin/list_operational_competence');
         }
     }
+
     /**
      * Deletes a trainer_apprentice link depending on $action
      *
@@ -581,6 +585,7 @@ class Admin extends MY_Controller
                 redirect('apprentice/list_apprentice/'.$apprentice->id);
         }
     }
+
     /**
      * Deletes a user_course depending on $action
      *
@@ -617,12 +622,12 @@ class Admin extends MY_Controller
                 redirect('apprentice/list_apprentice');
         }
     }
+
     /**
      * Displays the list of course plans
      *
-	 * @param int $id_operational_competence = ID of the operation whose objectives are to show.
-	 * 		If invalid, displays all objectives
-	 * @param bool $with_archived = TRUE to display archived objectives, FALSE otherwise
+	 * @param int|null $id_operational_competence = ID of the operational competence to select the objectives of.
+	 * 		If null, selects all objectives.
      * @return void
      */
     public function list_objective($id_operational_competence = 0, $with_archived = FALSE)
@@ -647,6 +652,9 @@ class Admin extends MY_Controller
 			'with_archived' => $with_archived,
 			'id' => $id_operational_competence
         );
+        if(is_numeric($id_operational_competence)){
+            $output[] = ['operational_competence',$operational_competence];
+        }
 
         $this->display_view('admin/objective/list', $output);
     }
@@ -661,29 +669,29 @@ class Admin extends MY_Controller
     {
 		if (count($_POST) > 0) {
 			$objective_id = $this->input->post('id');
-                        $rules = array(
-                            array(
-                              'field' => 'symbol',
-                              'label' => 'lang:field_objective_symbol',
-                              'rules' => 'required|max_length['.SYMBOL_MAX_LENGTH.']',
-                            ),
-                            array(
-                              'field' => 'taxonomy',
-                              'label' => 'lang:field_objective_taxonomy',
-                              'rules' => 'required|max_length['.TAXONOMY_MAX_VALUE.']',
-                            ),array(
-                              'field' => 'name',
-                              'label' => 'lang:field_objective_name',
-                              'rules' => 'required|max_length['.OBJECTIVE_NAME_MAX_LENGTH.']',
-                            )
-                        );
+			$rules = array(
+				array(
+					'field' => 'symbol',
+					'label' => 'lang:field_objective_symbol',
+					'rules' => 'required|max_length['.SYMBOL_MAX_LENGTH.']',
+				),
+				array(
+					'field' => 'taxonomy',
+					'label' => 'lang:field_objective_taxonomy',
+					'rules' => 'required|max_length['.TAXONOMY_MAX_VALUE.']',
+				),array(
+					'field' => 'name',
+					'label' => 'lang:field_objective_name',
+					'rules' => 'required|max_length['.OBJECTIVE_NAME_MAX_LENGTH.']',
+				)
+			);
 			$this->form_validation->set_rules($rules);
 			if ($this->form_validation->run()) {
 				$objective = array(
 					'symbol' => $this->input->post('symbol'),
 					'taxonomy' => $this->input->post('taxonomy'),
 					'name' => $this->input->post('name'),
-                                        'fk_operational_competence' => $this->input->post('operational_competence')
+					'fk_operational_competence' => $this->input->post('operational_competence')
 				);
 				if ($objective_id > 0) {
 					$this->objective_model->update($objective_id, $objective);
@@ -691,7 +699,7 @@ class Admin extends MY_Controller
 					$this->objective_model->insert($objective);
 				}
 				redirect('admin/list_objective');
-                                exit();
+				exit();
 			}
 		}
 

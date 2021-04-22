@@ -12,8 +12,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 
 /* Access levels */
-$config['access_lvl_guest'] = 1;
-$config['access_lvl_registered'] = 2;
+$config['access_lvl_apprentice'] = 1;
+$config['access_lvl_trainer'] = 2;
 $config['access_lvl_admin'] = 4;
 
 /* Validation rules */
@@ -21,6 +21,7 @@ $config['username_min_length'] = 3;
 $config['username_max_length'] = 45;
 $config['password_min_length'] = 6;
 $config['password_max_length'] = 72;
+$config['email_max_length'] = 100;
 
 /* Other rules */
 $config['password_hash_algorithm'] = PASSWORD_BCRYPT;

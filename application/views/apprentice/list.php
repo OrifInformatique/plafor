@@ -44,7 +44,18 @@
             </tr>
         </thead>
         <tbody id="apprenticeslist">
-            <?php foreach($apprentices as $apprentice) { ?>
+			<?php
+			$coursesSorted = [];
+			foreach($courses as $course) {
+				$fk_user = $course->fk_user;
+				if (!isset($coursesSorted[$fk_user]) || !is_array($coursesSorted[$fk_user])) {
+					$coursesSorted[$fk_user] = [];
+				}
+				$coursesSorted[$fk_user][] = $course;
+			}
+			foreach($apprentices as $apprentice) {
+				$apprenticeCourses = $coursesSorted[$apprentice->id];
+				?>
                 <tr>
                     <td><a href="<?= base_url('apprentice/view_apprentice/'.$apprentice->id); ?>"><?= $apprentice->username; ?></td>
                     <td><?php if(isset($isAdmin)): ?><a href="<?= base_url('admin/list_course_plan/'.$apprentice->id)?>"><?php endif; ?><?php

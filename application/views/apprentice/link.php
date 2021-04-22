@@ -1,17 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 $update = !is_null($link);
 ?>
-<?php
-    // For some reasons, you can only set a type to input made with form_input if done with only a array as param, may need to be checked for later uses.
-
-    $data_apprentice = array(
-        'name' => 'apprentice',
-        'value' => $apprentice_id ?? $apprentice->id ?? '',
-        'class' => 'form-control',
-        'type' => 'hidden',
-        'id' => 'apprentice'
-    );
-?>
 <div class="container">
     <!-- TITLE -->
     <div class="row">
@@ -29,6 +18,7 @@ $update = !is_null($link);
     echo form_open('admin/save_apprentice_link/'.$apprentice->id, $attributes, [
         'id' => $apprentice->id ?? 0
     ]);
+
     ?>
 
         <!-- ERROR MESSAGES -->
@@ -38,7 +28,6 @@ $update = !is_null($link);
         <div class="row">
             <div class="col-sm-6 form-group">
                 <?= form_label(lang('field_apprentice_username'), 'apprentice', ['class' => 'form-label']); ?>
-                <?= form_input($data_apprentice); ?>
                 <p><?=$apprentice->username?></p>
             </div>
             <div class="col-sm-6 form-group">
