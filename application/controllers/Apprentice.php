@@ -55,22 +55,29 @@ class Apprentice extends MY_Controller
      */
     public function list_apprentice($trainer_id = null)
     {
-		if ($_SESSION['user_access'] == ACCESS_LVL_APPRENTICE) {
-			redirect('apprentice');
-		}
-        if(is_null($trainer_id) && $_SESSION['user_access'] < ACCESS_LVL_ADMIN){
+		$trainer = $this->user_model->get($trainer_id);
+
+        if($_SESSION['user_access'] < ACCESS_LVL_ADMIN){
             redirect("apprentice");
         }
 
-        //if($trainer_id == null){
+		$coursesList = $this->course_plan_model->get_all();
+
+        if(is_null($trainer)){
             $apprentice_level = $this->user_type_model->get_by('access_level', ACCESS_LVL_APPRENTICE);
             $apprentices = $this->user_model->get_many_by('fk_user_type', $apprentice_level->id);
-            $coursesList = $this->course_plan_model->get_all();
             $courses = $this->user_course_model->get_all();
-        //}else{
-        //        $apprentices = $this->user_model->get_many_by(array('id' => $trainer_id));
-
-        //}
+        }else{
+			$apprenticesIds = $this->trainer_apprentice_model->get_many_by('fk_trainer', $trainer_id);
+			$apprenticesIds = array_column($apprenticesIds, 'fk_apprentice');
+			// Empty arrays produce errors in MySQL `IN()`
+			if (!empty($apprenticesIds)) {
+				$apprentices = $this->user_model->get_many($apprenticesIds);
+				$courses = $this->user_course_model->get_many_by(['fk_user' => $apprenticesIds]);
+			} else {
+				$apprentices = $courses = [];
+			}
+        }
 
         $output = array(
             'apprentices' => $apprentices,
