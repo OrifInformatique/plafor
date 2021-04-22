@@ -1,7 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 $update = !is_null($objective);
-?>
-<?php
+
     // For some reasons, you can only set a type to input made with form_input if done with only a array as param, may need to be checked for later uses.
 
     $data_symbol = array(
@@ -11,7 +10,7 @@ $update = !is_null($objective);
         'class' => 'form-control',
         'id' => 'objective_symbol'
     );
-    
+
     $data_taxonomy = array(
         'name' => 'taxonomy',
         'value' => $objective_taxonomy ?? $objective->taxonomy ?? '',
@@ -20,7 +19,7 @@ $update = !is_null($objective);
         'class' => 'form-control',
         'id' => 'objective_taxonomy'
     );
-    
+
     $data_name = array(
         'name' => 'name',
         'value' => $objective_name ?? $objective->name ?? '',
@@ -36,7 +35,7 @@ $update = !is_null($objective);
             <h1 class="title-section"><?= lang('objective_'.($update ? 'update' : 'new').'_title'); ?></h1>
         </div>
     </div>
-    
+
     <!-- FORM OPEN -->
     <?php
     $attributes = array(
@@ -67,7 +66,7 @@ $update = !is_null($objective);
                 <?= form_input($data_name); ?>
             </div>
         </div>
-                    
+
         <!-- FORM BUTTONS -->
         <div class="row">
             <div class="col text-right">
