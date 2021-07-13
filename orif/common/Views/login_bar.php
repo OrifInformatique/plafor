@@ -12,6 +12,8 @@
  */
 ?>
 
+<a href="<?=base_url('plafor/apprentice/list_apprentice')?>"><?=lang('plafor_lang.plafor_module')?></a>
+
 <div id="login-bar" class="container" >
   <div class="row xs-center">
     <div class="col-sm-5 col-md-3">

@@ -1,7 +1,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <p class="bg-primary text-white"><?=lang('user_lang.details_course_plan')?></p>
+            <p class="bg-primary text-white"><?=lang('plafor_lang.title_view_course_plan')?></p>
         </div>
         <div class="col-md-4">
             <p class="font-weight-bold"><?=lang('user_lang.field_course_plan_formation_number')?></p>
@@ -18,7 +18,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <p class="bg-primary text-white"><?=lang('user_lang.field_linked_competence_domains')?></p>
+            <p class="bg-primary text-white"><?=lang('plafor_lang.title_view_competence_domains_linked')?></p>
         </div>
         <div class="col-md-12">
             <table class="table table-hover">

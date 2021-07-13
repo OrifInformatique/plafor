@@ -1,7 +1,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <p class="bg-primary text-white"><?=lang('user_lang.details_user_course')?></p>
+            <p class="bg-primary text-white"><?=lang('plafor_lang.title_view_user_course')?></p>
         </div>
         <div class="col-md-4">
             <p class="font-weight-bold"><?=lang('user_lang.field_user_course_date_begin')?></p>
@@ -31,7 +31,7 @@
 
         if(($_SESSION['user_access'] == config('\User\Config\UserConfig')->access_lvl_admin)
         || ($_SESSION['user_access'] == config('\User\Config\UserConfig')->access_lvl_trainer && in_array($_SESSION['user_id'], $trainers_id))
-        || ($_SESSION['user_access'] == config('\User\Config\UserConfig')->access_lvl_apprentice && $user_course['fk_user'] == $apprentice['id'])): ?>
+        || ($_SESSION['user_access'] == config('\User\Config\UserConfig')->access_level_apprentice && $user_course['fk_user'] == $apprentice['id'])): ?>
     <div class="row">
         <p class="font-weight-bold"><?= lang('user_lang.field_user_course_objectives_status') ?></p>
         <div class="col-md-12">
@@ -45,7 +45,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                <?php foreach($acquisition_status as $acquisition): ?>
+                <?php
+                foreach($acquisition_status as $acquisition): ?>
                     <tr>
                         <td><a href="<?= base_url('plafor/apprentice/view_acquisition_status/'.$acquisition['id'])?>"><?= $objectives[$acquisition['fk_objective']]['symbol']; ?></a></td>
                         <td><a href="<?= base_url('plafor/apprentice/view_acquisition_status/'.$acquisition['id'])?>"><?= $objectives[$acquisition['fk_objective']]['name']; ?></a></td>

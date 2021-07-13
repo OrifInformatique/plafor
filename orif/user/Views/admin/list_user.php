@@ -34,7 +34,6 @@ helper("form");
         <thead>
             <tr>
                 <th><?= lang('user_lang.field_username'); ?></th>
-                <th><?= lang('user_lang.field_email'); ?></th>
                 <th><?= lang('user_lang.field_usertype'); ?></th>
                 <th><?= lang('user_lang.field_user_active'); ?></th>
                 <th></th>
@@ -44,7 +43,7 @@ helper("form");
             <?php foreach($users as $user) { ?>
                 <tr>
                     <td><a href="<?= base_url('user/admin/save_user/'.$user['id']); ?>"><?= esc($user['username']); ?></td>
-                    <td><?= esc($user['email']); ?></td>
+                    <!--<td><?php// esc($user['email']); ?></td> -->
                     <td><?= $user_types[$user['fk_user_type']]; ?></td>
                     <td><?= lang($user['archive'] ? 'common_lang.no' : 'common_lang.yes'); ?></td>
                     <td><a href="<?= base_url('user/admin/delete_user/'.$user['id']); ?>" class="close">×</td>

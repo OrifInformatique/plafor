@@ -6,7 +6,7 @@ $validation= \CodeIgniter\Config\Services::validation();
     <!-- TITLE -->
     <div class="row">
         <div class="col">
-            <h1 class="title-section"><?= lang('user_lang.title_edit_acquisition_status'); ?></h1>
+            <h1 class="title-section"><?= lang('plafor_lang.title_acquisition_status_edit'); ?></h1>
         </div>
     </div>
 
@@ -33,7 +33,7 @@ $validation= \CodeIgniter\Config\Services::validation();
 				<?= lang('user_lang.field_acquisition_level', ['class'=>'form-label']); ?>
 			</div>
 			<div class="col-6">
-				<?= form_dropdown('field_acquisition_level',['id' => 'field_acquisition_level', 'class' => 'form-control'], $acquisition_level, ); ?>
+				<?= form_dropdown('field_acquisition_level',$acquisition_levels, $acquisition_level,['id' => 'field_acquisition_level', 'class' => 'form-control'] ); ?>
 			</div>
 		</div>
 

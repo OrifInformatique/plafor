@@ -21,6 +21,7 @@ class AddUser extends \CodeIgniter\Database\Migration
             'fk_user_type'=>[
                 'type'              => 'INT',
                 'unsigned'          => true,
+                'null'              => false,
             ],
             'username'=>[
                 'type'              => 'VARCHAR',
@@ -42,11 +43,13 @@ class AddUser extends \CodeIgniter\Database\Migration
             'date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP',
 
         ]);
-        $this->forge->addKey('id',true);
+        $this->forge->addKey('id',true,true);
         $this->forge->addForeignKey('fk_user_type','user_type','id');
         $this->forge->createTable('user',true);
         $seeder=\Config\Database::seeder();
-        $seeder->call('\User\Database\Seeds\AddUserDatas');
+        //for plafor module
+        //$seeder->call('\User\Database\Seeds\AddUserDatas');
+        $seeder->call('\Plafor\Database\Seeds\addUserDatas');
     }
 
     /**

@@ -44,7 +44,7 @@ $validation=\CodeIgniter\Config\Services::validation();
         'id' => 'objective_form',
         'name' => 'objective_form'
     );
-    echo form_open('plafor/admin/save_objective', $attributes, [
+    echo form_open(base_url('plafor/admin/save_objective/0/'.($operational_competence_id??'')), $attributes, [
         'id' => $objective['id'] ?? 0
     ]);
     ?>
@@ -64,7 +64,7 @@ $validation=\CodeIgniter\Config\Services::validation();
             <div class="col-sm-12 form-group">
                 <?= form_label(lang('user_lang.field_objective_operational_competence'), 'operational_competence', ['class' => 'form-label']); ?>
                 <br />
-                <?= form_dropdown('operational_competence',$operational_competences,$objective['fk_operational_competence'] ?? '','id="operational_competence" class="form-control"')?>
+                <?= form_dropdown('operational_competence',$operational_competences,($operational_competence_id??''),'id="operational_competence" class="form-control"')?>
             </div>
             <div class="col-sm-12 form-group">
                 <?= form_label(lang('user_lang.field_objective_symbol'), 'objective_symbol', ['class' => 'form-label']); ?>
@@ -79,7 +79,7 @@ $validation=\CodeIgniter\Config\Services::validation();
         <!-- FORM BUTTONS -->
         <div class="row">
             <div class="col text-right">
-                <a class="btn btn-default" href="<?= base_url('plafor/admin/list_objective'); ?>"><?= lang('common_lang.btn_cancel'); ?></a>
+                <a class="btn btn-default" href="<?= base_url('plafor/admin/list_objective/'.($operational_competence_id??'')); ?>"><?= lang('common_lang.btn_cancel'); ?></a>
 				<?php if($objective && $objective['archive']) { ?>
 				<a href="<?=base_url('plafor/admin/delete_objective/'.$objective['id'].'/3')?>" class="btn btn-primary">
 					<?=lang('common_lang.btn_reactivate')?>

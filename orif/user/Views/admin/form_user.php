@@ -51,13 +51,7 @@ $validation=\Config\Services::validation();
                         'class' => 'form-control', 'id' => 'user_name'
                     ]); ?>
                 </div>
-                <div class="form-group">
-                    <?= form_label(lang('user_lang.field_email'), 'user_email', ['class' => 'form-label']); ?>
-                    <?= form_input('user_email', $user['email'] ?? '', [
-                        'maxlength' => config('\User\Config\UserConfig')->email_max_length,
-                        'class' => 'form-control', 'id' => 'user_email'
-                    ]); ?>
-                </div>
+
             </div>
             <div class="col-sm-6 form-group">
                 <?= form_label(lang('user_lang.field_usertype'), 'user_usertype', ['class' => 'form-label']); ?>

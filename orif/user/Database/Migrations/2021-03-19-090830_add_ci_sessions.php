@@ -23,17 +23,15 @@ class AddCiSessions extends \CodeIgniter\Database\Migration
                 'constraint'        => '45',
                 'null'              => false,
             ],
-            'timestamp'=>[
-                'type'              => 'INT',
-                'null'              => false,
-                'default'           => 0,
-            ],
+            'timestamp timestamp DEFAULT CURRENT_TIMESTAMP',
             'data'=>[
                 'type'              => 'BLOB',
                 'null'              =>  false,
             ]
 
         ]);
+        $this->forge->addPrimaryKey('id');
+        $this->forge->addKey('timestamp');
         $this->forge->createTable('ci_sessions',true);
     }
 

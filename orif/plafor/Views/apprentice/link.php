@@ -28,7 +28,14 @@ $validation=\CodeIgniter\Config\Services::validation()
         'id' => 'apprentice_link_form',
         'name' => 'apprentice_link_form'
     );
-    echo form_open('plafor/apprentice/save_apprentice_link/'.$apprentice['id'], $attributes, [
+    $formAction = '';
+    //exit();
+    if($link==null) {
+        $formAction = 'plafor/apprentice/save_apprentice_link/'.$apprentice['id'];
+    } else {
+        $formAction = 'plafor/apprentice/save_apprentice_link/'.$apprentice['id'].'/'.$link['id'];
+    }
+    echo form_open($formAction, $attributes, [
         'id' => $apprentice['id'] ?? 0
     ]);
     ?>
@@ -50,12 +57,12 @@ $validation=\CodeIgniter\Config\Services::validation()
             <div class="col-sm-6 form-group">
                 <?= form_label(lang('user_lang.field_trainer_link'), 'trainer', ['class' => 'form-label']); ?>
                 <br />
-                <?= form_dropdown('trainer',$trainers,$link['id'] ?? '','id="trainer" class="form-control"')?>
+                <?= form_dropdown('trainer',$trainers,$link['fk_trainer'] ?? '','id="trainer" class="form-control"')?>
             </div>   
         <!-- FORM BUTTONS -->
         <div class="row">
             <div class="col text-right">
-                <a class="btn btn-default" href="<?= base_url('plafor/apprentice/list_apprentice'); ?>"><?= lang('common_lang.btn_cancel'); ?></a>
+                <a class="btn btn-default" href="<?= base_url("plafor/apprentice/view_apprentice/{$apprentice['id']}"); ?>"><?= lang('common_lang.btn_cancel'); ?></a>
                 <?= form_submit('save', lang('common_lang.btn_save'), ['class' => 'btn btn-primary']); ?>
             </div>
         </div>

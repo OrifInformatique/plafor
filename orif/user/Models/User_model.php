@@ -14,7 +14,7 @@ class User_model extends \CodeIgniter\Model{
     private static $userModel;
     protected $table='user';
     protected $primaryKey='id';
-    protected $allowedFields=['archive','date_creation','email','username','password','fk_user_type'];
+    protected $allowedFields=['archive','date_creation','username','password','fk_user_type'];
     protected $useSoftDeletes=true;
     protected $deletedField="archive";
 
@@ -53,7 +53,7 @@ class User_model extends \CodeIgniter\Model{
      * @param string $password
      * @return bool true on success false otherwise
      */
-    public static function check_password_email($email,$password){
+   public static function check_password_email($email,$password){
         if (!filter_var($email,FILTER_VALIDATE_EMAIL)){
             return false;
         }
@@ -71,18 +71,18 @@ class User_model extends \CodeIgniter\Model{
      * @param $fkUserTypeId
      * @return mixed
      */
-    public static function get_access_level($fkUserTypeId){
-        return User_type_model::getInstance()->getWhere(['id'=>$fkUserTypeId])->getRow()->access_level;
+    public static function get_access_level($userID){
+        return User_type_model::getInstance()->getWhere(['id'=>User_model::getInstance()->find($userID)['fk_user_type']])->getRow()->access_level;
 
     }
 
     /**
      * @return array the list of apprentices
      */
-    public static function getApprentices(bool $withDelted=false){
+    public static function getApprentices(bool $withDeleted=false){
 
-        if ($withDelted)
-            return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Apprenti')->first()['id'])->withDeleted()->findAll();
+        if ($withDeleted)
+            return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('access_level', config("\User\Config\UserConfig")->access_level_apprentice)->first()['id'])->withDeleted()->findAll();
         return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Apprenti')->first()['id'])->findAll();
 
     }
@@ -91,9 +91,19 @@ class User_model extends \CodeIgniter\Model{
      * @return array the list of trainers
      */
     public static function getTrainers(bool $withDelted=false){
-        if ($withDelted)
-            return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Formateur')->first()['id'])->withDeleted()->findAll();
-        return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Formateur')->first()['id'])->findAll();
+        $indexedTrainers = array();
+        if ($withDelted) {
+            $trainers = User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Formateur')->first()['id'])->withDeleted()->findAll();
+            foreach ($trainers as $trainer) {
+                $indexedTrainers[$trainer['id']] = $trainer;
+            }
+            return $indexedTrainers;
+        }
+        $trainers = User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Formateur')->first()['id'])->findAll();
+        foreach ($trainers as $trainer) {
+            $indexedTrainers[$trainer['id']] = $trainer;
+        }
+        return $indexedTrainers;
 
     }
 

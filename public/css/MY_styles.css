@@ -19,3 +19,10 @@
 li.nav-item {
 	margin: 0 10px;
 }
+
+.show {
+    opacity: 1!important;
+    width: 250px!important;
+    transition: all 0.4s;
+    color: unset!important;
+}

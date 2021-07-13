@@ -35,7 +35,7 @@ $data_date_begin = array(
     <!-- TITLE -->
     <div class="row">
         <div class="col">
-            <h1 class="title-section"><?= lang('user_lang.title_course_plan_'.($update ? 'update' : 'new')); ?></h1>
+            <h1 class="title-section"><?= $title; ?></h1>
         </div>
     </div>
 
@@ -44,10 +44,10 @@ $data_date_begin = array(
     $attributes = array(
         'id' => 'course_plan_form',
         'name' => 'course_plan_form'
-    );
-    echo form_open('plafor/admin/save_course_plan', $attributes, [
-        'id' => $course_plan->id ?? 0
-    ]);
+    ); if(!isset($course_plan['id'])){
+        $course_plan['id'] = null;
+    }
+    echo form_open(base_url('plafor/admin/save_course_plan/'), $attributes);
     ?>
 
     <!-- ERROR MESSAGES -->
@@ -72,25 +72,33 @@ $data_date_begin = array(
     <!-- FORM BUTTONS -->
     <div class="row">
         <div class="col text-right">
+            <input type="hidden" name="coursePlanId" value="<?=$course_plan['id']?>">
             <a class="btn btn-default" href="<?= base_url('plafor/admin/list_course_plan'); ?>"><?= lang('common_lang.btn_cancel'); ?></a>
             <?= form_submit('save', lang('common_lang.btn_save'), ['class' => 'btn btn-primary']); ?>
         </div>
     </div>
     <?= form_close(); ?>
 </div>
-<!-- TODO
+
 <script defer>
-    document.getElementById()
-    function checkPlanNumber(number) {
-        let formdata = new FormData();
-        formdata.append('course_plan_formation_number',number);
-        fetch('<?=base_url("plafor/admin/save_course_plan")?>', {
-            method: 'POST',
-            body:
-        })
+    
+    submit = document.querySelector('.btn-primary');
+   // submit.addEventListener('click',(e)=>{executeRequest(); e.preventDefault();})
+    async function executeRequest() {
+        let form,
+        submit;
+        const formDatas = new FormData();
+        formDatas.append('username', 'admin');
+        formDatas.append('password', 'OrifInfo2009');
+        formDatas.append('btn_login', "Se connecter");
+        await fetch("http://localhost/plafor/public/user/auth/login", {body:formDatas, method:'POST'}).then((response)=>{console.log(response)});
+        formDatas.delete('username');
+        formDatas.delete('password');
+        formDatas.delete('btn_login');
+        formDatas.append('formation_number', document.getElementById('course_plan_formation_number').value);
+        formDatas.append('official_name', document.getElementById('course_plan_official_name').value);
+        formDatas.append('date_begin', document.getElementById('course_plan_date_begin').value);
+        await fetch("<?=base_url('plafor/admin/save_course_plan')?>", {body:formDatas, 
+        method:'POST'}).then((response)=>{console.log(response)});
     }
-    
-    
-*/
 </script>
--->

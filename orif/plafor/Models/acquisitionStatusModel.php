@@ -28,7 +28,7 @@ class AcquisitionStatusModel extends Model{
      * @return array|null
      */
     public static function getObjective($fkObjectiveId){
-        return ObjectiveModel::getInstance()->find($fkObjectiveId);
+        return ObjectiveModel::getInstance()->withDeleted()->find($fkObjectiveId);
 
     }
     /**

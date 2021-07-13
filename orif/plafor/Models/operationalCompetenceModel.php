@@ -12,7 +12,7 @@ class OperationalCompetenceModel extends \CodeIgniter\Model
     private static $operationalCompetenceModel=null;
     protected $table='operational_competence';
     protected $primaryKey='id';
-    protected $allowedFields=['fk_competence_domain','name','symbol','methodologic','social','personal'];
+    protected $allowedFields=['fk_competence_domain','name','symbol','methodologic','social','personal', 'archive'];
     protected $useSoftDeletes='true';
     protected $deletedField='archive';
     private CompetenceDomainModel $competenceDomainModel;
@@ -40,6 +40,14 @@ class OperationalCompetenceModel extends \CodeIgniter\Model
      */
     public static function getObjectives($operationalCompetenceId){
         return ObjectiveModel::getInstance()->where('fk_operational_competence',$operationalCompetenceId)->findAll();
+    }
+
+    public static function getOperationalCompetences($with_archived = false, $competence_domain_id = 0) { 
+        if($competence_domain_id == 0) {
+            return OperationalCompetenceModel::getInstance()->withDeleted($with_archived)->findall();
+        } else {
+            return OperationalCompetenceModel::getInstance()->where('fk_competence_domain', $competence_domain_id)->withDeleted($with_archived)->findall();
+        }
     }
 
 }

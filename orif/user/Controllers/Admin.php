@@ -96,9 +96,7 @@ class Admin extends BaseController
             $validationErrors=['id'=>['cb_not_null_user' => lang('user_lang.msg_err_user_not_exist')],
                 'user_name'=>['cb_unique_user' => lang('user_lang.msg_err_user_not_unique')],
                 'user_usertype'=>['cb_not_null_user_type' => lang('user_lang.msg_err_user_type_not_exist')]];
-            if ($this->request->getPost('user_email')) {
-            $validationRules['user_email']=['label'=>lang('user_lang.field_email'),'rules'=>'required|valid_email|max_length['.config("\User\Config\UserConfig")->email_max_length.']'];
-            }
+
             if ($user_id==0){
             $validationRules['user_password']=['label'=>lang('user_lang.field_password'),'rules'=>'required|trim|'.
                 'min_length['.config("\User\Config\UserConfig")->password_min_length.']|'.
@@ -111,8 +109,7 @@ class Admin extends BaseController
             if ($this->validation->withRequest($this->request)->run()) {
                 $user = array(
                     'fk_user_type' => intval($this->request->getPost('user_usertype')),
-                    'username' => $this->request->getPost('user_name'),
-                    'email' => $this->request->getPost('user_email') ?: NULL
+                    'username' => $this->request->getPost('user_name')
                 );
                 if ($user_id > 0) {
                     User_model::getInstance()->update($user_id, $user);

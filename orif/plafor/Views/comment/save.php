@@ -1,5 +1,5 @@
-<?php;
-$update = !is_null($acquisition_status);
+<?php
+$update = !is_null($comment_id);
 
     // For some reasons, you can only set a type to input made with form_input if done with only a array as param, may need to be checked for later uses.
 
@@ -7,7 +7,8 @@ $update = !is_null($acquisition_status);
         'name' => 'comment',
         'max' => config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH,
         'class' => 'form-control',
-        'id' => 'comment'
+        'id' => 'comment',
+        'value' => ($commentValue??'')
     );
     helper('form');
     $validation=\CodeIgniter\Config\Services::validation()
@@ -26,7 +27,7 @@ $update = !is_null($acquisition_status);
         'id' => 'comment_form',
         'name' => 'comment_form'
     );
-    echo form_open(base_url('plafor/apprentice/add_comment/'.$acquisition_status['id']));
+    echo form_open(base_url('plafor/apprentice/add_comment/'.$acquisition_status['id'].'/'.($comment_id??'')));
     ?>
 
         <!-- ERROR MESSAGES -->
@@ -49,7 +50,7 @@ $update = !is_null($acquisition_status);
         <!-- FORM BUTTONS -->
         <div class="row">
             <div class="col text-right">
-                <a class="btn btn-default" href="<?= base_url('apprentice/view_acquisition_status/'.$acquisition_status['id']); ?>"><?= lang('common_lang.btn_cancel'); ?></a>
+                <a class="btn btn-default" href="<?= base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status['id']); ?>"><?= lang('common_lang.btn_cancel'); ?></a>
                 <?= form_submit('save', lang('common_lang.btn_save'), ['class' => 'btn btn-primary']); ?>
             </div>
         </div>

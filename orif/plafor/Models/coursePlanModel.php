@@ -7,7 +7,7 @@ class CoursePlanModel extends Model{
     private static $coursePlanModel=null;
     protected $table='course_plan';
     protected $primaryKey='id';
-    protected $allowedFields=['formation_number','official_name','date_begin'];
+    protected $allowedFields=['id', 'formation_number','official_name','date_begin', 'archive'];
     protected $useSoftDeletes=true;
     protected $deletedField='archive';
     private $userCourseModel=null;

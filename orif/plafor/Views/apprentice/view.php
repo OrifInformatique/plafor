@@ -1,7 +1,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <p class="bg-primary text-white"><?=lang('user_lang.details_apprentice')?></p>
+            <p class="bg-primary text-white"><?=lang('plafor_lang.title_view_apprentice')?></p>
         </div>
         <div class="col-md-6">
             <p class="font-weight-bold"><?=lang('user_lang.field_apprentice_username')?></p>
@@ -14,7 +14,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <p class="bg-primary text-white"><?=lang('user_lang.field_trainer_link')?></p>
+            <p class="bg-primary text-white"><?=lang('plafor_lang.title_trainer_linked')?></p>
             <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/save_apprentice_link/'.$apprentice['id'])?>"><?= lang('user_lang.title_apprentice_link_new') ?></a>
         </div>
         <div class="col-md-12">
@@ -50,7 +50,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <p class="bg-primary text-white"><?=lang('user_lang.field_followed_courses')?></p>
+            <p class="bg-primary text-white"><?=lang('plafor_lang.title_apprentice_followed_courses')?></p>
             <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/save_user_course/'.$apprentice['id'])?>"><?= lang('user_lang.title_user_course_new') ?></a>
         </div>
         <div class="col-md-12">

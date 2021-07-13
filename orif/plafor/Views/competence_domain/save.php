@@ -43,11 +43,11 @@ $session=\CodeIgniter\Config\Services::session();
 
         <!-- ERROR MESSAGES -->
         <?php
-        echo count($validation->getErrors())>0?'<div class="alert alert-danger">':null;
+        echo count($validation->getErrors())>0?'<div class="alert alert-danger"><ul>':null;
         foreach ($validation->getErrors() as $error){
-            echo $error;
+            echo "<li>{$error}</li>";
         }
-        echo count($validation->getErrors())>0?'</div>':null;
+        echo count($validation->getErrors())>0?'</ul></div>':null;
         ?>
 
         <!-- USER FIELDS -->
@@ -55,7 +55,7 @@ $session=\CodeIgniter\Config\Services::session();
             <div class="col-sm-12 form-group">
                 <?= form_label(lang('user_lang.field_competence_domain_course_plan'), 'course_plan', ['class' => 'form-label']); ?>
                 <br />
-                <?= form_dropdown('course_plan',$course_plans,$competence_domain['fk_course_plan'] ?? '','id="course_plan" class="form-control"')?>
+                <?= form_dropdown('course_plan',$course_plans,$fk_course_plan_id ?? '','id="course_plan" class="form-control"')?>
             </div>
             <div class="col-sm-12 form-group">
                 <?= form_label(lang('user_lang.field_competence_domain_symbol'), 'competence_domain_symbol', ['class' => 'form-label']); ?>
@@ -68,7 +68,7 @@ $session=\CodeIgniter\Config\Services::session();
         <!-- FORM BUTTONS -->
         <div class="row">
             <div class="col text-right">
-                <a class="btn btn-default" href="<?= $session->get('_ci_previous_url') ?>"><?= lang('common_lang.btn_cancel'); ?></a>
+                <a class="btn btn-default" href="<?= base_url('plafor/admin/list_competence_domain/'.($fk_course_plan_id==null?'':$fk_course_plan_id)) ?>"><?= lang('common_lang.btn_cancel'); ?></a>
                 <?= form_submit('save', lang('common_lang.btn_save'), ['class' => 'btn btn-primary']); ?>
             </div>
         </div>

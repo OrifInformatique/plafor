@@ -218,7 +218,7 @@ class App extends BaseConfig
 	 *
 	 * @var integer
 	 */
-	public $sessionTimeToUpdate = 300;
+	public $sessionTimeToUpdate = 20;
 
 	/**
 	 * --------------------------------------------------------------------------
@@ -231,7 +231,7 @@ class App extends BaseConfig
 	 *
 	 * @var boolean
 	 */
-	public $sessionRegenerateDestroy = false;
+	public $sessionRegenerateDestroy = true;
 
 	/**
 	 * --------------------------------------------------------------------------

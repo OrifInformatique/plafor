@@ -8,7 +8,7 @@ $validation=\CodeIgniter\Config\Services::validation();
 
     $data_symbol = array(
         'name' => 'symbol',
-        'value' => $operational_competence_symbol ?? $operational_competence->symbol ?? '',
+        'value' => $operational_competence_symbol ?? $operational_competence['symbol'] ?? '',
         'max' => config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH,
         'class' => 'form-control',
         'id' => 'operational_competence_symbol'
@@ -60,17 +60,17 @@ $validation=\CodeIgniter\Config\Services::validation();
         'id' => 'operational_competence_form',
         'name' => 'operational_competence_form'
     );
-    echo form_open('plafor/admin/save_operational_competence', $attributes, [
+    echo form_open(base_url('plafor/admin/save_operational_competence/'.($operational_competence['id'] ?? '0').'/'.($competence_domain_id>0?$competence_domain_id:'')), $attributes, [
         'id' => $operational_competence['id'] ?? 0
     ]);
     ?>
 
         <!-- ERROR MESSAGES -->
         <?php
-        echo count($validation->getErrors())>0?'<div class="alert alert-danger">':null;
+        echo count($validation->getErrors())>0?'<div class="alert alert-danger"><ul>':null;
         foreach ($validation->getErrors() as $error)
-        echo $error;
-        echo count($validation->getErrors())>0?'</div>':null;
+        echo "<li>{$error}</li>";
+        echo count($validation->getErrors())>0?'</ul></div>':null;
         ?>
 
         <!-- USER FIELDS -->
@@ -78,7 +78,7 @@ $validation=\CodeIgniter\Config\Services::validation();
             <div class="col-sm-12 form-group">
                 <?= form_label(lang('user_lang.field_operational_competence_domain'), 'competence_domain', ['class' => 'form-label']); ?>
                 <br />
-                <?= form_dropdown('competence_domain',$competence_domains,$operational_competence['fk_competence_domain'] ?? '','id="competence_domain" class="form-control"')?>
+                <?= form_dropdown('competence_domain',$competence_domains,$competence_domain_id?? '','id="competence_domain" class="form-control"')?>
             </div>
             <div class="col-sm-12 form-group">
                 <?= form_label(lang('user_lang.field_operational_competence_symbol'), 'operational_competence_symbol', ['class' => 'form-label']); ?>
@@ -97,7 +97,7 @@ $validation=\CodeIgniter\Config\Services::validation();
         <!-- FORM BUTTONS -->
         <div class="row">
             <div class="col text-right">
-                <a class="btn btn-default" href="<?= base_url('plafor/admin/list_operational_competence'); ?>"><?= lang('common_lang.btn_cancel'); ?></a>
+                <a class="btn btn-default" href="<?= base_url('plafor/admin/list_operational_competence/'.($competence_domain_id??'')); ?>"><?= lang('common_lang.btn_cancel'); ?></a>
                 <?= form_submit('save', lang('common_lang.btn_save'), ['class' => 'btn btn-primary']); ?>
             </div>
         </div>

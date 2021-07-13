@@ -161,6 +161,7 @@ return[
 'field_objectives_taxonomies'    =>'Taxonomie des objectifs',
 'field_objective_name'           =>'Nom de l\'objectif',
 'field_objectives_names'         =>'Nom des objectifs',
+'field_linked_objectives'        =>'Objectifs liés à la compétence opérationnelle',
 'field_user_course_date_begin'   =>'Date du début de la formation',
 'field_user_course_date_end'     =>'Date de fin de la formation',
 'field_user_course_course_plan'  =>'Formation',
@@ -228,5 +229,13 @@ return[
 'trainer'                        =>'Formateur',
 'course_status'                  =>'Status des formations',
 'status'                         =>'Statut de la formation',
-'form_number_not_unique'         =>'Le numéro du plan de formation existe déjà'
+'form_number_not_unique'         =>'Le numéro du plan de formation existe déjà',
+
+'course_plan_enable_explanation' =>'Toutes les informations concernant ce plan de formation (domaines de compétences, compétences oppérationnelles et objectifs) seront réactivées.',
+'competence_domain_enable_explanation' =>'Toutes les informations concernant ce domaine de compétence (symbole, nom, compétences oppérationnelles et objectifs) seront réactivées.',
+'operational_competence_enable_explanation' =>'Toutes les informations concernant cette compétence opérationnelle (nom, symbole, compétences, objectifs) seront réactivées.',
+'objective_enable_explanation'  =>'Toutes les informations concernant cet objectif (symbole, taxonomie, nom) seront réactivées.',
+'user_course_enable_explanation' =>'Toutes les informations concernant cette formation liée seront réactivées.',
+'apprentice_link_enable_explanation' =>'Toutes les informations concernant le lien entre cette apprenti et ce formateur seront réactivées.',
+'acquisition_status_enable_explanation' =>'Toutes les informations concernant le statut d\'acquisition seront réactivées.',
 ];
