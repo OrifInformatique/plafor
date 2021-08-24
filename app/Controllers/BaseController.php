@@ -4,7 +4,7 @@
  *
  * @author      Orif (ViDi)
  * @link        https://github.com/OrifInformatique
- * @copyright   Copyright (c), Orif (https://www.orif.ch) 
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
  */
 
 namespace App\Controllers;
@@ -20,7 +20,7 @@ use CodeIgniter\Session\Session;
  *     class Home extends BaseController
  *
  * For security be sure to declare any new methods as protected or private.
- * 
+ *
  * @package CodeIgniter
  */
 
@@ -34,15 +34,14 @@ class BaseController extends Controller
      * @var array
      */
     protected $helpers = [];
-    protected Session $session;
 
     /**
      * Limit the accessibility to the entire controller.
      * Modify this value in constructor of child controllers, before calling parent::initController.
-     * 
+     *
      * '*' accessible for all users
      * '@' accessible for logged in users
-     * 
+     *
      * Other possible values are defined in User\Config\UserConfig
      * For example : $access_level = config('User\Config\UserConfig')->access_lvl_admin
      */
@@ -133,6 +132,13 @@ class BaseController extends Controller
         // Display common headers
         echo view('Common\header', $data);
         echo view('Common\login_bar');
+        foreach (config('Common\Config\AdminPanelConfig')->views as $view){
+            if (strstr(current_url(),$view['pageLink'])) {
+                $data['title']=lang($view['title']);
+                echo view('\Common\Adminmenu');
+
+            }
+        }
 
         if (is_array($view_parts)) {
             // Display multiple view parts
