@@ -10,7 +10,7 @@
 </div>
 <script defer>
     document.querySelectorAll('.adminnav').forEach((nav)=>{
-        if (nav.href.includes(window.location)){
+        if (window.location.toString().includes(nav.href)){
             nav.classList.add('active')
         }
         else{

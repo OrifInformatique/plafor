@@ -61,7 +61,7 @@ class Admin extends \App\Controllers\BaseController
             $output[] = ['course_plans' => $course_plans];
         }
 
-        $this->display_view(['Plafor\templates/admin_menu','Plafor\course_plan\list'], $output);
+        $this->display_view(['Plafor\course_plan\list'], $output);
     }
     /**
      * Adds or modify a course plan
@@ -213,7 +213,7 @@ class Admin extends \App\Controllers\BaseController
             'id_course_plan' => $id_course_plan,
             'with_archived' => $with_archived
         );
-        return $this->display_view(['Plafor\templates/admin_Menu','\Plafor\competence_domain\list'], $output);
+        return $this->display_view(['\Plafor\competence_domain\list'], $output);
     }
     /**
      * Displays the list of course plans
@@ -240,7 +240,7 @@ class Admin extends \App\Controllers\BaseController
             $output['id_competence_domain'] = $id_competence_domain;
         }
 
-        $this->display_view(['\Plafor\templates\admin_menu','\Plafor/operational_competence/list'], $output);
+        $this->display_view(['\Plafor/operational_competence/list'], $output);
         exit();
     }
     /**
@@ -549,7 +549,7 @@ class Admin extends \App\Controllers\BaseController
             $output['operational_competence_id'] = $id_operational_competence;
         }
 
-        $this->display_view(['Plafor\templates/admin_menu','Plafor\objective/list'], $output);
+        $this->display_view(['Plafor\objective/list'], $output);
     }
     /**
      * Adds or modify a course plan

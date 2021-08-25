@@ -9,7 +9,6 @@ helper('form');
  */
 ?>
 <div class="container">
-  </div>
     <div class="row">
         <div class="col">
             <h1 class="title-section"><?= lang('user_lang.title_competence_domain_list'); ?></h1>
