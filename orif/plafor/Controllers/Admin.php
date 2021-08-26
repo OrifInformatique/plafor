@@ -74,33 +74,20 @@ class Admin extends \App\Controllers\BaseController
         $lastDatas = array();
         if (count($_POST) > 0) {
            $course_plan_id = empty($this->request->getPost('coursePlanId'))?0:$this->request->getPost('coursePlanId');
-           $rules = array(
-                'formation_number'=>[
-                    'label' => 'user_lang.field_course_plan_formation_number',
-                    'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->FORMATION_NUMBER_MAX_LENGTH.']|numeric'.($course_plan_id==0?('|checkFormPlanNumber'):("")),
-                ],
-                'official_name'=>[
-                    'label' => 'user_lang.field_course_plan_official_name',
-                    'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->OFFICIAL_NAME_MAX_LENGTH.']',
-                ],'date_begin'=>[
-                    'label' => 'user_lang.field_course_plan_date_begin',
-                    'rules' => 'required',
-                ]
+            $course_plan = array(
+                'formation_number' => $this->request->getPost('formation_number'),
+                'official_name' => ' '.$this->request->getPost('official_name'),
+                'date_begin' => $this->request->getPost('date_begin'),
+                'id'        =>  $this->request->getPost('id'),
             );
-            $this->validation->setRules($rules);
-            if ($this->validation->withRequest($this->request)->run()) {
-                $course_plan = array(
-                    'formation_number' => $this->request->getPost('formation_number'),
-                    'official_name' => ' '.$this->request->getPost('official_name'),
-                    'date_begin' => $this->request->getPost('date_begin')
-                );
-                if ($course_plan_id > 0) {
-                    CoursePlanModel::getInstance()->update($course_plan_id, $course_plan);
-                } else {
-                    CoursePlanModel::getInstance()->insert($course_plan);
-                }
-                return redirect()->to(base_url('/plafor/admin/list_course_plan'));
+            if ($course_plan_id > 0) {
+                CoursePlanModel::getInstance()->update($course_plan_id, $course_plan);
+            } else {
+                CoursePlanModel::getInstance()->insert($course_plan);
             }
+           if (CoursePlanModel::getInstance()->errors()==null) {
+               return redirect()->to(base_url('/plafor/admin/list_course_plan'));
+           }
             else {//lastdatas takes the last datas if they arent't valid
                 $lastDatas = array(
                     'formation_number' => $this->request->getPost('formation_number'),
@@ -115,7 +102,8 @@ class Admin extends \App\Controllers\BaseController
         $formTitle = $course_plan_id<>0?'update' : 'new';
         $output = array(
             'title' => (lang('plafor_lang.title_course_plan_'.$formTitle)),
-            'course_plan' => $lastDatas!=null?$lastDatas:CoursePlanModel::getInstance()->withDeleted()->find($course_plan_id)
+            'course_plan' => $lastDatas!=null?$lastDatas:CoursePlanModel::getInstance()->withDeleted()->find($course_plan_id),
+            'errors'=>CoursePlanModel::getInstance()->errors(),
         );
 
         $this->display_view('\Plafor\course_plan\save', $output);
@@ -253,28 +241,19 @@ class Admin extends \App\Controllers\BaseController
     {
         if (count($_POST) > 0) {
             $competence_domain_id = $this->request->getPost('id');
-            $rules = array(
-                    'symbol'=>[
-                    'label' => 'user_lang.field_competence_domain_symbol',
-                    'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH.']|checkSameCompetenceDomain[symbol]'
-                    ],
-                    'name'=>[
-                    'label' => 'user_lang.field_competence_domain_name',
-                    'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->COMPETENCE_DOMAIN_NAME_MAX_LENGTH.']'
-                    ],
+            $competence_domain = array(
+                'symbol' => $this->request->getPost('symbol'),
+                'name' => $this->request->getPost('name'),
+                'fk_course_plan' => $this->request->getPost('course_plan'),
+                'id' =>$competence_domain_id
             );
-            $this->validation->setRules($rules);
-            if ($this->validation->withRequest($this->request)->run()) {
-                $competence_domain = array(
-                    'symbol' => $this->request->getPost('symbol'),
-                    'name' => $this->request->getPost('name'),
-                    'fk_course_plan' => $this->request->getPost('course_plan')
-                );
-                if ($competence_domain_id > 0) {
-                    CompetenceDomainModel::getInstance()->update($competence_domain_id, $competence_domain);
-                } else {
-                    CompetenceDomainModel::getInstance()->insert($competence_domain);
-                }
+            if ($competence_domain_id > 0) {
+                CompetenceDomainModel::getInstance()->update($competence_domain_id, $competence_domain);
+            } else {
+                CompetenceDomainModel::getInstance()->insert($competence_domain);
+            }
+            //if there aren't errors go here
+            if (CompetenceDomainModel::getInstance()->errors()==null) {
                 return redirect()->to(base_url('plafor/admin/list_competence_domain/'.($this->request->getPost('course_plan')==null?'':$this->request->getPost('course_plan'))));
             }
         }
@@ -285,7 +264,8 @@ class Admin extends \App\Controllers\BaseController
             'title' => lang('plafor_lang.title_competence_domain_'.((bool)$competence_domain_id ? 'update' : 'new')),
             'competence_domain' => CompetenceDomainModel::getInstance()->find($competence_domain_id),
             'course_plans' => $course_plans,
-            'fk_course_plan_id' => $course_plan_id
+            'fk_course_plan_id' => $course_plan_id,
+            'errors'=>CompetenceDomainModel::getInstance()->errors(),
             );
 
         $this->display_view('\Plafor\competence_domain/save', $output);
@@ -349,46 +329,29 @@ class Admin extends \App\Controllers\BaseController
     {
         if (count($_POST) > 0) {
             $operational_competence_id = $this->request->getPost('id');
-            $rules = array(
-                    'symbol'=>[
-                    'label' => 'user_lang.field_operational_competence_symbol',
-                    'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH.']'
-                    ],
-                    'name'=>[
-                    'label' => 'user_lang.field_operational_competence_name',
-                    'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->OPERATIONAL_COMPETENCE_NAME_MAX_LENGTH.']'
-                    ],
-                    'methodologic'=>[
-                    'label' => 'user_lang.field_operational_methodologic',
-                    'rules' => 'max_length['.config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH.']'
-                    ],
-                    'social'=>[
-                    'label' => 'user_lang.field_operational_social',
-                    'rules' => 'max_length['.config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH.']'
-                    ],
-                    'personal'=>[
-                    'label' => 'user_lang.field_operational_personal',
-                    'rules' => 'max_length['.config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH.']'
-                    ],
+
+            $operational_competence = array(
+                'id'    => $operational_competence_id!=null?$operational_competence_id:null,
+                'symbol' => $this->request->getPost('symbol'),
+                'name' => $this->request->getPost('name'),
+                'methodologic' => $this->request->getPost('methodologic'),
+                'social' => $this->request->getPost('social'),
+                'personal' => $this->request->getPost('personal'),
+                'fk_competence_domain' => $this->request->getPost('competence_domain')
             );
-            $this->validation->setRules($rules);
+            if ($operational_competence_id>0){
+                //update
+                OperationalCompetenceModel::getInstance()->update($operational_competence_id, $operational_competence);
+            }
+            else{
+                //insert
+                OperationalCompetenceModel::getInstance()->insert($operational_competence);
+
+            }
 
 
-
-            if ($this->validation->withRequest($this->request)->run()) {
-                $operational_competence = array(
-                    'symbol' => $this->request->getPost('symbol'),
-                    'name' => $this->request->getPost('name'),
-                    'methodologic' => $this->request->getPost('methodologic'),
-                    'social' => $this->request->getPost('social'),
-                    'personal' => $this->request->getPost('personal'),
-                    'fk_competence_domain' => $this->request->getPost('competence_domain')
-                );
-                if ($operational_competence_id > 0) {
-                    OperationalCompetenceModel::getInstance()->update($operational_competence_id, $operational_competence);
-                } else {
-                    OperationalCompetenceModel::getInstance()->insert($operational_competence);
-                }
+            if (OperationalCompetenceModel::getInstance()->errors()==null) {
+                //when it's ok
                 return redirect()->to(base_url('plafor/admin/list_operational_competence/'.$competence_domain_id));
             }
         }
@@ -401,7 +364,8 @@ class Admin extends \App\Controllers\BaseController
             'title' => lang('plafor_lang.title_operational_competence_'.((bool)$operational_competence_id ? 'update' : 'new')),
             'operational_competence' => OperationalCompetenceModel::getInstance()->withDeleted()->find($operational_competence_id),
             'competence_domains' => $competenceDomains,
-            'competence_domain_id' => $competence_domain_id
+            'competence_domain_id' => $competence_domain_id,
+            'errors'    => OperationalCompetenceModel::getInstance()->errors(),
         );
 
         $this->display_view('\Plafor\operational_competence/save', $output);
@@ -561,34 +525,21 @@ class Admin extends \App\Controllers\BaseController
     {
         if (count($_POST) > 0) {
             $objective_id = $this->request->getPost('id');
-            $rules = array(
-                    'symbol'=>[
-                    'label' => 'user_lang.field_objective_symbol',
-                    'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH.']',
-                    ],
-                    'taxonomy'=>[
-                    'label' => 'user_lang.field_objective_taxonomy',
-                    'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->TAXONOMY_MAX_VALUE.']',
-                    ],
-
-                    'name'=>[
-                    'label' => 'user_lang.field_objective_name',
-                    'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->OBJECTIVE_NAME_MAX_LENGTH.']',
-                    ]
+            $objective = array(
+                'symbol' => $this->request->getPost('symbol'),
+                'taxonomy' => $this->request->getPost('taxonomy'),
+                'name' => $this->request->getPost('name'),
+                'fk_operational_competence' => $this->request->getPost('operational_competence')
             );
-            $this->validation->setRules($rules);
-            if ($this->validation->withRequest($this->request)->run()) {
-                $objective = array(
-                    'symbol' => $this->request->getPost('symbol'),
-                    'taxonomy' => $this->request->getPost('taxonomy'),
-                    'name' => $this->request->getPost('name'),
-                    'fk_operational_competence' => $this->request->getPost('operational_competence')
-                );
-                if ($objective_id > 0) {
-                    ObjectiveModel::getInstance()->update($objective_id, $objective);
-                } else {
-                    ObjectiveModel::getInstance()->insert($objective);
-                }
+            if ($objective_id > 0) {
+                //update
+                ObjectiveModel::getInstance()->update($objective_id, $objective);
+            } else {
+                //insert
+                ObjectiveModel::getInstance()->insert($objective);
+            }
+            if (ObjectiveModel::getInstance()->errors()==null) {
+                //if ok
                 return redirect()->to(base_url('plafor/admin/list_objective/'.($operational_competence_id!=0?$operational_competence_id:'')));
             }
         }
@@ -600,7 +551,8 @@ class Admin extends \App\Controllers\BaseController
             'title' => lang('plafor_lang.title_objective_'.((bool)$objective_id ? 'update' : 'new')),
             'objective' => ObjectiveModel::getInstance()->withDeleted()->find($objective_id),
             'operational_competences' => $operationalCompetences,
-            'operational_competence_id' => $operational_competence_id
+            'operational_competence_id' => $operational_competence_id,
+            'errors'    => ObjectiveModel::getInstance()->errors(),
         );
 
         return $this->display_view('\Plafor\objective/save', $output);

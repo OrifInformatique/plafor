@@ -14,6 +14,23 @@ class CompetenceDomainModel extends Model{
     protected $deletedField='archive';
     private $coursePlanModel=null;
     private $operationalCompetenceModel=null;
+    protected $validationRules;
+
+
+    public function __construct(ConnectionInterface &$db = null, ValidationInterface $validation = null)
+    {
+        $this->validationRules= $rules = array(
+            'symbol'=>[
+                'label' => 'user_lang.field_competence_domain_symbol',
+                'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH.']|checkCompetenceDomainAssociated[{symbol}]'
+            ],
+            'name'=>[
+                'label' => 'user_lang.field_competence_domain_name',
+                'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->COMPETENCE_DOMAIN_NAME_MAX_LENGTH.']'
+            ],
+        );
+        parent::__construct($db, $validation);
+    }
 
     /**
      * @return CompetenceDomainModel

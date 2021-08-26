@@ -15,7 +15,35 @@ class OperationalCompetenceModel extends \CodeIgniter\Model
     protected $allowedFields=['fk_competence_domain','name','symbol','methodologic','social','personal', 'archive'];
     protected $useSoftDeletes='true';
     protected $deletedField='archive';
+    protected $validationRules;
     private CompetenceDomainModel $competenceDomainModel;
+
+    public function __construct(ConnectionInterface &$db = null, ValidationInterface $validation = null)
+    {
+        $this->validationRules=$rules = array(
+            'symbol'=>[
+                'label' => 'user_lang.field_operational_competence_symbol',
+                'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH.']'
+            ],
+            'name'=>[
+                'label' => 'user_lang.field_operational_competence_name',
+                'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->OPERATIONAL_COMPETENCE_NAME_MAX_LENGTH.']'
+            ],
+            'methodologic'=>[
+                'label' => 'user_lang.field_operational_methodologic',
+                'rules' => 'max_length['.config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH.']'
+            ],
+            'social'=>[
+                'label' => 'user_lang.field_operational_social',
+                'rules' => 'max_length['.config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH.']'
+            ],
+            'personal'=>[
+                'label' => 'user_lang.field_operational_personal',
+                'rules' => 'max_length['.config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH.']'
+            ],
+        );
+        parent::__construct($db, $validation);
+    }
 
     /**
      * @return OperationalCompetenceModel

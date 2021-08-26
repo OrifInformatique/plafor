@@ -4,6 +4,7 @@
 
         //Errors
         'same_competence_domain' => 'Le domaine de compétences existe déjà',
+        'competence_domain_already_associated'  => 'Un domaine de compétences portant le même (nom ou symbole) est déjà associé à ce plan de formation',
         
         //Usefull Links
         'plafor_module' => 'Module Plafor',

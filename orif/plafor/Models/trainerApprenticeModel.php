@@ -14,6 +14,17 @@ class TrainerApprenticeModel extends \CodeIgniter\Model
     protected $table='trainer_apprentice';
     protected $primaryKey='id';
     protected $allowedFields=['fk_trainer','fk_apprentice'];
+    protected $validationRules;
+
+    public function __construct(ConnectionInterface &$db = null, ValidationInterface $validation = null)
+    {
+        $this->validationRules=array(
+            'trainer'=>[
+                'label' => 'user_lang.field_trainer_link',
+                'rules' => 'required|numeric'
+            ]);
+        parent::__construct($db, $validation);
+    }
 
     /**
      * @return TrainerApprenticeModel

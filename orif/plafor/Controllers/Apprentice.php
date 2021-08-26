@@ -6,6 +6,7 @@ namespace Plafor\Controllers;
 
 use CodeIgniter\Config\Services;
 use CodeIgniter\Validation\Validation;
+use Exception;
 use Plafor\Models\AcquisitionLevelModel;
 use Plafor\Models\AcquisitionStatusModel;
 use Plafor\Models\CommentModel;
@@ -171,71 +172,51 @@ class Apprentice extends \App\Controllers\BaseController
         }
 
         if(count($_POST) > 0){
-            $rules = array(
-                    'course_plan'=>[
-                    'label' => 'user_lang.course_plan',
-                    'rules' => 'required|numeric',
-                ],
-                    'status'=>[
-                    'label' => 'user_lang.status',
-                    'rules' => 'required|numeric',
-                ],
-                    'date_begin'=>[
-                    'label' => 'user_lang.field_user_course_date_begin',
-                    'rules' => 'required',
-                ]
-                /*
-                array(
-                    'field' => 'date_end',
-                    'label' => 'lang:field_user_course_date_end',
-                    'rules' => 'required',
-                ),
-                */
+            $fk_course_plan = $this->request->getPost('course_plan');
+            $user_course = array(
+                'fk_user' => $id_apprentice,
+                'fk_course_plan' => $fk_course_plan,
+                'fk_status' => $this->request->getPost('status'),
+                'date_begin' => $this->request->getPost('date_begin'),
+                'date_end' => $this->request->getPost('date_end'),
             );
-            $this->validation->setRules($rules);
+            if($id_user_course > 0){
+                //update
+                UserCourseModel::getInstance()->update($id_user_course, $user_course);
+            }else if(UserCourseModel::getInstance()->where('fk_user', $id_apprentice)->where('fk_course_plan', $fk_course_plan)->first()==null) {
+                //insert
+                $id_user_course = UserCourseModel::getInstance()->insert($user_course);
 
-            if($this->validation->withRequest($this->request)->run()){
-                $fk_course_plan = $this->request->getPost('course_plan');
-                $user_course = array(
-                    'fk_user' => $id_apprentice,
-                    'fk_course_plan' => $fk_course_plan,
-                    'fk_status' => $this->request->getPost('status'),
-                    'date_begin' => $this->request->getPost('date_begin'),
-                    'date_end' => $this->request->getPost('date_end'),
-                );
+                $course_plan = UserCourseModel::getCoursePlan($user_course['fk_course_plan']);
+                $competenceDomainIds=[];
 
-                if($id_user_course > 0){
-                    echo UserCourseModel::getInstance()->update($id_user_course, $user_course);
-                }else if(UserCourseModel::getInstance()->where('fk_user', $id_apprentice)->where('fk_course_plan', $fk_course_plan)->first()==null) {
-                    $id_user_course = UserCourseModel::getInstance()->insert($user_course);
+                foreach (CoursePlanModel::getCompetenceDomains($course_plan['id']) as $competence_domain){
+                    $competenceDomainIds[] = $competence_domain['id'];
+                }
 
-                    $course_plan = UserCourseModel::getCoursePlan($user_course['fk_course_plan']);
-                    $competenceDomainIds=[];
-                    foreach (CoursePlanModel::getCompetenceDomains($course_plan['id']) as $competence_domain){
-                        $competenceDomainIds[] = $competence_domain['id'];
-                    }
-
-                    $operational_competences=[];
-                    // si il n'y a pas de compétence operationnelles associées
-                    try {
-                        $operational_competences = OperationalCompetenceModel::getInstance()->withDeleted()->whereIn('fk_competence_domain', $competenceDomainIds)->findAll();
-                    }catch (\Exception $e){};
-                    $objectiveIds = array();
-                    foreach ($operational_competences as $operational_competence){
-                        foreach (OperationalCompetenceModel::getObjectives($operational_competence['id']) as $objective){
-                            $objectiveIds[] = $objective['id'];
-                        }
-                    }
-                    foreach ($objectiveIds as $objectiveId){
-                        $acquisition_status = array(
-                            'fk_objective' => $objectiveId,
-                            'fk_user_course' => $id_user_course,
-                            'fk_acquisition_level' => 1
-                        );
-
-                        AcquisitionStatusModel::getInstance()->insert($acquisition_status);
+                $operational_competences=[];
+                // si il n'y a pas de compétence operationnelles associées
+                try {
+                    $operational_competences = OperationalCompetenceModel::getInstance()->withDeleted()->whereIn('fk_competence_domain', $competenceDomainIds)->findAll();
+                }catch (\Exception $e){};
+                $objectiveIds = array();
+                foreach ($operational_competences as $operational_competence){
+                    foreach (OperationalCompetenceModel::getObjectives($operational_competence['id']) as $objective){
+                        $objectiveIds[] = $objective['id'];
                     }
                 }
+                foreach ($objectiveIds as $objectiveId){
+                    $acquisition_status = array(
+                        'fk_objective' => $objectiveId,
+                        'fk_user_course' => $id_user_course,
+                        'fk_acquisition_level' => 1
+                    );
+
+                    AcquisitionStatusModel::getInstance()->insert($acquisition_status);
+                }
+            }
+            if(UserCourseModel::getInstance()->errors()==null){
+                //if ok
                 return redirect()->to(base_url('plafor/apprentice/view_apprentice/'.$id_apprentice));
                 exit();
             }
@@ -252,7 +233,8 @@ class Apprentice extends \App\Controllers\BaseController
             'course_plans' => $course_plans,
             'user_course'   => $user_course,
             'status' => $status,
-            'apprentice' => $apprentice
+            'apprentice' => $apprentice,
+            'errors' => UserCourseModel::getInstance()->errors()
         );
 
         return $this->display_view('Plafor\user_course/save',$output);
@@ -278,36 +260,27 @@ class Apprentice extends \App\Controllers\BaseController
         }
 
         if(count($_POST) > 0){
-            $rules = array(
-                    'trainer'=>[
-                    'label' => 'user_lang.field_trainer_link',
-                    'rules' => 'required|numeric'
-                    ]
-
+            $apprentice_link = array(
+                'fk_trainer' => $this->request->getPost('trainer'),
+                'fk_apprentice' => $this->request->getPost('apprentice'),
             );
-
-            $this->validation->setRules($rules);
-
-            if($this->validation->withRequest($this->request)->run()){
-                $apprentice_link = array(
-                    'fk_trainer' => $this->request->getPost('trainer'),
-                    'fk_apprentice' => $this->request->getPost('apprentice'),
-                );
-                // This is used to prevent an apprentice from being linked to the same person twice
-                $old_link = TrainerApprenticeModel::getInstance()->where('fk_trainer',$apprentice_link['fk_trainer'])->where('fk_apprentice',$apprentice_link['fk_apprentice'])->first();
-
-                if ($id_link != null) {
-                    if (!is_null($old_link)) {
-                        // Delete the old link instead of deleting the one being changed
-                        // It's easier that way
-                        TrainerApprenticeModel::getInstance()->delete($id_link);
-                    } else {
-                        TrainerApprenticeModel::getInstance()->update($id_link,$apprentice_link);
-                    }
-                } elseif (is_null($old_link)) {
-                    // Don't insert a new link that is the same as an old one
-                    TrainerApprenticeModel::getInstance()->insert($apprentice_link);
+            $old_link = TrainerApprenticeModel::getInstance()->where('fk_trainer',$apprentice_link['fk_trainer'])->where('fk_apprentice',$apprentice_link['fk_apprentice'])->first();
+            if ($id_link != null) {
+                if (!is_null($old_link)) {
+                    // Delete the old link instead of deleting the one being changed
+                    // It's easier that way
+                    TrainerApprenticeModel::getInstance()->delete($id_link);
+                } else {
+                    TrainerApprenticeModel::getInstance()->update($id_link,$apprentice_link);
                 }
+            } elseif (is_null($old_link)) {
+                // Don't insert a new link that is the same as an old one
+                TrainerApprenticeModel::getInstance()->insert($apprentice_link);
+            }
+
+            if(TrainerApprenticeModel::getInstance()->errors()==null){
+                //ok
+                // This is used to prevent an apprentice from being linked to the same person twice
                 return redirect()->to(base_url("plafor/apprentice/view_apprentice/{$id_apprentice}"));
             }
         }
@@ -330,6 +303,7 @@ class Apprentice extends \App\Controllers\BaseController
             'apprentice' => $apprentice,
             'trainers' => $trainers,
             'link' => $link,
+            'errors'=>TrainerApprenticeModel::getInstance()->errors()
         );
 
         $this->display_view('Plafor\apprentice/link',$output);
@@ -388,18 +362,15 @@ class Apprentice extends \App\Controllers\BaseController
         // Check if data was sent
         if (!empty($_POST)) {
             $acquisitionLevel = $this->request->getPost('field_acquisition_level');
+            $acquisitionStatus = [
+                'fk_acquisition_level' => $acquisitionLevel
+            ];
+            AcquisitionStatusModel::getInstance()->update($acquisition_status_id, $acquisitionStatus);
 
-            $this->validation->setRules(['field_acquisition_level'=>[
-                'label'=>'user_lang.field_acquisition_level',
-                'rules'=>'required|in_list['.implode(',', array_keys($acquisitionLevels)).']'
-            ]]);
 
-            if ($this->validation->withRequest($this->request)->run()) {
-                $acquisitionStatus = [
-                    'fk_acquisition_level' => $acquisitionLevel
-                ];
-                AcquisitionStatusModel::getInstance()->update($acquisition_status_id, $acquisitionStatus);
+            if (AcquisitionStatusModel::getInstance()->errors()==null) {
 
+                //if ok
                 return redirect()->to(base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status_id));
             }
         }
@@ -408,7 +379,8 @@ class Apprentice extends \App\Controllers\BaseController
             'title'=>lang('plafor_lang.title_acquisition_status_save'),
             'acquisition_levels' => $acquisitionLevels,
             'acquisition_level' => $acquisitionStatus['fk_acquisition_level'],
-            'id' => $acquisition_status_id
+            'id' => $acquisition_status_id,
+            'errors'=> AcquisitionStatusModel::getInstance()->errors()
         ];
 
         return $this->display_view('Plafor\acquisition_status/save', $output);
@@ -421,24 +393,19 @@ class Apprentice extends \App\Controllers\BaseController
         }
 
         if (count($_POST) > 0) {
-            $rules = array(
-                    'comment'=>[
-                    'label' => 'user_lang.field_comment',
-                    'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH.']',
-                        ]
+            $comment = array(
+                'fk_trainer' => $_SESSION['user_id'],
+                'fk_acquisition_status' => $acquisition_status_id,
+                'comment' => $this->request->getPost('comment'),
+                'date_creation' => date('Y-m-d H:i:s'),
             );
-            $this->validation->setRules($rules);
-            if ($this->validation->withRequest($this->request)->run()) {
-                $comment = array(
-                    'fk_trainer' => $_SESSION['user_id'],
-                    'fk_acquisition_status' => $acquisition_status_id,
-                    'comment' => $this->request->getPost('comment'),
-                    'date_creation' => date('Y-m-d H:i:s'),
-                );
-                if($comment_id == null)
+            if($comment_id == null)
                 CommentModel::getInstance()->insert($comment);
-                else
+            else
                 CommentModel::getInstance()->update($comment_id, $comment);
+
+            if (CommentModel::getInstance()->errors()==null) {
+                //if ok
 
                 return redirect()->to(base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status['id']));
             }
@@ -451,7 +418,8 @@ class Apprentice extends \App\Controllers\BaseController
             'title'=>lang('plafor_lang.title_comment_save'),
             'acquisition_status' => $acquisition_status,
             'comment_id' => $comment_id,
-            'commentValue' => ($comment['comment']??'')
+            'commentValue' => ($comment['comment']??''),
+            'errors'    => CommentModel::getInstance()->errors()
         );
 
         return $this->display_view('\Plafor\comment/save',$output);
@@ -475,8 +443,14 @@ class Apprentice extends \App\Controllers\BaseController
             return redirect()->to(base_url('plafor/admin/list_operational_competence'));
         }
 
-        $competence_domain = OperationalCompetenceModel::getCompetenceDomain($operational_competence['fk_competence_domain']);
-        $course_plan = CompetenceDomainModel::getCoursePlan($competence_domain['fk_course_plan']);
+        $competence_domain=null;
+        $course_plan=null;
+        try {
+            $competence_domain = OperationalCompetenceModel::getCompetenceDomain($operational_competence['fk_competence_domain']);
+            $course_plan = CompetenceDomainModel::getCoursePlan($competence_domain['fk_course_plan']);
+        }catch (Exception $exception){
+
+        }
         $objectives=OperationalCompetenceModel::getObjectives($operational_competence['id']);
         $output = array(
             'title'=>lang('plafor_lang.title_view_operational_competence'),
@@ -505,6 +479,8 @@ class Apprentice extends \App\Controllers\BaseController
         $operational_competence = ObjectiveModel::getOperationalCompetence($objective['fk_operational_competence'],true);
 
         $competence_domain = OperationalCompetenceModel::getCompetenceDomain($operational_competence['fk_competence_domain']);
+        $course_plan=null;
+        if (isset($competence_domain))
         $course_plan = CompetenceDomainModel::getCoursePlan($competence_domain['fk_course_plan']);
 
         $output = array(

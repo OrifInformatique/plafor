@@ -32,12 +32,11 @@ $update = !is_null($comment_id);
 
         <!-- ERROR MESSAGES -->
         <?php
-        echo count($validation->getErrors())>0?'<div class="alert alert-danger">':null;
-        foreach ($validation->getErrors() as $error) {
-            echo $error;
-        }
-        echo count($validation->getErrors())>0?'</div>':null;
-        ?>
+        foreach ($errors!=null?$errors:[] as $error) { ?>
+    <div class="alert alert-danger">
+            <?= $error; ?>
+    </div>
+        <?php } ?>
 
         <!-- USER FIELDS -->
         <div class="row">

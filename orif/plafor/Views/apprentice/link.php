@@ -29,7 +29,6 @@ $validation=\CodeIgniter\Config\Services::validation()
         'name' => 'apprentice_link_form'
     );
     $formAction = '';
-    //exit();
     if($link==null) {
         $formAction = 'plafor/apprentice/save_apprentice_link/'.$apprentice['id'];
     } else {
@@ -42,11 +41,13 @@ $validation=\CodeIgniter\Config\Services::validation()
 
         <!-- ERROR MESSAGES -->
         <?php
-        echo count($validation->getErrors())>0?'<div class="alert alert-danger">':null;
-        foreach ($validation->getErrors() as $error)
-            echo $error;
-        echo count($validation->getErrors())>0?'</div>':null;
-        ?>
+        foreach ($errors!=null?$errors:[] as $error){
+            ?>
+        <div class="alert alert-danger">
+            <?= $error ?>
+
+        </div>
+        <?php } ?>
         <!-- USER FIELDS -->
         <div class="row">
             <div class="col-sm-6 form-group">

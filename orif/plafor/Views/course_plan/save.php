@@ -3,7 +3,6 @@ $update = !is_null($course_plan);
 ?>
 <?php
 helper("form");
-$validation=\Config\Services::validation();
 
 // For some reasons, you can only set a type to input made with form_input if done with only a array as param, may need to be checked for later uses.
 
@@ -51,15 +50,16 @@ $data_date_begin = array(
     ?>
 
     <!-- ERROR MESSAGES -->
-    <?php if (! empty($validation->getErrors())) : ?>
+    <?php foreach ($errors==null?[]:$errors as $error){?>
         <div class="alert alert-danger" role="alert">
-            <?= $validation->listErrors(); ?>
+            <?= $error; ?>
         </div>
-    <?php endif ?>
+    <?php }?>
 
     <!-- USER FIELDS -->
     <div class="row">
         <div class="col-sm-12 form-group">
+            <?=form_hidden('id',$course_plan['id']??'')?>
             <?= form_label(lang('user_lang.field_course_plan_formation_number'), 'course_plan_formation_number', ['class' => 'form-label']); ?>
             <?= form_input($data_formation_number); ?>
             <?= form_label(lang('user_lang.field_course_plan_official_name'), 'course_plan_name', ['class' => 'form-label']); ?>
@@ -79,26 +79,3 @@ $data_date_begin = array(
     </div>
     <?= form_close(); ?>
 </div>
-
-<script defer>
-    
-    submit = document.querySelector('.btn-primary');
-   // submit.addEventListener('click',(e)=>{executeRequest(); e.preventDefault();})
-    async function executeRequest() {
-        let form,
-        submit;
-        const formDatas = new FormData();
-        formDatas.append('username', 'admin');
-        formDatas.append('password', 'OrifInfo2009');
-        formDatas.append('btn_login', "Se connecter");
-        await fetch("http://localhost/plafor/public/user/auth/login", {body:formDatas, method:'POST'}).then((response)=>{console.log(response)});
-        formDatas.delete('username');
-        formDatas.delete('password');
-        formDatas.delete('btn_login');
-        formDatas.append('formation_number', document.getElementById('course_plan_formation_number').value);
-        formDatas.append('official_name', document.getElementById('course_plan_official_name').value);
-        formDatas.append('date_begin', document.getElementById('course_plan_date_begin').value);
-        await fetch("<?=base_url('plafor/admin/save_course_plan')?>", {body:formDatas, 
-        method:'POST'}).then((response)=>{console.log(response)});
-    }
-</script>

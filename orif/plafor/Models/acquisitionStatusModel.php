@@ -13,6 +13,16 @@ class AcquisitionStatusModel extends Model{
     private $objectiveModel=null;
     private $userCourseModel=null;
     private $acquisitionLevelModel=null;
+    protected $validationRules;
+
+    public function __construct(ConnectionInterface &$db = null, ValidationInterface $validation = null)
+    {
+        $this->validationRules= ['fk_acquisition_level'=>[
+            'label'=>'user_lang.field_acquisition_level',
+            'rules'=>'required|in_list['.implode(',', AcquisitionLevelModel::getInstance()->findColumn('id')).']'
+        ]];
+        parent::__construct($db, $validation);
+    }
 
     /**
      * @return AcquisitionStatusModel

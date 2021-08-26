@@ -29,6 +29,7 @@ return[
 'btn_disable_user'               => 'Désactiver cet utilisateur',
 
 // Fields labels
+'field_identity'                 => 'id',
 'field_username'                 => 'Identifiant',
 'field_password'                 => 'Mot de passe',
 'field_email'                    => 'Addresse e-mail',

@@ -11,7 +11,19 @@ class CommentModel extends Model{
     protected $table='comment';
     protected $primaryKey='id';
     protected $allowedFields=['fk_trainer','fk_acquisition_status','comment','date_creation'];
+    protected $validationRules;
     private $acquisitionStatusModel=null;
+
+    public function __construct(ConnectionInterface &$db = null, ValidationInterface $validation = null)
+    {
+        $this->validationRules=array(
+            'comment'=>[
+                'label' => 'user_lang.field_comment',
+                'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH.']',
+            ]
+        );
+        parent::__construct($db, $validation);
+    }
 
     /**
      * @return CommentModel

@@ -1,7 +1,9 @@
 <?php
 namespace Plafor\Models;
 
+use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Model;
+use CodeIgniter\Validation\ValidationInterface;
 
 class CoursePlanModel extends Model{
     private static $coursePlanModel=null;
@@ -12,6 +14,31 @@ class CoursePlanModel extends Model{
     protected $deletedField='archive';
     private $userCourseModel=null;
     private $competenceDomainModel=null;
+    protected $validationRules;
+
+    /** should be public but don't know if
+     *  it will be used so stay public
+     */
+    public function __construct(ConnectionInterface &$db = null, ValidationInterface $validation = null)
+    {
+        $this->validationRules=
+            [
+                'formation_number'=>[
+                    'label' => 'user_lang.field_course_plan_formation_number',
+                    'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->FORMATION_NUMBER_MAX_LENGTH.']|numeric'."|checkFormPlanNumber[{id}]",
+                ],
+                'official_name'=>[
+                    'label' => 'user_lang.field_course_plan_official_name',
+                    'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->OFFICIAL_NAME_MAX_LENGTH.']',
+                ],
+                'date_begin'=>[
+                'label' => 'user_lang.field_course_plan_date_begin',
+                'rules' => 'required',
+            ]
+        ];
+
+        parent::__construct($db, $validation);
+    }
 
     /**
      * @return CoursePlanModel

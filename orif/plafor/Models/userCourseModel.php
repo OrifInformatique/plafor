@@ -14,6 +14,25 @@ class UserCourseModel extends \CodeIgniter\Model
     protected $table='user_course';
     protected $primaryKey='id';
     protected $allowedFields=['fk_user','fk_course_plan','fk_status','date_begin','date_end'];
+    protected $validationRules;
+    public function __construct(ConnectionInterface &$db = null, ValidationInterface $validation = null)
+    {
+        $this->validationRules=array(
+            'fk_course_plan'=>[
+                'label' => 'user_lang.course_plan',
+                'rules' => 'required|numeric',
+            ],
+            'fk_status'=>[
+                'label' => 'user_lang.status',
+                'rules' => 'required|numeric',
+            ],
+            'date_begin'=>[
+                'label' => 'user_lang.field_user_course_date_begin',
+                'rules' => 'required',
+            ]
+        );
+        parent::__construct($db, $validation);
+    }
 
     /**
      * @return UserCourseModel
