@@ -53,18 +53,14 @@ class BaseController extends Controller
 	public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger)
 	{
 		// Do Not Edit This Line
-        try {
-            parent::initController($request, $response, $logger);
-            //--------------------------------------------------------------------
-            // Preload any models, libraries, etc, here.
-            //--------------------------------------------------------------------
-            // E.g.:
-            // $this->session = \Config\Services::session();
-            $this->session = \Config\Services::session();
-        }catch (\mysqli_sql_exception $e){
-            echo view('\Plafor\Views\migrationindex');
-            exit();
-        }
+		parent::initController($request, $response, $logger);
+
+		//--------------------------------------------------------------------
+		// Preload any models, libraries, etc, here.
+		//--------------------------------------------------------------------
+		// E.g.:
+		// $this->session = \Config\Services::session();
+        $this->session = \Config\Services::session();
         // Check permission on construct
         if (!$this->check_permission()) {
             $this->display_view('\User\errors\403error');
