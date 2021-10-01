@@ -11,7 +11,7 @@ helper('form');
 <div class="container">
     <div class="row">
         <div class="col">
-            <h1 class="title-section"><?= lang('user_lang.title_operational_competence_list'); ?></h1>
+            <h1 class="title-section"><?= lang('plafor_lang.title_operational_competence_list'); ?></h1>
         </div>
     </div>
     <div class="row" style="justify-content:space-between;">
@@ -31,7 +31,7 @@ helper('form');
         <table class="table table-hover">
         <thead>
             <tr>
-                <th><?= lang('user_lang.field_operational_competence_name'); ?></th>
+                <th><?= lang('plafor_lang.field_operational_competence_name'); ?></th>
                 <th></th>
                 <th></th>
                 <th></th>

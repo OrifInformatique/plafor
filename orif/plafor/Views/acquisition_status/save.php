@@ -29,7 +29,7 @@ helper('form');
 		<!-- FIELDS -->
 		<div class="row form-group">
 			<div class="col-6">
-				<?= lang('user_lang.field_acquisition_level', ['class'=>'form-label']); ?>
+				<?= lang('plafor_lang.field_acquisition_level', ['class'=>'form-label']); ?>
 			</div>
 			<div class="col-6">
 				<?= form_dropdown('field_acquisition_level',$acquisition_levels, $acquisition_level,['id' => 'field_acquisition_level', 'class' => 'form-control'] ); ?>

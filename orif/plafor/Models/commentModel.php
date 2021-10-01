@@ -18,7 +18,7 @@ class CommentModel extends Model{
     {
         $this->validationRules=array(
             'comment'=>[
-                'label' => 'user_lang.field_comment',
+                'label' => 'plafor_lang.field_comment',
                 'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH.']',
             ]
         );

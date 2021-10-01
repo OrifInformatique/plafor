@@ -50,14 +50,14 @@ $session=\CodeIgniter\Config\Services::session();
         <!-- USER FIELDS -->
         <div class="row">
             <div class="col-sm-12 form-group">
-                <?= form_label(lang('user_lang.field_competence_domain_course_plan'), 'course_plan', ['class' => 'form-label']); ?>
+                <?= form_label(lang('plafor_lang.field_competence_domain_course_plan'), 'course_plan', ['class' => 'form-label']); ?>
                 <br />
                 <?= form_dropdown('course_plan',$course_plans,$fk_course_plan_id ?? '','id="course_plan" class="form-control"')?>
             </div>
             <div class="col-sm-12 form-group">
-                <?= form_label(lang('user_lang.field_competence_domain_symbol'), 'competence_domain_symbol', ['class' => 'form-label']); ?>
+                <?= form_label(lang('plafor_lang.field_competence_domain_symbol'), 'competence_domain_symbol', ['class' => 'form-label']); ?>
                 <?= form_input($data_symbol); ?>
-                <?= form_label(lang('user_lang.field_competence_domain_name'), 'competence_domain_name', ['class' => 'form-label']); ?>
+                <?= form_label(lang('plafor_lang.field_competence_domain_name'), 'competence_domain_name', ['class' => 'form-label']); ?>
                 <?= form_input($data_name); ?>
             </div>
         </div>

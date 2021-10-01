@@ -21,11 +21,11 @@ class CompetenceDomainModel extends Model{
     {
         $this->validationRules= $rules = array(
             'symbol'=>[
-                'label' => 'user_lang.field_competence_domain_symbol',
+                'label' => 'plafor_lang.field_competence_domain_symbol',
                 'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH.']|checkCompetenceDomainAssociated[{symbol}]'
             ],
             'name'=>[
-                'label' => 'user_lang.field_competence_domain_name',
+                'label' => 'plafor_lang.field_competence_domain_name',
                 'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->COMPETENCE_DOMAIN_NAME_MAX_LENGTH.']'
             ],
         );

@@ -22,11 +22,11 @@ class OperationalCompetenceModel extends \CodeIgniter\Model
     {
         $this->validationRules=$rules = array(
             'symbol'=>[
-                'label' => 'user_lang.field_operational_competence_symbol',
+                'label' => 'plafor_lang.field_operational_competence_symbol',
                 'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH.']'
             ],
             'name'=>[
-                'label' => 'user_lang.field_operational_competence_name',
+                'label' => 'plafor_lang.field_operational_competence_name',
                 'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->OPERATIONAL_COMPETENCE_NAME_MAX_LENGTH.']'
             ],
             'methodologic'=>[

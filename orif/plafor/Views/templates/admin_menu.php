@@ -2,7 +2,7 @@
     <div class="row">
             <ul class="nav nav-pills">
                 <li class="nav-item">
-                    <a href="<?= base_url('plafor/apprentice/list_apprentice/') ?>" class="nav-link"><?= lang('user_lang.admin_apprentices'); ?></a>
+                    <a href="<?= base_url('plafor/apprentice/list_apprentice/') ?>" class="nav-link"><?= lang('plafor_lang.admin_apprentices'); ?></a>
                 </li>
             </ul>
     </div>

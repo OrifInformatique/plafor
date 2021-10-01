@@ -19,15 +19,15 @@ class UserCourseModel extends \CodeIgniter\Model
     {
         $this->validationRules=array(
             'fk_course_plan'=>[
-                'label' => 'user_lang.course_plan',
+                'label' => 'plafor_lang.course_plan',
                 'rules' => 'required|numeric',
             ],
             'fk_status'=>[
-                'label' => 'user_lang.status',
+                'label' => 'plafor_lang.status',
                 'rules' => 'required|numeric',
             ],
             'date_begin'=>[
-                'label' => 'user_lang.field_user_course_date_begin',
+                'label' => 'plafor_lang.field_user_course_date_begin',
                 'rules' => 'required',
             ]
         );

@@ -61,16 +61,16 @@ $validation=\CodeIgniter\Config\Services::validation();
         <!-- USER FIELDS -->
         <div class="row">
             <div class="col-sm-12 form-group">
-                <?= form_label(lang('user_lang.field_objective_operational_competence'), 'operational_competence', ['class' => 'form-label']); ?>
+                <?= form_label(lang('plafor_lang.field_objective_operational_competence'), 'operational_competence', ['class' => 'form-label']); ?>
                 <br />
                 <?= form_dropdown('operational_competence',$operational_competences,($operational_competence_id??''),'id="operational_competence" class="form-control"')?>
             </div>
             <div class="col-sm-12 form-group">
-                <?= form_label(lang('user_lang.field_objective_symbol'), 'objective_symbol', ['class' => 'form-label']); ?>
+                <?= form_label(lang('plafor_lang.field_objective_symbol'), 'objective_symbol', ['class' => 'form-label']); ?>
                 <?= form_input($data_symbol); ?>
-                <?= form_label(lang('user_lang.field_objective_taxonomy'), 'objective_taxonomy', ['class' => 'form-label']); ?>
+                <?= form_label(lang('plafor_lang.field_objective_taxonomy'), 'objective_taxonomy', ['class' => 'form-label']); ?>
                 <?= form_input($data_taxonomy); ?>
-                <?= form_label(lang('user_lang.field_objective_name'), 'objective_name', ['class' => 'form-label']); ?>
+                <?= form_label(lang('plafor_lang.field_objective_name'), 'objective_name', ['class' => 'form-label']); ?>
                 <?= form_input($data_name); ?>
             </div>
         </div>

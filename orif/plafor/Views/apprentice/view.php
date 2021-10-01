@@ -4,24 +4,24 @@
             <p class="bg-primary text-white"><?=lang('plafor_lang.title_view_apprentice')?></p>
         </div>
         <div class="col-md-6">
-            <p class="font-weight-bold"><?=lang('user_lang.field_apprentice_username')?></p>
+            <p class="font-weight-bold"><?=lang('plafor_lang.field_apprentice_username')?></p>
             <p><?=$apprentice['username']?></p>
         </div>
         <div class="col-md-6">
-            <p class="font-weight-bold"><?=lang('user_lang.field_apprentice_date_creation')?></p>
+            <p class="font-weight-bold"><?=lang('plafor_lang.field_apprentice_date_creation')?></p>
             <p><?=$apprentice['date_creation']?></p>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
             <p class="bg-primary text-white"><?=lang('plafor_lang.title_trainer_linked')?></p>
-            <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/save_apprentice_link/'.$apprentice['id'])?>"><?= lang('user_lang.title_apprentice_link_new') ?></a>
+            <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/save_apprentice_link/'.$apprentice['id'])?>"><?= lang('plafor_lang.title_apprentice_link_new') ?></a>
         </div>
         <div class="col-md-12">
             <table class="table table-hover">
             <thead>
                 <tr>
-                    <th><?= lang('user_lang.field_trainers_name') ?></th>
+                    <th><?= lang('plafor_lang.field_trainers_name') ?></th>
                     <?php if($_SESSION['user_access']): ?>
                     <th></th>
                     <th></th>
@@ -36,8 +36,8 @@
                 <tr>
                     <td><a href="<?= base_url('plafor/apprentice/list_apprentice/'.$trainer['id']); ?>"><?= $trainer['username']; ?></a></th>
                     <?php if($_SESSION['user_access']): ?>
-                    <th><a href="<?= base_url('plafor/apprentice/save_apprentice_link/'.$apprentice['id'].'/'.$link['id']) ?>"><?= lang('user_lang.title_apprentice_link_update'); ?></a></th>
-                    <th><a href="<?= base_url('plafor/admin/delete_apprentice_link/'.$link['id']) ?>"><?= lang('user_lang.title_apprentice_link_delete');?></a></th>
+                    <th><a href="<?= base_url('plafor/apprentice/save_apprentice_link/'.$apprentice['id'].'/'.$link['id']) ?>"><?= lang('plafor_lang.title_apprentice_link_update'); ?></a></th>
+                    <th><a href="<?= base_url('plafor/admin/delete_apprentice_link/'.$link['id']) ?>"><?= lang('plafor_lang.title_apprentice_link_delete');?></a></th>
                     <?php endif; ?>
                 </tr><?php
                     endif;
@@ -51,15 +51,15 @@
     <div class="row">
         <div class="col-md-12">
             <p class="bg-primary text-white"><?=lang('plafor_lang.title_apprentice_followed_courses')?></p>
-            <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/save_user_course/'.$apprentice['id'])?>"><?= lang('user_lang.title_user_course_new') ?></a>
+            <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/save_user_course/'.$apprentice['id'])?>"><?= lang('plafor_lang.title_user_course_new') ?></a>
         </div>
         <div class="col-md-12">
             <table class="table table-hover">
             <thead>
                 <tr>
-                    <th><span class="font-weight-bold"><?=lang('user_lang.field_course_plans_formation_numbers')?></span></th>
-                    <th><span class="font-weight-bold"><?=lang('user_lang.field_course_plans_official_names')?></span></th>
-                    <th><span class="font-weight-bold"><?=lang('user_lang.course_status')?></span></th>
+                    <th><span class="font-weight-bold"><?=lang('plafor_lang.field_course_plans_formation_numbers')?></span></th>
+                    <th><span class="font-weight-bold"><?=lang('plafor_lang.field_course_plans_official_names')?></span></th>
+                    <th><span class="font-weight-bold"><?=lang('plafor_lang.course_status')?></span></th>
                 </tr>
             </thead>
             <tbody><?php

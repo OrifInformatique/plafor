@@ -19,7 +19,7 @@ class PlaforRules
     public function checkFormPlanNumber($number, $course_plan_id,$datas,&$error){
         if ($course_plan_id==0)
         if(count((new CoursePlanModel())->getWhere(['formation_number'=>$number])->getResultArray())>0){
-            $error= lang('user_lang.form_number_not_unique');
+            $error= lang('plafor_lang.form_number_not_unique');
             return false;
         }
 
