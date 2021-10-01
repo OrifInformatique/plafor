@@ -60,11 +60,11 @@ $data_date_begin = array(
     <div class="row">
         <div class="col-sm-12 form-group">
             <?=form_hidden('id',$course_plan['id']??'')?>
-            <?= form_label(lang('user_lang.field_course_plan_formation_number'), 'course_plan_formation_number', ['class' => 'form-label']); ?>
+            <?= form_label(lang('plafor_lang.field_course_plan_formation_number'), 'course_plan_formation_number', ['class' => 'form-label']); ?>
             <?= form_input($data_formation_number); ?>
-            <?= form_label(lang('user_lang.field_course_plan_official_name'), 'course_plan_name', ['class' => 'form-label']); ?>
+            <?= form_label(lang('plafor_lang.field_course_plan_official_name'), 'course_plan_name', ['class' => 'form-label']); ?>
             <?= form_input($data_official_name); ?>
-            <?= form_label(lang('user_lang.field_course_plan_date_begin'), 'course_plan_date_begin', ['class' => 'form-label']); ?>
+            <?= form_label(lang('plafor_lang.field_course_plan_date_begin'), 'course_plan_date_begin', ['class' => 'form-label']); ?>
             <?= form_input($data_date_begin); ?>
         </div>
     </div>

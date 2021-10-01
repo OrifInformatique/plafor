@@ -22,16 +22,16 @@ class ObjectiveModel extends \CodeIgniter\Model
     {
         $this->validationRules= array(
             'symbol'=>[
-                'label' => 'user_lang.field_objective_symbol',
+                'label' => 'plafor_lang.field_objective_symbol',
                 'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH.']',
             ],
             'taxonomy'=>[
-                'label' => 'user_lang.field_objective_taxonomy',
+                'label' => 'plafor_lang.field_objective_taxonomy',
                 'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->TAXONOMY_MAX_VALUE.']',
             ],
 
             'name'=>[
-                'label' => 'user_lang.field_objective_name',
+                'label' => 'plafor_lang.field_objective_name',
                 'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->OBJECTIVE_NAME_MAX_LENGTH.']',
             ]
         );

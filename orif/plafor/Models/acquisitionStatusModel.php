@@ -18,7 +18,7 @@ class AcquisitionStatusModel extends Model{
     public function __construct(ConnectionInterface &$db = null, ValidationInterface $validation = null)
     {
         $this->validationRules= ['fk_acquisition_level'=>[
-            'label'=>'user_lang.field_acquisition_level',
+            'label'=>'plafor_lang.field_acquisition_level',
             'rules'=>'required|in_list['.implode(',', AcquisitionLevelModel::getInstance()->findColumn('id')).']'
         ]];
         parent::__construct($db, $validation);

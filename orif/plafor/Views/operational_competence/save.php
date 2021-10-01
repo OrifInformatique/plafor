@@ -50,7 +50,7 @@ $validation=\CodeIgniter\Config\Services::validation();
     <!-- TITLE -->
     <div class="row">
         <div class="col">
-            <h1 class="title-section"><?= lang('user_lang.title_operational_competence_'.($update ? 'update' : 'new')); ?></h1>
+            <h1 class="title-section"><?= lang('plafor_lang.title_operational_competence_'.($update ? 'update' : 'new')); ?></h1>
         </div>
     </div>
     
@@ -76,20 +76,20 @@ $validation=\CodeIgniter\Config\Services::validation();
         <!-- USER FIELDS -->
         <div class="row">
             <div class="col-sm-12 form-group">
-                <?= form_label(lang('user_lang.field_operational_competence_domain'), 'competence_domain', ['class' => 'form-label']); ?>
+                <?= form_label(lang('plafor_lang.field_operational_competence_domain'), 'competence_domain', ['class' => 'form-label']); ?>
                 <br />
                 <?= form_dropdown('competence_domain',$competence_domains,$competence_domain_id?? '','id="competence_domain" class="form-control"')?>
             </div>
             <div class="col-sm-12 form-group">
-                <?= form_label(lang('user_lang.field_operational_competence_symbol'), 'operational_competence_symbol', ['class' => 'form-label']); ?>
+                <?= form_label(lang('plafor_lang.field_operational_competence_symbol'), 'operational_competence_symbol', ['class' => 'form-label']); ?>
                 <?= form_input($data_symbol); ?>
-                <?= form_label(lang('user_lang.field_operational_competence_name'), 'operational_competence_name', ['class' => 'form-label']); ?>
+                <?= form_label(lang('plafor_lang.field_operational_competence_name'), 'operational_competence_name', ['class' => 'form-label']); ?>
                 <?= form_input($data_name); ?>
-                <?= form_label(lang('user_lang.field_operational_competence_methodologic'), 'operational_competence_methodologic', ['class' => 'form-label']); ?>
+                <?= form_label(lang('plafor_lang.field_operational_competence_methodologic'), 'operational_competence_methodologic', ['class' => 'form-label']); ?>
                 <?= form_textarea($data_methodologic); ?>
-                <?= form_label(lang('user_lang.field_operational_competence_social'), 'operational_competence_social', ['class' => 'form-label']); ?>
+                <?= form_label(lang('plafor_lang.field_operational_competence_social'), 'operational_competence_social', ['class' => 'form-label']); ?>
                 <?= form_textarea($data_social); ?>
-                <?= form_label(lang('user_lang.field_operational_competence_personal'), 'operational_competence_personal', ['class' => 'form-label']); ?>
+                <?= form_label(lang('plafor_lang.field_operational_competence_personal'), 'operational_competence_personal', ['class' => 'form-label']); ?>
                 <?= form_textarea($data_personal); ?>
             </div>
         </div>

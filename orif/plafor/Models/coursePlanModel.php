@@ -24,15 +24,15 @@ class CoursePlanModel extends Model{
         $this->validationRules=
             [
                 'formation_number'=>[
-                    'label' => 'user_lang.field_course_plan_formation_number',
+                    'label' => 'plafor_lang.field_course_plan_formation_number',
                     'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->FORMATION_NUMBER_MAX_LENGTH.']|numeric'."|checkFormPlanNumber[{id}]",
                 ],
                 'official_name'=>[
-                    'label' => 'user_lang.field_course_plan_official_name',
+                    'label' => 'plafor_lang.field_course_plan_official_name',
                     'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->OFFICIAL_NAME_MAX_LENGTH.']',
                 ],
                 'date_begin'=>[
-                'label' => 'user_lang.field_course_plan_date_begin',
+                'label' => 'plafor_lang.field_course_plan_date_begin',
                 'rules' => 'required',
             ]
         ];

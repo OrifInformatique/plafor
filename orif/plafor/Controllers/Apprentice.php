@@ -99,7 +99,7 @@ class Apprentice extends \App\Controllers\BaseController
     {
         $apprentice = User_model::getInstance()->find($apprentice_id);
         
-        if(is_null($apprentice) || $apprentice['fk_user_type'] != User_type_model::getInstance()->where('name',lang('user_lang.title_apprentice'))->first()['id']){
+        if(is_null($apprentice) || $apprentice['fk_user_type'] != User_type_model::getInstance()->where('name',lang('plafor_lang.title_apprentice'))->first()['id']){
             return redirect()->to(base_url("/plafor/apprentice/list_apprentice"));
         }
         $user_courses=[];
@@ -115,7 +115,7 @@ class Apprentice extends \App\Controllers\BaseController
         $course_plans[$courseplan['id']] = $courseplan;
 
         $trainers = [];
-        foreach (User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name',lang('user_lang.title_trainer'))->first()['id'])->findall() as $trainer)
+        foreach (User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name',lang('plafor_lang.title_trainer'))->first()['id'])->findall() as $trainer)
             $trainers[$trainer['id']]= $trainer;
 
         $links = [];
@@ -166,7 +166,7 @@ class Apprentice extends \App\Controllers\BaseController
         $apprentice = User_model::getInstance()->find($id_apprentice);
         $user_course = UserCourseModel::getInstance()->find($id_user_course);
 
-        if($id_apprentice == null || $apprentice['fk_user_type'] != User_type_model::getInstance()->where('name',lang('user_lang.title_apprentice'))->first()['id']){
+        if($id_apprentice == null || $apprentice['fk_user_type'] != User_type_model::getInstance()->where('name',lang('plafor_lang.title_apprentice'))->first()['id']){
             return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
             exit();
         }
@@ -229,7 +229,7 @@ class Apprentice extends \App\Controllers\BaseController
             $status[$usercoursestatus['id']]=$usercoursestatus['name'];
         }
         $output = array(
-            'title' => lang('plafor_lang.user_course_title_course_plan_link'),
+            'title' => lang('plafor_lang.title_user_course_plan_link'),
             'course_plans' => $course_plans,
             'user_course'   => $user_course,
             'status' => $status,
@@ -255,7 +255,7 @@ class Apprentice extends \App\Controllers\BaseController
         if($_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_admin
             || $apprentice == null
             || $apprentice['fk_user_type'] != User_type_model::getInstance()->
-            where('name',lang('user_lang.title_apprentice'))->first()['id']){
+            where('name',lang('plafor_lang.title_apprentice'))->first()['id']){
             return redirect()->to(base_url());
         }
 

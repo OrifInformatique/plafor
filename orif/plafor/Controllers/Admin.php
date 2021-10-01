@@ -613,22 +613,22 @@ class Admin extends \App\Controllers\BaseController
         $apprentice = User_model::getInstance()->find($id_apprentice);
         $user_course = UserCourseModel::getInstance()->find($id_user_course);
 
-        if($id_apprentice == null || $apprentice['fk_user_type'] != User_type_model::getInstance()->where('name',lang('user_lang.title_apprentice'))['id']){
+        if($id_apprentice == null || $apprentice['fk_user_type'] != User_type_model::getInstance()->where('name',lang('plafor_lang.title_apprentice'))['id']){
             return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
         }
 
         if(count($_POST) > 0){
             $rules = array(
                     'course_plan'=>[
-                    'label' => 'user_lang.course_plan',
+                    'label' => 'plafor_lang.course_plan',
                     'rules' => 'required|numeric',
                     ],
                     'status'=>[
-                    'label' => 'user_lang.status',
+                    'label' => 'plafor_lang.status',
                     'rules' => 'required|numeric',
                     ],
                     'date_begin'=>[
-                    'label' => 'user_lang.field_user_course_date_begin',
+                    'label' => 'plafor_lang.field_user_course_date_begin',
                     'rules' => 'required'
                     ]
                 /*
@@ -689,7 +689,7 @@ class Admin extends \App\Controllers\BaseController
             $status[$usercoursestatus['id']]=$usercoursestatus['name'];
 
         $output = array(
-            'title' => lang('user_lang.title_course_plan_link'),
+            'title' => lang('plafor_lang.title_course_plan_link'),
             'course_plans' => $course_plans,
             'user_course'   => $user_course,
             'status' => $status,
@@ -713,7 +713,7 @@ class Admin extends \App\Controllers\BaseController
 
         if($_SESSION['user_access'] < config('\Plafor\Config\plaforConfig')->access_lvl_admin
             || $apprentice == null
-            || $apprentice['fk_user_type'] != User_type_model::getInstance()->where('name',lang('user_lang.title_apprentice'))->first()['id']){
+            || $apprentice['fk_user_type'] != User_type_model::getInstance()->where('name',lang('plafor_lang.title_apprentice'))->first()['id']){
             return redirect()->to(base_url());
         }
 

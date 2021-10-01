@@ -18,7 +18,7 @@ $validation=\CodeIgniter\Config\Services::validation()
     <!-- TITLE -->
     <div class="row">
         <div class="col">
-            <h1 class="title-section"><?= lang('user_lang.title_apprentice_link_'.($update ? 'update' : 'new')); ?></h1>
+            <h1 class="title-section"><?= lang('plafor_lang.title_apprentice_link_'.($update ? 'update' : 'new')); ?></h1>
         </div>
     </div>
     
@@ -51,12 +51,12 @@ $validation=\CodeIgniter\Config\Services::validation()
         <!-- USER FIELDS -->
         <div class="row">
             <div class="col-sm-6 form-group">
-                <?= form_label(lang('user_lang.field_apprentice_username'), 'apprentice', ['class' => 'form-label']); ?>
+                <?= form_label(lang('plafor_lang.field_apprentice_username'), 'apprentice', ['class' => 'form-label']); ?>
                 <?= form_input($data_apprentice); ?>
                 <p><?=$apprentice['username']?></p>
             </div>
             <div class="col-sm-6 form-group">
-                <?= form_label(lang('user_lang.field_trainer_link'), 'trainer', ['class' => 'form-label']); ?>
+                <?= form_label(lang('plafor_lang.field_trainer_link'), 'trainer', ['class' => 'form-label']); ?>
                 <br />
                 <?= form_dropdown('trainer',$trainers,$link['fk_trainer'] ?? '','id="trainer" class="form-control"')?>
             </div>   

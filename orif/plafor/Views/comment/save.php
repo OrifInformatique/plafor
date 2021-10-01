@@ -41,7 +41,7 @@ $update = !is_null($comment_id);
         <!-- USER FIELDS -->
         <div class="row">
             <div class="col-sm-12 form-group">
-                <?= form_label(lang('user_lang.field_comment'), 'comment', ['class' => 'form-label']); ?>
+                <?= form_label(lang('plafor_lang.field_comment'), 'comment', ['class' => 'form-label']); ?>
                 <?= form_textarea($data_comment); ?>
             </div>
         </div>

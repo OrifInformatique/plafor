@@ -22,23 +22,23 @@ class OperationalCompetenceModel extends \CodeIgniter\Model
     {
         $this->validationRules=$rules = array(
             'symbol'=>[
-                'label' => 'user_lang.field_operational_competence_symbol',
+                'label' => 'plafor_lang.field_operational_competence_symbol',
                 'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH.']'
             ],
             'name'=>[
-                'label' => 'user_lang.field_operational_competence_name',
+                'label' => 'plafor_lang.field_operational_competence_name',
                 'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->OPERATIONAL_COMPETENCE_NAME_MAX_LENGTH.']'
             ],
             'methodologic'=>[
-                'label' => 'user_lang.field_operational_methodologic',
+                'label' => 'plafor_lang.field_operational_methodologic',
                 'rules' => 'max_length['.config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH.']'
             ],
             'social'=>[
-                'label' => 'user_lang.field_operational_social',
+                'label' => 'plafor_lang.field_operational_social',
                 'rules' => 'max_length['.config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH.']'
             ],
             'personal'=>[
-                'label' => 'user_lang.field_operational_personal',
+                'label' => 'plafor_lang.field_operational_personal',
                 'rules' => 'max_length['.config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH.']'
             ],
         );

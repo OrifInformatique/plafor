@@ -26,7 +26,7 @@ helper('form');
     <!-- TITLE -->
     <div class="row">
         <div class="col">
-            <h1 class="title-section"><?= lang('user_lang.title_user_course_'.($update ? 'update' : 'new').''); ?></h1>
+            <h1 class="title-section"><?= lang('plafor_lang.title_user_course_'.($update ? 'update' : 'new').''); ?></h1>
         </div>
     </div>
     
@@ -52,21 +52,21 @@ helper('form');
         <!-- USER FIELDS -->
         <div class="row">
             <div class="col-sm-6 form-group">
-                <?= form_label(lang('user_lang.field_user_course_course_plan'), 'course_plan', ['class' => 'form-label']); ?>
+                <?= form_label(lang('plafor_lang.field_user_course_course_plan'), 'course_plan', ['class' => 'form-label']); ?>
                 <br />
                 <?= form_dropdown('course_plan',$course_plans,'','id="course_plan" class="form-control"')?>
             </div>
             <div class="col-sm-6 form-group">
-                <?= form_label(lang('user_lang.field_user_course_status'), 'status', ['class' => 'form-label']); ?>
+                <?= form_label(lang('plafor_lang.field_user_course_status'), 'status', ['class' => 'form-label']); ?>
                 <br />
                 <?= form_dropdown('status',$status,$user_course['fk_status'] ?? '','id="status" class="form-control"')?>
             </div>
             <div class="col-sm-6 form-group">
-                <?= form_label(lang('user_lang.field_user_course_date_begin'), 'user_course_date_begin', ['class' => 'form-label']); ?>
+                <?= form_label(lang('plafor_lang.field_user_course_date_begin'), 'user_course_date_begin', ['class' => 'form-label']); ?>
                 <?= form_input($data_date_begin); ?>
             </div>
             <div class="col-sm-6 form-group">
-                <?= form_label(lang('user_lang.field_user_course_date_end'), 'user_course_date_end', ['class' => 'form-label']); ?>
+                <?= form_label(lang('plafor_lang.field_user_course_date_end'), 'user_course_date_end', ['class' => 'form-label']); ?>
                 <?= form_input($data_date_end); ?>
             </div>
         </div>
