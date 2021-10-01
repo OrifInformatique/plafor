@@ -10,7 +10,7 @@ class Migration extends \CodeIgniter\Controller
 {
     public function init()
     {
-        if ($this->request->getPost('password')==='ys3vTFiR6gyGajz'){
+        if ($this->request->getPost('password')===$migrationPassword){
 
         $file = fopen(WRITEPATH . 'appStatus.json', 'r+');
         $initDatas = fread($file, 100);
