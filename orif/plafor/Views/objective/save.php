@@ -34,7 +34,7 @@ $validation=\CodeIgniter\Config\Services::validation();
     <!-- TITLE -->
     <div class="row">
         <div class="col">
-            <h1 class="title-section"><?= lang('user_lang.title_objective_'.($update ? 'update' : 'new')); ?></h1>
+            <h1 class="title-section"><?= lang('plafor_lang.title_objective_'.($update ? 'update' : 'new')); ?></h1>
         </div>
     </div>
 

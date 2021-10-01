@@ -689,7 +689,7 @@ class Admin extends \App\Controllers\BaseController
             $status[$usercoursestatus['id']]=$usercoursestatus['name'];
 
         $output = array(
-            'title' => lang('user_lang.title_course_plan_link'),
+            'title' => lang('plafor_lang.title_course_plan_link'),
             'course_plans' => $course_plans,
             'user_course'   => $user_course,
             'status' => $status,
