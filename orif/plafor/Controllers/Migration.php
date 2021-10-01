@@ -10,7 +10,7 @@ class Migration extends \App\Controllers\BaseController {
 
     public function init()
     {
-        if ($this->request->getPost('password')===$migrationPassword){
+        if ($this->request->getPost('password')==config('\Plafor\Config\PlaforConfig')->MIGRATION_PASSWORD){
 
             $file = fopen(WRITEPATH . 'appStatus.json', 'r+');
             $initDatas = fread($file, 100);

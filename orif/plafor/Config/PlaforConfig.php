@@ -20,5 +20,5 @@ class PlaforConfig extends BaseConfig
     public $TAXONOMY_MAX_VALUE=6;
     public $OBJECTIVE_NAME_MAX_LENGTH=350;
     public $SQL_TEXT_MAX_LENGTH=65535;
-    public $migrationPassword='ys3vTFiR6gyGajz';
+    public $MIGRATION_PASSWORD='ys3vTFiR6gyGajz';
 }
