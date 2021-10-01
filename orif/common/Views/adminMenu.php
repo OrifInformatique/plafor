@@ -1,9 +1,8 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <?php foreach (config('\Common\Config\AdminPanelConfig')->views as $view){?>
-            <a href="<?=base_url($view['pageLink'])?>" class="btn btn-primary <?= (isset($view['active'])?'active':'')?> adminnav" style="min-width: 90px"><?=lang($view['label'])?></a>
-
+            <?php foreach (config('\Common\Config\AdminPanelConfig')->tabs as $tab){?>
+                    <a href="<?=base_url($tab['pageLink'])?>" class="btn btn-primary adminnav" ><?=lang($tab['label'])?></a>
             <?php } ?>
         </div>
     </div>

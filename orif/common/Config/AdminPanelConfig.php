@@ -15,7 +15,7 @@ use User\Controllers\Admin;
 class AdminPanelConfig extends \CodeIgniter\Config\BaseConfig
 {
     /** here come the views details for adminPanel */
-    public $views=[
+    public $tabs=[
         /** eg... */
         ['label'=>'user_lang.title_user_list','title'=>'user_lang.title_user_list','pageLink'=>'user/admin/list_user'],
         ['label'=>'plafor_lang.title_apprentice_list','title'=>'plafor_lang.title_apprentice_list','pageLink'=>'plafor/apprentice/list_apprentice'],
