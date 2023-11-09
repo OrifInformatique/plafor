@@ -1,4 +1,11 @@
 <?php
+/**
+ * Fichier de model pour course_plan
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
 namespace Plafor\Models;
 
 use CodeIgniter\Database\ConnectionInterface;
@@ -57,8 +64,8 @@ class CoursePlanModel extends Model{
      * @param $coursePlanId
      * @return array
      */
-    public static function getCompetenceDomains($coursePlanId){
-        return CompetenceDomainModel::getInstance()->where('fk_course_plan',$coursePlanId)->findAll();
+    public static function getCompetenceDomains($coursePlanId,$with_archived=0){
+        return CompetenceDomainModel::getInstance()->where('fk_course_plan',$coursePlanId)->withDeleted($with_archived)->findAll();
     }
 
     /**
@@ -66,7 +73,7 @@ class CoursePlanModel extends Model{
      * @return array
      */
     public static function getUserCourses($coursePlanId){
-        return UserCourseModel::getInstance()->where('fk_course_plan',$coursePlanId)->findAll();
+        return UserCourseModel::getInstance()->where('fk_course_plan',$coursePlanId)->withDeleted(true)->findAll();
     }
     /**
      * @param $userId //is the apprentice id
@@ -79,8 +86,8 @@ class CoursePlanModel extends Model{
         $coursePlanAssociated=[];
         function getCoursePlansDatas($userid){
             $coursplans=[];
-            foreach (UserCourseModel::getInstance()->where('fk_user',$userid)->findAll() as $userCourse){
-                $coursplans[$userCourse['fk_course_plan']]=UserCourseModel::getCoursePlan($userCourse['fk_course_plan']);
+            foreach (UserCourseModel::getInstance()->where('fk_user',$userid)->withDeleted(true)->findAll() as $userCourse){
+                $coursplans[$userCourse['fk_course_plan']]=UserCourseModel::getCoursePlan($userCourse['fk_course_plan'],true);
                 $coursplans[$userCourse['fk_course_plan']]['fk_acquisition_status']=$userCourse['fk_status'];
             }
             return $coursplans;

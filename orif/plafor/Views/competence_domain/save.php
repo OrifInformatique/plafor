@@ -1,4 +1,13 @@
 <?php
+/**
+ * Fichier de vue pour save_competence_domain
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
+?>
+<?php
 $update = !is_null($competence_domain);
 helper('form');
 $validation = \CodeIgniter\Config\Services::validation();
@@ -36,7 +45,7 @@ $session=\CodeIgniter\Config\Services::session();
         'id' => 'competence_domain_form',
         'name' => 'competence_domain_form'
     );
-    echo form_open(base_url('plafor/courseplan/save_competence_domain'), $attributes, [
+    echo form_open(base_url('plafor/courseplan/save_competence_domain/0'), $attributes, [
         'id' => $competence_domain['id'] ?? 0
     ]);
     ?>

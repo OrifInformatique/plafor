@@ -1,4 +1,13 @@
 <?php
+/**
+ * Fichier de vue pour save_comment
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
+?>
+<?php
 $update = !is_null($comment_id);
 
     // For some reasons, you can only set a type to input made with form_input if done with only a array as param, may need to be checked for later uses.

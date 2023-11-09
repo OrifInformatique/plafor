@@ -1,4 +1,11 @@
 <?php
+/**
+ * Fichier de vue pour effectuer la migration
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
 ?>
 <style>
     .header{

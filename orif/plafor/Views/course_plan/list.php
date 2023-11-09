@@ -1,4 +1,7 @@
 <?php
+
+use CodeIgniter\I18n\Time;
+
 view('\Plafor\templates\navigator',['reset'=>true]);
 helper('form');
 /**
@@ -21,36 +24,36 @@ helper('form');
                 <?= lang('common_lang.btn_new_m'); ?>
             </a>
         </div>
-        <div style="margin-left: 20px; width:100%; padding: 0 15px 0 15px">
+        <div class="col-sm-9 text-right">
+            <?=form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted', ['class' => 'form-check-label','style'=>'padding-right:30px']);?>
+
             <?=form_checkbox('toggle_deleted', '', $with_archived, [
                 'id' => 'toggle_deleted', 'class' => 'form-check-input'
             ]);?>
-            <?=form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted', ['class' => 'form-check-label']);?>
         </div>
     </div>
     <div class="row mt-2">
      <div class="col-sm-3 offset-6">
 		</div>
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <th><?= lang('plafor_lang.field_course_plan_official_name'); ?></th>
-                <th></th>
-                <th></th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody id="course_planslist">
-            <?php foreach($course_plans as $course_plan) { ?>
-                <tr>
-                    <td><a href="<?= base_url('plafor/courseplan/view_course_plan/'.$course_plan['id']) ?>"><span class="font-weight-bold"><?= $course_plan['formation_number']?></span><?= $course_plan['official_name']; ?></td>
-                    <td><a href="<?= base_url('plafor/courseplan/view_course_plan/'.$course_plan['id'])?>"><?= lang('common_lang.btn_details')?></a></td>
-                    <td><a href="<?= base_url('plafor/courseplan/save_course_plan/'.$course_plan['id']); ?>"><?= lang('common_lang.btn_edit')?></a></td>
-                    <td><a href="<?= base_url('plafor/courseplan/delete_course_plan/'.$course_plan['id']); ?>" class="<?=$course_plan['archive']==null?'bi bi-trash':'bi bi-reply-all-fill'?>"></td>
-                </tr>
-            <?php } ?>
-            </tbody>
-        </table>
+        <?php
+        $datas=[];
+        foreach($course_plans as $course_plan) {
+            $datas[]=['id'=>$course_plan['id'],'formNumber'=>$course_plan['formation_number'],'coursePlan'=>$course_plan['official_name'],'begin_date'=>Time::createFromFormat('Y-m-d', $course_plan['date_begin'])->toLocalizedString('dd.MM.Y')];
+        }
+        ?>
+
+        <?= view('Common\Views\items_list',[
+            'columns'=>[
+                'formNumber'=>lang('plafor_lang.field_course_plan_formation_number'),
+                'coursePlan'=>lang('plafor_lang.field_course_plan_official_name'),
+                'begin_date'=>lang('plafor_lang.field_course_plan_into_effect')
+            ],
+            'items'=>$datas,
+            'primary_key_field'=>'id',
+            'url_update'=>'plafor/courseplan/save_course_plan/',
+            'url_delete'=>'plafor/courseplan/delete_course_plan/',
+            'url_detail'=>'plafor/courseplan/view_course_plan/',
+        ])?>
     </div>
 </div>
 
@@ -58,10 +61,15 @@ helper('form');
     $(document).ready(function(){
         $('#toggle_deleted').change(e => {
             let checked = e.currentTarget.checked;
-            $.post('<?=base_url();?>/plafor/courseplan/list_course_plan/0/'+(+checked), {}, data => {
-                $('#course_planslist').empty();
-                $('#course_planslist')[0].innerHTML = $(data).find('#course_planslist')[0].innerHTML;
-            });
-        });
+            history.replaceState(null,null,'<?=base_url('/plafor/courseplan/list_course_plan');?>?wa='+(checked?1:0))
+            $.get('<?=base_url('/plafor/courseplan/list_course_plan');?>?wa='+(checked?1:0),(datas)=>{
+                let parser=new DOMParser();
+                parser.parseFromString(datas,'text/html').querySelectorAll('table').forEach((domTag)=>{
+                    document.querySelectorAll('table').forEach((thisDomTag)=>{
+                        thisDomTag.innerHTML=domTag.innerHTML;
+                    })
+                })
+            })
+        })
     });
 </script>

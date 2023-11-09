@@ -1,3 +1,12 @@
+<?php
+/**
+ * Fichier de vue pour view_acquisition_status
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
+?>
 <div class="container">
     <?=view('\Plafor\templates\navigator',['title'=>lang('plafor_lang.title_view_acquisition_status')])?>
     <div class="row">
@@ -5,13 +14,13 @@
             <p class="bg-primary text-white"><?=lang('plafor_lang.details_acquisition_status')?></p>
         </div><div class="col-md-2">
             <p class="font-weight-bold"><?=lang('plafor_lang.field_objective_symbol')?></p>
-            <a href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id'])?>"><?=$objective['symbol']?></a>
+            <a><?=$objective['symbol']?></a>
         </div><div class="col-md-6">
             <p class="font-weight-bold"><?=lang('plafor_lang.field_objective_name')?></p>
-            <a href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id'])?>"><?=$objective['name']?></a>
+            <a ><?=$objective['name']?></a>
         </div><div class="col-md-2">
             <p class="font-weight-bold"><?=lang('plafor_lang.field_objective_taxonomy')?></p>
-            <a href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id'])?>"><?=$objective['taxonomy']?></a>
+            <a ><?=$objective['taxonomy']?></a>
         </div>
         <div class="col-md-2">
             <p class="font-weight-bold"><?=lang('plafor_lang.field_acquisition_level')?></p>

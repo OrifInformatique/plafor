@@ -90,7 +90,7 @@ async function initProgress(getCourseplanProgressUrl,detailsLang) {
                     ReactDOM.render(<div><Progressbar colors={['#6ca77f', '#AE9B70', '#d9af47', '#D9918D']}
                                                       elements={coursePlanStats.progress}
                                                       timeToRefresh="10" elementToGroup={3}
-                                                      disabled={coursePlanStats.status > 2}
+                                                      disabled={coursePlan.archive!==null}
                     />
                         {
                             coursePlanStats.status <= 2 ?

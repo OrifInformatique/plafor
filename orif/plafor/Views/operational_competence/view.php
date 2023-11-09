@@ -1,3 +1,15 @@
+<?php
+/**
+ * Fichier de vue pour save_operational_competence
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
+?>
+<?php
+helper('form');
+?>
 <div class="container">
     <?=view('\Plafor\templates\navigator',['title'=>lang('plafor_lang.title_view_operational_competence')])?>
     <div class="row">
@@ -62,10 +74,18 @@
             <p class="bg-primary text-white"><?=lang('plafor_lang.field_linked_objectives')?></p>
         </div>
         <div class="col-md-12">
+            <div class="col-sm-12 text-right d-flex justify-content-between">
             <?php if (service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin): ?>
             <a href="<?=base_url('plafor/courseplan/save_objective/0/'.$operational_competence['id']) ?>" class="btn btn-primary"><?= lang('common_lang.btn_new_m')?></a>
             <?php endif;?>
-            <table class="responsiveTable table table-hover">
+                <span>
+                <?=form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted', ['class' => 'form-check-label','style'=>'padding-right:30px']);?>
+                <?=form_checkbox('toggle_deleted', '', isset($with_archived)?$with_archived:false, [
+                    'id' => 'toggle_deleted', 'class' => 'form-check-input'
+                ]);?>
+                </span>
+            </div>
+            <table class="responsiveTable table table-striped table-hover">
             <thead>
                 <tr>
                     <th><span class="font-weight-bold"><?=lang('plafor_lang.field_objectives_symbols')?></span></th>
@@ -82,17 +102,18 @@
             foreach ($objectives as $objective){
                 ?><tr>
                     <td>
-                        <a class="font-weight-bold" href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id'])?>"><?=$objective['symbol']?></a>
+                        <a><?=$objective['symbol']?></a>
 
                     </td>
                     <td>
                         <span class="font-weight-bold descTitle" style="display: none"><?=lang('plafor_lang.field_taxonomy')?></span>
-                        <a href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id'])?>"><?=$objective['taxonomy']?></a>
+                        <a><?=$objective['taxonomy']?></a>
 
                     </td>
-                    <td><a href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id'])?>"><?=$objective['name']?></a></td>
+                    <td><?=$objective['name']?></td>
+
                 <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
-                    <td><a href="<?= base_url('plafor/courseplan/save_objective/'.$objective['id'].'/'.$operational_competence['id']); ?>"><?= lang('common_lang.btn_edit')?></a></td>
+                    <td><a href="<?= base_url('plafor/courseplan/save_objective/'.$objective['id'].'/'.$operational_competence['id']); ?>"><i class="bi bi-pencil"></i></a></td>
                     <td><a href="<?= base_url('plafor/courseplan/delete_objective/'.$objective['id']); ?>" class="<?=$operational_competence['archive']==null?'bi bi-trash':'bi bi-reply-all-fill'?>"></td>
                 <?php endif;?>
                 <?php
@@ -103,6 +124,22 @@
         </div>
     </div>
 </div>
+<script defer>
+    $(document).ready(function(){
+        $('#toggle_deleted').change(e => {
+            let checked = e.currentTarget.checked;
+            history.replaceState(null,null,'<?=base_url('/plafor/courseplan/view_operational_competence/'.$operational_competence['id']);?>?wa='+(checked?1:0))
+            $.get('<?=base_url('/plafor/courseplan/view_operational_competence/')."/${operational_competence['id']}";?>?wa='+(checked?1:0),(datas)=>{
+                let parser=new DOMParser();
+                parser.parseFromString(datas,'text/html').querySelectorAll('table').forEach((domTag)=>{
+                    document.querySelectorAll('table').forEach((thisDomTag)=>{
+                        thisDomTag.innerHTML=domTag.innerHTML;
+                    })
+                })
+            })
+        })
+    });
+</script>
 <script defer type="text/javascript">
     window.addEventListener('resize',()=>{
 

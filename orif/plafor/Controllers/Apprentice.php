@@ -1,10 +1,20 @@
 <?php
+/**
+ * Controller pour la gestion des apprentis
+ * Required level apprentice
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
 
 
 namespace Plafor\Controllers;
 
 
 use CodeIgniter\Config\Services;
+use CodeIgniter\HTTP\Response;
+use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\I18n\Time;
 use CodeIgniter\Validation\Validation;
 use Exception;
@@ -74,18 +84,18 @@ class Apprentice extends \App\Controllers\BaseController
             $apprentices = User_model::getApprentices($withDeleted);
 
             $coursesList=[];
-            foreach (CoursePlanModel::getInstance()->findall() as $courseplan)
+            foreach (CoursePlanModel::getInstance()->withDeleted(true)->findall() as $courseplan)
                 $coursesList[$courseplan['id']]=$courseplan;
-            $courses = UserCourseModel::getInstance()->findall();
+            $courses = UserCourseModel::getInstance()->withDeleted(true)->findall();
         }else{
             $apprentices=[];
             if (count(TrainerApprenticeModel::getInstance()->where('fk_trainer', $trainer_id)->findall()))
                 $apprentices = User_Model::getInstance()->whereIn('id', array_column(TrainerApprenticeModel::getInstance()->where('fk_trainer', $trainer_id)->findall(), 'fk_apprentice'))->findall();
             $coursesList=[];
-            foreach (CoursePlanModel::getInstance()->findall() as $courseplan)
+            foreach (CoursePlanModel::getInstance()->withDeleted(true)->findall() as $courseplan)
                 $coursesList[$courseplan['id']]=$courseplan;
-            $courses = UserCourseModel::getInstance()->findall();
-        }
+            $courses = UserCourseModel::getInstance()->withDeleted(true)->findall();
+            }
         
         
         $output = array(
@@ -118,15 +128,15 @@ class Apprentice extends \App\Controllers\BaseController
         }
 
         $user_course_status=[];
-        foreach (UserCourseStatusModel::getInstance()->findAll() as $usercoursetatus)
+        foreach (UserCourseStatusModel::getInstance()->withDeleted(true)->findAll() as $usercoursetatus)
         $user_course_status[$usercoursetatus['id']] = $usercoursetatus;
 
         $course_plans=[];
-        foreach (CoursePlanModel::getInstance()->findall() as $courseplan)
+        foreach (CoursePlanModel::getInstance()->withDeleted(true)->findall() as $courseplan)
         $course_plans[$courseplan['id']] = $courseplan;
 
         $trainers = [];
-        foreach (User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name',lang('plafor_lang.title_trainer'))->first()['id'])->findall() as $trainer)
+        foreach (User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name',lang('plafor_lang.title_trainer'))->first()['id'])->withDeleted(true)->findall() as $trainer)
             $trainers[$trainer['id']]= $trainer;
 
         $links = [];
@@ -375,7 +385,7 @@ class Apprentice extends \App\Controllers\BaseController
      * Changes an acquisition status for an apprentice
      *
      * @param int $acquisition_status_id = ID of the acquisition status to change
-     * @return void
+     * @return Response|ResponseInterface
      */
     public function save_acquisition_status($acquisition_status_id = 0) {
         $acquisitionStatus = AcquisitionStatusModel::getInstance()->find($acquisition_status_id);
@@ -396,14 +406,27 @@ class Apprentice extends \App\Controllers\BaseController
             $acquisitionLevels[$acquisitionLevel['id']]=$acquisitionLevel['name'];
 
         // Check if data was sent
+
         if (!empty($_POST)) {
             $acquisitionLevel = $this->request->getPost('field_acquisition_level');
-            $acquisitionStatus = [
-                'fk_acquisition_level' => $acquisitionLevel
-            ];
+            $acquisitionStatus=AcquisitionStatusModel::getInstance()->find($acquisition_status_id);
+            $acquisitionStatus['fk_acquisition_level'] = $acquisitionLevel;
+            //check if opcomp and compdom is avtive
+
+            $objective=ObjectiveModel::getInstance()->find($acquisitionStatus['fk_objective']);
+            $opeationalCompetence=ObjectiveModel::getOperationalCompetence($objective['fk_operational_competence']);
+            //verify if op comp is disabled
+            if ($opeationalCompetence==null||$opeationalCompetence['archive']!=null){
+                return $this->response->setContentType('application/json')->setStatusCode(409)->setBody(json_encode(['error'=>lang('plafor_lang.associated_op_comp_disabled')]));
+            }
+            //if not verify if competence domain is active
+            else{
+                $competenceDomain=OperationalCompetenceModel::getCompetenceDomain($opeationalCompetence['fk_competence_domain']);
+                if ($competenceDomain==null|$competenceDomain['archive']!=null){
+                    return $this->response->setContentType('application/json')->setStatusCode(409)->setBody(json_encode(['error'=>lang('plafor_lang.associated_comp_dom_disabled')]));
+                }
+            }
             AcquisitionStatusModel::getInstance()->update($acquisition_status_id, $acquisitionStatus);
-
-
             if (AcquisitionStatusModel::getInstance()->errors()==null) {
 
                 //if ok

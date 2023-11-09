@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * Fichier de model pour objective
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
 
 namespace Plafor\Models;
 

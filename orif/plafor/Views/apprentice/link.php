@@ -1,4 +1,13 @@
 <?php
+/**
+ * Fichier de vue pour link_apprentice
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
+?>
+<?php
 $update = !is_null($link);
 helper('form');
 $validation=\CodeIgniter\Config\Services::validation()

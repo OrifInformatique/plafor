@@ -54,7 +54,7 @@ helper('form');
             <div class="col-sm-6 form-group">
                 <?= form_label(lang('plafor_lang.field_user_course_course_plan'), 'course_plan', ['class' => 'form-label']); ?>
                 <br />
-                <?= form_dropdown('course_plan',$course_plans,isset($user_course['fk_course_plan'])?$user_course['fk_course_plan']:'','id="course_plan" class="form-control" '.($update?'disabled':''))?>
+                <?= form_dropdown('course_plan',$course_plans,isset($user_course['fk_course_plan'])?$user_course['fk_course_plan']:'','id="course_plan" class="form-control" '.($update?'style="pointer-events:none;background-color:rgba(0,0,0,0.2)"':''))?>
             </div>
             <div class="col-sm-6 form-group">
                 <?= form_label(lang('plafor_lang.field_user_course_status'), 'status', ['class' => 'form-label']); ?>

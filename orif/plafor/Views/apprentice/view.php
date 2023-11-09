@@ -1,3 +1,12 @@
+<?php
+/**
+ * Fichier de vue pour view_apprentice
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
+?>
 <div class="container">
     <?=view('\Plafor\templates\navigator',['title'=>lang('plafor_lang.title_view_apprentice')])?>
     <?php

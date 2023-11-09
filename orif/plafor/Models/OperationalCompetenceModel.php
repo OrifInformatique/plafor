@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * Fichier de model pour operational_competence
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
 
 namespace Plafor\Models;
 
@@ -66,8 +72,8 @@ class OperationalCompetenceModel extends \CodeIgniter\Model
      * @param $operationalCompetenceId
      * @return array
      */
-    public static function getObjectives($operationalCompetenceId){
-        return ObjectiveModel::getInstance()->where('fk_operational_competence',$operationalCompetenceId)->findAll();
+    public static function getObjectives($operationalCompetenceId,$with_archived=0){
+        return ObjectiveModel::getInstance()->withDeleted($with_archived)->where('fk_operational_competence',$operationalCompetenceId)->findAll();
     }
 
     public static function getOperationalCompetences($with_archived = false, $competence_domain_id = 0) { 

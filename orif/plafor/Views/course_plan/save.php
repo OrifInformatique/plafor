@@ -1,4 +1,13 @@
 <?php
+/**
+ * Fichier de vue pour save_course_plan
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
+?>
+<?php
 $update = !is_null($course_plan);
 ?>
 <?php

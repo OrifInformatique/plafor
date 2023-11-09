@@ -1,5 +1,13 @@
 <?php
-
+/**
+ * Fichier de filtre pour vérifier si l'application est initialisé
+ * Ansi que s'occupant de la redirection lors de la suppression d'un utilisateur dans le module plafor
+ * competence_domain avec les nouveaux plans si n'existent pas
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
 
 namespace Plafor\Filters;
 
@@ -45,7 +53,6 @@ class LoginFilter implements \CodeIgniter\Filters\FilterInterface
      */
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-        // TODO: Implement after() method.
     }
 
     /**
