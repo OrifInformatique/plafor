@@ -203,7 +203,7 @@ return [
     'msg_err_course_plan_not_exist'  =>'Le plan de formation sélectionné n\'existe pas',
     'msg_err_course_plan_not_unique' =>'Ce plan de formation est déjà utilisé, merci d\'en choisir un autre',
     'associated_op_comp_disabled'    =>'La compétence opérationnelle associée à cet objectif est désactivée',
-    'associated_comp_dom_disabled'   =>'Le domaine de ccompétence associé est désactivé',
+    'associated_comp_dom_disabled'   =>'Le domaine de compétence associé est désactivé',
 
     // Other texts
     'course_plan'                    =>'Plan de formation',
@@ -248,7 +248,7 @@ return [
     'course_status'                  =>'Status des formations',
     'status'                         =>'Statut de la formation',
     'form_number_not_unique'         =>'Le numéro du plan de formation existe déjà',
-    'with_status'                    =>'Avec le status',
+    'with_status'                    =>'Avec le statut',
 
     'course_plan_enable_explanation' =>'Toutes les informations concernant ce plan de formation (domaines de compétences, compétences oppérationnelles et objectifs) seront réactivées.',
     'competence_domain_enable_explanation' =>'Toutes les informations concernant ce domaine de compétence (symbole, nom, compétences oppérationnelles et objectifs) seront réactivées.',
@@ -258,5 +258,5 @@ return [
     'apprentice_link_enable_explanation' =>'Toutes les informations concernant le lien entre cette apprenti et ce formateur seront réactivées.',
     'acquisition_status_enable_explanation' =>'Toutes les informations concernant le statut d\'acquisition seront réactivées.',
 
-    'apprentices_already_assigned_to_course_plan'   => 'Le(s) apprentis suivant(s) sont déjà associé(s) au plan de formation'
+    'apprentices_already_assigned_to_course_plan'   => 'Les apprentis suivants sont déjà associés au plan de formation'
 ];
