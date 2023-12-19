@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * Fichier de model pour user_course
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
 
 namespace Plafor\Models;
 
@@ -48,15 +54,15 @@ class UserCourseModel extends \CodeIgniter\Model
      * @return array
      */
     public static function getUser($fkUserId){
-        return User_model::getInstance()->find($fkUserId);
+        return User_model::getInstance()->withDeleted()->find($fkUserId);
     }
 
     /**
      * @param $fkCoursePlanId
      * @return array
      */
-    public static function getCoursePlan($fkCoursePlanId){
-        return CoursePlanModel::getInstance()->find($fkCoursePlanId);
+    public static function getCoursePlan($fkCoursePlanId,$with_archived=0){
+        return CoursePlanModel::getInstance()->withDeleted($with_archived)->find($fkCoursePlanId);
     }
 
     /**

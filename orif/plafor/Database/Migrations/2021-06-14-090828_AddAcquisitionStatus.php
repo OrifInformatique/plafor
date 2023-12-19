@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * Fichier de migration créant la table acquisition_status
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
 
 namespace Plafor\Database\Migrations;
 
@@ -45,7 +51,6 @@ class AddAcquisitionStatus extends \CodeIgniter\Database\Migration
         $this->db->disableForeignKeyChecks();
         $this->forge->createTable('acquisition_status');
         $seeder = \Config\Database::seeder();
-        $seeder->call('\Plafor\Database\Seeds\addAcquisitionStatusDatas');
     }
 
 

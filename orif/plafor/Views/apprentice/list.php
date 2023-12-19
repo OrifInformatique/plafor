@@ -1,4 +1,13 @@
 <?php
+/**
+ * Fichier de vue pour list_apprentice
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
+?>
+<?php
 view('\Plafor\templates\navigator',['reset'=>true]);
 helper('form');
 /**
@@ -13,7 +22,8 @@ helper('form');
     <div class="row">
         <div class="col">
             <h1 class="title-section"><?= lang('plafor_lang.title_apprentice_list'); ?></h1>
-            <div style="display:flex;flex-direction:row;align-items:center;justify-content:space-between;flex-wrap: wrap">
+            <div class="row" >
+                <div class="col-sm-8">
                 <?php
                 echo form_open(base_url('plafor/apprentice/list_apprentice/'), ['method' => 'GET']);
                 echo form_dropdown('trainer_id', $trainers, strval($trainer_id), ['class' => 'form-control', 'style' => 'width:unset!important;display:unset!important;']);
@@ -21,14 +31,16 @@ helper('form');
                 <?php
                 echo form_close();
                 ?>
-                <span>
+                </div>
+                <span class="col-sm-4 text-right">
+                    <?= form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted', ['class' => 'form-check-label','style'=>'padding-right:30px']); ?>
 
-            <?= form_checkbox('toggle_deleted', '', $with_archived, [
-                'id' => 'toggle_deleted', 'class' => 'form-check-input','style' => 'margin-left:1px'
-            ]); ?>
-            <?= form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted', ['class' => 'form-check-label','style'=>'margin-left:1.5rem']); ?>
+                    <?= form_checkbox('toggle_deleted', '', $with_archived, [
+                        'id' => 'toggle_deleted', 'class' => 'form-check-input'
+                    ]); ?>
                 </span>
             </div>
+
 
 
         </div>

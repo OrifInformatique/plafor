@@ -1,4 +1,12 @@
 <?php
+/**
+ * Fichier de migration créant la table
+ * competence_domain avec les nouveaux domaines de compétences
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
 namespace Plafor\Database\Migrations\mig2021;
 use CodeIgniter\Database\Migration;
 

@@ -1,4 +1,14 @@
 <?php
+/**
+ * Fichier de vue pour delete_competence_domain
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
+?>
+
+<?php
 $session=\CodeIgniter\Config\Services::session();
 ?>
 <div id="page-content-wrapper">

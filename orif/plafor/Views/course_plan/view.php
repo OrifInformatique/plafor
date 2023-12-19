@@ -1,3 +1,13 @@
+<?php
+/**
+ * Fichier de vue pour view_course_plan
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
+?>
+<?php helper('form'); ?>
 <div class="container">
     <?=view('\Plafor\templates\navigator',['title'=>lang('plafor_lang.title_view_course_plan')])?>
     <div class="row">
@@ -18,34 +28,52 @@
             <p class="bg-primary text-white"><?=lang('plafor_lang.title_view_competence_domains_linked')?></p>
         </div>
         <div class="col-12">
-            <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
-                <a href="<?=base_url('plafor/courseplan/save_competence_domain/'.'0/'.$course_plan['id'])?>" class="btn btn-primary"><?=lang('common_lang.btn_new_m')?></a>
-            <?php endif; ?>
+            <div class="col-sm-12 text-right d-flex justify-content-between">
+                <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
+                    <a href="<?=base_url('plafor/courseplan/save_competence_domain/'.$course_plan['id'].'/0/')?>" class="btn btn-primary"><?=lang('common_lang.btn_new_m')?></a>
+                <?php endif; ?>
+                <span>
+                <?=form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted', ['class' => 'form-check-label','style'=>'padding-right:30px']);?>
+                <?=form_checkbox('toggle_deleted', '', isset($with_archived)?$with_archived:false, [
+                    'id' => 'toggle_deleted', 'class' => 'form-check-input'
+                ]);?>
+                </span>
+            </div>
 
-            <table class="table table-hover mt-2">
-            <thead>
-                <tr>
-                    <th><span class="font-weight-bold"><?=lang('plafor_lang.symbol')?></span></th>
-                    <th><span class="font-weight-bold"><?=lang('plafor_lang.competence_domain')?></span></th>
-                    <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
-                        <th></th>
-                        <th></th>
-                    <?php endif;?>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($competence_domains as $competence_domain){ ?>
-                    <tr>
-                        <td><a href="<?= base_url('plafor/courseplan/view_competence_domain/'.$competence_domain['id'])?>"><?=$competence_domain['symbol']?></a></td>
-                        <td><a href="<?= base_url('plafor/courseplan/view_competence_domain/'.$competence_domain['id'])?>"><?=$competence_domain['name']?></a></td>
-                        <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
-                            <td><a href="<?= base_url('plafor/courseplan/save_competence_domain/'.$competence_domain['id'].'/'.$course_plan['id']); ?>"><i class="bi-pencil" style="font-size: 20px;"></i></a></td>
-                            <td><a href="<?= base_url('plafor/courseplan/delete_competence_domain/'.$competence_domain['id']); ?>" ><i class="<?=$course_plan['archive']==null?'bi bi-trash':'bi bi-reply-all-fill' ?>" style="font-size: 20px;" ></td>
-                        <?php endif;?>
-                    </tr>
-                <?php } ?>
-            </tbody>
-            </table>
+            <?php
+            $datas=[];
+            foreach ($competence_domains as $competence_domain){
+                $datas[]=['id'=>$competence_domain['id'],'symbol'=>$competence_domain['symbol'],'compDom'=>$competence_domain['name']];
+            }
+            ?>
+
+            <?= view('Common\Views\items_list',[
+                'columns'=>[
+                    'symbol'=>lang('plafor_lang.symbol'),
+                    'compDom'=>lang('plafor_lang.competence_domain')
+                 ],
+                'items'=>$datas,
+                'primary_key_field'=>'id',
+                'url_update'=>'plafor/courseplan/save_competence_domain/'.$course_plan['id'].'/',
+                'url_delete'=>'plafor/courseplan/delete_competence_domain/',
+                'url_detail'=>'plafor/courseplan/view_competence_domain/',
+                ])?>
         </div>
     </div>
 </div>
+<script defer>
+    $(document).ready(function(){
+        $('#toggle_deleted').change(e => {
+            let checked = e.currentTarget.checked;
+            history.replaceState(null,null,'<?=base_url('/plafor/courseplan/view_course_plan/'.$course_plan['id']);?>?wa='+(checked?1:0))
+            $.get('<?=base_url('/plafor/courseplan/view_course_plan/')."/${course_plan['id']}";?>?wa='+(checked?1:0),(datas)=>{
+                let parser=new DOMParser();
+                parser.parseFromString(datas,'text/html').querySelectorAll('table').forEach((domTag)=>{
+                    document.querySelectorAll('table').forEach((thisDomTag)=>{
+                        thisDomTag.innerHTML=domTag.innerHTML;
+                    })
+                })
+            })
+        })
+    });
+</script>

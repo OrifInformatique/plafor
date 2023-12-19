@@ -1,4 +1,13 @@
 <?php
+/**
+ * Fichier de vue pour delete_course_plan
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
+?>
+<?php
 $courses=\Plafor\Models\CoursePlanModel::getUserCourses($course_plan['id']);
 $apprentices=[];
 $userCourseStatus=[];
@@ -7,6 +16,7 @@ $session=session();
 foreach ($courses as $course){
     $apprentices[]=\Plafor\Models\UserCourseModel::getUser($course['fk_user']);
     $userCourseStatus[]=\Plafor\Models\UserCourseModel::getUserCourseStatus($course['fk_status']);
+
 }
 /**@TODO
  * Make situation when there are multiple apprentices associated with the same Course Plan
@@ -17,14 +27,17 @@ foreach ($courses as $course){
         <div class="row">
             <div class="col-12">
                 <div>
+                    <h1><?=count($apprentices)>0?lang('plafor_lang.apprentices_already_assigned_to_course_plan'):''?></h1>
                     <?php
-                    if (count($apprentices)>0&&isset($apprentices[0])&&$apprentices[0]!=null){?>
-                    <h1><?= lang('plafor_lang.apprentice').' "'.$apprentices[0]['username'].'"' ?></h1>
-                    <?php } ?>
+                    foreach ($apprentices as $apprentice):
+                    ?>
+                        <h3><?= ' "'.$apprentice['username'].'"'. lang('plafor_lang.with_status') ?> "<?=\Plafor\Models\UserCourseStatusModel::getInstance()->find(\Plafor\Models\UserCourseModel::getInstance()->where('fk_user',$apprentice['id'])->where('fk_course_plan',$course_plan['id'])->first()['fk_status'])['name']?>"</h3>
 
-                    <h1><?= lang('plafor_lang.course_plan').' "'.$course_plan['official_name'].'"' ?></h1>
+                    <?php endforeach;?>
+                    <h1><?=lang('plafor_lang.course_plan').' '?></h1>
+                    <h3><?='"'.$course_plan['official_name'].'"' ?></h3>
                     <?php if (count($userCourseStatus)>0&&isset($userCourseStatus[0])&&$userCourseStatus[0]!=null){?>
-                    <h1><?= lang('plafor_lang.status').' "'.$userCourseStatus[0]['name'].'"' ?></h1>
+                    <h1></h1>
                     <?php } ?>
                     <h4><?= lang('user_lang.what_to_do')?></h4>
                     <div class = "alert alert-info" ><?= lang('plafor_lang.user_course_'.($course_plan['archive']==null?'disable_explanation':'enable_explanation'))?></div>

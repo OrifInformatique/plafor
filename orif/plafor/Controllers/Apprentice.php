@@ -1,10 +1,20 @@
 <?php
+/**
+ * Controller pour la gestion des apprentis
+ * Required level apprentice
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
 
 
 namespace Plafor\Controllers;
 
 
 use CodeIgniter\Config\Services;
+use CodeIgniter\HTTP\Response;
+use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\I18n\Time;
 use CodeIgniter\Validation\Validation;
 use Exception;
@@ -74,15 +84,17 @@ class Apprentice extends \App\Controllers\BaseController
             $apprentices = User_model::getApprentices($withDeleted);
 
             $coursesList=[];
-            foreach (CoursePlanModel::getInstance()->findall() as $courseplan)
+            foreach (CoursePlanModel::getInstance()->withDeleted(true)->findall() as $courseplan)
                 $coursesList[$courseplan['id']]=$courseplan;
-            $courses = UserCourseModel::getInstance()->findall();
+            $courses = UserCourseModel::getInstance()->withDeleted(true)->findall();
         }else{
+            $apprentices=[];
+            if (count(TrainerApprenticeModel::getInstance()->where('fk_trainer', $trainer_id)->findall()))
                 $apprentices = User_Model::getInstance()->whereIn('id', array_column(TrainerApprenticeModel::getInstance()->where('fk_trainer', $trainer_id)->findall(), 'fk_apprentice'))->findall();
-                $coursesList=[];
-                foreach (CoursePlanModel::getInstance()->findall() as $courseplan)
-                    $coursesList[$courseplan['id']]=$courseplan;
-                $courses = UserCourseModel::getInstance()->findall();
+            $coursesList=[];
+            foreach (CoursePlanModel::getInstance()->withDeleted(true)->findall() as $courseplan)
+                $coursesList[$courseplan['id']]=$courseplan;
+            $courses = UserCourseModel::getInstance()->withDeleted(true)->findall();
             }
         
         
@@ -116,15 +128,15 @@ class Apprentice extends \App\Controllers\BaseController
         }
 
         $user_course_status=[];
-        foreach (UserCourseStatusModel::getInstance()->findAll() as $usercoursetatus)
+        foreach (UserCourseStatusModel::getInstance()->withDeleted(true)->findAll() as $usercoursetatus)
         $user_course_status[$usercoursetatus['id']] = $usercoursetatus;
 
         $course_plans=[];
-        foreach (CoursePlanModel::getInstance()->findall() as $courseplan)
+        foreach (CoursePlanModel::getInstance()->withDeleted(true)->findall() as $courseplan)
         $course_plans[$courseplan['id']] = $courseplan;
 
         $trainers = [];
-        foreach (User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name',lang('plafor_lang.title_trainer'))->first()['id'])->findall() as $trainer)
+        foreach (User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name',lang('plafor_lang.title_trainer'))->first()['id'])->withDeleted(true)->findall() as $trainer)
             $trainers[$trainer['id']]= $trainer;
 
         $links = [];
@@ -169,6 +181,7 @@ class Apprentice extends \App\Controllers\BaseController
                 );
                 if ($id_user_course > 0) {
                     //update
+                    //when we update the userCourse see if the courseplan is changed
                     UserCourseModel::getInstance()->update($id_user_course, $user_course);
                 } else if (UserCourseModel::getInstance()->where('fk_user', $id_apprentice)->where('fk_course_plan', $fk_course_plan)->first() == null) {
                     //insert
@@ -372,7 +385,7 @@ class Apprentice extends \App\Controllers\BaseController
      * Changes an acquisition status for an apprentice
      *
      * @param int $acquisition_status_id = ID of the acquisition status to change
-     * @return void
+     * @return Response|ResponseInterface
      */
     public function save_acquisition_status($acquisition_status_id = 0) {
         $acquisitionStatus = AcquisitionStatusModel::getInstance()->find($acquisition_status_id);
@@ -393,14 +406,27 @@ class Apprentice extends \App\Controllers\BaseController
             $acquisitionLevels[$acquisitionLevel['id']]=$acquisitionLevel['name'];
 
         // Check if data was sent
+
         if (!empty($_POST)) {
             $acquisitionLevel = $this->request->getPost('field_acquisition_level');
-            $acquisitionStatus = [
-                'fk_acquisition_level' => $acquisitionLevel
-            ];
+            $acquisitionStatus=AcquisitionStatusModel::getInstance()->find($acquisition_status_id);
+            $acquisitionStatus['fk_acquisition_level'] = $acquisitionLevel;
+            //check if opcomp and compdom is avtive
+
+            $objective=ObjectiveModel::getInstance()->find($acquisitionStatus['fk_objective']);
+            $opeationalCompetence=ObjectiveModel::getOperationalCompetence($objective['fk_operational_competence']);
+            //verify if op comp is disabled
+            if ($opeationalCompetence==null||$opeationalCompetence['archive']!=null){
+                return $this->response->setContentType('application/json')->setStatusCode(409)->setBody(json_encode(['error'=>lang('plafor_lang.associated_op_comp_disabled')]));
+            }
+            //if not verify if competence domain is active
+            else{
+                $competenceDomain=OperationalCompetenceModel::getCompetenceDomain($opeationalCompetence['fk_competence_domain']);
+                if ($competenceDomain==null|$competenceDomain['archive']!=null){
+                    return $this->response->setContentType('application/json')->setStatusCode(409)->setBody(json_encode(['error'=>lang('plafor_lang.associated_comp_dom_disabled')]));
+                }
+            }
             AcquisitionStatusModel::getInstance()->update($acquisition_status_id, $acquisitionStatus);
-
-
             if (AcquisitionStatusModel::getInstance()->errors()==null) {
 
                 //if ok
@@ -440,7 +466,7 @@ class Apprentice extends \App\Controllers\BaseController
             if (CommentModel::getInstance()->errors()==null) {
                 //if ok
 
-                return redirect()->to(base_url('plafor/courseplan/view_acquisition_status/'.$acquisition_status['id']));
+                return redirect()->to(base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status['id']));
             }
         
         }
@@ -460,7 +486,7 @@ class Apprentice extends \App\Controllers\BaseController
 
     public function delete_comment($comment_id = 0, $acquisition_status_id = 0) {
         CommentModel::getInstance()->delete($comment_id);
-        return redirect()->to(base_url('plafor/courseplan/view_acquisition_status/'.$acquisition_status_id));
+        return redirect()->to(base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status_id));
     }
 
 
@@ -560,5 +586,62 @@ class Apprentice extends \App\Controllers\BaseController
         );
 
         $this->display_view('\Plafor\user_course/view',$output);
+    }
+    /**
+     * Delete or deactivate a user depending on $action
+     *
+     * @param integer $user_id = ID of the user to affect
+     * @param integer $action = Action to apply on the user:
+     *  - 0 for displaying the confirmation
+     *  - 1 for deactivating (soft delete)
+     *  - 2 for deleting (hard delete)
+     * @return void
+     */
+    public function delete_user($user_id, $action = 0)
+    {
+        if ($_SESSION['user_access'] == config('\User\Config\UserConfig')->access_lvl_admin) {
+            $user = User_model::getInstance()->withDeleted()->find($user_id);
+            if (is_null($user)) {
+                return redirect()->to(base_url('/user/admin/list_user'));
+            }
+
+            switch ($action) {
+                case 0: // Display confirmation
+                    $output = array(
+                        'user' => $user,
+                        'title' => lang('user_lang.title_user_delete')
+                    );
+                    $this->display_view('\User\admin\delete_user', $output);
+                    break;
+                case 1: // Deactivate (soft delete) user
+                    if ($_SESSION['user_id'] != $user['id']) {
+                        User_model::getInstance()->delete($user_id, FALSE);
+                    }
+                    return redirect()->to('/user/admin/list_user');
+                case 2: // Delete user
+                    if ($_SESSION['user_id'] != $user['id']) {
+                        //here we have to delete associated infos
+                        foreach(TrainerApprenticeModel::getInstance()->where('fk_apprentice',$user['id'])->orWhere('fk_trainer',$user['id'])->findAll() as $trainerApprentice)
+                            $trainerApprentice==null?:TrainerApprenticeModel::getInstance()->delete($trainerApprentice['id']);
+                        if (count(UserCourseModel::getUser($user['id']))>0){
+                            foreach(UserCourseModel::getInstance()->where('fk_user',$user['id'])->findAll() as $userCourse){
+                                foreach(UserCourseModel::getAcquisitionStatus($userCourse['id']) as $acquisitionStatus){
+
+                                    foreach (CommentModel::getInstance()->where('fk_acquisition_status',$acquisitionStatus['id']) as $comment){
+                                        $comment==null?:CommentModel::getInstance()->delete($comment['id'],true);
+                                    }
+                                    AcquisitionStatusModel::getInstance()->delete($acquisitionStatus['id'],true);
+                                }
+                                UserCourseModel::getInstance()->delete($userCourse['id'],true);
+                            }
+
+                        }
+                        User_model::getInstance()->delete($user_id, TRUE);
+                    }
+                    return redirect()->to('/user/admin/list_user');
+                default: // Do nothing
+                    return redirect()->to('/user/admin/list_user');
+            }
+        }
     }
 }

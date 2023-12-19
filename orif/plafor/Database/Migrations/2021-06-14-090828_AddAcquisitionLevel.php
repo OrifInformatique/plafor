@@ -1,4 +1,11 @@
 <?php
+/**
+ * Fichier de migration créant la table acquisition_level
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
 namespace Plafor\Database\Migrations;
 use CodeIgniter\Database\Migration;
 

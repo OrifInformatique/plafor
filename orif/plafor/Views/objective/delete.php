@@ -1,4 +1,13 @@
 <?php
+/**
+ * Fichier de vue pour delete_objective
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
+?>
+<?php
 ?>
 <div id="page-content-wrapper">
     <div class="container">

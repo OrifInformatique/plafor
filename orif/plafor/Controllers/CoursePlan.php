@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * Controller pour la gestion des plan de formation non associés à un apprenti
+ * Required level connected
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
 
 namespace Plafor\Controllers;
 
@@ -103,39 +109,13 @@ class CoursePlan extends \App\Controllers\BaseController
                 case 1: // Deactivate (soft delete) course plan
                     //get linked competence domain
 
-                    $competenceDomains = CoursePlanModel::getCompetenceDomains($course_plan['id']);
-                    $operationalCompetences = [];
-                    $objectives = [];
-
-                    foreach ($competenceDomains as $competence_domain) {
-                        //get all operationnal competences in an array($operational_competences) which format is [[:competencedomainid]=>[operationalCompetence id, name, etc...],[:competencedomainid]=>[operationalCompetence id, name, etc...]
-                        $operationalCompetences[$competence_domain['id']] = CompetenceDomainModel::getOperationalCompetences($competence_domain['id']);
-                        //get all objectives assiociated with an operational_competence in an array($objectives) which format is [[operationalcompetenceid]=>[objectives id,fkop, symbol, etc...]
-                        try {
-                            foreach ($operationalCompetences as list($operationalCompetence)) {
-                                $objectives[$operationalCompetence['id']] = OperationalCompetenceModel::getObjectives($operationalCompetence['id']);
-                            }
-                        } catch (\Exception $e) {
-                        };
-
-                    }
-                    //get all ids
-                    $competenceDomainIds = array_column($competenceDomains, 'id');
-                    foreach ($objectives as list($objective)) {
-                        $objectiveIds[] = $objective['id'];
-
-                    }
-
-
-                    count($objectiveIds) > 0 ? ObjectiveModel::getInstance()->whereIn('id', $objectiveIds)->delete() : null;
-                    count($competenceDomainIds) > 0 ? OperationalCompetenceModel::getInstance()->whereIn('fk_competence_domain', $competenceDomainIds)->delete() : null;
-                    CompetenceDomainModel::getInstance()->where('fk_course_plan', $course_plan_id);
-                    CoursePlanModel::getInstance()->delete($course_plan_id, FALSE);
+                    CoursePlanModel::getInstance()->delete($course_plan_id);
                     return redirect()->to('/plafor/courseplan/list_course_plan');
                     break;
                 case 3:
-                    //Reactiver le plan de formation
+                    //Reactiver le plan de formation et ses competence et objectifs associés
                     CoursePlanModel::getInstance()->withDeleted()->update($course_plan_id, ['archive' => null]);
+
                     return redirect()->to(base_url('plafor/courseplan/list_course_plan'));
                     break;
                 default:
@@ -152,7 +132,7 @@ class CoursePlan extends \App\Controllers\BaseController
      * @param integer $competence_domain_id = The id of the course plan to modify, leave blank to create a new one
      * @return void
      */
-    public function save_competence_domain($competence_domain_id = 0, $course_plan_id = 0)
+    public function save_competence_domain($course_plan_id = 0,$competence_domain_id = 0)
     {
         if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) {
 
@@ -226,14 +206,6 @@ class CoursePlan extends \App\Controllers\BaseController
                     $this->display_view('\Plafor/competence_domain/delete', $output);
                     break;
                 case 1: // Deactivate (soft delete) competence domain
-                    $operationalCompetenceIds = [];
-                    foreach (CompetenceDomainModel::getOperationalCompetences($competence_domain_id) as $operational_competence) {
-                        $operationalCompetenceIds[] = $operational_competence['id'];
-                    }
-
-                    if (count($operationalCompetenceIds))
-                        ObjectiveModel::getInstance()->whereIn('fk_operational_competence', $operationalCompetenceIds)->delete();
-                    OperationalCompetenceModel::getInstance()->where('fk_competence_domain', $competence_domain_id)->delete();
                     $courseplanId = CompetenceDomainModel::getInstance()->find($competence_domain_id)['fk_course_plan'];
                     CompetenceDomainModel::getInstance()->delete($competence_domain_id);
 
@@ -242,7 +214,6 @@ class CoursePlan extends \App\Controllers\BaseController
 
                 case 3:
                     //Reactiver le domaine de compétences
-
                     CompetenceDomainModel::getInstance()->withDeleted()->update($competence_domain_id, ['archive' => null]);
                     return redirect()->to(base_url('plafor/courseplan/view_course_plan/' . $competence_domain['fk_course_plan']));
                     break;
@@ -288,7 +259,7 @@ class CoursePlan extends \App\Controllers\BaseController
 
                 if (OperationalCompetenceModel::getInstance()->errors() == null) {
                     //when it's ok
-                    return redirect()->to(base_url('plafor/courseplan/view_competence_domain/' . $competence_domain_id));
+                    return redirect()->to(base_url('plafor/courseplan/view_competence_domain/' . $operational_competence['fk_competence_domain']));
                 }
             }
             $competenceDomains = [];
@@ -336,7 +307,6 @@ class CoursePlan extends \App\Controllers\BaseController
                     $this->display_view('\Plafor\operational_competence/delete', $output);
                     break;
                 case 1: // Deactivate (soft delete) operational competence
-                    ObjectiveModel::getInstance()->where('fk_operational_competence', $operational_competence_id)->delete();
                     OperationalCompetenceModel::getInstance()->delete($operational_competence_id, FALSE);
                     return redirect()->to(base_url('plafor/courseplan/view_competence_domain/' . $operational_competence['fk_competence_domain']));
                     break;
@@ -421,7 +391,19 @@ class CoursePlan extends \App\Controllers\BaseController
                     ObjectiveModel::getInstance()->update($objective_id, $objective);
                 } else {
                     //insert
-                    ObjectiveModel::getInstance()->insert($objective);
+                    $objective_id=ObjectiveModel::getInstance()->insert($objective);
+                    //when we add objective we have to update all students acquisition_status whene operationnal
+                    $userCourses=CoursePlanModel::getUserCourses(
+                        OperationalCompetenceModel::getCompetenceDomain(
+                            ObjectiveModel::getOperationalCompetence(
+                                $objective['fk_operational_competence']
+                            )['fk_competence_domain']
+                        )['fk_course_plan']
+                    );
+                    foreach($userCourses as $userCourse){
+                     AcquisitionStatusModel::getInstance()->insert(['fk_objective'=>$objective_id,'fk_user_course'=>$userCourse['id'],'fk_acquisition_level'=>1]);
+
+                    }
                 }
                 if (ObjectiveModel::getInstance()->errors() == null) {
                     //if ok
@@ -499,8 +481,9 @@ class CoursePlan extends \App\Controllers\BaseController
      *
      * @return void
      */
-    public function list_course_plan($id_apprentice = null, bool $with_archived=false)
+    public function list_course_plan($id_apprentice = null, $with_archived=false)
     {
+        $this->request->getGet('wa')!=null?$with_archived=$this->request->getGet('wa'):null;
         $id_apprentice==0?$id_apprentice = null:null;
         $coursePlanModel=new CoursePlanModel();
         $userCourseModel=new UserCourseModel();
@@ -539,6 +522,7 @@ class CoursePlan extends \App\Controllers\BaseController
      */
     public function view_course_plan($course_plan_id = null)
     {
+        $with_archived=$this->request->getGet('wa')!=null?$this->request->getGet('wa'):false;
         if(!isset($course_plan_id)) {
             // Back to course plans list
             return redirect()->to(base_url('plafor/courseplan/list_course_plan'));
@@ -550,7 +534,7 @@ class CoursePlan extends \App\Controllers\BaseController
             }
         }
 
-        $competence_domains=CoursePlanModel::getCompetenceDomains($course_plan_id);
+        $competence_domains=CoursePlanModel::getCompetenceDomains($course_plan_id,$with_archived);
 
         // Format date
         $date_begin = Time::createFromFormat('Y-m-d', $course_plan['date_begin']);
@@ -584,6 +568,7 @@ class CoursePlan extends \App\Controllers\BaseController
                 return redirect()->to(base_url('plafor/courseplan/list_course_plan'));
             }
         }
+        $with_archived=$this->request->getGet('wa')!=null?$this->request->getGet('wa'):false;
 
         $course_plan = CompetenceDomainModel::getCoursePlan($competence_domain['fk_course_plan'], true);
 
@@ -595,6 +580,7 @@ class CoursePlan extends \App\Controllers\BaseController
             'title' =>lang('plafor_lang.title_view_competence_domain'),
             'course_plan' =>$course_plan,
             'competence_domain' => $competence_domain,
+            'with_archived'=>$with_archived,
         );
 
         return $this->display_view('\Plafor/competence_domain/view',$output);
@@ -612,6 +598,7 @@ class CoursePlan extends \App\Controllers\BaseController
         if($operational_competence == null){
             return redirect()->to(base_url('plafor/courseplan/list_course_plan/'));
         }
+        $with_archived=$this->request->getGet('wa')!=null?$this->request->getGet('wa'):false;
 
         $competence_domain=null;
         $course_plan=null;
@@ -621,7 +608,7 @@ class CoursePlan extends \App\Controllers\BaseController
         }catch (Exception $exception){
 
         }
-        $objectives=OperationalCompetenceModel::getObjectives($operational_competence['id']);
+        $objectives=OperationalCompetenceModel::getObjectives($operational_competence['id'],$with_archived);
         $output = array(
             'title'=>lang('plafor_lang.title_view_operational_competence'),
             'operational_competence' => $operational_competence,

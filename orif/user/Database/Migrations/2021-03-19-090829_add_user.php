@@ -47,10 +47,7 @@ class AddUser extends \CodeIgniter\Database\Migration
         $this->forge->addForeignKey('fk_user_type','user_type','id');
         $this->forge->createTable('user',true);
         $seeder=\Config\Database::seeder();
-        //for plafor module
-        //$seeder->call('\User\Database\Seeds\AddUserDatas');
-        // only for application
-        $seeder->call('\Plafor\Database\Seeds\addUserDatas');
+        $seeder->call('\User\Database\Seeds\AddUserDatas');
     }
 
     /**

@@ -1,5 +1,12 @@
 <?php
-
+/**
+ * Controller pour faire la migration des données
+ * Effacé après initialisation
+ * Required level all pour la migration mot de passe
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ */
 
 namespace Plafor\Controllers;
 
