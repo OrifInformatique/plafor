@@ -432,7 +432,8 @@ class Auth extends BaseController {
                 $this->azure_login();
                 exit();
             }
-            //Display login page
+
+            // Display login page
             $output = array('title' => lang('user_lang.title_page_login'));
             return $this->display_view('\User\auth\login', $output);
         } else {

@@ -64,7 +64,6 @@ class Apprentice extends \App\Controllers\BaseController
         }
     }
 
-    
     public function list_apprentice($withDeleted=0)
     {
         $trainer_id = $this->request->getGet('trainer_id');
@@ -108,18 +107,18 @@ class Apprentice extends \App\Controllers\BaseController
             'with_archived' => $withDeleted
         );
 
-        $this->display_view(['Plafor\apprentice/list'], $output);
+        return $this->display_view('\Plafor\apprentice\list', $output);
     }
 
     public function view_apprentice($apprentice_id = null)
     {
         $apprentice = User_model::getInstance()->find($apprentice_id);
-        
+
         if(is_null($apprentice) || $apprentice['fk_user_type'] != User_type_model::getInstance()->where('name',lang('plafor_lang.title_apprentice'))->first()['id']){
             return redirect()->to(base_url("/plafor/apprentice/list_apprentice"));
         }
         $user_courses=[];
-        foreach (UserCourseModel::getInstance()->where('fk_user',$apprentice_id)->findall() as $usercourse) {
+        foreach (UserCourseModel::getInstance()->where('fk_user',$apprentice_id)->findAll() as $usercourse) {
             $date_begin = Time::createFromFormat('Y-m-d', $usercourse['date_begin']);
             $date_end = Time::createFromFormat('Y-m-d', $usercourse['date_end']);
             $usercourse['date_begin'] = $date_begin->toLocalizedString('dd.MM.Y');
@@ -132,7 +131,7 @@ class Apprentice extends \App\Controllers\BaseController
         $user_course_status[$usercoursetatus['id']] = $usercoursetatus;
 
         $course_plans=[];
-        foreach (CoursePlanModel::getInstance()->withDeleted(true)->findall() as $courseplan)
+        foreach (CoursePlanModel::getInstance()->withDeleted(true)->findAll() as $courseplan)
         $course_plans[$courseplan['id']] = $courseplan;
 
         $trainers = [];
@@ -142,7 +141,7 @@ class Apprentice extends \App\Controllers\BaseController
         $links = [];
         foreach (TrainerApprenticeModel::getInstance()->where('fk_apprentice',$apprentice_id)->findAll() as $link)
             $links[$link['id']]=$link;
-        
+
         $output = array(
             'title' => lang('plafor_lang.title_view_apprentice'),
             'apprentice' => $apprentice,
@@ -152,7 +151,7 @@ class Apprentice extends \App\Controllers\BaseController
             'user_course_status' => $user_course_status,
             'course_plans' => $course_plans
         );
-        $this->display_view('Plafor\apprentice/view',$output);
+        return $this->display_view('Plafor\apprentice/view',$output);
     }
 
     /**
@@ -244,6 +243,7 @@ class Apprentice extends \App\Controllers\BaseController
             return $this->display_view('\User\errors\403error');
         }
     }
+
     /**@todo the user doesn't modify the trainer but add one on update
     /**
      * Create a link between a apprentice and a trainer, or change the trainer
@@ -311,8 +311,9 @@ class Apprentice extends \App\Controllers\BaseController
             'errors'=>TrainerApprenticeModel::getInstance()->errors()
         );
 
-        $this->display_view('Plafor\apprentice/link',$output);
+        return $this->display_view('Plafor\apprentice/link',$output);
     }
+
     /**
      * Deletes a trainer_apprentice link depending on $action
      *
@@ -341,8 +342,7 @@ class Apprentice extends \App\Controllers\BaseController
                         'trainer' => $trainer,
                         'title' => lang('plafor_lang.title_apprentice_link_delete')
                     );
-                    $this->display_view('\Plafor\apprentice/delete', $output);
-                    break;
+                    return $this->display_view('\Plafor\apprentice/delete', $output);
                 case 1: // Delete apprentice link
                     TrainerApprenticeModel::getInstance()->delete($link_id, TRUE);
                     return redirect()->to(base_url('plafor/apprentice/list_apprentice/' . $apprentice['id']));
@@ -354,6 +354,7 @@ class Apprentice extends \App\Controllers\BaseController
             return $this->display_view('\User\errors\403error');
         }
     }
+
     /**
      * Show details of the selected acquisition status
      *
@@ -381,6 +382,7 @@ class Apprentice extends \App\Controllers\BaseController
 
         return $this->display_view('Plafor\acquisition_status/view',$output);
     }
+
     /**
      * Changes an acquisition status for an apprentice
      *
@@ -444,6 +446,7 @@ class Apprentice extends \App\Controllers\BaseController
 
         return $this->display_view('Plafor\acquisition_status/save', $output);
     }
+
     public function add_comment($acquisition_status_id = null, $comment_id = null){
         $acquisition_status = AcquisitionStatusModel::getInstance()->find($acquisition_status_id);
 
@@ -489,8 +492,6 @@ class Apprentice extends \App\Controllers\BaseController
         return redirect()->to(base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status_id));
     }
 
-
-
     /**
      * @param null $userId the id of user
      * If admin
@@ -514,10 +515,8 @@ class Apprentice extends \App\Controllers\BaseController
 
             return $response;
         }
-
-
-
     }
+
     /**
      * Show a user course's details
      *
@@ -585,8 +584,9 @@ class Apprentice extends \App\Controllers\BaseController
             'objectives'=>$objectives
         );
 
-        $this->display_view('\Plafor\user_course/view',$output);
+        return $this->display_view('\Plafor\user_course/view',$output);
     }
+
     /**
      * Delete or deactivate a user depending on $action
      *
@@ -611,8 +611,7 @@ class Apprentice extends \App\Controllers\BaseController
                         'user' => $user,
                         'title' => lang('user_lang.title_user_delete')
                     );
-                    $this->display_view('\User\admin\delete_user', $output);
-                    break;
+                    return $this->display_view('\User\admin\delete_user', $output);
                 case 1: // Deactivate (soft delete) user
                     if ($_SESSION['user_id'] != $user['id']) {
                         User_model::getInstance()->delete($user_id, FALSE);

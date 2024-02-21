@@ -72,7 +72,7 @@ class CoursePlan extends \App\Controllers\BaseController
                 'errors' => CoursePlanModel::getInstance()->errors(),
             );
 
-            $this->display_view('\Plafor\course_plan\save', $output);
+            return $this->display_view('\Plafor\course_plan\save', $output);
         }
         else{
             return $this->display_view('\User\errors\403error');
@@ -104,20 +104,17 @@ class CoursePlan extends \App\Controllers\BaseController
                         'course_plan' => $course_plan,
                         'title' => lang('plafor_lang.title_delete_course_plan')
                     );
-                    $this->display_view('\Plafor\course_plan\delete', $output);
-                    break;
+                    return $this->display_view('\Plafor\course_plan\delete', $output);
                 case 1: // Deactivate (soft delete) course plan
                     //get linked competence domain
 
                     CoursePlanModel::getInstance()->delete($course_plan_id);
                     return redirect()->to('/plafor/courseplan/list_course_plan');
-                    break;
                 case 3:
                     //Reactiver le plan de formation et ses competence et objectifs associés
                     CoursePlanModel::getInstance()->withDeleted()->update($course_plan_id, ['archive' => null]);
 
                     return redirect()->to(base_url('plafor/courseplan/list_course_plan'));
-                    break;
                 default:
                     // Do nothing
                     return redirect()->to('/plafor/courseplan/list_course_plan');
@@ -165,7 +162,7 @@ class CoursePlan extends \App\Controllers\BaseController
                 'errors' => CompetenceDomainModel::getInstance()->errors(),
             );
 
-            $this->display_view('\Plafor\competence_domain/save', $output);
+            return $this->display_view('\Plafor\competence_domain/save', $output);
         }else{
             return $this->display_view('\User\errors\403error');
         }
@@ -203,21 +200,16 @@ class CoursePlan extends \App\Controllers\BaseController
                         'title' => lang('plafor_lang.title_competence_domain_delete')
                     );
 
-                    $this->display_view('\Plafor/competence_domain/delete', $output);
-                    break;
+                    return $this->display_view('\Plafor/competence_domain/delete', $output);
                 case 1: // Deactivate (soft delete) competence domain
                     $courseplanId = CompetenceDomainModel::getInstance()->find($competence_domain_id)['fk_course_plan'];
                     CompetenceDomainModel::getInstance()->delete($competence_domain_id);
 
                     return redirect()->to(base_url('plafor/courseplan/view_course_plan/' . $courseplanId));
-                    break;
-
                 case 3:
                     //Reactiver le domaine de compétences
                     CompetenceDomainModel::getInstance()->withDeleted()->update($competence_domain_id, ['archive' => null]);
                     return redirect()->to(base_url('plafor/courseplan/view_course_plan/' . $competence_domain['fk_course_plan']));
-                    break;
-
                 default: // Do nothing
                     return redirect()->to(base_url('plafor/courseplan/view_course_plan/' . CompetenceDomainModel::getInstance()->find($competence_domain_id)['fk_course_plan']));
             }
@@ -275,7 +267,7 @@ class CoursePlan extends \App\Controllers\BaseController
                 'errors' => OperationalCompetenceModel::getInstance()->errors(),
             );
 
-            $this->display_view('\Plafor\operational_competence/save', $output);
+            return $this->display_view('\Plafor\operational_competence/save', $output);
         }else{
             return $this->display_view('\User\errors\403error');
         }
@@ -304,20 +296,16 @@ class CoursePlan extends \App\Controllers\BaseController
                         'operational_competence' => $operational_competence,
                         'title' => lang('plafor_lang.title_operational_competence_delete')
                     );
-                    $this->display_view('\Plafor\operational_competence/delete', $output);
-                    break;
+                    return $this->display_view('\Plafor\operational_competence/delete', $output);
                 case 1: // Deactivate (soft delete) operational competence
                     OperationalCompetenceModel::getInstance()->delete($operational_competence_id, FALSE);
                     return redirect()->to(base_url('plafor/courseplan/view_competence_domain/' . $operational_competence['fk_competence_domain']));
-                    break;
                 case 3:
                     //Reactiver la compétence opérationnelle
                     OperationalCompetenceModel::getInstance()->withDeleted()->update($operational_competence_id, ['archive' => null]);
                     return redirect()->to(base_url('plafor/courseplan/view_competence_domain/' . $operational_competence['fk_competence_domain']));
-                    break;
                 default: // Do nothing
                     return redirect()->to(base_url('plafor/courseplan/view_competence_domain/' . $operational_competence['fk_competence_domain']));
-                    break;
             }
         }else{
             return $this->display_view('\User\errors\403error');
@@ -353,8 +341,7 @@ class CoursePlan extends \App\Controllers\BaseController
                         'status' => $status,
                         'title' => lang('plafor_lang.title_user_course_delete')
                     );
-                    $this->display_view('Plafor\user_course/delete', $output);
-                    break;
+                    return $this->display_view('Plafor\user_course/delete', $output);
                 case 1: // Delete user course
                     /**@todo delete course plan
                      * **/
@@ -454,21 +441,16 @@ class CoursePlan extends \App\Controllers\BaseController
                         'title' => lang('plafor_lang.title_objective_delete'),
                         'deleted' => $objective['archive']
                     );
-                    $this->display_view('\Plafor\objective/delete', $output);
-                    break;
+                    return $this->display_view('\Plafor\objective/delete', $output);
                 case 1: // Deactivate (soft delete) objective
                     ObjectiveModel::getInstance()->delete($objective_id, FALSE);
                     return redirect()->to(base_url('plafor/courseplan/view_operational_competence/' . $objective['fk_operational_competence']));
-                    break;
                 case 2: // Hard delete
                     ObjectiveModel::getInstance()->delete($objective_id, TRUE);
                     return redirect()->to(base_url('plafor/courseplan/view_operational_competence/' . $objective['fk_operational_competence']));
-                    break;
-
                 case 3:
                     ObjectiveModel::getInstance()->withDeleted()->update($objective_id, ['archive' => null]);
                     return redirect()->to(base_url('plafor/courseplan/view_operational_competence/' . $objective['fk_operational_competence']));
-                    break;
                 default: // Do nothing
                     return redirect()->to('plafor/courseplan/view_operational_competence' . $objective['fk_operational_competence']);
             }
@@ -512,7 +494,7 @@ class CoursePlan extends \App\Controllers\BaseController
             $output[] = ['course_plans' => $course_plans];
         }
 
-        $this->display_view(['Plafor\course_plan\list'], $output);
+        return $this->display_view(['Plafor\course_plan\list'], $output);
     }
     /**
      * Show details of the selected course plan
@@ -648,6 +630,6 @@ class CoursePlan extends \App\Controllers\BaseController
             'course_plan' => $course_plan
         );
 
-        $this->display_view('Plafor\objective/view',$output);
+        return $this->display_view('Plafor\objective/view',$output);
     }
 }

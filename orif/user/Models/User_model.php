@@ -102,7 +102,6 @@ class User_model extends \CodeIgniter\Model{
         }
         else{
             return false;
-
         }
     }
 

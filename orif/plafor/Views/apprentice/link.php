@@ -6,8 +6,7 @@
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c), Orif (https://www.orif.ch)
  */
-?>
-<?php
+
 $update = !is_null($link);
 helper('form');
 $validation=\CodeIgniter\Config\Services::validation()

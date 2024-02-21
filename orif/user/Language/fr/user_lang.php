@@ -35,7 +35,7 @@ return[
 // Fields labels
 'field_username'                 => 'Identifiant',
 'field_password'                 => 'Mot de passe',
-'field_email'                    => 'Addresse e-mail',
+'field_email'                    => 'Adresse e-mail',
 'field_old_password'             => 'Ancien mot de passe',
 'field_new_password'             => 'Nouveau mot de passe',
 'field_password_confirm'         => 'Confirmer le mot de passe',

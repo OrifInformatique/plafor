@@ -51,8 +51,7 @@ class Admin extends BaseController
     public function list_user(?bool $with_deleted = FALSE): string
     {
         if ($with_deleted) {
-            $users = $this->user_model->orderBy('username')->withDeleted()
-                   ->findAll();
+            $users = $this->user_model->orderBy('username')->withDeleted()->findAll();
         } else {
             $users = $this->user_model->orderBy('username')->findAll();
         }
