@@ -18,7 +18,7 @@ class AddAcquisitionLevel extends Migration {
         $this->forge->addField([
             'id' => [
                 'type' => 'int',
-                'contraint' => '11',
+                'constraint' => '11',
                 'unsigned' => true,
                 'auto_increment' => true,
             ],
