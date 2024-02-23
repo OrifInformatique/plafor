@@ -84,8 +84,9 @@ class Auth extends BaseController {
     
         if ($user_verification_code == $_SESSION['verification_code']) {
 
-            if ($_SESSION['new_user'] == true)  {
+            $_SESSION['logged_in'] = true;
 
+            if ($_SESSION['new_user'] == true) {
                 // A new user needs to be created in the db
                 
                 // Receive array $user from createNewUser()
@@ -94,10 +95,10 @@ class Auth extends BaseController {
                 // insert this new user
                 $this->user_model->insert($new_user);
 
-            } else {
+                $_SESSION['user_id'] = $this->user_model->where('email', $_SESSION['form_email'])->first()['id'];
 
+            } else {
                 // User already in DB => Update azure_mail in DB
-                
                 $ci_user = $this->user_model->where('email', $_SESSION['form_email'])->first();
                 
                 // Verification code matches
@@ -165,8 +166,8 @@ class Auth extends BaseController {
 
         $email->initialize($emailConfig);
 
-        // Sending code to user's  mail
-        $email->setFrom('smtp@sectioninformatique.ch', 'packbase'); 
+        // Sending code to user's mail
+        $email->setFrom('smtp@sectioninformatique.ch', 'Plafor'); 
         $email->setTo($form_email);
         $email->setSubject('Code de vérification');
         $email->setMessage('Voici votre code de vérification: '.$verification_code);
@@ -182,7 +183,7 @@ class Auth extends BaseController {
 
         // Setting up default azure access level
         $default_access_level = $user_config->azure_default_access_lvl;
-        $new_user_type =  $user_type_model->where("access_level = ".$default_access_level)->first();
+        $new_user_type = $user_type_model->where("access_level = ".$default_access_level)->first();
 
         // Generating username
         $username_max_length = $user_config->username_max_length;
@@ -190,11 +191,11 @@ class Auth extends BaseController {
         $new_username = substr($new_username[0], 0, $username_max_length);
 
         // Generating a random password
-        $password_max_lenght = $user_config->password_max_length;
+        $password_max_length = $user_config->password_max_length;
         $new_password = '';
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+-={}[]|:;"<>,.?/~`';
 
-        for ($i = 0; $i < $password_max_lenght; $i++) {
+        for ($i = 0; $i < $password_max_length; $i++) {
             $new_password .= $characters[rand(0, strlen($characters) - 1)];
         }
 
@@ -253,13 +254,13 @@ class Auth extends BaseController {
             $content .= "&client_secret=" . urlencode($client_secret);
             $options = array(
                 "http" => array(  //Use "http" even if you send the request with https
-                "method"  => "POST",
-                "header"  => "Content-Type: application/x-www-form-urlencoded\r\n" .
-                    "Content-Length: " . strlen($content) . "\r\n",
-                "content" => $content
+                    "method"  => "POST",
+                    "header"  => "Content-Type: application/x-www-form-urlencoded\r\n" .
+                        "Content-Length: " . strlen($content) . "\r\n",
+                    "content" => $content
                 )
             );
-            $context  = stream_context_create($options);
+            $context = stream_context_create($options);
 
             // Special error handler to verify if "client secret" is still valid
             try {
@@ -286,9 +287,9 @@ class Auth extends BaseController {
             //Fetching user information
             $options = array(
                 "http" => array(  //Use "http" even if you send the request with https
-                "method" => "GET",
-                "header" => "Accept: application/json\r\n" .
-                "Authorization: Bearer " . $authdata["access_token"] . "\r\n"
+                    "method" => "GET",
+                    "header" => "Accept: application/json\r\n" .
+                    "Authorization: Bearer " . $authdata["access_token"] . "\r\n"
                 )
             );
             $context = stream_context_create($options);
@@ -308,7 +309,6 @@ class Auth extends BaseController {
             };
 
             // Setting up the session
-            $_SESSION['logged_in'] = (bool)true;
             $_SESSION['azure_identification'] = (bool)true;
 
             // Mail correspondances
@@ -349,6 +349,7 @@ class Auth extends BaseController {
                 $_SESSION['user_id'] = $ci_user_azure['id'];
                 $_SESSION['username'] = $ci_user_azure['username'];
                 $_SESSION['user_access'] = (int)$this->user_model->get_access_level($ci_user_azure);
+                $_SESSION['logged_in'] = true;
 
                 return redirect()->to($_SESSION['after_login_redirect']);
             };

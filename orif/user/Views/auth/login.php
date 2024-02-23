@@ -12,10 +12,10 @@
         <div class="col-md-6 col-sm-10 well">
             <legend><?= lang('user_lang.title_page_login'); ?></legend>
             <?php 
-                $attributes = array("class" => "form-horizontal",
-                                    "id" => "azureloginform",
-                                    "name" => "azureloginform");
-                echo form_open("user/auth/login", $attributes);
+            $attributes = array("class" => "form-horizontal",
+                                "id" => "azureloginform",
+                                "name" => "azureloginform");
+            echo form_open("user/auth/login", $attributes);
             ?>
             <fieldset>
                 <div class="form-group">
@@ -35,10 +35,10 @@
             <?php
             $session=\Config\Services::session();
             $validation=\Config\Services::validation();
-                $attributes = array("class" => "form-horizontal",
-                                    "id" => "loginform",
-                                    "name" => "loginform");
-                echo form_open("user/auth/login", $attributes);
+            $attributes = array("class" => "form-horizontal",
+                                "id" => "loginform",
+                                "name" => "loginform");
+            echo form_open("user/auth/login", $attributes);
             ?>
             <fieldset>
                 <!-- Status messages -->
