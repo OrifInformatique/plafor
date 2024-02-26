@@ -8,8 +8,9 @@
  */
 ?>
 <div class="container">
-    <?=view('\Plafor\templates\navigator',['title'=>lang('plafor_lang.title_view_apprentice')])?>
     <?php
+    echo (view('\Plafor\templates\navigator',['title'=>lang('plafor_lang.title_view_apprentice')]));
+
     $maxdate=null;
     $userCourseMax=null;
     foreach ($user_courses as $user_course){
@@ -37,41 +38,34 @@
             <br><?=$apprentice['email']?></p>
         </div>
         <div class="col-sm-6">
-            <p><span class="font-weight-bold"><?=lang('plafor_lang.title_trainer_linked')?></span>
-
+            <p><span class="font-weight-bold"><?=lang('plafor_lang.title_trainer_linked')?></span></p>
             <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer):?>
                 <!-- List with ADMIN buttons, accessible for trainers or admin only -->
-                </p><table class="table table-hover table-borderless">
-                <tbody>
-                    <?php
-                    foreach ($links as $link):
-                        foreach ($trainers as $trainer):
-                            if($link['fk_trainer'] == $trainer['id']): ?>
-                                <tr>
-                                    <td><a href="<?= base_url('plafor/apprentice/list_apprentice/'.$trainer['id']); ?>"><?= $trainer['username']; ?></a></td>
-                                    <td><a href="<?= base_url('plafor/apprentice/save_apprentice_link/'.$apprentice['id'].'/'.$link['id']) ?>"><i class="bi-pencil" style="font-size: 20px;"></i></a></td>
-                                    <td><a href="<?= base_url('plafor/apprentice/delete_apprentice_link/'.$link['id']) ?>"><i class="bi-trash" style="font-size: 20px;"></i></a></td>
-                                </tr>
-                            <?php endif;
-                        endforeach;
-                    endforeach;
-                    ?>
-                </tbody>
+                <table class="table table-hover table-borderless">
+                    <tbody>
+                        <?php foreach ($links as $link):
+                            foreach ($trainers as $trainer):
+                                if($link['fk_trainer'] == $trainer['id']): ?>
+                                    <tr>
+                                        <td><a href="<?= base_url('plafor/apprentice/list_apprentice/'.$trainer['id']); ?>"><?= $trainer['username']; ?></a></td>
+                                        <td><a href="<?= base_url('plafor/apprentice/save_apprentice_link/'.$apprentice['id'].'/'.$link['id']) ?>"><i class="bi-pencil" style="font-size: 20px;"></i></a></td>
+                                        <td><a href="<?= base_url('plafor/apprentice/delete_apprentice_link/'.$link['id']) ?>"><i class="bi-trash" style="font-size: 20px;"></i></a></td>
+                                    </tr>
+                                <?php endif;
+                            endforeach;
+                        endforeach;?>
+                    </tbody>
                 </table>
-
                 <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/save_apprentice_link/'.$apprentice['id'])?>"><?= lang('plafor_lang.title_apprentice_link_new') ?></a>
-            <?php else:?>
-                <?php
+            <?php else:
                 foreach ($links as $link):
                     foreach ($trainers as $trainer):
                         if($link['fk_trainer'] == $trainer['id']): ?>
-                            <br><?= $trainer['username']; ?>
-                        <?php endif;
+                            <br><?php echo $trainer['username'];
+                        endif;
                     endforeach;
                 endforeach;
-                ?>
-                </p>
-            <?php endif ?>
+            endif;?>
         </div>
 
         <!-- Linked course plans -->
@@ -84,25 +78,20 @@
             </select>
             <table class="table table-hover table-borderless user-course-details-table">
                 <tbody>
-                <tr>
-                    <td class="user-course-details-begin-date"><?=isset($userCourseMax)?$userCourseMax['date_begin']:null?></td>
-                    <td class="user-course-details-end-date"><?=isset($userCourseMax)?$userCourseMax['date_end']:null?></td>
-                    <td class="user-course-details-status"><?=isset($userCourseMax)?$user_course_status[$userCourseMax['fk_status']]['name']:null?></td>
-
-                </tr>
+                    <tr>
+                        <td class="user-course-details-begin-date"><?=isset($userCourseMax)?$userCourseMax['date_begin']:null?></td>
+                        <td class="user-course-details-end-date"><?=isset($userCourseMax)?$userCourseMax['date_end']:null?></td>
+                        <td class="user-course-details-status"><?=isset($userCourseMax)?$user_course_status[$userCourseMax['fk_status']]['name']:null?></td>
+                    </tr>
                 </tbody>
             </table>
             <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer):?>
                 <!-- List with ADMIN buttons, accessible for trainers or admin only -->
                 <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/save_user_course/'.$apprentice['id'])?>"><?= lang('plafor_lang.title_user_course_new') ?></a>
-            <?php else:?>
-
-            <?php endif;
-
-            ?>
+            <?php endif;?>
         </div>
     </div>
-    
+
     <!-- Current course plan detailed status -->
     <div class="row mt-2">
         <div class="col-md-12">
@@ -114,28 +103,28 @@
 </div>
 
 <script type="text/babel">
+    console.log("jngowejgn");
     $(document).ready(()=>{
         $('#usercourseSelector').val(<?=isset($userCourseMax)?$userCourseMax['id']:null?>);
-            setTimeout(()=>{displayDetails(null,<?=json_encode($userCourseMax)?>,'integrated',"<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/',"<?=base_url('plafor/apprentice/view_user_course')?>");},200)
-            $('#usercourseSelector').change((event)=>{
-                let userCourses=<?= json_encode($user_courses)?>;
-                let coursePlans=<?= json_encode($course_plans)?>;
-                let userCoursesStatus=<?= json_encode($user_course_status)?>;
-                document.querySelectorAll('.user-course-details-course-plan-name').forEach((node)=>{
-                    node.innerHTML=`${coursePlans[userCourses[event.target.value].fk_course_plan].official_name}`;
-                })
-                document.querySelectorAll('.user-course-details-begin-date').forEach((node)=>{
-                    node.innerHTML=`${userCourses[event.target.value].date_begin}`;
-                })
-                document.querySelectorAll('.user-course-details-end-date').forEach((node)=>{
-                    node.innerHTML=`${userCourses[event.target.value].date_end}`;
-                })
-                document.querySelectorAll('.user-course-details-status').forEach((node)=>{
-                    node.innerHTML=`${userCoursesStatus[userCourses[event.target.value].fk_status].name}`;
-                })
-                document.getElementById('detailsArray').setAttribute('course_plan_id',userCourses[event.target.value].fk_course_plan);
-                displayDetails(null,userCourses[event.target.value],'integrated',"<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/',"<?=base_url('plafor/apprentice/view_user_course')?>");
-
-            })
-    })
+        setTimeout(()=>{displayDetails(null,<?=json_encode($userCourseMax)?>,'integrated',"<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/',"<?=base_url('plafor/apprentice/view_user_course')?>");},200);
+        $('#usercourseSelector').change((event)=>{
+            let userCourses=<?= json_encode($user_courses)?>;
+            let coursePlans=<?= json_encode($course_plans)?>;
+            let userCoursesStatus=<?= json_encode($user_course_status)?>;
+            document.querySelectorAll('.user-course-details-course-plan-name').forEach((node)=>{
+                node.innerHTML=`${coursePlans[userCourses[event.target.value].fk_course_plan].official_name}`;
+            });
+            document.querySelectorAll('.user-course-details-begin-date').forEach((node)=>{
+                node.innerHTML=`${userCourses[event.target.value].date_begin}`;
+            });
+            document.querySelectorAll('.user-course-details-end-date').forEach((node)=>{
+                node.innerHTML=`${userCourses[event.target.value].date_end}`;
+            });
+            document.querySelectorAll('.user-course-details-status').forEach((node)=>{
+                node.innerHTML=`${userCoursesStatus[userCourses[event.target.value].fk_status].name}`;
+            });
+            document.getElementById('detailsArray').setAttribute('course_plan_id',userCourses[event.target.value].fk_course_plan);
+            displayDetails(null,userCourses[event.target.value],'integrated',"<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/',"<?=base_url('plafor/apprentice/view_user_course')?>");
+        });
+    });
 </script>

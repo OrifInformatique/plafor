@@ -1,0 +1,83 @@
+.accordionContainer{
+    display: flex;
+    min-width: 300px;
+    flex-direction: column;
+    margin-bottom: 10px;
+    width: 100%;
+}
+.accordionContainer > div > .compdomContainer{
+    display: flex;
+    flex-direction: row;
+    border-top: 2px #dbceb1 solid;
+}
+.accordionContainer > div > .compdomContainer > p{
+    padding: .75rem;
+    margin: 0;
+}
+.accordionContainer > div > .compdomContainer >.compdomSymbol{
+    padding: .75rem;
+    text-align: center;
+}
+.accordionContainer > .compdomContainerHeader{
+    display: none;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+.accordionContainer > .opcompContainerList > .opcompList > .opcompContainer{
+    display: flex;
+    flex-direction: row;
+}
+.accordionContainer > .opcompContainerList > .opcompContainerHeader{
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    margin-top: 5px;
+    color: #dbceb1 !important;
+    background-color: transparent !important;
+}
+.accordionContainer > .opcompContainerList{
+    width: 100%;
+}
+.accordionContainer > .opcompContainerList > .opcompList > .opcompContainer p{
+    width: 80%;
+}
+.accordionContainer > .opcompContainerList > .opcompContainerHeader > .openLogo{
+    transition: color 200ms;
+    font-size: 1.5rem;
+    width: 0;
+    margin-left: 0.3rem;
+
+}
+.accordionContainer > .opcompContainerList > .opcompContainerHeader > .openLogo:hover{
+    color: #AE9B70;
+}
+.accordionContainer > .opcompContainerList > .opcompList{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    transition: max-height 0.5s;
+    overflow: hidden;
+    height: auto;
+    max-height: 900px;
+}
+.accordionContainer > .opcompContainerList > .opcompList > .opcompContainer > .opcompSymbol{
+    padding: .75rem;
+    text-align: center;
+}
+.ac-hidden{
+    height: auto!important;
+    max-height: 0px!important;
+}
+@media screen and (max-width: 770px) {
+    .accordionContainer > .opcompContainerList > .opcompList{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        transition: max-height 0.5s;
+        overflow: hidden;
+        height: auto;
+        max-height: 1200px;
+    }
+}
