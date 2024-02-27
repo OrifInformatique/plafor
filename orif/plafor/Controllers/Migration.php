@@ -53,9 +53,3 @@ class Migration extends \CodeIgniter\Controller
 
     }
 }
-
-
-
-
-
-

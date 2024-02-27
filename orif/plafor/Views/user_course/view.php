@@ -101,6 +101,12 @@
     window.onresize=()=>{
         fixCardDescriptionLength();
     }
+    document.querySelectorAll('.acquisitionStatusSelect').forEach((element)=>{
+        element.addEventListener('change',(e)=>{
+            $.post(`<?=base_url('plafor/apprentice/save_acquisition_status')?>/${e.target.getAttribute('data-acquisition-status-id')}`,{field_acquisition_level:e.target.value}).done((response)=>{})
+        })
+    })
+
     function fixCardDescriptionLength(){
         let maxHeight=0;
         document.querySelectorAll('.objectiveCardDescription').forEach((node)=> {
@@ -112,16 +118,4 @@
             node.style.minHeight=`${maxHeight}px`;
         })
     }
-        document.querySelectorAll('.acquisitionStatusSelect').forEach((element)=>{
-            element.addEventListener('change',(e)=>{
-               $.post(`<?=base_url('plafor/apprentice/save_acquisition_status')?>/${e.target.getAttribute('data-acquisition-status-id')}`,{field_acquisition_level:e.target.value}).done((response)=>{
-                })
-
-
-
-
-            })
-        })
-
-
 </script>

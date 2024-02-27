@@ -468,10 +468,8 @@ class Apprentice extends \App\Controllers\BaseController
 
             if (CommentModel::getInstance()->errors()==null) {
                 //if ok
-
                 return redirect()->to(base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status['id']));
             }
-        
         }
 
         $comment = CommentModel::getInstance()->find($comment_id);
