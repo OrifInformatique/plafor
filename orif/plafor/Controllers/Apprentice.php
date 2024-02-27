@@ -35,15 +35,20 @@ use User\Models\User_model;
 class Apprentice extends \App\Controllers\BaseController
 {
     private Validation $validation;
-    public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger)
-    {
+
+    /**
+     * Method to initialize controller attributes
+     */
+    public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger) {
         $this->access_level=config('\User\Config\UserConfig')->access_level_apprentice;
         parent::initController($request, $response, $logger);
         $this->validation=Services::validation();
     }
 
     /**
-     * Default method, redirect to a homepage depending on the type of user
+     * Default method to redirect to a homepage depending on the type of user
+     * 
+     * @return void
      */
     public function index() {
         if(isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true) {
@@ -64,8 +69,13 @@ class Apprentice extends \App\Controllers\BaseController
         }
     }
 
-    public function list_apprentice($withDeleted=0)
-    {
+    /**
+     * Method to display the list of apprentices
+     * 
+     * @param $withDeleted : determines whether to show deleted apprentices or not
+     * @return void
+     */
+    public function list_apprentice($withDeleted=0) {
         $trainer_id = $this->request->getGet('trainer_id');
         if ($trainer_id==null && $this->session->get('user_access')==config('\User\Config\UserConfig')->access_lvl_trainer){
             $trainer_id=$this->session->get('user_id');
@@ -110,8 +120,13 @@ class Apprentice extends \App\Controllers\BaseController
         return $this->display_view('\Plafor\apprentice\list', $output);
     }
 
-    public function view_apprentice($apprentice_id = null)
-    {
+    /**
+     * Displays the view for a given apprentice
+     * 
+     * @param int $apprentice_id : ID of the apprentice
+     * @return void
+     */
+    public function view_apprentice($apprentice_id = null) {
         $apprentice = User_model::getInstance()->find($apprentice_id);
 
         if(is_null($apprentice) || $apprentice['fk_user_type'] != User_type_model::getInstance()->where('name',lang('plafor_lang.title_apprentice'))->first()['id']){
@@ -155,11 +170,12 @@ class Apprentice extends \App\Controllers\BaseController
     }
 
     /**
-     * Form to create a link between a apprentice and a course plan
+     * Displays a form to create a link between a apprentice and a course plan
      *
      * @param int (SQL PRIMARY KEY) $id_user_course
+     * @return void
      */
-    public function save_user_course($id_apprentice = null,$id_user_course = 0){
+    public function save_user_course($id_apprentice = null,$id_user_course = 0) {
         if ($this->session->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer) {
             $apprentice = User_model::getInstance()->find($id_apprentice);
             $user_course = UserCourseModel::getInstance()->find($id_user_course);
@@ -244,16 +260,16 @@ class Apprentice extends \App\Controllers\BaseController
         }
     }
 
-    /**@todo the user doesn't modify the trainer but add one on update
+    // @todo the user doesn't modify the trainer but add one on update
     /**
-     * Create a link between a apprentice and a trainer, or change the trainer
+     * Creates a link between a apprentice and a trainer, or change the trainer
      * linked on the selected trainer_apprentice SQL entry
      *
-     * @param int $id_apprentice = ID of the apprentice to add the link to or change the link of
-     * @param int $id_link = ID of the link to modify. If 0, adds a new link
+     * @param int $id_apprentice : ID of the apprentice to add the link to or change the link of
+     * @param int $id_link       : ID of the link to modify. If 0, adds a new link
      * @return void
      */
-    public function save_apprentice_link($id_apprentice = null, $id_link = null){
+    public function save_apprentice_link($id_apprentice = null, $id_link = null) {
 
         $apprentice = User_model::getInstance()->find($id_apprentice);
 
@@ -317,14 +333,13 @@ class Apprentice extends \App\Controllers\BaseController
     /**
      * Deletes a trainer_apprentice link depending on $action
      *
-     * @param integer $link_id = ID of the trainer_apprentice_link to affect
-     * @param integer $action = Action to apply on the trainer_apprentice link :
+     * @param integer $link_id : ID of the trainer_apprentice_link to affect
+     * @param integer $action  : Action to apply on the trainer_apprentice link :
      *  - 0 for displaying the confirmation
      *  - 1 for deleting (hard delete)
      * @return void
      */
-    public function delete_apprentice_link($link_id, $action = 0)
-    {
+    public function delete_apprentice_link($link_id, $action = 0) {
 
         if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_trainer) {
             $link = TrainerApprenticeModel::getInstance()->find($link_id);
@@ -356,12 +371,12 @@ class Apprentice extends \App\Controllers\BaseController
     }
 
     /**
-     * Show details of the selected acquisition status
+     * Shows details of the selected acquisition status
      *
-     * @param int $acquisition_status_id = ID of the acquisition status to view
+     * @param int $acquisition_status_id : ID of the acquisition status to view
      * @return void
      */
-    public function view_acquisition_status($acquisition_status_id = null){
+    public function view_acquisition_status($acquisition_status_id = null) {
         $acquisition_status = AcquisitionStatusModel::getInstance()->find($acquisition_status_id);
         $objective=AcquisitionStatusModel::getObjective($acquisition_status['fk_objective']);
         $acquisition_level=AcquisitionStatusModel::getAcquisitionLevel($acquisition_status['fk_acquisition_level']);
@@ -386,7 +401,7 @@ class Apprentice extends \App\Controllers\BaseController
     /**
      * Changes an acquisition status for an apprentice
      *
-     * @param int $acquisition_status_id = ID of the acquisition status to change
+     * @param int $acquisition_status_id : ID of the acquisition status to change
      * @return Response|ResponseInterface
      */
     public function save_acquisition_status($acquisition_status_id = 0) {
@@ -447,7 +462,14 @@ class Apprentice extends \App\Controllers\BaseController
         return $this->display_view('Plafor\acquisition_status/save', $output);
     }
 
-    public function add_comment($acquisition_status_id = null, $comment_id = null){
+    /**
+     * Adds a comment to an acquisition status
+     * 
+     * @param int $acquisition_status_id : ID of the acquisition status
+     * @param int $comment_id            : ID of the comment
+     * @return void
+     */
+    public function add_comment($acquisition_status_id = null, $comment_id = null) {
         $acquisition_status = AcquisitionStatusModel::getInstance()->find($acquisition_status_id);
 
         if($acquisition_status == null || $_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_trainer){
@@ -485,16 +507,26 @@ class Apprentice extends \App\Controllers\BaseController
         return $this->display_view('\Plafor\comment/save',$output);
     }
 
+    /**
+     * Deletes a comment from an acquisition status
+     * 
+     * @param int $comment_id            : ID of the comment
+     * @param int $acquisition_status_id : ID of the acquisition status
+     * @return void
+     */
     public function delete_comment($comment_id = 0, $acquisition_status_id = 0) {
         CommentModel::getInstance()->delete($comment_id);
         return redirect()->to(base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status_id));
     }
 
     /**
-     * @param null $userId the id of user
-     * If admin
+     * Gets the course plan progress for a given user
+     * 
+     * @param null $userId       : ID of the user
+     * @param null $coursePlanId : ID of the course plan
+     * @return Response|ResponseInterface
      */
-    public function getCoursePlanProgress($userId=null,$coursePlanId=null){
+    public function getCoursePlanProgress($userId=null,$coursePlanId=null) {
         if ($userId==null && $this->session->get('user_id')==null)
             return;
         //if user is admin
@@ -516,12 +548,12 @@ class Apprentice extends \App\Controllers\BaseController
     }
 
     /**
-     * Show a user course's details
+     * Shows the details of a user's course
      *
-     * @param int $id_user_course = ID of the user course to view
+     * @param int $id_user_course : ID of the user course to view
      * @return void
      */
-    public function view_user_course($id_user_course = null){
+    public function view_user_course($id_user_course = null) {
         $objectives = null;
         $acquisition_levels = null;
         $user_course = UserCourseModel::getInstance()->find($id_user_course);
@@ -586,17 +618,16 @@ class Apprentice extends \App\Controllers\BaseController
     }
 
     /**
-     * Delete or deactivate a user depending on $action
+     * Deletes or deactivates a user depending on $action
      *
-     * @param integer $user_id = ID of the user to affect
-     * @param integer $action = Action to apply on the user:
-     *  - 0 for displaying the confirmation
-     *  - 1 for deactivating (soft delete)
-     *  - 2 for deleting (hard delete)
+     * @param integer $user_id : ID of the user to affect
+     * @param integer $action  : Action to apply on the user:
+     *      - 0 for displaying the confirmation
+     *      - 1 for deactivating (soft delete)
+     *      - 2 for deleting (hard delete)
      * @return void
      */
-    public function delete_user($user_id, $action = 0)
-    {
+    public function delete_user($user_id, $action = 0) {
         if ($_SESSION['user_access'] == config('\User\Config\UserConfig')->access_lvl_admin) {
             $user = User_model::getInstance()->withDeleted()->find($user_id);
             if (is_null($user)) {

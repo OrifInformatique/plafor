@@ -23,20 +23,21 @@ use User\Models\User_model;
 
 class CoursePlan extends \App\Controllers\BaseController
 {
-    public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger)
-    {
+    /**
+     * Method to initialize controller attributes
+     */
+    public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger) {
         $this->access_level="@";
         parent::initController($request, $response, $logger);
     }
 
     /**
-     * Adds or modify a course plan
+     * Adds or modifies a course plan
      *
-     * @param integer $course_plan_id = The id of the course plan to modify, leave blank to create a new one
+     * @param integer $course_plan_id : ID of the course plan to modify, leave blank to create a new one
      * @return void
      */
-    public function save_course_plan($course_plan_id = 0)
-    {
+    public function save_course_plan($course_plan_id = 0) {
         if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) {
             $lastDatas = array();
             if (count($_POST) > 0) {
@@ -78,18 +79,18 @@ class CoursePlan extends \App\Controllers\BaseController
             return $this->display_view('\User\errors\403error');
         }
     }
+
     /**
      * Deletes a course plan depending on $action
      *
-     * @param integer $course_plan_id = ID of the course_plan to affect
-     * @param integer $action = Action to apply on the course plan:
-     *  - 0 for displaying the confirmation
-     *  - 1 for deactivating (soft delete)
-     *  - 2 for deleting (hard delete)
+     * @param integer $course_plan_id : ID of the course_plan to affect
+     * @param integer $action         : Action to apply on the course plan:
+     *      - 0 for displaying the confirmation
+     *      - 1 for deactivating (soft delete)
+     *      - 2 for deleting (hard delete)
      * @return void
      */
-    public function delete_course_plan($course_plan_id, $action = 0)
-    {
+    public function delete_course_plan($course_plan_id, $action = 0) {
         if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) {
             $competenceDomainIds = [];
             $objectiveIds = [];
@@ -123,14 +124,15 @@ class CoursePlan extends \App\Controllers\BaseController
             return $this->display_view('\User\errors\403error');
         }
     }
+
     /**
-     * Adds or modify a course plan
+     * Adds or modifies a competence domain
      *
-     * @param integer $competence_domain_id = The id of the course plan to modify, leave blank to create a new one
+     * @param integer $course_plan_id       : ID of the course plan
+     * @param integer $competence_domain_id : ID of the competence domain to modify, leave blank to create a new one
      * @return void
      */
-    public function save_competence_domain($course_plan_id = 0,$competence_domain_id = 0)
-    {
+    public function save_competence_domain($course_plan_id = 0, $competence_domain_id = 0) {
         if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) {
 
             if (count($_POST) > 0) {
@@ -169,17 +171,16 @@ class CoursePlan extends \App\Controllers\BaseController
     }
 
     /**
-     * Deletes a course plan depending on $action
+     * Deletes a competence domain depending on $action
      *
-     * @param integer $competence_domain_id = ID of the competence_domain to affect
-     * @param integer $action = Action to apply on the course plan:
-     *  - 0 for displaying the confirmation
-     *  - 1 for deactivating (soft delete)
-     *  - 2 for deleting (hard delete)
+     * @param integer $competence_domain_id : ID of the competence domain to affect
+     * @param integer $action               : Action to apply on the course plan:
+     *      - 0 for displaying the confirmation
+     *      - 1 for deactivating (soft delete)
+     *      - 2 for deleting (hard delete)
      * @return void
      */
-    public function delete_competence_domain($competence_domain_id = null, $action = 0)
-    {
+    public function delete_competence_domain($competence_domain_id = null, $action = 0) {
         if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) {
 
             if (!isset($competence_domain_id)) {
@@ -217,14 +218,16 @@ class CoursePlan extends \App\Controllers\BaseController
             return $this->display_view('\User\errors\403error');
         }
     }
+
     /**
-     * Adds or modify a course plan
+     * Adds or modifies an operational competence
      *
-     * @param integer $operational_competence_id = The id of the course plan to modify, leave blank to create a new one
+     * @param integer $operational_competence_id : ID of the operational competence to modify,
+     *  leave blank to create a new one
+     * @param integer $competence_domain_id      : ID of the competence domain
      * @return void
      */
-    public function save_operational_competence($operational_competence_id = 0, $competence_domain_id = 0)
-    {
+    public function save_operational_competence($operational_competence_id = 0, $competence_domain_id = 0) {
         if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) {
 
             if (count($_POST) > 0) {
@@ -272,18 +275,18 @@ class CoursePlan extends \App\Controllers\BaseController
             return $this->display_view('\User\errors\403error');
         }
     }
+
     /**
-     * Deletes a course plan depending on $action
+     * Deletes an operational competence depending on $action
      *
-     * @param integer $operational_competence_id = ID of the operational_competence to affect
-     * @param integer $action = Action to apply on the course plan:
-     *  - 0 for displaying the confirmation
-     *  - 1 for deactivating (soft delete)
-     *  - 2 for deleting (hard delete)
+     * @param integer $operational_competence_id : ID of the operational competence to affect
+     * @param integer $action                    : Action to apply on the course plan:
+     *      - 0 for displaying the confirmation
+     *      - 1 for deactivating (soft delete)
+     *      - 2 for deleting (hard delete)
      * @return void
      */
-    public function delete_operational_competence($operational_competence_id, $action = 0)
-    {
+    public function delete_operational_competence($operational_competence_id, $action = 0) {
         if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) {
 
             $operational_competence = OperationalCompetenceModel::getInstance()->withDeleted()->find($operational_competence_id);
@@ -311,16 +314,17 @@ class CoursePlan extends \App\Controllers\BaseController
             return $this->display_view('\User\errors\403error');
         }
     }
+
     /**
-     * Deletes a user_course depending on $action
+     * Deletes a user's course depending on $action
      *
-     * @param integer $user_course_id = ID of the user_course to affect
-     * @param integer $action = Action to apply on the course plan:
-     *  - 0 for displaying the confirmation
-     *  - 1 for deleting (hard delete)
+     * @param integer $user_course_id : ID of the user_course to affect
+     * @param integer $action         : Action to apply on the course plan:
+     *      - 0 for displaying the confirmation
+     *      - 1 for deleting (hard delete)
      * @return void
      */
-    public function delete_user_course($user_course_id, $action = 0){
+    public function delete_user_course($user_course_id, $action = 0) {
         if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) {
 
             $user_course = UserCourseModel::getInstance()->find($user_course_id);
@@ -355,14 +359,15 @@ class CoursePlan extends \App\Controllers\BaseController
             return $this->display_view('\User\errors\403error');
         }
     }
+
     /**
-     * Adds or modify a course plan
+     * Adds or modifies an objective
      *
-     * @param integer $objective_id = The id of the course plan to modify, leave blank to create a new one
+     * @param integer $objective_id              : ID of the objective to modify, leave blank to create a new one
+     * @param integer $operational_competence_id : ID of the operational competence
      * @return void
      */
-    public function save_objective($objective_id = 0, $operational_competence_id = 0)
-    {
+    public function save_objective($objective_id = 0, $operational_competence_id = 0) {
         if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) {
 
             if (count($_POST) > 0) {
@@ -414,19 +419,19 @@ class CoursePlan extends \App\Controllers\BaseController
             return $this->display_view('\User\errors\403error');
         }
     }
+
     /**
-     * Deletes a course plan depending on $action
+     * Deletes an objective depending on $action
      *
-     * @param integer $objective_id = ID of the objective to affect
-     * @param integer $action = Action to apply on the course plan:
-     *  - 0 for displaying the confirmation
-     *  - 1 for deactivating (soft delete)
-     *  - 2 for deleting (hard delete)
-     *  - 3 for reactivating
+     * @param integer $objective_id : ID of the objective to affect
+     * @param integer $action       : Action to apply on the course plan:
+     *      - 0 for displaying the confirmation
+     *      - 1 for deactivating (soft delete)
+     *      - 2 for deleting (hard delete)
+     *      - 3 for reactivating
      * @return void
      */
-    public function delete_objective($objective_id, $action = 0)
-    {
+    public function delete_objective($objective_id, $action = 0) {
         if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) {
 
             $objective = ObjectiveModel::getInstance()->withDeleted()->find($objective_id);
@@ -458,13 +463,15 @@ class CoursePlan extends \App\Controllers\BaseController
             return $this->display_view('\User\errors\403error');
         }
     }
+
     /**
      * Displays the list of course plans
      *
+     * @param int $id_apprentice : ID of the apprentice
+     * @param boolean $with_archived : Whether or not to include archived course plans
      * @return void
      */
-    public function list_course_plan($id_apprentice = null, $with_archived=false)
-    {
+    public function list_course_plan($id_apprentice = null, $with_archived=false) {
         $this->request->getGet('wa')!=null?$with_archived=$this->request->getGet('wa'):null;
         $id_apprentice==0?$id_apprentice = null:null;
         $coursePlanModel=new CoursePlanModel();
@@ -496,14 +503,14 @@ class CoursePlan extends \App\Controllers\BaseController
 
         return $this->display_view(['Plafor\course_plan\list'], $output);
     }
+
     /**
-     * Show details of the selected course plan
+     * Shows details of the selected course plan
      *
-     * @param int (SQL PRIMARY KEY) $course_plan_id
-     *
+     * @param int (SQL PRIMARY KEY) $course_plan_id : ID of the selected course plan
+     * @return void
      */
-    public function view_course_plan($course_plan_id = null)
-    {
+    public function view_course_plan($course_plan_id = null) {
         $with_archived=$this->request->getGet('wa')!=null?$this->request->getGet('wa'):false;
         if(!isset($course_plan_id)) {
             // Back to course plans list
@@ -532,13 +539,12 @@ class CoursePlan extends \App\Controllers\BaseController
     }
 
     /**
-     * Show details of the selected competence domain
+     * Shows details of the selected competence domain
      *
-     * @param int (SQL PRIMARY KEY) $competence_domain_id
-     *
+     * @param int (SQL PRIMARY KEY) $competence_domain_id : ID of the selected competence domain
+     * @return void
      */
-    public function view_competence_domain($competence_domain_id = null)
-    {
+    public function view_competence_domain($competence_domain_id = null) {
         if(!isset($competence_domain_id)) {
             // Back to course plans list
             return redirect()->to(base_url('plafor/courseplan/list_course_plan'));
@@ -567,14 +573,14 @@ class CoursePlan extends \App\Controllers\BaseController
 
         return $this->display_view('\Plafor/competence_domain/view',$output);
     }
+
     /**
-     * Show details of the selected operational competence
+     * Shows details of the selected operational competence
      *
-     * @param int $operational_competence_id = ID of the operational competence to view
+     * @param int $operational_competence_id : ID of the selected operational competence
      * @return void
      */
-    public function view_operational_competence($operational_competence_id = null)
-    {
+    public function view_operational_competence($operational_competence_id = null) {
         $operational_competence = OperationalCompetenceModel::getInstance()->withDeleted(true)->find($operational_competence_id);
 
         if($operational_competence == null){
@@ -601,19 +607,18 @@ class CoursePlan extends \App\Controllers\BaseController
 
         return $this->display_view('\Plafor/operational_competence/view',$output);
     }
+
     /**
-     * Show details of the selected objective
-     * @param int $objective_id = ID of the objective to view
+     * Shows details of the selected objective
+     * @param int $objective_id : ID of the selected objective
      * @return void
      */
-    public function view_objective($objective_id = null)
-    {
+    public function view_objective($objective_id = null) {
         $objective = ObjectiveModel::getInstance()->withDeleted()->find($objective_id);
 
         if($objective == null){
             return redirect()->to(base_url('plafor/courseplan/list_course_plan'));
         }
-
 
         $operational_competence = ObjectiveModel::getOperationalCompetence($objective['fk_operational_competence'],true);
 
