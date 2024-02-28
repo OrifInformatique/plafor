@@ -70,9 +70,9 @@ class Apprentice extends \App\Controllers\BaseController
     }
 
     /**
-     * Method to display the list of apprentices
+     * Displays the list of apprentices
      * 
-     * @param $withDeleted : determines whether to show deleted apprentices or not
+     * @param $withDeleted : Whether or not to show deleted apprentices
      * @return void
      */
     public function list_apprentice($withDeleted=0) {
@@ -105,8 +105,7 @@ class Apprentice extends \App\Controllers\BaseController
                 $coursesList[$courseplan['id']]=$courseplan;
             $courses = UserCourseModel::getInstance()->withDeleted(true)->findall();
             }
-        
-        
+
         $output = array(
             'title' => lang('plafor_lang.title_list_apprentice'),
             'trainer_id' => $trainer_id,
@@ -170,9 +169,9 @@ class Apprentice extends \App\Controllers\BaseController
     }
 
     /**
-     * Displays a form to create a link between a apprentice and a course plan
+     * Displays a form to create a link between an apprentice and a course plan
      *
-     * @param int (SQL PRIMARY KEY) $id_user_course
+     * @param int (SQL PRIMARY KEY) $id_user_course : ID of the user's course
      * @return void
      */
     public function save_user_course($id_apprentice = null,$id_user_course = 0) {
@@ -260,9 +259,10 @@ class Apprentice extends \App\Controllers\BaseController
         }
     }
 
-    // @todo the user doesn't modify the trainer but add one on update
     /**
-     * Creates a link between a apprentice and a trainer, or change the trainer
+     * @todo the user doesn't modify the trainer but add one on update
+     * 
+     * Creates a link between an apprentice and a trainer, or changes the trainer
      * linked on the selected trainer_apprentice SQL entry
      *
      * @param int $id_apprentice : ID of the apprentice to add the link to or change the link of
@@ -428,7 +428,7 @@ class Apprentice extends \App\Controllers\BaseController
             $acquisitionLevel = $this->request->getPost('field_acquisition_level');
             $acquisitionStatus=AcquisitionStatusModel::getInstance()->find($acquisition_status_id);
             $acquisitionStatus['fk_acquisition_level'] = $acquisitionLevel;
-            //check if opcomp and compdom is avtive
+            //check if opcomp and compdom are active
 
             $objective=ObjectiveModel::getInstance()->find($acquisitionStatus['fk_objective']);
             $opeationalCompetence=ObjectiveModel::getOperationalCompetence($objective['fk_operational_competence']);
@@ -447,7 +447,7 @@ class Apprentice extends \App\Controllers\BaseController
             if (AcquisitionStatusModel::getInstance()->errors()==null) {
 
                 //if ok
-                return $this->response->setStatusCode(200,'OK');
+                $this->response->setStatusCode(200,'OK');
             }
         }
 
@@ -463,7 +463,7 @@ class Apprentice extends \App\Controllers\BaseController
     }
 
     /**
-     * Adds a comment to an acquisition status
+     * Adds or modifies a comment for an acquisition status
      * 
      * @param int $acquisition_status_id : ID of the acquisition status
      * @param int $comment_id            : ID of the comment
@@ -472,17 +472,21 @@ class Apprentice extends \App\Controllers\BaseController
     public function add_comment($acquisition_status_id = null, $comment_id = null) {
         $acquisition_status = AcquisitionStatusModel::getInstance()->find($acquisition_status_id);
 
+        // Check access requirements
         if($acquisition_status == null || $_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_trainer){
             return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
         }
-
+        d($_POST);
+        d($acquisition_status);
+        // Check if form has been sumbitted
         if (count($_POST) > 0) {
             $comment = array(
-                'fk_trainer' => $_SESSION['user_id'],
+                'fk_trainer'            => $_SESSION['user_id'],
                 'fk_acquisition_status' => $acquisition_status_id,
-                'comment' => $this->request->getPost('comment'),
-                'date_creation' => date('Y-m-d H:i:s'),
+                'comment'               => $this->request->getPost('comment'),
+                'date_creation'         => date('Y-m-d H:i:s'),
             );
+            // Update existing comment, or create a new one
             if($comment_id == null)
                 CommentModel::getInstance()->insert($comment);
             else
@@ -496,12 +500,13 @@ class Apprentice extends \App\Controllers\BaseController
 
         $comment = CommentModel::getInstance()->find($comment_id);
 
+        // Data to send to the view
         $output = array(
-            'title'=>lang('plafor_lang.title_comment_save'),
-            'acquisition_status' => $acquisition_status,
-            'comment_id' => $comment_id,
-            'commentValue' => ($comment['comment']??''),
-            'errors'    => CommentModel::getInstance()->errors()
+            'title'                 => lang('plafor_lang.title_comment_save'),
+            'acquisition_status'    => $acquisition_status,
+            'comment_id'            => $comment_id,
+            'commentValue'          => ($comment['comment']??''),
+            'errors'                => CommentModel::getInstance()->errors()
         );
 
         return $this->display_view('\Plafor\comment/save',$output);
