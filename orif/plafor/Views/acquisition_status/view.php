@@ -59,7 +59,7 @@
 						<?php endif; ?>
                         <td><?= $comment['date_creation']; ?></td>
                         <td><a class="bi bi-trash" id="<?=$comment['id']?>" onClick="
-                        let obj={yes: '<?= lang('common_lang.yes')?>',no: '<?=lang('common_lang.no')?>',message: '<?=lang('plafor_lang.comment_delete')?>',url: '<?=base_url('plafor/apprentice/delete_comment/'.$comment['id'].'/'.($acquisition_status['id']??''))?>'};
+                        let obj={yes: '<?= lang('common_lang.yes')?>',no: '<?=lang('common_lang.no')?>',message: '<?=lang('plafor_lang.comment_delete')?>',url: '<?=base_url('plafor/apprentice/delete_comment/'.$comment['id'])?>'};
                         displayNotif(event.pageX, event.pageY,obj)"></a></td>
 
                     </tr> 

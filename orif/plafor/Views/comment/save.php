@@ -51,8 +51,6 @@ $validation=\CodeIgniter\Config\Services::validation()
         <div class="col-sm-12 form-group">
             <?= form_label(lang('plafor_lang.field_comment'), $data_comment['id'], ['class' => 'form-label']); ?>
             <?= form_textarea($data_comment); ?>
-            <?= form_label(lang('plafor_lang.field_comment'), $data_comment['id'], ['class' => 'form-label']); ?>
-            <?= form_input("test"); ?>
         </div>
     </div>
 

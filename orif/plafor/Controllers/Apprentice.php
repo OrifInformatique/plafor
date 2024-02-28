@@ -378,9 +378,15 @@ class Apprentice extends \App\Controllers\BaseController
      */
     public function view_acquisition_status($acquisition_status_id = null) {
         $acquisition_status = AcquisitionStatusModel::getInstance()->find($acquisition_status_id);
-        $objective=AcquisitionStatusModel::getObjective($acquisition_status['fk_objective']);
-        $acquisition_level=AcquisitionStatusModel::getAcquisitionLevel($acquisition_status['fk_acquisition_level']);
-        if($acquisition_status == null){
+        $objective = AcquisitionStatusModel::getObjective($acquisition_status['fk_objective']);
+        $acquisition_level = AcquisitionStatusModel::getAcquisitionLevel($acquisition_status['fk_acquisition_level']);
+        $user_course = UserCourseModel::getInstance()->find($acquisition_status['fk_user_course']);
+        $apprentice = User_model::getInstance()->find($user_course['fk_user']);
+
+        // Check access rights
+        if($acquisition_status == null
+         || $_SESSION['user_access'] == config('\User\Config\UserConfig')->access_level_apprentice
+         && $apprentice['id'] != $_SESSION['user_id']) {
             return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
         }
 
@@ -476,8 +482,7 @@ class Apprentice extends \App\Controllers\BaseController
         if($acquisition_status == null || $_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_trainer){
             return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
         }
-        d($_POST);
-        d($acquisition_status);
+
         // Check if form has been sumbitted
         if (count($_POST) > 0) {
             $comment = array(
@@ -515,13 +520,23 @@ class Apprentice extends \App\Controllers\BaseController
     /**
      * Deletes a comment from an acquisition status
      * 
-     * @param int $comment_id            : ID of the comment
-     * @param int $acquisition_status_id : ID of the acquisition status
+     * @param int $comment_id : ID of the comment to delete
      * @return void
      */
-    public function delete_comment($comment_id = 0, $acquisition_status_id = 0) {
-        CommentModel::getInstance()->delete($comment_id);
-        return redirect()->to(base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status_id));
+    public function delete_comment($comment_id = null) {
+        $comment_model = CommentModel::getInstance();
+
+        // Check if comment exists in database
+        if (!is_null($comment_id) && isset($comment_model->find($comment_id)['fk_acquisition_status'])) {
+            $acquisition_status_id = $comment_model->find($comment_id)['fk_acquisition_status'] ?? null;
+
+            // Delete comment if user has rights
+            if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_trainer) {
+                $comment_model->delete($comment_id);
+            }
+            return redirect()->to(base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status_id));
+        }
+        return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
     }
 
     /**
@@ -633,6 +648,7 @@ class Apprentice extends \App\Controllers\BaseController
      * @return void
      */
     public function delete_user($user_id, $action = 0) {
+        // Check if user is admin
         if ($_SESSION['user_access'] == config('\User\Config\UserConfig')->access_lvl_admin) {
             $user = User_model::getInstance()->withDeleted()->find($user_id);
             if (is_null($user)) {
@@ -676,5 +692,6 @@ class Apprentice extends \App\Controllers\BaseController
                     return redirect()->to('/user/admin/list_user');
             }
         }
+        return redirect()->to(base_url('/plafor/apprentice/list_apprentice'));
     }
 }
