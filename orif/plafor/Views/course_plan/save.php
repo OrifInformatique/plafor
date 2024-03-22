@@ -51,8 +51,9 @@ $data_date_begin = array(
     <?php
     $attributes = array(
         'id' => 'course_plan_form',
-        'name' => 'course_plan_form'
-    ); if(!isset($course_plan['id'])){
+        'name' => 'course_plan_form',
+    );
+    if (!isset($course_plan['id'])) {
         $course_plan['id'] = null;
     }
     echo form_open(base_url('plafor/courseplan/save_course_plan/'), $attributes);

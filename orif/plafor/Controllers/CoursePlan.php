@@ -87,7 +87,7 @@ class CoursePlan extends \App\Controllers\BaseController
      * @param integer $action         : Action to apply on the course plan:
      *      - 0 for displaying the confirmation
      *      - 1 for deactivating (soft delete)
-     *      - 2 for deleting (hard delete)
+     *      - 3 for reactivating
      * @return void
      */
     public function delete_course_plan($course_plan_id, $action = 0) {
@@ -111,8 +111,7 @@ class CoursePlan extends \App\Controllers\BaseController
 
                     CoursePlanModel::getInstance()->delete($course_plan_id);
                     return redirect()->to('/plafor/courseplan/list_course_plan');
-                case 3:
-                    //Reactiver le plan de formation et ses competence et objectifs associés
+                case 3: // Reactivate course plan and its linked objectives
                     CoursePlanModel::getInstance()->withDeleted()->update($course_plan_id, ['archive' => null]);
 
                     return redirect()->to(base_url('plafor/courseplan/list_course_plan'));
@@ -120,7 +119,7 @@ class CoursePlan extends \App\Controllers\BaseController
                     // Do nothing
                     return redirect()->to('/plafor/courseplan/list_course_plan');
             }
-        }else{
+        } else {
             return $this->display_view('\User\errors\403error');
         }
     }
@@ -138,10 +137,10 @@ class CoursePlan extends \App\Controllers\BaseController
             if (count($_POST) > 0) {
                 $competence_domain_id = $this->request->getPost('id');
                 $competence_domain = array(
-                    'symbol' => $this->request->getPost('symbol'),
-                    'name' => $this->request->getPost('name'),
-                    'fk_course_plan' => $this->request->getPost('course_plan'),
-                    'id' => $competence_domain_id
+                    'id'                => $competence_domain_id,
+                    'fk_course_plan'    => $this->request->getPost('course_plan'),
+                    'symbol'            => $this->request->getPost('symbol'),
+                    'name'              => $this->request->getPost('name')
                 );
                 if ($competence_domain_id > 0) {
                     CompetenceDomainModel::getInstance()->update($competence_domain_id, $competence_domain);
