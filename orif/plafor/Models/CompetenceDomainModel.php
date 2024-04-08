@@ -29,7 +29,7 @@ class CompetenceDomainModel extends Model{
         $this->validationRules = array(
             'symbol'=>[
                 'label' => 'plafor_lang.field_competence_domain_symbol',
-                'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH."]|is_symbol_unique[]"
+                'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH.']|is_symbol_unique[]'
             ],
             'name'=>[
                 'label' => 'plafor_lang.field_competence_domain_name',

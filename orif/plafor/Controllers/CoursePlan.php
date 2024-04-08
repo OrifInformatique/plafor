@@ -137,7 +137,6 @@ class CoursePlan extends \App\Controllers\BaseController
             if (count($_POST) > 0) {
                 $competence_domain_id = $this->request->getPost('id');
                 $competence_domain = array(
-                    'id'                => $competence_domain_id,
                     'fk_course_plan'    => $this->request->getPost('course_plan'),
                     'symbol'            => $this->request->getPost('symbol'),
                     'name'              => $this->request->getPost('name')
@@ -176,7 +175,7 @@ class CoursePlan extends \App\Controllers\BaseController
      * @param integer $action               : Action to apply on the course plan:
      *      - 0 for displaying the confirmation
      *      - 1 for deactivating (soft delete)
-     *      - 2 for deleting (hard delete)
+     *      - 3 for reactivating
      * @return void
      */
     public function delete_competence_domain($competence_domain_id = null, $action = 0) {
@@ -222,7 +221,7 @@ class CoursePlan extends \App\Controllers\BaseController
      * Adds or modifies an operational competence
      *
      * @param integer $operational_competence_id : ID of the operational competence to modify,
-     *  leave blank to create a new one
+     *                                             leave blank to create a new one
      * @param integer $competence_domain_id      : ID of the competence domain
      * @return void
      */
@@ -233,13 +232,13 @@ class CoursePlan extends \App\Controllers\BaseController
                 $operational_competence_id = $this->request->getPost('id');
 
                 $operational_competence = array(
-                    'id' => $operational_competence_id != null ? $operational_competence_id : null,
-                    'symbol' => $this->request->getPost('symbol'),
-                    'name' => $this->request->getPost('name'),
-                    'methodologic' => $this->request->getPost('methodologic'),
-                    'social' => $this->request->getPost('social'),
-                    'personal' => $this->request->getPost('personal'),
-                    'fk_competence_domain' => $this->request->getPost('competence_domain')
+                    'id'                    => $operational_competence_id != null ? $operational_competence_id : null,
+                    'symbol'                => $this->request->getPost('symbol'),
+                    'name'                  => $this->request->getPost('name'),
+                    'methodologic'          => $this->request->getPost('methodologic'),
+                    'social'                => $this->request->getPost('social'),
+                    'personal'              => $this->request->getPost('personal'),
+                    'fk_competence_domain'  => $this->request->getPost('competence_domain')
                 );
                 if ($operational_competence_id > 0) {
                     //update
@@ -247,9 +246,7 @@ class CoursePlan extends \App\Controllers\BaseController
                 } else {
                     //insert
                     OperationalCompetenceModel::getInstance()->insert($operational_competence);
-
                 }
-
 
                 if (OperationalCompetenceModel::getInstance()->errors() == null) {
                     //when it's ok
@@ -262,11 +259,11 @@ class CoursePlan extends \App\Controllers\BaseController
 
             }
             $output = array(
-                'title' => lang('plafor_lang.title_operational_competence_' . ((bool)$operational_competence_id ? 'update' : 'new')),
-                'operational_competence' => OperationalCompetenceModel::getInstance()->withDeleted()->find($operational_competence_id),
-                'competence_domains' => $competenceDomains,
-                'competence_domain_id' => $competence_domain_id,
-                'errors' => OperationalCompetenceModel::getInstance()->errors(),
+                'title'                     => lang('plafor_lang.title_operational_competence_' . ((bool)$operational_competence_id ? 'update' : 'new')),
+                'operational_competence'    => OperationalCompetenceModel::getInstance()->withDeleted()->find($operational_competence_id),
+                'competence_domains'        => $competenceDomains,
+                'competence_domain_id'      => $competence_domain_id,
+                'errors'                    => OperationalCompetenceModel::getInstance()->errors(),
             );
 
             return $this->display_view('\Plafor\operational_competence/save', $output);
@@ -282,7 +279,7 @@ class CoursePlan extends \App\Controllers\BaseController
      * @param integer $action                    : Action to apply on the course plan:
      *      - 0 for displaying the confirmation
      *      - 1 for deactivating (soft delete)
-     *      - 2 for deleting (hard delete)
+     *      - 3 for reactivating
      * @return void
      */
     public function delete_operational_competence($operational_competence_id, $action = 0) {
@@ -372,9 +369,9 @@ class CoursePlan extends \App\Controllers\BaseController
             if (count($_POST) > 0) {
                 $objective_id = $this->request->getPost('id');
                 $objective = array(
-                    'symbol' => $this->request->getPost('symbol'),
-                    'taxonomy' => $this->request->getPost('taxonomy'),
-                    'name' => $this->request->getPost('name'),
+                    'symbol'                    => $this->request->getPost('symbol'),
+                    'taxonomy'                  => $this->request->getPost('taxonomy'),
+                    'name'                      => $this->request->getPost('name'),
                     'fk_operational_competence' => $this->request->getPost('operational_competence')
                 );
                 if ($objective_id > 0) {
@@ -382,18 +379,21 @@ class CoursePlan extends \App\Controllers\BaseController
                     ObjectiveModel::getInstance()->update($objective_id, $objective);
                 } else {
                     //insert
-                    $objective_id=ObjectiveModel::getInstance()->insert($objective);
-                    //when we add objective we have to update all students acquisition_status whene operationnal
-                    $userCourses=CoursePlanModel::getUserCourses(
-                        OperationalCompetenceModel::getCompetenceDomain(
-                            ObjectiveModel::getOperationalCompetence(
-                                $objective['fk_operational_competence']
-                            )['fk_competence_domain']
-                        )['fk_course_plan']
-                    );
-                    foreach($userCourses as $userCourse){
-                     AcquisitionStatusModel::getInstance()->insert(['fk_objective'=>$objective_id,'fk_user_course'=>$userCourse['id'],'fk_acquisition_level'=>1]);
-
+                    $objective_id = ObjectiveModel::getInstance()->insert($objective);
+                    //when we add objective we have to update all students acquisition_status when operationnal
+                    if (ObjectiveModel::getInstance()->errors() == null) {
+                        $userCourses=CoursePlanModel::getUserCourses(
+                            OperationalCompetenceModel::getCompetenceDomain(
+                                ObjectiveModel::getOperationalCompetence(
+                                    $objective['fk_operational_competence']
+                                )['fk_competence_domain']
+                            )['fk_course_plan']
+                        );
+                        foreach($userCourses as $userCourse){
+                        AcquisitionStatusModel::getInstance()->insert(['fk_objective'=>$objective_id,'fk_user_course'=>$userCourse['id'],'fk_acquisition_level'=>1]);
+                        }
+                    } else {
+                        $objective_id = 0;
                     }
                 }
                 if (ObjectiveModel::getInstance()->errors() == null) {
@@ -449,10 +449,10 @@ class CoursePlan extends \App\Controllers\BaseController
                 case 1: // Deactivate (soft delete) objective
                     ObjectiveModel::getInstance()->delete($objective_id, FALSE);
                     return redirect()->to(base_url('plafor/courseplan/view_operational_competence/' . $objective['fk_operational_competence']));
-                case 2: // Hard delete
+                case 2: // Delete (hard delete) objective
                     ObjectiveModel::getInstance()->delete($objective_id, TRUE);
                     return redirect()->to(base_url('plafor/courseplan/view_operational_competence/' . $objective['fk_operational_competence']));
-                case 3:
+                case 3: // Reactivate objective
                     ObjectiveModel::getInstance()->withDeleted()->update($objective_id, ['archive' => null]);
                     return redirect()->to(base_url('plafor/courseplan/view_operational_competence/' . $objective['fk_operational_competence']));
                 default: // Do nothing

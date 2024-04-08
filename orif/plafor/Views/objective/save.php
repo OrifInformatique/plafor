@@ -54,7 +54,8 @@ $validation=\CodeIgniter\Config\Services::validation();
         'name' => 'objective_form'
     );
     echo form_open(base_url('plafor/courseplan/save_objective/0/'.($operational_competence_id??'')), $attributes, [
-        'id' => $objective['id'] ?? 0
+        'id' => $objective['id'] ?? 0,
+        'type' => 'objective',
     ]);
     ?>
 

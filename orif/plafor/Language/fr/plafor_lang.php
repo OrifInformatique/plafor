@@ -11,8 +11,9 @@
 return [
 
     //Errors
-    'same_competence_domain' => 'Le domaine de compétence existe déjà',
-    'competence_domain_already_associated' => 'Un domaine de compétences portant le même (nom ou symbole) est déjà associé à ce plan de formation',
+    'same_competence_domain'                => 'Le domaine de compétence existe déjà',
+    'same_operational_competence'           => 'La compétence opérationnelle existe déjà',
+    'same_objective'                        => 'L\'objectif existe déjà',
 
     // Field labels
     'field_identity' => 'id',
@@ -172,7 +173,7 @@ return [
     'field_operational_competence_social'       => 'Compétence sociale',
     'field_operational_competence_personal'     => 'Compétence personnelle',
     'field_objective_operational_competence'    => 'Compétence opérationnelle liée à l\'objectif',
-    'field_objective_symbol'                    => 'Symboles de l\' objectif',
+    'field_objective_symbol'                    => 'Symbole de l\'objectif',
     'field_objectives_symbols'                  => 'Symbole des objectif',
     'field_objective_taxonomy'                  => 'Taxonomie de l\'objectif',
     'field_objectives_taxonomies'               => 'Taxonomie des objectifs',

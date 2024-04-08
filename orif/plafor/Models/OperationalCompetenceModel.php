@@ -26,10 +26,10 @@ class OperationalCompetenceModel extends \CodeIgniter\Model
 
     public function __construct(ConnectionInterface &$db = null, ValidationInterface $validation = null)
     {
-        $this->validationRules=$rules = array(
+        $this->validationRules = array(
             'symbol'=>[
                 'label' => 'plafor_lang.field_operational_competence_symbol',
-                'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH.']'
+                'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH.']|is_symbol_unique[]'
             ],
             'name'=>[
                 'label' => 'plafor_lang.field_operational_competence_name',
