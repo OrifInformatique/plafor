@@ -8,7 +8,7 @@
  */
 ?>
 <?php
-$update = !is_null($comment_id);
+$update = (bool)$comment_id;
 
 // For some reasons, you can only set a type to input made with form_input if done with only a array as param, may need to be checked for later uses.
 $data_comment = array(
@@ -35,7 +35,7 @@ $validation=\CodeIgniter\Config\Services::validation()
         'id'    => 'comment_form',
         'name'  => 'comment_form',
     );
-    echo form_open(base_url('plafor/apprentice/add_comment/'.$acquisition_status['id'].'/'.($comment_id??'')), $attributes);
+    echo form_open(base_url('plafor/apprentice/add_comment/'.$acquisition_status['id'].'/'.$comment_id), $attributes);
     ?>
 
     <!-- ERROR MESSAGES -->

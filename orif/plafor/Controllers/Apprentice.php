@@ -475,7 +475,7 @@ class Apprentice extends \App\Controllers\BaseController
      * @param int $comment_id            : ID of the comment
      * @return void
      */
-    public function add_comment($acquisition_status_id = null, $comment_id = null) {
+    public function add_comment($acquisition_status_id = null, $comment_id = 0) {
         $acquisition_status = AcquisitionStatusModel::getInstance()->find($acquisition_status_id);
 
         // Check access requirements
@@ -492,7 +492,7 @@ class Apprentice extends \App\Controllers\BaseController
                 'date_creation'         => date('Y-m-d H:i:s'),
             );
             // Update existing comment, or create a new one
-            if($comment_id == null)
+            if($comment_id == 0)
                 CommentModel::getInstance()->insert($comment);
             else
                 CommentModel::getInstance()->update($comment_id, $comment);
@@ -503,7 +503,9 @@ class Apprentice extends \App\Controllers\BaseController
             }
         }
 
-        $comment = CommentModel::getInstance()->find($comment_id);
+        if ($comment_id != 0) {
+            $comment = CommentModel::getInstance()->find($comment_id);
+        }
 
         // Data to send to the view
         $output = array(

@@ -41,6 +41,7 @@
                         <th><?= lang('plafor_lang.field_comment'); ?></th>
                         <th><?= lang('plafor_lang.field_comment_creater'); ?></th>
                         <th><?= lang('plafor_lang.field_comment_date_creation'); ?></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,10 +54,7 @@
 				?>
                     <tr>
                         <td><a href="<?= base_url('plafor/apprentice/add_comment/'.$acquisition_status['id'].'/'.$comment['id'])?>"><?= $comment['comment']; ?></a></td>
-						<?php
-						if (isset($trainersSorted[$comment['fk_trainer']])): ?>
-                        <th><?= $trainers[$comment['fk_trainer']]['username']; ?></th>
-						<?php endif; ?>
+                        <th><?= isset($trainersSorted[$comment['fk_trainer']])?$trainers[$comment['fk_trainer']]['username']:''; ?></th>
                         <td><?= $comment['date_creation']; ?></td>
                         <td><a class="bi bi-trash" id="<?=$comment['id']?>" onClick="
                         let obj={yes: '<?= lang('common_lang.yes')?>',no: '<?=lang('common_lang.no')?>',message: '<?=lang('plafor_lang.comment_delete')?>',url: '<?=base_url('plafor/apprentice/delete_comment/'.$comment['id'])?>'};

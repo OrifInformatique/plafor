@@ -44,9 +44,8 @@ class CoursePlan extends \App\Controllers\BaseController
                 $course_plan_id = empty($this->request->getPost('coursePlanId')) ? 0 : $this->request->getPost('coursePlanId');
                 $course_plan = array(
                     'formation_number' => $this->request->getPost('formation_number'),
-                    'official_name' => ' ' . $this->request->getPost('official_name'),
+                    'official_name' => $this->request->getPost('official_name'),
                     'date_begin' => $this->request->getPost('date_begin'),
-                    'id' => $this->request->getPost('id'),
                 );
                 if ($course_plan_id > 0) {
                     CoursePlanModel::getInstance()->update($course_plan_id, $course_plan);
