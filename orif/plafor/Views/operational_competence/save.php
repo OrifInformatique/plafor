@@ -69,7 +69,7 @@ $validation=\CodeIgniter\Config\Services::validation();
         'id' => 'operational_competence_form',
         'name' => 'operational_competence_form'
     );
-    echo form_open(base_url('plafor/courseplan/save_operational_competence/'.($operational_competence['id'] ?? '0').'/'.$competence_domain_id), $attributes, [
+    echo form_open(base_url('plafor/courseplan/save_operational_competence/'.$competence_domain['id'].'/'.($operational_competence['id'] ?? '0')), $attributes, [
         'id' => $operational_competence['id'] ?? 0,
         'type' => 'operational_competence',
     ]);
@@ -79,7 +79,7 @@ $validation=\CodeIgniter\Config\Services::validation();
         <?php
         foreach ($errors!=null?$errors:[] as $error){ ?>
         <div class="alert alert-danger">
-        <?= $error ?>
+            <?= $error ?>
         </div>
         <?php } ?>
 
@@ -107,7 +107,7 @@ $validation=\CodeIgniter\Config\Services::validation();
         <!-- FORM BUTTONS -->
         <div class="row">
             <div class="col text-right">
-                <a class="btn btn-default" href="<?= base_url('plafor/courseplan/view_competence_domain/'.$competence_domain_id) ?>"><?= lang('common_lang.btn_cancel'); ?></a>
+                <a class="btn btn-default" href="<?= base_url('plafor/courseplan/view_competence_domain/'.$competence_domain['id']) ?>"><?= lang('common_lang.btn_cancel'); ?></a>
                 <?= form_submit('save', lang('common_lang.btn_save'), ['class' => 'btn btn-primary']); ?>
             </div>
         </div>

@@ -75,7 +75,7 @@ class Apprentice extends \App\Controllers\BaseController
      * @param $withDeleted : Whether or not to show deleted apprentices
      * @return void
      */
-    public function list_apprentice($withDeleted=0) {
+    public function list_apprentice($withDeleted = 0) {
         $trainer_id = $this->request->getGet('trainer_id');
         if ($trainer_id==null && $this->session->get('user_access')==config('\User\Config\UserConfig')->access_lvl_trainer){
             $trainer_id=$this->session->get('user_id');
@@ -125,12 +125,17 @@ class Apprentice extends \App\Controllers\BaseController
      * @param int $apprentice_id : ID of the apprentice
      * @return void
      */
-    public function view_apprentice($apprentice_id = null) {
-        $apprentice = User_model::getInstance()->find($apprentice_id);
+    public function view_apprentice($apprentice_id = 0) {
+        // Gets data of the user if it exists and is an apprentice
+        $user_type_id = User_type_model::getInstance()->
+            where('access_level', config('\User\Config\UserConfig')->access_level_apprentice)->first()['id'];
+        $apprentice = User_model::getInstance()->where('fk_user_type', $user_type_id)->find($apprentice_id);
 
-        if(is_null($apprentice) || $apprentice['fk_user_type'] != User_type_model::getInstance()->where('name',lang('plafor_lang.title_apprentice'))->first()['id']){
+        // Redirection
+        if(is_null($apprentice)) {
             return redirect()->to(base_url("/plafor/apprentice/list_apprentice"));
         }
+
         $user_courses=[];
         foreach (UserCourseModel::getInstance()->where('fk_user',$apprentice_id)->findAll() as $usercourse) {
             $date_begin = Time::createFromFormat('Y-m-d', $usercourse['date_begin']);
@@ -156,6 +161,7 @@ class Apprentice extends \App\Controllers\BaseController
         foreach (TrainerApprenticeModel::getInstance()->where('fk_apprentice',$apprentice_id)->findAll() as $link)
             $links[$link['id']]=$link;
 
+        // Data to send to the view
         $output = array(
             'title' => lang('plafor_lang.title_view_apprentice'),
             'apprentice' => $apprentice,
@@ -171,19 +177,25 @@ class Apprentice extends \App\Controllers\BaseController
     /**
      * Displays a form to create a link between an apprentice and a course plan
      *
-     * @param int (SQL PRIMARY KEY) $id_user_course : ID of the user's course
+     * @param int $id_apprentice  : ID of the apprentice
+     * @param int $id_user_course : ID of the user's course
      * @return void
      */
-    public function save_user_course($id_apprentice = null,$id_user_course = 0) {
+    public function save_user_course($id_apprentice = 0, $id_user_course = 0) {
+        // Access permissions
         if ($this->session->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer) {
-            $apprentice = User_model::getInstance()->find($id_apprentice);
+            // Gets data of the apprentice and their course, if they exist
+            $user_type_id = User_type_model::getInstance()->
+                where('access_level', config('\User\Config\UserConfig')->access_level_apprentice)->first()['id'];
+            $apprentice = User_model::getInstance()->where('fk_user_type', $user_type_id)->find($id_apprentice);
             $user_course = UserCourseModel::getInstance()->find($id_user_course);
 
-            if ($id_apprentice == null || $apprentice['fk_user_type'] != User_type_model::getInstance()->where('name', lang('plafor_lang.title_apprentice'))->first()['id']) {
+            if (is_null($apprentice)) {
                 return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
                 exit();
             }
 
+            // Actions upon form submission
             if (count($_POST) > 0) {
                 $fk_course_plan = $this->request->getPost('course_plan');
                 $user_course = array(
@@ -269,39 +281,39 @@ class Apprentice extends \App\Controllers\BaseController
      * @param int $id_link       : ID of the link to modify. If 0, adds a new link
      * @return void
      */
-    public function save_apprentice_link($id_apprentice = null, $id_link = null) {
+    public function save_apprentice_link($id_apprentice = 0, $id_link = 0) {
+        // Gets data of the apprentice and the link if they exist
+        $user_type_id = User_type_model::getInstance()->
+            where('access_level', config('\User\Config\UserConfig')->access_level_apprentice)->first()['id'];
+        $apprentice = User_model::getInstance()->where('fk_user_type', $user_type_id)->find($id_apprentice);
+        $link = TrainerApprenticeModel::getInstance()->find($id_link);
 
-        $apprentice = User_model::getInstance()->find($id_apprentice);
-
+        // Access permissions
         if($_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_trainer
-            || $apprentice == null
-            || $apprentice['fk_user_type'] != User_type_model::getInstance()->
-            where('name',lang('plafor_lang.title_apprentice'))->first()['id']){
+            || is_null($apprentice)
+            || !is_null($link) && $link['fk_apprentice'] != $id_apprentice) {
             return redirect()->to(base_url());
         }
 
+        // Actions upon form submission
         if(count($_POST) > 0){
+            // Prepares data for insert of update query
             $apprentice_link = array(
                 'fk_trainer' => $this->request->getPost('trainer'),
                 'fk_apprentice' => $this->request->getPost('apprentice'),
             );
-            $old_link = TrainerApprenticeModel::getInstance()->where('fk_trainer',$apprentice_link['fk_trainer'])->where('fk_apprentice',$apprentice_link['fk_apprentice'])->first();
-            if ($id_link != null) {
-                if (!is_null($old_link)) {
-                    // Delete the old link instead of deleting the one being changed
-                    // It's easier that way
-                    TrainerApprenticeModel::getInstance()->delete($id_link);
-                } else {
-                    TrainerApprenticeModel::getInstance()->update($id_link,$apprentice_link);
-                }
-            } elseif (is_null($old_link)) {
-                // Don't insert a new link that is the same as an old one
+
+            // Checks action to perform
+            if (is_null($link)) {
+                // There is no existing link - inserts a new one
                 TrainerApprenticeModel::getInstance()->insert($apprentice_link);
+            } else {
+                // A link already exists - updates it
+                TrainerApprenticeModel::getInstance()->update($id_link,$apprentice_link);
             }
 
             if(TrainerApprenticeModel::getInstance()->errors()==null){
-                //ok
-                // This is used to prevent an apprentice from being linked to the same person twice
+                // No errors - return to apprentice page
                 return redirect()->to(base_url("plafor/apprentice/view_apprentice/{$id_apprentice}"));
             }
         }
@@ -310,15 +322,13 @@ class Apprentice extends \App\Controllers\BaseController
         // with the matching constitution
 
         $trainersRaw = User_model::getTrainers();
-
         $trainers = array();
 
         foreach ($trainersRaw as $trainer){
             $trainers[$trainer['id']] = $trainer['username'];
         }
 
-        $link = $id_link==null?null:TrainerApprenticeModel::getInstance()->find($id_link);
-
+        // Data to send to the view
         $output = array(
             'title'=>lang('plafor_lang.title_save_apprentice_link'),
             'apprentice' => $apprentice,
@@ -339,16 +349,20 @@ class Apprentice extends \App\Controllers\BaseController
      *  - 1 for deleting (hard delete)
      * @return void
      */
-    public function delete_apprentice_link($link_id, $action = 0) {
-
+    public function delete_apprentice_link($link_id = 0, $action = 0) {
+        // Access permissions
         if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_trainer) {
+            // Gets data related to the link
             $link = TrainerApprenticeModel::getInstance()->find($link_id);
-            $apprentice = TrainerApprenticeModel::getApprentice($link['fk_apprentice']);
-            $trainer = TrainerApprenticeModel::getTrainer($link['fk_trainer']);
+
             if (is_null($link)) {
                 return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
             }
 
+            $apprentice = TrainerApprenticeModel::getApprentice($link['fk_apprentice']);
+            $trainer = TrainerApprenticeModel::getTrainer($link['fk_trainer']);
+
+            // Action to perform
             switch ($action) {
                 case 0: // Display confirmation
                     $output = array(
@@ -365,7 +379,7 @@ class Apprentice extends \App\Controllers\BaseController
                     return redirect()->to(base_url('plafor/apprentice/list_apprentice/' . $apprentice['id']));
             }
         }
-        else{
+        else {
             return $this->display_view('\User\errors\403error');
         }
     }
@@ -376,22 +390,29 @@ class Apprentice extends \App\Controllers\BaseController
      * @param int $acquisition_status_id : ID of the acquisition status to view
      * @return void
      */
-    public function view_acquisition_status($acquisition_status_id = null) {
+    public function view_acquisition_status($acquisition_status_id = 0) {
+        // Gets data related to the acquisition status
         $acquisition_status = AcquisitionStatusModel::getInstance()->find($acquisition_status_id);
+
+        if (is_null($acquisition_status)) {
+            return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
+        }
+
         $objective = AcquisitionStatusModel::getObjective($acquisition_status['fk_objective']);
         $acquisition_level = AcquisitionStatusModel::getAcquisitionLevel($acquisition_status['fk_acquisition_level']);
         $user_course = UserCourseModel::getInstance()->find($acquisition_status['fk_user_course']);
         $apprentice = User_model::getInstance()->find($user_course['fk_user']);
 
-        // Check access rights
-        if($acquisition_status == null
-         || $_SESSION['user_access'] == config('\User\Config\UserConfig')->access_level_apprentice
-         && $apprentice['id'] != $_SESSION['user_id']) {
+        // Access permissions
+        if ($_SESSION['user_access'] == config('\User\Config\UserConfig')->access_level_apprentice
+            && $apprentice['id'] != $_SESSION['user_id']) {
             return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
         }
 
         $comments = CommentModel::getInstance()->where('fk_acquisition_status',$acquisition_status_id)->findAll();
         $trainers = User_model::getTrainers();
+
+        // Data to send to the view
         $output = array(
             'title' => lang('plafor_lang.title_acquisition_status_view'),
             'acquisition_status' => $acquisition_status,
@@ -429,7 +450,6 @@ class Apprentice extends \App\Controllers\BaseController
             $acquisitionLevels[$acquisitionLevel['id']]=$acquisitionLevel['name'];
 
         // Check if data was sent
-
         if (!empty($_POST)) {
             $acquisitionLevel = $this->request->getPost('field_acquisition_level');
             $acquisitionStatus=AcquisitionStatusModel::getInstance()->find($acquisition_status_id);
@@ -475,36 +495,41 @@ class Apprentice extends \App\Controllers\BaseController
      * @param int $comment_id            : ID of the comment
      * @return void
      */
-    public function add_comment($acquisition_status_id = null, $comment_id = 0) {
+    public function add_comment($acquisition_status_id = 0, $comment_id = 0) {
+        // Gets data related to the comment
         $acquisition_status = AcquisitionStatusModel::getInstance()->find($acquisition_status_id);
+        $comment = CommentModel::getInstance()->find($comment_id);
 
-        // Check access requirements
-        if($acquisition_status == null || $_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_trainer){
+        // Access permissions
+        if (is_null($acquisition_status)
+            || is_null($comment) && $comment_id != 0
+            || $_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_trainer) {
             return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
         }
 
-        // Check if form has been sumbitted
+        // Actions upon form submission
         if (count($_POST) > 0) {
-            $comment = array(
+            $new_comment = array(
                 'fk_trainer'            => $_SESSION['user_id'],
                 'fk_acquisition_status' => $acquisition_status_id,
                 'comment'               => $this->request->getPost('comment'),
                 'date_creation'         => date('Y-m-d H:i:s'),
             );
-            // Update existing comment, or create a new one
-            if($comment_id == 0)
-                CommentModel::getInstance()->insert($comment);
-            else
-                CommentModel::getInstance()->update($comment_id, $comment);
+            
+            // Checks action to perform
+            if (is_null($comment)) {
+                // Comment doesn't already exist - inserts it
+                CommentModel::getInstance()->insert($new_comment);
+            } else {
+                // Comment already exists - updates it
+                CommentModel::getInstance()->update($comment_id, $new_comment);
+            }
 
+            // Checks for errors
             if (CommentModel::getInstance()->errors()==null) {
-                //if ok
+                // No error - return to acquisition status page
                 return redirect()->to(base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status['id']));
             }
-        }
-
-        if ($comment_id != 0) {
-            $comment = CommentModel::getInstance()->find($comment_id);
         }
 
         // Data to send to the view
@@ -525,18 +550,21 @@ class Apprentice extends \App\Controllers\BaseController
      * @param int $comment_id : ID of the comment to delete
      * @return void
      */
-    public function delete_comment($comment_id = null) {
+    public function delete_comment($comment_id = 0) {
+        // Creates model object
         $comment_model = CommentModel::getInstance();
 
-        // Check if comment exists in database
-        if (!is_null($comment_id) && isset($comment_model->find($comment_id)['fk_acquisition_status'])) {
-            $acquisition_status_id = $comment_model->find($comment_id)['fk_acquisition_status'] ?? null;
+        // Gets comment array from database
+        $comment = $comment_model->find($comment_id);
 
-            // Delete comment if user has rights
-            if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_trainer) {
+        // Access permissions
+        if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_trainer) {
+            // Check if comment exists in database
+            if (!is_null($comment)) {
+                // Deletes comment
                 $comment_model->delete($comment_id);
+                return redirect()->to(base_url('plafor/apprentice/view_acquisition_status/'.$comment['fk_acquisition_status']));
             }
-            return redirect()->to(base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status_id));
         }
         return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
     }
@@ -575,24 +603,27 @@ class Apprentice extends \App\Controllers\BaseController
      * @param int $id_user_course : ID of the user course to view
      * @return void
      */
-    public function view_user_course($id_user_course = null) {
+    public function view_user_course($id_user_course = 0) {
         $objectives = null;
         $acquisition_levels = null;
         $user_course = UserCourseModel::getInstance()->find($id_user_course);
+
+        // Redirection
         if($user_course == null){
             return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
         }
 
         $apprentice = User_model::getInstance()->find($user_course['fk_user']);
-        if($_SESSION['user_access'] == config('\User\Config\UserConfig')->access_level_apprentice && $apprentice['id'] != $_SESSION['user_id']) {
+
+        // Denies access to apprentices which the course does not belong to
+        if ($_SESSION['user_access'] == config('\User\Config\UserConfig')->access_level_apprentice && $apprentice['id'] != $_SESSION['user_id']) {
             return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
         }
+
         $user_course_status = UserCourseModel::getUserCourseStatus($user_course['fk_status']);
         $course_plan = UserCourseModel::getCoursePlan($user_course['fk_course_plan']);
         $trainers_apprentice = TrainerApprenticeModel::getInstance()->where('fk_apprentice',$apprentice['id'])->findAll();
-        if($user_course == null){
-            return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
-        }
+
         //if url parameters contains filter operationalCompetenceId
         if ($this->request->getGet('operationalCompetenceId')!=null){
             $objectives=[];
@@ -649,10 +680,12 @@ class Apprentice extends \App\Controllers\BaseController
      *      - 2 for deleting (hard delete)
      * @return void
      */
-    public function delete_user($user_id, $action = 0) {
-        // Check if user is admin
+    public function delete_user($user_id = 0, $action = 0) {
+        // Access permissions
         if ($_SESSION['user_access'] == config('\User\Config\UserConfig')->access_lvl_admin) {
+            // Gets data related to the user
             $user = User_model::getInstance()->withDeleted()->find($user_id);
+
             if (is_null($user)) {
                 return redirect()->to(base_url('/user/admin/list_user'));
             }

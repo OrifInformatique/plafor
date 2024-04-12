@@ -35,7 +35,7 @@ $session=\CodeIgniter\Config\Services::session();
     <!-- TITLE -->
     <div class="row">
         <div class="col">
-            <h1 class="title-section"><?= lang('plafor_lang.title_competence_domain_'.($update ? 'update' : 'new')); ?></h1>
+            <h1 class="title-section"><?= $title; ?></h1>
         </div>
     </div>
     
@@ -45,7 +45,7 @@ $session=\CodeIgniter\Config\Services::session();
         'id' => 'competence_domain_form',
         'name' => 'competence_domain_form'
     );
-    echo form_open(base_url('plafor/courseplan/save_competence_domain/0'), $attributes, [
+    echo form_open(base_url('plafor/courseplan/save_competence_domain/'.$fk_course_plan_id.'/'.$competence_domain_id), $attributes, [
         'id' => $competence_domain['id'] ?? 0,
         'type' => 'competence_domain',
     ]);

@@ -9,6 +9,13 @@
 ?>
 <?php helper('form'); ?>
 <div class="container">
+    <!-- TITLE -->
+    <div class="row">
+        <div class="col">
+            <h2 class="title-section"><?= $title; ?></h2>
+        </div>
+    </div>
+
      <?=view('\Plafor\templates\navigator',['title'=>lang('plafor_lang.details_competence_domain')])?>
     <div class="row">
         <div class="col-12">
@@ -38,7 +45,7 @@
         <div class="col-12">
             <div class="col-sm-12 text-right d-flex justify-content-between">
             <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
-                <a href="<?=base_url('plafor/courseplan/save_operational_competence/0/'.$competence_domain['id'])?>" class="btn btn-primary"><?=lang('common_lang.btn_new_f')?></a>
+                <a href="<?=base_url('plafor/courseplan/save_operational_competence/'.$competence_domain['id'].'/0')?>" class="btn btn-primary"><?=lang('common_lang.btn_new_f')?></a>
             <?php endif?>
                 <span>
                 <?=form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted', ['class' => 'form-check-label','style'=>'padding-right:30px']);?>
@@ -50,18 +57,21 @@
             <?php
             $datas=[];
             foreach (\Plafor\Models\CompetenceDomainModel::getOperationalCompetences($competence_domain['id'],$with_archived) as $operational_competence){
-                $datas[]=['id'=>$operational_competence['id'],'symbol'=>$operational_competence['symbol'],'opComp'=>$operational_competence['name']];
+                $datas[] = [
+                    'id'        =>$operational_competence['id'],
+                    'symbol'    =>$operational_competence['symbol'],
+                    'opComp'    =>$operational_competence['name']
+                ];
             }
-            ?>
-
-            <?= view('Common\Views\items_list',[
+            
+            echo view('Common\Views\items_list',[
                 'columns'=>[
                     'symbol'=>lang('plafor_lang.symbol'),
                     'opComp'=>lang('plafor_lang.operational_competence')
                 ],
                 'items'=>$datas,
                 'primary_key_field'=>'id',
-                'url_update'=>'plafor/courseplan/save_operational_competence/',
+                'url_update'=>'plafor/courseplan/save_operational_competence/'.$competence_domain['id'].'/',
                 'url_delete'=>'plafor/courseplan/delete_operational_competence/',
                 'url_detail'=>'plafor/courseplan/view_operational_competence/',
             ])?>

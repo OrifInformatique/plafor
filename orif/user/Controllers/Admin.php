@@ -157,7 +157,6 @@ class Admin extends BaseController
                     'title' => lang('user_lang.title_user_delete')
                 );
                 return $this->display_view('\User\admin\delete_user', $output);
-                break;
             case 1: // Deactivate (soft delete) user
                 if ($_SESSION['user_id'] != $user['id']) {
                     $this->user_model->delete($user_id, FALSE);
