@@ -20,6 +20,7 @@ use Plafor\Models\TrainerApprenticeModel;
 use Plafor\Models\UserCourseModel;
 use Plafor\Models\UserCourseStatusModel;
 use User\Models\User_model;
+use User\Models\User_type_model;
 
 class CoursePlan extends \App\Controllers\BaseController
 {
@@ -41,6 +42,7 @@ class CoursePlan extends \App\Controllers\BaseController
         $this->user_course_status_model = UserCourseStatusModel::getInstance();
         $this->trainer_apprentice_model = TrainerApprenticeModel::getInstance();
         $this->user_model = User_model::getInstance();
+        $this->user_type_model = User_type_model::getInstance();
     }
 
     /**
@@ -60,9 +62,9 @@ class CoursePlan extends \App\Controllers\BaseController
             if (count($_POST) > 0) {
                 // Data to insert or update
                 $new_course_plan = array(
-                    'formation_number' => $this->request->getPost('formation_number'),
-                    'official_name' => $this->request->getPost('official_name'),
-                    'date_begin' => $this->request->getPost('date_begin'),
+                    'formation_number'  => $this->request->getPost('formation_number'),
+                    'official_name'     => $this->request->getPost('official_name'),
+                    'date_begin'        => $this->request->getPost('date_begin'),
                 );
 
                 // Query to perform
@@ -81,9 +83,9 @@ class CoursePlan extends \App\Controllers\BaseController
                 } else {
                     // Error - autofills form with pre-submitted values
                     $lastDatas = array(
-                        'formation_number' => $this->request->getPost('formation_number'),
-                        'official_name' => $this->request->getPost('official_name'),
-                        'date_begin' => $this->request->getPost('date_begin')
+                        'formation_number'  => $this->request->getPost('formation_number'),
+                        'official_name'     => $this->request->getPost('official_name'),
+                        'date_begin'        => $this->request->getPost('date_begin')
                     );
                 }
             }
@@ -91,9 +93,9 @@ class CoursePlan extends \App\Controllers\BaseController
             // Data to send to the view
             $formTitle = !is_null($course_plan) ? 'update' : 'new';
             $output = array(
-                'title' => (lang('plafor_lang.title_course_plan_' . $formTitle)),
-                'course_plan' => !empty($lastDatas) ? $lastDatas : $course_plan,
-                'errors' => $this->course_plan_model->errors(),
+                'title'         => (lang('plafor_lang.title_course_plan_' . $formTitle)),
+                'course_plan'   => !empty($lastDatas) ? $lastDatas : $course_plan,
+                'errors'        => $this->course_plan_model->errors(),
             );
             return $this->display_view('\Plafor\course_plan\save', $output);
         } else {
@@ -488,11 +490,11 @@ class CoursePlan extends \App\Controllers\BaseController
                 $operationalCompetences[$operationalCompetence['id']] = $operationalCompetence['name'];
             }
             $output = array(
-                'title' => lang('plafor_lang.title_objective_' . (is_null($objective) ? 'new' : 'update')),
-                'objective' => $objective,
-                'operational_competences' => $operationalCompetences,
+                'title'                     => lang('plafor_lang.title_objective_' . (is_null($objective) ? 'new' : 'update')),
+                'objective'                 => $objective,
+                'operational_competences'   => $operationalCompetences,
                 'operational_competence_id' => $operational_comp_id,
-                'errors' => $this->objective_model->errors(),
+                'errors'                    => $this->objective_model->errors(),
             );
 
             return $this->display_view('\Plafor\objective/save', $output);
@@ -560,32 +562,40 @@ class CoursePlan extends \App\Controllers\BaseController
      * @param boolean $with_archived : Whether or not to include archived course plans
      * @return void
      */
-    public function list_course_plan($id_apprentice = null, $with_archived=false) {
-        $this->request->getGet('wa')!=null?$with_archived=$this->request->getGet('wa'):null;
-        $id_apprentice==0?$id_apprentice = null:null;
+    public function list_course_plan($id_apprentice = 0, $with_archived = false) {
+        // Checks if the soft deleted course plans should be displayed
+        $with_archived = $this->request->getGet('wa') ?? false;
 
-        if ($id_apprentice == null) {
+        // Gets data of the user if it exists and is an apprentice
+        $user_type_id = $this->user_type_model->
+            where('access_level', config('\User\Config\UserConfig')->access_level_apprentice)->first()['id'];
+        $apprentice = $this->user_model->where('fk_user_type', $user_type_id)->withDeleted()->find($id_apprentice);
+
+        // Gets data of the course plans depending on whether an apprentice is selected or not
+        if (is_null($apprentice)) {
+            // Apprentice is selected
             $course_plans = $this->course_plan_model->withDeleted($with_archived)->findAll();
         } else {
+            // No apprentice is selected
             $userCourses = $this->user_course_model->getWhere(['fk_user'=>$id_apprentice])->getResult();
-
             $coursesId = array();
 
             foreach ($userCourses as $userCourse){
                 $coursesId[] = $userCourse->fk_course_plan;
             }
 
-            //$course_plans = $this->course_plan_model->get_many($coursesId);
-            $course_plans=$this->course_plan_model->whereIn('id',count($coursesId)==0?[null]:$coursesId)->findAll();
+            // $course_plans = $this->course_plan_model->get_many($coursesId);
+            $course_plans = $this->course_plan_model->whereIn('id',count($coursesId)==0?[null]:$coursesId)->findAll();
         }
 
+        // Data to send to the view
         $output = array(
-            'title' =>  lang('plafor_lang.title_list_course_plan'),
-            'course_plans' => $course_plans,
+            'title'         => lang('plafor_lang.title_list_course_plan'),
+            'course_plans'  => $course_plans,
             'with_archived' => $with_archived
         );
 
-        if(is_numeric($id_apprentice)){
+        if (is_numeric($id_apprentice)) {
             $output[] = ['course_plans' => $course_plans];
         }
 
