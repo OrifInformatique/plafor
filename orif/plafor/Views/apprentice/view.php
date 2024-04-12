@@ -28,6 +28,12 @@
         }
     }
     ?>
+    <!-- TITLE -->
+    <div class="row">
+        <div class="col">
+            <h2 class="title-section"><?= $title; ?></h2>
+        </div>
+    </div>
     <!-- Apprentice details -->
     <div class="row">
         <div class="col-md-12">

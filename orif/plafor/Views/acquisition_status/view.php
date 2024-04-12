@@ -9,6 +9,12 @@
 ?>
 <div class="container">
     <?=view('\Plafor\templates\navigator',['title'=>lang('plafor_lang.title_view_acquisition_status')])?>
+    <!-- TITLE -->
+    <div class="row">
+        <div class="col">
+            <h2 class="title-section"><?= $title; ?></h2>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-12">
             <p class="bg-primary text-white"><?=lang('plafor_lang.details_acquisition_status')?></p>

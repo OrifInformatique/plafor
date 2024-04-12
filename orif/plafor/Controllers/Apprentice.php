@@ -401,7 +401,6 @@ class Apprentice extends \App\Controllers\BaseController
                         'link'          => $link,
                         'apprentice'    => $apprentice,
                         'trainer'       => $trainer,
-                        'title'         => lang('plafor_lang.title_apprentice_link_delete')
                     );
                     return $this->display_view('\Plafor\apprentice/delete', $output);
                 case 1: // Deletes apprentice link
@@ -448,7 +447,7 @@ class Apprentice extends \App\Controllers\BaseController
 
         // Data to send to the view
         $output = array(
-            'title'                 => lang('plafor_lang.title_acquisition_status_view'),
+            'title'                 => lang('plafor_lang.title_view_acquisition_status'),
             'acquisition_status'    => $acquisition_status,
             'trainers'              => $trainers,
             'comments'              => $comments,
@@ -699,7 +698,7 @@ class Apprentice extends \App\Controllers\BaseController
 
         // Data to send to the view
         $output = array(
-            'title'                 => lang('plafor_lang.title_user_course_view'),
+            'title'                 => lang('plafor_lang.title_view_user_course'),
             'user_course'           => $user_course,
             'apprentice'            => $apprentice,
             'user_course_status'    => $user_course_status,

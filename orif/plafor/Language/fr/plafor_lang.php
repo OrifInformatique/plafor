@@ -68,7 +68,7 @@ return [
 
     //User course
     'title_user_course_delete'      => 'Supprimer un cours',
-    'title_user_course_view'        => 'Détails du cours',
+    'title_user_course_view'        => 'Détail du cours',
     'title_user_course_plan_link'   => 'Ajouter un cours associé',
 
     //Acquisition status
@@ -125,7 +125,7 @@ return [
     'title_apprentice_link_update'          => 'Modifer le formateur',
     'title_apprentice_link_new'             => 'Ajouter un formateur',
     'title_apprentice_link_delete'          => 'Supprimer le formateur',
-    'title_view_acquisition_status'         => 'Détails du statut d\'acquisition',
+    'title_view_acquisition_status'         => 'Détail du statut d\'acquisition',
     'title_acquisition_status_list'         => 'Liste des statuts d\'acquisition',
     'title_acquisition_status_update'       => 'Modifer le statut d\'acquisition',
     'title_acquisition_status_new'          => 'Ajouter un statut d\'acquisition',
@@ -234,7 +234,7 @@ return [
     'user_course_delete_explanation'                => 'Toutes les informations concernant cette formation liée seront supprimées.',
     'user_course_disable'                           => 'Désactiver cette formation liée',
     'user_course_disable_explanation'               => 'Toutes les informations concernant cette formation liée seront désactivées.',
-    'apprentice_link'                               => 'Apprenti et formateur lié',
+    'apprentice_link'                               => 'Apprenti et formateur liés',
     'apprentice_link_delete'                        => 'Supprimer le lien entre cet apprenti et ce formateur',
     'apprentice_link_delete_explanation'            => 'Toutes les informations concernant le lien entre cet apprenti et ce formateur seront supprimées.',
     'apprentice_link_disable'                       => 'Désactiver le lien entre cet apprenti et ce formateur',
