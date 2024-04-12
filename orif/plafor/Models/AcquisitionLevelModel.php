@@ -33,12 +33,5 @@ class AcquisitionLevelModel extends Model{
             AcquisitionLevelModel::$acquisitionLevelModel=new AcquisitionLevelModel();
         return AcquisitionLevelModel::$acquisitionLevelModel;
     }
-
 }
-
-
-
-
-
-
 ?>

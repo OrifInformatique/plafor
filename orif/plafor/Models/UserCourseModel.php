@@ -80,7 +80,4 @@ class UserCourseModel extends \CodeIgniter\Model
     public static function getAcquisitionStatus($userCourseId){
         return AcquisitionStatusModel::getInstance()->where('fk_user_course',$userCourseId)->findAll();
     }
-
-
-
 }

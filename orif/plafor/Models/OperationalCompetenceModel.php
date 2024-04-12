@@ -83,5 +83,4 @@ class OperationalCompetenceModel extends \CodeIgniter\Model
             return OperationalCompetenceModel::getInstance()->where('fk_competence_domain', $competence_domain_id)->withDeleted($with_archived)->findall();
         }
     }
-
 }

@@ -147,15 +147,6 @@ class CoursePlanModel extends Model{
             }
 
         return $coursePlans;
-
-
-
-
-
-
-
     }
 }
-
-
 ?>

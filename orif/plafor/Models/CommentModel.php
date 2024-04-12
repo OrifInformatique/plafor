@@ -57,10 +57,4 @@ class CommentModel extends Model{
         return AcquisitionStatusModel::getInstance()->find($fkAcquisitionStatusId);
     }
 }
-
-
-
-
-
-
 ?>

@@ -64,10 +64,4 @@ class AcquisitionStatusModel extends Model{
 
     }
 }
-
-
-
-
-
-
 ?>

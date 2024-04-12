@@ -78,6 +78,4 @@ class ObjectiveModel extends \CodeIgniter\Model
             return ObjectiveModel::getInstance()->where('fk_operational_competence', $operational_competence_id)->withDeleted($with_archived)->findAll();
         }
     }
-
-
 }
