@@ -11,6 +11,13 @@
 helper('form');
 ?>
 <div class="container">
+    <!-- TITLE -->
+    <div class="row">
+        <div class="col">
+            <h2 class="title-section"><?= $title; ?></h2>
+        </div>
+    </div>
+
     <?=view('\Plafor\templates\navigator',['title'=>lang('plafor_lang.title_view_operational_competence')])?>
     <div class="row">
         <div class="col-md-12">
@@ -113,6 +120,7 @@ helper('form');
                     <td><?=$objective['name']?></td>
 
                 <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
+                    <td><a href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id']); ?>"><i class="bi bi-card-text"></i></a></td>
                     <td><a href="<?= base_url('plafor/courseplan/save_objective/'.$objective['id'].'/'.$operational_competence['id']); ?>"><i class="bi bi-pencil"></i></a></td>
                     <td><a href="<?= base_url('plafor/courseplan/delete_objective/'.$objective['id']); ?>" class="<?=$operational_competence['archive']==null?'bi bi-trash':'bi bi-reply-all-fill'?>"></td>
                 <?php endif;?>

@@ -9,6 +9,13 @@
 ?>
 <?php helper('form'); ?>
 <div class="container">
+    <!-- TITLE -->
+    <div class="row">
+        <div class="col">
+            <h2 class="title-section"><?= $title; ?></h2>
+        </div>
+    </div>
+
     <?=view('\Plafor\templates\navigator',['title'=>lang('plafor_lang.title_view_course_plan')])?>
     <div class="row">
         <div class="col-12">
@@ -57,7 +64,7 @@
                 'url_update'=>'plafor/courseplan/save_competence_domain/'.$course_plan['id'].'/',
                 'url_delete'=>'plafor/courseplan/delete_competence_domain/',
                 'url_detail'=>'plafor/courseplan/view_competence_domain/',
-                ])?>
+                ]);?>
         </div>
     </div>
 </div>

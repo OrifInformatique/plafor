@@ -24,17 +24,23 @@ foreach ($courses as $course){
 ?>
 <div id="page-content-wrapper">
     <div class="container">
+        <!-- TITLE -->
+        <div class="row">
+            <div class="col">
+                <h1 class="title-section"><?= lang('plafor_lang.title_course_plan_'.(is_null($course_plan['archive'])?'delete':'enable')); ?></h1>
+            </div>
+        </div>
         <div class="row">
             <div class="col-12">
                 <div>
-                    <h1><?=count($apprentices)>0?lang('plafor_lang.apprentices_already_assigned_to_course_plan'):''?></h1>
+                    <h2><?=count($apprentices)>0?lang('plafor_lang.apprentices_already_assigned_to_course_plan'):''?></h2>
                     <?php
                     foreach ($apprentices as $apprentice):
                     ?>
                         <h3><?= ' "'.$apprentice['username'].'"'. lang('plafor_lang.with_status') ?> "<?=\Plafor\Models\UserCourseStatusModel::getInstance()->find(\Plafor\Models\UserCourseModel::getInstance()->where('fk_user',$apprentice['id'])->where('fk_course_plan',$course_plan['id'])->first()['fk_status'])['name']?>"</h3>
 
                     <?php endforeach;?>
-                    <h1><?=lang('plafor_lang.course_plan').' '?></h1>
+                    <h2><?=lang('plafor_lang.course_plan').' '?></h2>
                     <h3><?='"'.$course_plan['official_name'].'"' ?></h3>
                     <?php if (count($userCourseStatus)>0&&isset($userCourseStatus[0])&&$userCourseStatus[0]!=null){?>
                     <h1></h1>

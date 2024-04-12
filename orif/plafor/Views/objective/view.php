@@ -1,4 +1,11 @@
 <div class="container">
+    <!-- TITLE -->
+    <div class="row">
+        <div class="col">
+            <h2 class="title-section"><?= $title; ?></h2>
+        </div>
+    </div>
+
     <?=view('\Plafor\templates\navigator',['title'=>lang('plafor_lang.title_view_objective')])?>
 
     <div class="row">
