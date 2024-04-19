@@ -10,6 +10,8 @@ use CodeIgniter\HTTP\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use CodeIgniter\HTTP\Response;
 
+use Common\Exceptions\AccessDeniedException;
+
 /**
  * Class BaseController
  *
@@ -71,10 +73,7 @@ abstract class BaseController extends Controller
         
         // Check permission on construct
         if (!$this->check_permission()) {
-            echo $this->display_view('\User\errors\403error');
-            exit();
-            //throw new \Exception("some message here",403);
-            //show_error(lang('msg_err_access_denied_message'), 403, lang('msg_err_access_denied_header'));
+            throw AccessDeniedException::forPageAccessDenied();
         }
     }
 
@@ -109,7 +108,7 @@ abstract class BaseController extends Controller
             // check if user is logged in, if not access is not allowed
             if ($_SESSION['logged_in'] != true) {
                 // The usual redirect()->to() doesn't work here. Keep this kind of redirect.
-                return $this->response->redirect(base_url('user/auth/login'));
+                return false;
             }
             // check if page is accessible for all logged in users
             elseif ($required_level == "@") {
@@ -142,6 +141,11 @@ abstract class BaseController extends Controller
         // If not defined in $data, set page title to empty string
         if (!isset($data['title'])) {
             $data['title'] = '';
+        }
+                
+        // If not defined in $data, set after login redirect URL to base URL
+        if (!isset($data['after_login_redirect'])) {
+            $data['after_login_redirect'] = current_url();
         }
 
         // Add common headers to the view

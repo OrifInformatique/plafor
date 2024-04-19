@@ -17,6 +17,9 @@ class UserConfig extends BaseConfig
     public $access_lvl_trainer          = 2;
     public $access_level_apprentice     = 1;
 
+    /* Used for unit tests */
+    public $access_lvl_registered       = 1;
+
     /* Default access level for Azure logged in users */
     public $azure_default_access_lvl    = 1;
 

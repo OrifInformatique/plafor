@@ -29,9 +29,6 @@
     <!-- Bootstrap  -->
     <!-- Orif Bootstrap CSS personalized with https://bootstrap.build/app -->
     <link rel="stylesheet" href="<?= base_url("css/bootstrap.min.css"); ?>" />
-    <link rel="stylesheet" href="<?= base_url("css/progressview.css"); ?>" />
-    <link rel="stylesheet" href="<?= base_url("css/progressview_accordion.css"); ?>" />
-
     <!-- Bootstrap icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <!-- jquery, popper and Bootstrap javascript -->
@@ -49,7 +46,6 @@
 
     <!-- Application styles -->
     <link rel="stylesheet" href="<?= base_url("css/MY_styles.css"); ?>" />
-    <link rel="stylesheet" href="<?= base_url("css/progressbarstyle.css"); ?>" />
 </head>
 <body>
     <?php
