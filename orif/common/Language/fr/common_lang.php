@@ -31,7 +31,10 @@ return[
     'btn_reactivate'                 => 'Réactiver',
     'btn_show_disabled'              => 'Afficher les éléments désactivés',
     'btn_delete'                     => 'Supprimer',
+    'btn_hard_delete'                => 'Supprimer définitivement',
     'btn_search'                     => 'Rechercher',
+    'btn_restore'                    => 'Restaurer',
+    'btn_copy'                       => 'Dupliquer',
 
 // Other common texts
     'yes'                            => 'Oui',
@@ -43,5 +46,5 @@ return[
     'initialize'                     => 'Initialiser',
     'for'                            => 'Pour',
     'click_on_the_button'            => 'Cliquez sur le bouton',
-    'above'                          => 'Ci-dessous'
+    'above'                          => 'Ci-dessous',
 ];
