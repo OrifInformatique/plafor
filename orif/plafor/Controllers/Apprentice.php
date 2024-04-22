@@ -38,9 +38,9 @@ class Apprentice extends \App\Controllers\BaseController
      * Method to initialize controller attributes
      */
     public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger) {
-        $this->access_level=config('\User\Config\UserConfig')->access_level_apprentice;
+        $this->access_level = "*";
         parent::initController($request, $response, $logger);
-        $this->validation=Services::validation();
+        $this->validation = Services::validation();
 
         // Loads required models
         $this->acquisition_lvl_model = AcquisitionLevelModel::getInstance();
