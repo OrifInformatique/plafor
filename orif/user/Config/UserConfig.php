@@ -22,6 +22,7 @@ class UserConfig extends BaseConfig
 
     /* Access levels for unit tests */
     public $access_lvl_registered       = 1;
+    public $access_lvl_guest            = 1;
 
     /* Validation rules */
     public $username_min_length         = 3;

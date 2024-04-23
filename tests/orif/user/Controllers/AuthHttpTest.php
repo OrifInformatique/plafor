@@ -63,7 +63,6 @@ class AuthHttpTest extends CIUnitTestCase
         $noAzureMail = 'fake@fake.fake';
         $userModel = model(User_model::class);
         $userModel->update($userId, ['email' => $noAzureMail]);
-        d($userModel->find($userId));
         $_POST['user_verification_code'] = null;
         $_SESSION['verification_code'] = null;
         # $_SESSION['verification_attempts'] = 3;
@@ -84,7 +83,6 @@ class AuthHttpTest extends CIUnitTestCase
         $noAzureMail = 'fake@fake.fake';
         $userModel = model(User_model::class);
         $userModel->update($userId, ['email' => $noAzureMail]);
-        d($userModel->findAll());
         $_POST['user_verification_code'] = 'correct';
         $_SESSION['verification_code'] = 'correct';
         # $_SESSION['verification_attempts'] = 3;

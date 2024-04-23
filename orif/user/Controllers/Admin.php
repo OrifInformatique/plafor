@@ -39,7 +39,6 @@ class Admin extends BaseController
         $this->user_type_model = new User_type_model();
         //get db instance
         $this->db = \CodeIgniter\Database\Config::connect();
-
     }
 
     /**
