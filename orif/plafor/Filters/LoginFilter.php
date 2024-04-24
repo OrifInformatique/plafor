@@ -40,12 +40,10 @@ class LoginFilter implements \CodeIgniter\Filters\FilterInterface
                     }
                 }
             }
-        }catch (\mysqli_sql_exception $e){
+        } catch (\mysqli_sql_exception $e){
 
         }
         return $this->redirectToPlaforDeleteUser();
-
-
     }
 
     /**
@@ -60,9 +58,13 @@ class LoginFilter implements \CodeIgniter\Filters\FilterInterface
      *of using user/admin/delete_user
      * @return RedirectResponse
      */
-    private function redirectToPlaforDeleteUser(){
-        if((boolean)strpos($_SERVER['REQUEST_URI'],'user/admin/delete_user')){
-            $value=str_replace('plafor/public/user/admin/delete_user','plafor/apprentice/delete_user',$_SERVER['REQUEST_URI']);
+    private function redirectToPlaforDeleteUser()
+    {
+        helper('uri');
+        $uri = service('uri')->getPath();
+
+        if((boolean)strpos($uri,'user/admin/delete_user')){
+            $value=str_replace('plafor/public/user/admin/delete_user','plafor/apprentice/delete_user',$uri);
             return redirect()->to(base_url($value));
         }
     }

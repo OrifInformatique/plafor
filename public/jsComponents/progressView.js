@@ -144,12 +144,12 @@ var ProgressView = function (_React$Component) {
                                     React.createElement(
                                         'th',
                                         { style: { width: '13%' } },
-                                        'competence domain'
+                                        'Domaine de compétence'
                                     ),
                                     React.createElement(
                                         'th',
                                         { colSpan: 21 },
-                                        'operational competences'
+                                        'Compétences opérationnelles'
                                     ),
                                     React.createElement('i', { className: 'bi bi-x-circle-fill', id: 'exitdetails', onClick: function onClick() {
                                             _this2.props.callback();
