@@ -155,7 +155,7 @@ class Auth extends BaseController {
         
         // setup
         $email = \Config\Services::email();
-                
+
         $emailConfig = [
             'protocol' => getenv('PROTOCOL'),
             'SMTPHost' => getenv('SMTP_HOST'),
@@ -167,7 +167,7 @@ class Auth extends BaseController {
         $email->initialize($emailConfig);
 
         // Sending code to user's mail
-        $email->setFrom('smtp@sectioninformatique.ch', 'Plafor'); 
+        $email->setFrom('smtp@sectioninformatique.ch', lang('common_lang.page_prefix')); 
         $email->setTo($form_email);
         $email->setSubject('Code de vérification');
         $email->setMessage('Voici votre code de vérification: '.$verification_code);
@@ -332,7 +332,7 @@ class Auth extends BaseController {
                 }
 
                 $output = array(
-                    'title' => lang('user_lang.title_page_login'),
+                    'title' => lang('user_lang.title_register_account'),
                     'correspondingEmail' => $correspondingEmail,
                     'ci_user' => $ci_user_azure,
                     'userdata' => $userdata);
