@@ -18,6 +18,9 @@ class AdminPanelConfig extends \CodeIgniter\Config\BaseConfig
      *  Syntax : ['label'=>'tab label','pageLink'=>'tab link']
     */
     public $tabs=[
-        ['label'=>'user_lang.title_user_list', 'pageLink'=>'user/admin/list_user'],
+        /** eg... */
+        ['label'=>'user_lang.title_user_list','title'=>'user_lang.title_user_list','pageLink'=>'user/admin/list_user'],
+        ['label'=>'plafor_lang.title_my_apprentices','title'=>'plafor_lang.title_apprentice_list','pageLink'=>'plafor/apprentice/list_apprentice'],
+        ['label'=>'plafor_lang.admin_course_plans','title'=>'plafor_lang.admin_course_plans','pageLink'=>'plafor/courseplan/list_course_plan'],
     ];
 }

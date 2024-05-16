@@ -39,7 +39,6 @@ class Admin extends BaseController
         $this->user_type_model = new User_type_model();
         //get db instance
         $this->db = \CodeIgniter\Database\Config::connect();
-
     }
 
     /**
@@ -51,8 +50,7 @@ class Admin extends BaseController
     public function list_user(?bool $with_deleted = FALSE): string
     {
         if ($with_deleted) {
-            $users = $this->user_model->orderBy('username')->withDeleted()
-                   ->findAll();
+            $users = $this->user_model->orderBy('username')->withDeleted()->findAll();
         } else {
             $users = $this->user_model->orderBy('username')->findAll();
         }
@@ -158,7 +156,6 @@ class Admin extends BaseController
                     'title' => lang('user_lang.title_user_delete')
                 );
                 return $this->display_view('\User\admin\delete_user', $output);
-                break;
             case 1: // Deactivate (soft delete) user
                 if ($_SESSION['user_id'] != $user['id']) {
                     $this->user_model->delete($user_id, FALSE);

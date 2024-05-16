@@ -9,10 +9,10 @@
 
 return[
 // Application name
-    'app_title'                      => 'Titre de l\'application',
+    'app_title'                      => 'Gestion des plans de formation',
 
 // Page titles
-    'page_prefix'                    => 'Packbase V4',
+    'page_prefix'                    => 'Plafor',
 
 // Buttons
     'btn_admin'                      => 'Administration',

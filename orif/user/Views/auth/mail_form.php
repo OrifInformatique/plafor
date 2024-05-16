@@ -10,7 +10,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-6 col-sm-10">
-            <legend><?= lang('user_lang.title_register_account'); ?></legend>
+            <legend><?= $title; ?></legend>
             <?php
                 $session=\Config\Services::session();
                 $attributes = array("class" => "form-horizontal",

@@ -44,10 +44,11 @@ class Auth extends BaseController {
         
     }
 
-    function errorhandler($data) {
+    private function errorhandler(?string $message=null): string
+    {
+        $data['Exception'] = $message;
         $data['title'] = 'Azure error';
-        echo $this->display_view('\User\errors\azureErrors', $data);
-        exit();
+        return $this->display_view('\User\errors\azureErrors', $data);
     }
 
     public function processMailForm() {
@@ -154,7 +155,7 @@ class Auth extends BaseController {
         
         // setup
         $email = \Config\Services::email();
-                
+
         $emailConfig = [
             'protocol' => getenv('PROTOCOL'),
             'SMTPHost' => getenv('SMTP_HOST'),
@@ -165,8 +166,8 @@ class Auth extends BaseController {
 
         $email->initialize($emailConfig);
 
-        // Sending code to user's  mail
-        $email->setFrom('smtp@sectioninformatique.ch', 'packbase'); 
+        // Sending code to user's mail
+        $email->setFrom('smtp@sectioninformatique.ch', lang('common_lang.page_prefix')); 
         $email->setTo($form_email);
         $email->setSubject('Code de vérification');
         $email->setMessage('Voici votre code de vérification: '.$verification_code);
@@ -182,7 +183,7 @@ class Auth extends BaseController {
 
         // Setting up default azure access level
         $default_access_level = $user_config->azure_default_access_lvl;
-        $new_user_type =  $user_type_model->where("access_level = ".$default_access_level)->first();
+        $new_user_type = $user_type_model->where("access_level = ".$default_access_level)->first();
 
         // Generating username
         $username_max_length = $user_config->username_max_length;
@@ -190,11 +191,11 @@ class Auth extends BaseController {
         $new_username = substr($new_username[0], 0, $username_max_length);
 
         // Generating a random password
-        $password_max_lenght = $user_config->password_max_length;
+        $password_max_length = $user_config->password_max_length;
         $new_password = '';
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+-={}[]|:;"<>,.?/~`';
 
-        for ($i = 0; $i < $password_max_lenght; $i++) {
+        for ($i = 0; $i < $password_max_length; $i++) {
             $new_password .= $characters[rand(0, strlen($characters) - 1)];
         }
 
@@ -215,8 +216,8 @@ class Auth extends BaseController {
      *
      * @return void
      */
-    public function azure_login() {
-
+    public function azure_login(): string|Response
+    {
         $client_id = getenv('CLIENT_ID');
         $client_secret = getenv('CLIENT_SECRET');
         $ad_tenant = getenv('TENANT_ID');
@@ -234,14 +235,11 @@ class Auth extends BaseController {
             $url .= "&approval_prompt=auto";
             $url .= "&client_id=" . $client_id;
             $url .= "&redirect_uri=" . urlencode($redirect_uri);
-            header("Location: " . $url);  // Redirection to Microsoft's login page
+            return redirect()->to($url); // Redirection to Microsoft's login page
 
         // Second stage of the authentication process
         } elseif (isset($_GET["error"])) {
-
-            $data['Exception'] = null;
-            $this->errorhandler($data);
-
+            return $this->errorhandler();
         //Checking that the session_id matches to the state for security reasons
         } elseif (strcmp(session_id(), $_GET["state"]) == 0) {
             
@@ -253,13 +251,13 @@ class Auth extends BaseController {
             $content .= "&client_secret=" . urlencode($client_secret);
             $options = array(
                 "http" => array(  //Use "http" even if you send the request with https
-                "method"  => "POST",
-                "header"  => "Content-Type: application/x-www-form-urlencoded\r\n" .
-                    "Content-Length: " . strlen($content) . "\r\n",
-                "content" => $content
+                    "method"  => "POST",
+                    "header"  => "Content-Type: application/x-www-form-urlencoded\r\n" .
+                        "Content-Length: " . strlen($content) . "\r\n",
+                    "content" => $content
                 )
             );
-            $context  = stream_context_create($options);
+            $context = stream_context_create($options);
 
             // Special error handler to verify if "client secret" is still valid
             try {
@@ -267,45 +265,42 @@ class Auth extends BaseController {
             } catch (\Exception $e) {
                 $data['title'] = 'Azure error';
                 $data['Exception'] = $e;
-                echo $this->display_view('\User\errors\401error', $data);
-                exit();
-            };
+                return $this->display_view('\User\errors\401error', $data);
+            }
 
             if ($json === false){
                 //Error received during Bearer token fetch
-                $data['Exception'] = lang('user_lang.msg_err_azure_no_token').'.';
-                $this->errorhandler($data);
-            };
+                return $this->errorhandler(
+                    lang('user_lang.msg_err_azure_no_token').'.');
+            }
             $authdata = json_decode($json, true);
             if (isset($authdata["error"])){
                 //Bearer token fetch contained an error
-                $data['Exception'] = null;
-                $this->errorhandler($data);
-            };
+                return $this->errorhandler();
+            }
             
             //Fetching user information
             $options = array(
                 "http" => array(  //Use "http" even if you send the request with https
-                "method" => "GET",
-                "header" => "Accept: application/json\r\n" .
-                "Authorization: Bearer " . $authdata["access_token"] . "\r\n"
+                    "method" => "GET",
+                    "header" => "Accept: application/json\r\n" .
+                    "Authorization: Bearer " . $authdata["access_token"] . "\r\n"
                 )
             );
             $context = stream_context_create($options);
             $json = file_get_contents("https://graph.microsoft.com/v1.0/me", false, $context);
             if ($json === false) {
                 // Error received during user data fetch.
-                $data['Exception'] = null;
-                $this->errorhandler($data);
-            };
+                return $this->errorhandler(
+                    lang('user_lang.msg_err_azure_no_token').'.');
+            }
 
             $userdata = json_decode($json, true);
 
             if (isset($userdata["error"])) {
                 // User data fetch contained an error.
-                $data['Exception'] = null;
-                $this->errorhandler($data);
-            };
+                return $this->errorhandler();
+            }
 
             // Setting up the session
             $_SESSION['logged_in'] = (bool)true;
@@ -337,7 +332,7 @@ class Auth extends BaseController {
                 }
 
                 $output = array(
-                    'title' => lang('user_lang.title_page_login'),
+                    'title' => lang('user_lang.title_register_account'),
                     'correspondingEmail' => $correspondingEmail,
                     'ci_user' => $ci_user_azure,
                     'userdata' => $userdata);
@@ -351,18 +346,18 @@ class Auth extends BaseController {
                 $_SESSION['user_access'] = (int)$this->user_model->get_access_level($ci_user_azure);
 
                 return redirect()->to($_SESSION['after_login_redirect']);
-            };
+            }
 
         } else {
             // Returned states mismatch and no $_GET["error"] received.
-            $data['Exception'] = lang('user_lang.msg_err_azure_mismatch').'.';
-            $this->errorhandler($data);
+            return $this->errorhandler(
+                lang('user_lang.msg_err_azure_mismatch').'.');
         }
     }
 
     public function login(): string|Response
     {
-        // If user is not already logged
+        // If user not yet logged in
         if(!(isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true)) {
 
             // Store the redirection URL in a session variable
@@ -426,15 +421,15 @@ class Auth extends BaseController {
                     }
                     $this->session->setFlashdata('message-danger', lang('user_lang.msg_err_invalid_password'));
                 }
-
             // Check if microsoft login button submitted, else, display login page
             } else if (!is_null($this->request->getPost('btn_login_microsoft'))) {
-                $this->azure_login();
-                exit();
+                return $this->azure_login();
             }
             //Display login page
             $output = array('title' => lang('user_lang.title_page_login'));
             return $this->display_view('\User\auth\login', $output);
+
+        // If user already logged in
         } else {
             return redirect()->to(base_url());
         }

@@ -33,8 +33,8 @@
             </fieldset>
             <?= form_close(); ?>
             <?php
-            $session=\Config\Services::session();
-            $validation=\Config\Services::validation();
+                $session=\Config\Services::session();
+                $validation=\Config\Services::validation();
                 $attributes = array("class" => "form-horizontal",
                                     "id" => "loginform",
                                     "name" => "loginform");
