@@ -1,86 +1,60 @@
-# Project Title
+# Plafor - Follow an apprenticeship plan
 
-One Paragraph of project description goes here
+This application is designed to follow apprenticeship plans in the context of the swiss computer sciences apprenticeships (CFC).
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
-
-```text
-Give examples
-```
+This project is developed on an AMP server with PHP 8.1 and MySQL 8.0.
+It is based on the CodeIgniter 4 framework.
+- PHP 8.0 or newer
+- Composer
+- An empty database
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
+After cloning this git repository, make a copy of the "env_dist" file and rename it to ".env". Adjust the content of this file to match your development environment.
 
-Say what the step will be
+Get the required packages with a composer command :
 
-```text
-Give the example
+```shell
+composer install
 ```
 
-And repeat
+Generate the database structure with spark :
 
-```text
-until finished
+```shell
+php spark migrate --all
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
+You should be able to run the application and login with admin => admin1234.
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
+We provide a partial PHPUnit test set wich can be run with this command :
 
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```text
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```text
-Give an example
+```shell
+vendor/bin/phpunit
 ```
 
 ## Deployment
 
-Add additional notes about how to deploy this on a live system
-
+Use the last release to deploy the project and follow the same steps on your production environment as described for a development environment.
 ## Built With
 
-* [CodeIgniter](https://www.codeigniter.com/) - PHP framework
-* [Bootstrap](https://getbootstrap.com/) - To simplify views design
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+* [CodeIgniter 4](https://www.codeigniter.com/) - PHP framework
+* [Bootstrap](https://getbootstrap.com/) - Design library with personalized css
+* [ReactJS v17.0.2](https://fr.reactjs.org/) - Design Library to add simple interactivity
 
 ## Authors
 
 * **Orif, domaine informatique** - *Initiating and following the project* - [GitHub account](https://github.com/OrifInformatique)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/OrifInformatique/plafor/contributors) who participated in this project.
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
