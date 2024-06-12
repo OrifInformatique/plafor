@@ -30,7 +30,7 @@ Generate the database structure with spark :
 php spark migrate --all
 ```
 
-You should be able to run the application and login with admin => admin1234.
+You should be able to run the application and login with admin => admin1234 or with trainer => trainer1234.
 
 ## Running the tests
 
