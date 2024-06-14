@@ -83,6 +83,7 @@ return[
 'user_delete_himself'            => 'Vous ne pouvez pas désactiver ou supprimer votre propre compte. Cette opération doit être faite par un autre administrateur.',
 'page_my_password_change'        => 'Modification de mon mot de passe',
 'user_first_azure_connexion'     => 'Vous utilisez la connexion Microsoft pour la première fois. Afin d\'enregistrer votre compte, merci d\'indiquer votre adresse e-mail se terminant par @formation.orif.ch ou @orif.ch.',
-'user_validation_code'           => 'Un code de vérification a été envoyé sur votre adresse e-mail.<br>Merci d\'entrer ce code.'
-
+'user_validation_code'           => 'Un code de vérification a été envoyé sur votre adresse e-mail.<br>Merci d\'entrer ce code.',
+'mail_verification_code_subject'    => 'Code de vérification',
+'mail_verification_code_text'       => 'Voici votre code de vérification: ',
 ];
