@@ -349,12 +349,25 @@ class Apprentice extends \App\Controllers\BaseController
             // so here we get every users that are trainer, then we create a array
             // with the matching constitution
 
-            // Gets data of trainers for the dropdown menu
+            // Gets data of trainers for the dropdown menu BUT ignore the trainers who are 
+            // already linked to the selected apprentice
             $trainersRaw = $this->user_model->getTrainers();
             $trainers = array();
+            $linked_apprentices = array();
 
             foreach ($trainersRaw as $trainer){
-                $trainers[$trainer['id']] = $trainer['username'];
+                $are_linked = false;
+                $linked_apprentices = $this->trainer_apprentice_model->getApprenticeIdsFromTrainer($trainer['id']);
+                if (!is_null($linked_apprentices)){
+                    foreach ($linked_apprentices as $id){
+                        if ($id == $id_apprentice){
+                            $are_linked = true;
+                        }
+                    }
+                }
+                if (!$are_linked){
+                    $trainers[$trainer['id']] = $trainer['username'];
+                }
             }
 
             // Data to send to the view
