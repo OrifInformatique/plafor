@@ -239,7 +239,7 @@ return [
     'apprentice_link_delete_explanation'            => 'Toutes les informations concernant le lien entre cet apprenti et ce formateur seront supprimées.',
     'apprentice_link_disable'                       => 'Désactiver le lien entre cet apprenti et ce formateur',
     'apprentice_link_disable_explanation'           => 'Toutes les informations concernant le lien entre cet apprenti et ce formateur seront désactivées.',
-    'apprentice_link_trainer_already_linked'        => 'Le formateur sélectionné est déjà lié à cet apprenti',
+    'apprentice_trainer_already_linked'             => 'Le formateur sélectionné est déjà lié à cet apprenti',
     'acquisition_status'                            => 'Statut d\'acquisition',
     'acquisition_status_delete'                     => 'Supprimer le statut d\'acquisition',
     'acquisition_status_delete_explanation'         => 'Toutes les informations concernant le statut d\'acquisition seront supprimées.',

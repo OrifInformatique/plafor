@@ -50,7 +50,7 @@ class PlaforRules
         if (empty(TrainerApprenticeModel::getInstance()->getWhere($array_where)->getResultArray())){
             return true;
         }
-        $error = lang('plafor_lang.apprentice_link_trainer_already_linked');
+        $error = lang('plafor_lang.apprentice_trainer_already_linked');
         return false;
     }
     
