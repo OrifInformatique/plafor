@@ -435,14 +435,19 @@ class CoursePlan extends \App\Controllers\BaseController
     public function save_objective($objective_id = 0, $operational_comp_id = 0) {
         // Access permissions
         if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) {
-            // Gets data of objective and operational competence if they exist
+            // Get datas of given objective and operational competence
             $objective = $this->objective_model->withDeleted()->find($objective_id);
-            $operational_comp = $this->operational_comp_model->withDeleted()->find($operational_comp_id);
+            if (!is_null($objective)) {
+                // Given objective has to be modified. Get the operational competence corresponding to it.
+                $operational_comp = $this->operational_comp_model->withDeleted()->find($objective['fk_operational_competence']);
+            } else {
+                // No objective is given, add a new objective for the operational competence given in second parameter
+                $operational_comp = $this->operational_comp_model->withDeleted()->find($operational_comp_id);
+            }
 
-            // Redirection
-            if (is_null($operational_comp) ||
-                !is_null($objective) && $objective['fk_operational_competence'] != $operational_comp_id) {
-                return redirect()->to(base_url('plafor/courseplan/view_operational_competence/'.$operational_comp_id));
+            // If no objective and no operational competence is given, redirect to courseplan list
+            if (is_null($operational_comp)) {
+                return redirect()->to(base_url('plafor/courseplan/list_course_plan'));
             }
 
             // Actions upon form submission
@@ -493,7 +498,7 @@ class CoursePlan extends \App\Controllers\BaseController
                 'title'                     => lang('plafor_lang.title_objective_' . (is_null($objective) ? 'new' : 'update')),
                 'objective'                 => $objective,
                 'operational_competences'   => $operationalCompetences,
-                'operational_competence_id' => $operational_comp_id,
+                'operational_competence_id' => $operational_comp['id'],
                 'errors'                    => $this->objective_model->errors(),
             );
 
