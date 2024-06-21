@@ -353,16 +353,8 @@ class Apprentice extends \App\Controllers\BaseController
             $linked_apprentices = array();
 
             foreach ($trainersRaw as $trainer){
-                $are_linked = false;
                 $linked_apprentices = $this->trainer_apprentice_model->getApprenticeIdsFromTrainer($trainer['id']);
-                if (!is_null($linked_apprentices)){
-                    foreach ($linked_apprentices as $id){
-                        if ($id == $id_apprentice){
-                            $are_linked = true;
-                        }
-                    }
-                }
-                if (!$are_linked){
+                if (is_null($linked_apprentices) || !in_array($id_apprentice, $linked_apprentices)){
                     $trainers[$trainer['id']] = $trainer['username'];
                 }
             }
