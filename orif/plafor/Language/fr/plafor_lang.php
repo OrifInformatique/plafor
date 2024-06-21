@@ -233,7 +233,7 @@ return [
     'user_course_delete'                            => 'Supprimer cette formation liée',
     'user_course_delete_explanation'                => 'Toutes les informations concernant cette formation liée seront supprimées.',
     'user_course_disable'                           => 'Désactiver cette formation liée',
-    'user_course_disable_explanation'               => 'Toutes les informations concernant cette formation liée seront désactivées.',
+    'user_course_disable_explanation'               => 'Les apprentis listés garderont le lien avec ce plan de formation.',
     'apprentice_link'                               => 'Apprenti et formateur liés',
     'apprentice_link_delete'                        => 'Supprimer le lien entre cet apprenti et ce formateur',
     'apprentice_link_delete_explanation'            => 'Toutes les informations concernant le lien entre cet apprenti et ce formateur seront supprimées.',
