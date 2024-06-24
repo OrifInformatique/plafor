@@ -41,7 +41,7 @@ class PlaforRules
      * @param  int $fkApprenticeId  : ID of the apprentice, required
      * @param  int $fkTrainerId     : ID of the trainer, required
      * @param  null $datas          : Is set to access error
-     * @param  string $error        : Error message
+     * @param  string &$error       : Error message
      * @return bool
      */
     public function AreApprenticeAndTrainerNotLinked($fkTrainerId, $fkApprenticeId, $datas, &$error) : bool{
