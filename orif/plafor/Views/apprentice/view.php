@@ -109,28 +109,74 @@
 </div>
 
 <script type="text/babel">
-    console.log("jngowejgn");
-    $(document).ready(()=>{
-        $('#usercourseSelector').val(<?=isset($userCourseMax)?$userCourseMax['id']:null?>);
-        setTimeout(()=>{displayDetails(null,<?=json_encode($userCourseMax)?>,'integrated',"<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/',"<?=base_url('plafor/apprentice/view_user_course')?>");},200);
-        $('#usercourseSelector').change((event)=>{
-            let userCourses=<?= json_encode($user_courses)?>;
-            let coursePlans=<?= json_encode($course_plans)?>;
-            let userCoursesStatus=<?= json_encode($user_course_status)?>;
-            document.querySelectorAll('.user-course-details-course-plan-name').forEach((node)=>{
-                node.innerHTML=`${coursePlans[userCourses[event.target.value].fk_course_plan].official_name}`;
-            });
-            document.querySelectorAll('.user-course-details-begin-date').forEach((node)=>{
-                node.innerHTML=`${userCourses[event.target.value].date_begin}`;
-            });
-            document.querySelectorAll('.user-course-details-end-date').forEach((node)=>{
-                node.innerHTML=`${userCourses[event.target.value].date_end}`;
-            });
-            document.querySelectorAll('.user-course-details-status').forEach((node)=>{
-                node.innerHTML=`${userCoursesStatus[userCourses[event.target.value].fk_status].name}`;
-            });
-            document.getElementById('detailsArray').setAttribute('course_plan_id',userCourses[event.target.value].fk_course_plan);
-            displayDetails(null,userCourses[event.target.value],'integrated',"<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/',"<?=base_url('plafor/apprentice/view_user_course')?>");
-        });
+const invokeDisplayDetails = () => {
+    try {
+        displayDetails(null, <?=json_encode($userCourseMax)?>, 'integrated',
+            "<?=base_url("plafor/apprentice/getcourseplanprogress")?>" + '/' ,
+            "<?=base_url('plafor/apprentice/view_user_course')?>"
+        );
+    } catch (e) {
+        new Promise(resolve => setTimeout(resolve, 300))
+            .then(invokeDisplayDetails);
+    }
+};
+
+const invokeHydrationName = (event, userCourses, coursePlans) => {
+    document.querySelectorAll('.user-course-details-course-plan-name')
+        .forEach((node) =>
+    {
+        let coursePlanId = userCourses[event.target.value].fk_course_plan;
+        let officialName = coursePlans[coursePlanId].official_name;
+        node.innerHTML = new String(official_name);
     });
+};
+
+const invokeHydrationBeginDate = (event, userCourses) => {
+    document.querySelectorAll('.user-course-details-begin-date').forEach(
+        (node) =>
+    {
+        let dateBegin = userCourses[event.target.value].date_begin;
+        node.innerHTML = new String(dateBegin);
+    });
+};
+
+const invokeHydrationEndDate = (event, userCourses) => {
+    document.querySelectorAll('.user-course-details-end-date').forEach(
+        (node) =>
+    {
+        let dateEnd = userCourses[event.target.value].date_end;
+        node.innerHTML = new String(dateEnd);
+    });
+};
+
+const invokeHydrationStatus = (event, userCourses, userCoursesStatus) => {
+    document.querySelectorAll('.user-course-details-status').forEach(
+        (node) =>
+    {
+        let statusId = userCourses[event.target.value].fk_status;
+        let name = userCoursesStatus[statusId].name;
+        node.innerHTML = new String(name);
+    });
+}
+
+$(document).ready(()=>{
+    $('#usercourseSelector').val(<?=isset($userCourseMax)
+        ? $userCourseMax['id'] : null?>);
+    $('#usercourseSelector').change((event) => {
+        let userCourses = <?=json_encode($user_courses)?>;
+        let coursePlans = <?=json_encode($course_plans)?>;
+        let userCoursesStatus = <?= json_encode($user_course_status)?>;
+        invokeHydrationName(event, userCourses, coursePlans);
+        invokeHydrationBeginDate(event, userCourses);
+        invokeHydrationEndDate(event, userCourses);
+        invokeHydrationStatus(event, userCourses, userCoursesStatus);
+        document.querySelector('#detailsArray').setAttribute('course_plan_id',
+            userCourses[event.target.value].fk_course_plan);
+        displayDetails(null, userCourses[event.target.value], 'integrated',
+            "<?=base_url("plafor/apprentice/getcourseplanprogress")?>"
+            + '/' , "<?=base_url('plafor/apprentice/view_user_course')?>"
+        );
+    });
+    invokeDisplayDetails();
+});
 </script>
