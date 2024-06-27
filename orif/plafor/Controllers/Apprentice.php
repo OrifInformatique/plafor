@@ -345,16 +345,18 @@ class Apprentice extends \App\Controllers\BaseController
                     return redirect()->to(base_url("plafor/apprentice/view_apprentice/{$id_apprentice}"));
                 }
             }
-            // It seems that the MY_model dropdown method can't return a filtered result
-            // so here we get every users that are trainer, then we create a array
-            // with the matching constitution
 
-            // Gets data of trainers for the dropdown menu
+            // Gets data of trainers for the dropdown menu BUT ignore the trainers who are 
+            // already linked to the selected apprentice
             $trainersRaw = $this->user_model->getTrainers();
             $trainers = array();
+            $linked_apprentices = array();
 
             foreach ($trainersRaw as $trainer){
-                $trainers[$trainer['id']] = $trainer['username'];
+                $linked_apprentices = $this->trainer_apprentice_model->getApprenticeIdsFromTrainer($trainer['id']);
+                if (is_null($linked_apprentices) || !in_array($id_apprentice, $linked_apprentices)){
+                    $trainers[$trainer['id']] = $trainer['username'];
+                }
             }
 
             // Data to send to the view
