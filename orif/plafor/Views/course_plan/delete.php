@@ -49,7 +49,7 @@ foreach ($courses as $course){
                     <div class = "alert alert-info" ><?= lang('plafor_lang.user_course_'.($course_plan['archive']==null?'disable_explanation':'enable_explanation'))?></div>
                 </div>
                 <div class="text-right">
-                    <a href="<?= /*base_url('apprentice/view_user_course/'.$apprentices[0]['id']);*/ $session->get('_ci_previous_url')?>" class="btn btn-default">
+                    <a href="<?= /*base_url('apprentice/view_user_course/'.$apprentices[0]['id']);*/ $session->get('_ci_previous_url')?>" class="btn btn-secondary">
                         <?= lang('common_lang.btn_cancel'); ?>
                     </a> 
                     <?php 

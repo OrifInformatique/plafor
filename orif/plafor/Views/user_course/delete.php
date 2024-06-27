@@ -16,7 +16,7 @@
                     <div class = "alert alert-info" ><?= lang('plafor_lang.user_course_delete_explanation')?></div>
                 </div>
                 <div class="text-right">
-                    <a href="<?= base_url('plafor/apprentice/view_user_course/'.$apprentice['id']); ?>" class="btn btn-default">
+                    <a href="<?= base_url('plafor/apprentice/view_user_course/'.$apprentice['id']); ?>" class="btn btn-secondary">
                         <?= lang('common_lang.btn_cancel'); ?>
                     </a>
                     <a href="<?= base_url(uri_string().'/1'); ?>" class="btn btn-danger">
