@@ -211,7 +211,7 @@ return [
     'course_plan_delete'                            => 'Supprimer ce plan de formation',
     'course_plan_delete_explanation'                => 'Toutes les informations concernant ce plan de formation (domaines de compétences, compétences oppérationnelles et objectifs) seront supprimées.',
     'course_plan_disable'                           => 'Désactiver ce plan de formation',
-    'course_plan_disable_explanation'               => 'Toutes les informations concernant ce plan de formation (domaines de compétences, compétences oppérationnelles et objectifs) seront désactivées.',
+    'course_plan_disable_explanation'               => 'Les apprentis listés garderont le lien avec ce plan de formation, mais il sera désactivé et ne pourra plus être attribué à de nouveaux apprentis.',
     'number_abr'                                    => 'No',
     'competence_domain'                             => 'Domaine de compétence',
     'competence_domain_delete'                      => 'Supprimer ce domaine de compétence',
@@ -233,12 +233,12 @@ return [
     'user_course_delete'                            => 'Supprimer cette formation liée',
     'user_course_delete_explanation'                => 'Toutes les informations concernant cette formation liée seront supprimées.',
     'user_course_disable'                           => 'Désactiver cette formation liée',
-    'user_course_disable_explanation'               => 'Toutes les informations concernant cette formation liée seront désactivées.',
     'apprentice_link'                               => 'Apprenti et formateur liés',
     'apprentice_link_delete'                        => 'Supprimer le lien entre cet apprenti et ce formateur',
     'apprentice_link_delete_explanation'            => 'Toutes les informations concernant le lien entre cet apprenti et ce formateur seront supprimées.',
     'apprentice_link_disable'                       => 'Désactiver le lien entre cet apprenti et ce formateur',
     'apprentice_link_disable_explanation'           => 'Toutes les informations concernant le lien entre cet apprenti et ce formateur seront désactivées.',
+    'apprentice_trainer_already_linked'             => 'Le formateur sélectionné est déjà lié à cet apprenti',
     'acquisition_status'                            => 'Statut d\'acquisition',
     'acquisition_status_delete'                     => 'Supprimer le statut d\'acquisition',
     'acquisition_status_delete_explanation'         => 'Toutes les informations concernant le statut d\'acquisition seront supprimées.',
@@ -251,13 +251,12 @@ return [
     'form_number_not_unique'                        => 'Le numéro du plan de formation existe déjà',
     'with_status'                                   => 'Avec le statut',
 
-    'course_plan_enable_explanation'                => 'Toutes les informations concernant ce plan de formation (domaines de compétences, compétences oppérationnelles et objectifs) seront réactivées.',
+    'course_plan_enable_explanation'                => 'Ce plan de formation sera réactivé et pourra de nouveau être attribué à des apprentis.',
     'competence_domain_enable_explanation'          => 'Toutes les informations concernant ce domaine de compétence (symbole, nom, compétences oppérationnelles et objectifs) seront réactivées.',
     'operational_competence_enable_explanation'     => 'Toutes les informations concernant cette compétence opérationnelle (nom, symbole, compétences, objectifs) seront réactivées.',
     'objective_enable_explanation'                  => 'Toutes les informations concernant cet objectif (symbole, taxonomie, nom) seront réactivées.',
-    'user_course_enable_explanation'                => 'Toutes les informations concernant cette formation liée seront réactivées.',
     'apprentice_link_enable_explanation'            => 'Toutes les informations concernant le lien entre cet apprenti et ce formateur seront réactivées.',
     'acquisition_status_enable_explanation'         => 'Toutes les informations concernant le statut d\'acquisition seront réactivées.',
 
-    'apprentices_already_assigned_to_course_plan'   => 'Les apprentis suivants sont déjà associés au plan de formation'
+    'apprentices_already_assigned_to_course_plan'   => 'Les apprentis suivants sont associés à ce plan de formation'
 ];

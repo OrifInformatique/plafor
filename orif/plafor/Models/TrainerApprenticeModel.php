@@ -24,11 +24,16 @@ class TrainerApprenticeModel extends \CodeIgniter\Model
 
     public function __construct(ConnectionInterface &$db = null, ValidationInterface $validation = null)
     {
-        $this->validationRules=array(
+        $this->validationRules = array(
             'fk_trainer'=>[
                 'label' => 'plafor_lang.field_trainer_link',
+                'rules' => 'required|numeric|AreApprenticeAndTrainerNotLinked[{fk_apprentice}]'
+            ],
+            'fk_apprentice'=>[
+                'label' => 'plafor_lang.field_trainer_link',
                 'rules' => 'required|numeric'
-            ]);
+            ]
+        );
         parent::__construct($db, $validation);
     }
 

@@ -28,28 +28,24 @@ foreach ($courses as $course){
         <div class="row">
             <div class="col">
                 <h1 class="title-section"><?= lang('plafor_lang.title_course_plan_'.(is_null($course_plan['archive'])?'delete':'enable')); ?></h1>
+                <h2><?= $course_plan['official_name'] ?></h2>
             </div>
         </div>
         <div class="row">
             <div class="col-12">
                 <div>
-                    <h2><?=count($apprentices)>0?lang('plafor_lang.apprentices_already_assigned_to_course_plan'):''?></h2>
-                    <?php
-                    foreach ($apprentices as $apprentice):
-                    ?>
-                        <h3><?= ' "'.$apprentice['username'].'"'. lang('plafor_lang.with_status') ?> "<?=\Plafor\Models\UserCourseStatusModel::getInstance()->find(\Plafor\Models\UserCourseModel::getInstance()->where('fk_user',$apprentice['id'])->where('fk_course_plan',$course_plan['id'])->first()['fk_status'])['name']?>"</h3>
+                    <p><?=count($apprentices)>0?lang('plafor_lang.apprentices_already_assigned_to_course_plan').' :':''?></p>
 
-                    <?php endforeach;?>
-                    <h2><?=lang('plafor_lang.course_plan').' '?></h2>
-                    <h3><?='"'.$course_plan['official_name'].'"' ?></h3>
-                    <?php if (count($userCourseStatus)>0&&isset($userCourseStatus[0])&&$userCourseStatus[0]!=null){?>
-                    <h1></h1>
-                    <?php } ?>
-                    <h4><?= lang('user_lang.what_to_do')?></h4>
-                    <div class = "alert alert-info" ><?= lang('plafor_lang.user_course_'.($course_plan['archive']==null?'disable_explanation':'enable_explanation'))?></div>
+                    <ul>
+                    <?php foreach ($apprentices as $apprentice): ?>
+                            <li><?= ' "'.$apprentice['username'].'"'. lang('plafor_lang.with_status') ?> "<?=\Plafor\Models\UserCourseStatusModel::getInstance()->find(\Plafor\Models\UserCourseModel::getInstance()->where('fk_user',$apprentice['id'])->where('fk_course_plan',$course_plan['id'])->first()['fk_status'])['name']?>"</li>
+                        <?php endforeach;?>
+                    </ul>
+
+                    <div class = "alert alert-info" ><?= lang('plafor_lang.course_plan_'.($course_plan['archive']==null?'disable_explanation':'enable_explanation'))?></div>
                 </div>
                 <div class="text-right">
-                    <a href="<?= /*base_url('apprentice/view_user_course/'.$apprentices[0]['id']);*/ $session->get('_ci_previous_url')?>" class="btn btn-secondary">
+                    <a href="<?= $session->get('_ci_previous_url')?>" class="btn btn-secondary">
                         <?= lang('common_lang.btn_cancel'); ?>
                     </a> 
                     <?php 

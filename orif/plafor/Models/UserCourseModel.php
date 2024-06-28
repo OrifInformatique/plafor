@@ -61,8 +61,11 @@ class UserCourseModel extends \CodeIgniter\Model
      * @param $fkCoursePlanId
      * @return array
      */
-    public static function getCoursePlan($fkCoursePlanId,$with_archived=0){
-        return CoursePlanModel::getInstance()->withDeleted($with_archived)->find($fkCoursePlanId);
+    public static function getCoursePlan($fkCoursePlanId,
+        $with_archived = false)
+    {
+        return CoursePlanModel::getInstance()->withDeleted($with_archived)
+                                             ->find($fkCoursePlanId);
     }
 
     /**
