@@ -21,7 +21,7 @@
                     <div class = "alert alert-info" ><?= lang('plafor_lang.apprentice_link_'.($apprentice['archive']==null?'disable_explanation':'enable_explanation'))?></div>
                 </div>
                 <div class="text-right">
-                    <a href="<?= base_url('plafor/apprentice/view_apprentice/'.$apprentice['id']); ?>" class="btn btn-default">
+                    <a href="<?= base_url('plafor/apprentice/view_apprentice/'.$apprentice['id']); ?>" class="btn btn-secondary">
                         <?= lang('common_lang.btn_cancel'); ?>
                     </a>
                     <a href="<?= base_url(uri_string().'/1'); ?>" class="btn btn-danger">

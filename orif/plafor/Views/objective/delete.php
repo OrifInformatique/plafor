@@ -25,7 +25,7 @@
                     <div class = "alert alert-info" ><?= lang('plafor_lang.objective_'.($objective['archive']==null?'disable_explanation':'enable_explanation'))?></div>
                 </div>
                 <div class="text-right">
-                    <a href="<?= base_url('plafor/courseplan/view_operational_competence/'.$objective['fk_operational_competence']); ?>" class="btn btn-default">
+                    <a href="<?= base_url('plafor/courseplan/view_operational_competence/'.$objective['fk_operational_competence']); ?>" class="btn btn-secondary">
                         <?= lang('common_lang.btn_cancel'); ?>
                     </a>
                     <?php 
