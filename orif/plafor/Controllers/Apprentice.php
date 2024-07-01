@@ -195,29 +195,68 @@ class Apprentice extends \App\Controllers\BaseController
         return $this->display_view('Plafor\apprentice/view',$output);
     }
 
+
+    /**
+     * Displays the list of course plans
+     *
+     * @param int $id_apprentice ID of the apprentice
+     * 
+     * @return void
+     * 
+     */
+    public function list_user_courses($id_apprentice = null) 
+    {
+        if(is_numeric($id_apprentice))
+            $user = $this->user_model->where('id', $id_apprentice)->first();
+
+        if(!isset($user) || empty($user))
+            return redirect()->to('plafor/courseplan/list_course_plan/');
+
+        $course_plans = $this->user_course_model->getUserCourses($id_apprentice);
+
+        // Here, reference (&) is used in order to update the 'id' value in each entry of the $course_plans array 
+        foreach($course_plans as &$course_plan)
+            $course_plan['id'] = $this->user_course_model->getUserCourseByUserAndCoursePlan($course_plan['fk_user'], $course_plan['fk_course_plan'], true);
+
+        $output = array(
+            'title'         => sprintf(lang('plafor_lang.title_user_course_plan_list'), $user['username']),
+            'course_plans'  => $course_plans,
+            'id_apprentice' => $id_apprentice
+        );
+
+        return $this->display_view(['Plafor\user_course\list'], $output);
+    }
+
+
     /**
      * Displays a form to create a link between an apprentice and a course plan
      *
-     * @param int $id_apprentice  : ID of the apprentice
-     * @param int $id_user_course : ID of the user's course
+     * @param int $id_apprentice   ID of the apprentice
+     * @param int $id_user_course  ID of the user's course
+     * 
      * @return void
+     * 
      */
-    public function save_user_course($id_apprentice = 0, $id_user_course = 0) {
+    public function save_user_course($id_apprentice = 0, $id_user_course = 0)
+    {
         // Access permissions
-        if ($this->session->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer) {
-            // Gets data of the apprentice and their course, if they exist
-            $user_type_id = $this->user_type_model->
-                where('access_level', config('\User\Config\UserConfig')->access_level_apprentice)->first()['id'];
-            $apprentice = $this->user_model->where('fk_user_type', $user_type_id)->find($id_apprentice);
-            $user_course = $this->user_course_model->find($id_user_course);
+        if ($this->session->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer) 
+        {
+            $user_type_id = $this->user_type_model
+                ->where('access_level', config('\User\Config\UserConfig')->access_level_apprentice)
+                ->first()['id'];
 
-            // Redirection
-            if (is_null($apprentice)) {
+            $apprentice = $this->user_model
+                ->where('fk_user_type', $user_type_id)
+                ->find($id_apprentice);
+
+            $user_course = $this->user_course_model->getUserCourseById($id_user_course);
+
+            if (is_null($apprentice))
                 return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
-            }
 
-            // Actions upon form submission
-            if (count($_POST) > 0) {
+            if (count($_POST) > 0) 
+            {
                 $fk_course_plan = $this->request->getPost('course_plan');
                 $new_user_course = array(
                     'fk_user'           => $id_apprentice,
@@ -227,61 +266,69 @@ class Apprentice extends \App\Controllers\BaseController
                     'date_end'          => $this->request->getPost('date_end'),
                 );
 
-                // Query to perform
-                if (!is_null($user_course)) {
+                if (!is_null($user_course)) 
                     // User's course already exists - updates it
                     $this->user_course_model->update($id_user_course, $new_user_course);
-                } else if ($this->user_course_model->where('fk_user', $id_apprentice)->where('fk_course_plan', $fk_course_plan)->first() == null) {
-                    // No user's course was found in database - inserts a new one
-                    $id_user_course = $this->user_course_model->insert($new_user_course);
+                
+                else 
+                {
+                    $user_has_course = $this->user_course_model->getUserCourseByUserAndCoursePlan($user_type_id, $new_user_course['fk_course_plan']) ? true : false;
 
-                    $course_plan = $this->user_course_model->getCoursePlan($new_user_course['fk_course_plan']);
-                    $competenceDomainIds = [];
+                    // If the apprentice already follows the course plan submitted, prevent the creation of the entry.
+                    if(!$user_has_course)
+                    {
+                        // No user's course was found in database - inserts a new one
+                        $id_user_course = $this->user_course_model->insert($new_user_course);
+                            
+                        $course_plan = $this->user_course_model->getCoursePlan($new_user_course['fk_course_plan']);
+                        $competenceDomainIds = [];
+                        
+                        foreach ($this->course_plan_model->getCompetenceDomains($course_plan['id']) as $competence_domain) 
+                            $competenceDomainIds[] = $competence_domain['id'];
+                        
+                        $operational_competences = [];
+                        // No operational competence associated
+                        try 
+                        {
+                            $operational_competences = $this->operational_comp_model->withDeleted()->whereIn('fk_competence_domain', $competenceDomainIds)->findAll();
+                        } 
+                        
+                        catch (\Exception $e) {};
 
-                    foreach ($this->course_plan_model->getCompetenceDomains($course_plan['id']) as $competence_domain) {
-                        $competenceDomainIds[] = $competence_domain['id'];
-                    }
+                        // Adds an acquisition status of level 1 for each objective
+                        $objectiveIds = array();
+                        foreach ($operational_competences as $operational_competence) 
+                        {
+                            foreach ($this->operational_comp_model->getObjectives($operational_competence['id']) as $objective) 
+                                $objectiveIds[] = $objective['id'];
+                        }
 
-                    $operational_competences = [];
-                    // No operational competence associated
-                    try {
-                        $operational_competences = $this->operational_comp_model->withDeleted()->whereIn('fk_competence_domain', $competenceDomainIds)->findAll();
-                    } catch (\Exception $e) {
-                    };
-                    // Adds an acquisition status of level 1 for each objective
-                    $objectiveIds = array();
-                    foreach ($operational_competences as $operational_competence) {
-                        foreach ($this->operational_comp_model->getObjectives($operational_competence['id']) as $objective) {
-                            $objectiveIds[] = $objective['id'];
+                        foreach ($objectiveIds as $objectiveId) 
+                        {
+                            $acquisition_status = array(
+                                'fk_objective'          => $objectiveId,
+                                'fk_user_course'        => $id_user_course,
+                                'fk_acquisition_level'  => 1
+                            );
+                            
+                            $this->acquisition_status_model->insert($acquisition_status);
                         }
                     }
-                    foreach ($objectiveIds as $objectiveId) {
-                        $acquisition_status = array(
-                            'fk_objective'          => $objectiveId,
-                            'fk_user_course'        => $id_user_course,
-                            'fk_acquisition_level'  => 1
-                        );
+                }
 
-                        $this->acquisition_status_model->insert($acquisition_status);
-                    }
-                }
-                // Error handling
-                if ($this->user_course_model->errors() == null) {
-                    // No error - redirects to apprentice page
-                    return redirect()->to(base_url('plafor/apprentice/view_apprentice/' . $id_apprentice));
-                }
+                if ($this->user_course_model->errors() == null) 
+                    return redirect()->to(base_url('plafor/apprentice/list_user_courses/' . $id_apprentice));
             }
 
             // Preparing data for the view
-            // Course plans
             $course_plans = [];
+            $status = [];
+
             foreach ($this->course_plan_model->findAll() as $courseplan)
                 $course_plans[$courseplan['id']] = $courseplan['official_name'];
-            // Status of user's course
-            $status = [];
-            foreach ($this->user_course_status_model->findAll() as $usercoursestatus) {
+
+            foreach ($this->user_course_status_model->findAll() as $usercoursestatus)
                 $status[$usercoursestatus['id']] = $usercoursestatus['name'];
-            }
 
             // Data to send to the view
             $output = array(
@@ -294,9 +341,10 @@ class Apprentice extends \App\Controllers\BaseController
             );
 
             return $this->display_view('Plafor\user_course/save', $output);
-        } else {
+        } 
+        
+        else
             return $this->display_view('\User\errors\403error');
-        }
     }
 
     /**

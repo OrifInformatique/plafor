@@ -383,11 +383,7 @@ class CoursePlan extends \App\Controllers\BaseController
 
             // Redirection
             if (is_null($user_course)) {
-                /**
-                 * @todo Create method and view for list of users' courses
-                 */
-                // return redirect()->to(base_url('plafor/courseplan/list_user_course'));
-                return redirect()->to(base_url('plafor/apprentice/list_apprentice')); // Temporary redirection
+                return redirect()->to(base_url('plafor/courseplan/list_user_courses'));
             }
 
             // Gets data for the confirmation view
