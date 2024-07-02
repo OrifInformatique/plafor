@@ -58,6 +58,64 @@ class UserCourseModel extends \CodeIgniter\Model
     }
 
     /**
+     * Gets all courses from a user.
+     * 
+     * @param int $fk_user ID of the user
+     * 
+     * @return array
+     * 
+     */
+    public static function getUserCourses($fk_user){
+        return UserCourseModel::getInstance()
+            ->join('course_plan','course_plan.id = user_course.fk_course_plan')
+            ->where('fk_user', $fk_user)
+            ->findAll();
+    }
+
+
+    /**
+     * Gets a specific user_course entry-
+     * 
+     * @param int $id_user_course ID of the user_course entry
+     * 
+     * @return array
+     * 
+     */
+    public static function getUserCourseById($id_user_course)
+    {
+        return UserCourseModel::getInstance()
+            ->where('id', $id_user_course)
+            ->first();
+    }
+
+    /**
+     * Gets the user_course id from the user_course entry.
+     * 
+     * @param int $fk_user ID of the user
+     * @param int $fk_course_plan ID of the course plan
+     * @param bool $onlyId If true, the function only returns the ID of the entry
+     * 
+     * @return array
+     * 
+     */
+    public static function getUserCourseByUserAndCoursePlan($fk_user, $fk_course_plan, $onlyId = false)
+    {
+        $user_course = UserCourseModel::getInstance()
+            ->where(
+            [
+                'fk_user' => $fk_user,
+                'fk_course_plan' => $fk_course_plan
+            ])
+            ->first();
+            
+        if($onlyId)
+            return $user_course['id'];
+
+        else
+            return $user_course;
+    }
+
+    /**
      * @param $fkCoursePlanId
      * @return array
      */

@@ -70,6 +70,7 @@ return [
     'title_user_course_delete'      => 'Supprimer un cours',
     'title_user_course_view'        => 'Détail du cours',
     'title_user_course_plan_link'   => 'Ajouter un cours associé',
+    'title_user_course_manage'      => 'Gérer ses formations',
 
     //Acquisition status
     'title_acquisition_status_view' => 'Afficher les détails des status d\'acquisition',
@@ -97,6 +98,7 @@ return [
     'title_trainer_new'                     => 'Ajouter un formateur',
     'title_trainer_delete'                  => 'Supprimer un formateur',
     'title_course_plan_list'                => 'Liste des plans de formation',
+    'title_user_course_plan_list'           => 'Liste des plans de formation de "%s"',
     'title_course_plan_update'              => 'Modifier le plan de formation',
     'title_course_plan_new'                 => 'Ajouter un plan de formation',
     'title_course_plan_delete'              => 'Supprimer le plan de formation',
@@ -259,5 +261,7 @@ return [
     'apprentice_link_enable_explanation'            => 'Toutes les informations concernant le lien entre cet apprenti et ce formateur seront réactivées.',
     'acquisition_status_enable_explanation'         => 'Toutes les informations concernant le statut d\'acquisition seront réactivées.',
 
-    'apprentices_already_assigned_to_course_plan'   => 'Les apprentis suivants sont déjà associés au plan de formation'
+    'apprentices_already_assigned_to_course_plan'   => 'Les apprentis suivants sont déjà associés au plan de formation',
+
+    'current' => 'En vigueur'
 ];

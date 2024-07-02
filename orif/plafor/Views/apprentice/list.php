@@ -50,13 +50,23 @@ helper('form');
                     <td>
                         <a href="<?= base_url('plafor/apprentice/view_apprentice/' . $apprentice['id']); ?>"><?= $apprentice['username']; ?>
                     </td>
-                    <td><a href="<?= base_url('plafor/courseplan/list_course_plan/' . $apprentice['id']) ?>"><?php
+                    <td>
+                        <?php if(isset($courses) && !empty($courses)): ?>
+                            <a href="<?= base_url('plafor/apprentice/list_user_courses/' . $apprentice['id']) ?>">
+                            <?php
                             $linkedCourses = "";
-                            foreach ($courses as $course) {
+                            foreach ($courses as $course)
                                 $linkedCourses .= ($course['fk_user'] == $apprentice['id'] ? $coursesList[$course['fk_course_plan']]['official_name'] . "," : "");
-                            }
+
                             echo rtrim($linkedCourses, ",");
-                            ?></a></td>
+                            ?>
+                            </a>
+                        <?php else: ?>
+                            <a href="<?= base_url('plafor/apprentice/save_user_course/'.$apprentice['id']); ?>" class="btn btn-primary">
+                                <?= lang('common_lang.btn_new_m'); ?>
+                            </a>
+                        <?php endif ?>
+                    </td>
                     <td style="width: 30%;max-width: 300px;min-width: 200px">
                         <div class="progressContainer" apprentice_id="<?= $apprentice['id'] ?>"></div>
                     </td>

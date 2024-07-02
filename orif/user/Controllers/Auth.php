@@ -162,17 +162,26 @@ class Auth extends BaseController {
             'SMTPUser' => getenv('SMTP_ID'),
             'SMTPPass' => getenv('SMTP_PASSWORD'),
             'SMTPPort' => getenv('SMTP_PORT'),
+            'SMTPCrypto' => getenv('SMTP_CRYPTO'),
         ];
 
         $email->initialize($emailConfig);
 
         // Sending code to user's mail
-        $email->setFrom('smtp@sectioninformatique.ch', lang('common_lang.page_prefix')); 
+        $email->setFrom(getenv('SMTP_ID'), lang('common_lang.app_title'));
         $email->setTo($form_email);
-        $email->setSubject('Code de vérification');
-        $email->setMessage('Voici votre code de vérification: '.$verification_code);
+        $email->setSubject(lang('user_lang.mail_verification_code_subject'));
+        $email->setMessage(lang('user_lang.mail_verification_code_text').$verification_code);
         
+        // Comment this line to debug mail sending
         $email->send();
+
+        // Uncomment this part to debug mail sending
+        /*
+        if(!$email->send(false)){
+            dd($email->printDebugger());
+        }
+        */
         return $verification_code;
     }
 
