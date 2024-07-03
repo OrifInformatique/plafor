@@ -15,7 +15,7 @@ helper('form');
 <div class="container">
     <div class="row">
         <div class="col">
-            <h1 class="title-section"><?= $title ?></h1>
+            <h2 class="title-section"><?= $title ?></h2>
         </div>
     </div>
     <div class="row" style="justify-content:space-between">
@@ -29,17 +29,17 @@ helper('form');
      <div class="col-sm-3 offset-6">
 		</div>
         <?php
-        if(isset($course_plans) && !empty($course_plans))
+        if(isset($user_courses) && !empty($user_courses))
         {
-            foreach($course_plans as $course_plan) 
+            foreach($user_courses as $user_course)
             {
                 $data[] = 
                 [
-                    'id'         => $course_plan['id'],
-                    'formNumber' => $course_plan['formation_number'],
-                    'coursePlan' => $course_plan['official_name'],
-                    'begin_date' => Time::createFromFormat('Y-m-d', $course_plan['date_begin'])->toLocalizedString('dd.MM.Y'),
-                    'active'     => isset($course_plan['archive']) ? lang('common_lang.no') : lang('common_lang.yes')
+                    'id' => $user_course['id'],
+                    'course_plan_number' => $user_course['course_plan']['formation_number'],
+                    'course_plan_name' => $user_course['course_plan']['official_name'],
+                    'date_begin' => Time::createFromFormat('Y-m-d', $user_course['date_begin'])->toLocalizedString('dd.MM.Y'),
+                    'date_end' => Time::createFromFormat('Y-m-d', $user_course['date_end'])->toLocalizedString('dd.MM.Y'),
                 ];
             }
             
@@ -47,10 +47,10 @@ helper('form');
             [
                 'columns' =>
                 [
-                    'formNumber' =>lang('plafor_lang.field_course_plan_formation_number'),
-                    'coursePlan' =>lang('plafor_lang.field_course_plan_official_name'),
-                    'begin_date' =>lang('plafor_lang.field_course_plan_into_effect'),
-                    'active'     => lang('plafor_lang.current')
+                    'course_plan_number' => lang('plafor_lang.field_course_plan_formation_number'),
+                    'course_plan_name' => lang('plafor_lang.field_course_plan_official_name'),
+                    'date_begin' => lang('plafor_lang.field_user_course_date_begin_short'),
+                    'date_end' => lang('plafor_lang.field_user_course_date_end_short'),
                 ],
                 'items'             => $data,
                 'primary_key_field' => 'id',

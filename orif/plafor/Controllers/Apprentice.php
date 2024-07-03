@@ -197,9 +197,9 @@ class Apprentice extends \App\Controllers\BaseController
 
 
     /**
-     * Displays the list of course plans
+     * Display the list of user courses linked to one given user
      *
-     * @param int $id_apprentice ID of the apprentice
+     * @param int $id_apprentice ID of the concerned apprentice
      * 
      * @return void
      * 
@@ -210,17 +210,17 @@ class Apprentice extends \App\Controllers\BaseController
             $user = $this->user_model->where('id', $id_apprentice)->first();
 
         if(!isset($user) || empty($user))
-            return redirect()->to('plafor/courseplan/list_course_plan/');
+            return redirect()->to('plafor/apprentice/list_apprentice');
 
-        $course_plans = $this->user_course_model->getUserCourses($id_apprentice);
+        $user_courses = $this->user_course_model->where('fk_user', $id_apprentice)->withDeleted()->findAll();
 
-        // Here, reference (&) is used in order to update the 'id' value in each entry of the $course_plans array 
-        foreach($course_plans as &$course_plan)
-            $course_plan['id'] = $this->user_course_model->getUserCourseByUserAndCoursePlan($course_plan['fk_user'], $course_plan['fk_course_plan'], true);
+        // Get the course_plan informations for each user_course
+        foreach($user_courses as &$user_course)
+            $user_course['course_plan'] = $this->course_plan_model->find($user_course['fk_course_plan']);
 
         $output = array(
             'title'         => sprintf(lang('plafor_lang.title_user_course_plan_list'), $user['username']),
-            'course_plans'  => $course_plans,
+            'user_courses'  => $user_courses,
             'id_apprentice' => $id_apprentice
         );
 
