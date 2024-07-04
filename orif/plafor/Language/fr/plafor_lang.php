@@ -70,7 +70,7 @@ return [
     'title_user_course_delete'      => 'Supprimer un cours',
     'title_user_course_view'        => 'Détail du cours',
     'title_user_course_plan_link'   => 'Ajouter un cours associé',
-    'title_user_course_manage'      => 'Gérer ses formations',
+    'btn_user_course_manage'        => 'Gérer ces formations',
 
     //Acquisition status
     'title_acquisition_status_view' => 'Afficher les détails des status d\'acquisition',
