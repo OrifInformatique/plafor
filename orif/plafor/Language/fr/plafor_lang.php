@@ -261,6 +261,6 @@ return [
     'objective_enable_explanation'                  => 'Toutes les informations concernant cet objectif (symbole, taxonomie, nom) seront réactivées.',
     'apprentice_link_enable_explanation'            => 'Toutes les informations concernant le lien entre cet apprenti et ce formateur seront réactivées.',
     'acquisition_status_enable_explanation'         => 'Toutes les informations concernant le statut d\'acquisition seront réactivées.',
-    'current' => 'En vigueur'
+    'current'                                       => 'En vigueur',
     'apprentices_already_assigned_to_course_plan'   => 'Les apprentis suivants sont associés à ce plan de formation'
 ];
