@@ -36,10 +36,11 @@ helper('form');
                 $data[] = 
                 [
                     'id' => $user_course['id'],
-                    'course_plan_number' => $user_course['course_plan']['formation_number'],
-                    'course_plan_name' => $user_course['course_plan']['official_name'],
-                    'date_begin' => Time::createFromFormat('Y-m-d', $user_course['date_begin'])->toLocalizedString('dd.MM.Y'),
-                    'date_end' => Time::createFromFormat('Y-m-d', $user_course['date_end'])->toLocalizedString('dd.MM.Y'),
+                    'course_plan_number'    => $user_course['course_plan']['formation_number'],
+                    'course_plan_name'      => $user_course['course_plan']['official_name'],
+                    'date_begin'            => Time::createFromFormat('Y-m-d', $user_course['date_begin'])->toLocalizedString('dd.MM.Y'),
+                    'date_end'              => isset($user_course['date_end']) ? Time::createFromFormat('Y-m-d', $user_course['date_end'])->toLocalizedString('dd.MM.Y') : '',
+                    'course_plan_status'    => $user_course['status'],
                 ];
             }
             
@@ -47,10 +48,11 @@ helper('form');
             [
                 'columns' =>
                 [
-                    'course_plan_number' => lang('plafor_lang.field_course_plan_formation_number'),
-                    'course_plan_name' => lang('plafor_lang.field_course_plan_official_name'),
-                    'date_begin' => lang('plafor_lang.field_user_course_date_begin_short'),
-                    'date_end' => lang('plafor_lang.field_user_course_date_end_short'),
+                    'course_plan_number'    => lang('plafor_lang.field_course_plan_formation_number'),
+                    'course_plan_name'      => lang('plafor_lang.field_course_plan_official_name'),
+                    'date_begin'            => lang('plafor_lang.field_user_course_date_begin_short'),
+                    'date_end'              => lang('plafor_lang.field_user_course_date_end_short'),
+                    'course_plan_status'    => lang('plafor_lang.status'),
                 ],
                 'items'             => $data,
                 'primary_key_field' => 'id',

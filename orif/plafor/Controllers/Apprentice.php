@@ -216,7 +216,13 @@ class Apprentice extends \App\Controllers\BaseController
 
         // Get the course_plan informations for each user_course
         foreach($user_courses as &$user_course)
+        {
             $user_course['course_plan'] = $this->course_plan_model->withDeleted()->find($user_course['fk_course_plan']);
+            $user_course['status']      = $this->user_course_status_model->getUserCourseStatusName($user_course['fk_status']);
+
+            if($user_course['date_end'] === '0000-00-00')
+                $user_course['date_end'] = null;
+        }
 
         $output = array(
             'title'         => sprintf(lang('plafor_lang.title_user_course_plan_list'), $user['username']),
