@@ -69,19 +69,19 @@ class PlaforRules
             case 'competence_domain':
                 // For a competence domain
                 $parent = 'course_plan';
-                $model = CompetenceDomainModel::getInstance();
+                $model = model('CompetenceDomainModel');
                 $error_str = 'same_competence_domain';
                 break;
             case 'operational_competence':
                 // For an operational competence
                 $parent = 'competence_domain';
-                $model = OperationalCompetenceModel::getInstance();
+                $model = model('OperationalCompetenceModel');
                 $error_str = 'same_operational_competence';
                 break;
             case 'objective':
                 // For an objective
                 $parent = 'operational_competence';
-                $model = ObjectiveModel::getInstance();
+                $model = model('ObjectiveModel');
                 $error_str = 'same_objective';
                 break;
         }
