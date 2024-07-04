@@ -21,7 +21,7 @@ helper('form');
     <div class="row" style="justify-content:space-between">
         <div class="col-sm-3">
             <a href="<?= base_url('plafor/apprentice/save_user_course/'.$id_apprentice); ?>" class="btn btn-primary">
-                <?= lang('common_lang.btn_new_m'); ?>
+                <?= lang('common_lang.btn_new_f'); ?>
             </a>
         </div>
     </div>

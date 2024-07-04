@@ -52,7 +52,6 @@ helper('form');
                     </td>
                     <td>
                         <?php if(isset($courses) && !empty($courses)): ?>
-                            <a href="<?= base_url('plafor/apprentice/list_user_courses/' . $apprentice['id']) ?>">
                             <?php
                             $linkedCourses = "";
                             foreach ($courses as $course)
@@ -60,7 +59,6 @@ helper('form');
 
                             echo rtrim($linkedCourses, ",");
                             ?>
-                            </a>
                         <?php else: ?>
                             <a href="<?= base_url('plafor/apprentice/save_user_course/'.$apprentice['id']); ?>" class="btn btn-primary">
                                 <?= lang('common_lang.btn_new_m'); ?>
