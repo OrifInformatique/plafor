@@ -212,11 +212,11 @@ class Apprentice extends \App\Controllers\BaseController
         if(!isset($user) || empty($user))
             return redirect()->to('plafor/apprentice/list_apprentice');
 
-        $user_courses = $this->user_course_model->where('fk_user', $id_apprentice)->withDeleted()->findAll();
+        $user_courses = $this->user_course_model->where('fk_user', $id_apprentice)->findAll();
 
         // Get the course_plan informations for each user_course
         foreach($user_courses as &$user_course)
-            $user_course['course_plan'] = $this->course_plan_model->find($user_course['fk_course_plan']);
+            $user_course['course_plan'] = $this->course_plan_model->withDeleted()->find($user_course['fk_course_plan']);
 
         $output = array(
             'title'         => sprintf(lang('plafor_lang.title_user_course_plan_list'), $user['username']),

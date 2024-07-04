@@ -31,6 +31,7 @@ helper('form');
         <?php
         if(isset($user_courses) && !empty($user_courses))
         {
+            dd($user_courses);
             foreach($user_courses as $user_course)
             {
                 $data[] = 
