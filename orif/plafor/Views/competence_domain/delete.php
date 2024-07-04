@@ -29,7 +29,7 @@ $session=\CodeIgniter\Config\Services::session();
                 <!-- BUTTONS -->
                 <div class="text-right">
                     <!-- CANCEL -->
-                    <a href="<?= base_url('plafor/courseplan/view_course_plan/'.$competence_domain['fk_course_plan']) ?>" class="btn btn-default">
+                    <a href="<?= base_url('plafor/courseplan/view_course_plan/'.$competence_domain['fk_course_plan']) ?>" class="btn btn-secondary">
                         <?= lang('common_lang.btn_cancel'); ?>
                     </a>
                     <!-- ENABLE / DISABLE -->

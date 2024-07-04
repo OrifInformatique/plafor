@@ -14,6 +14,7 @@ use Plafor\Models\CoursePlanModel;
 use Plafor\Models\CompetenceDomainModel;
 use Plafor\Models\OperationalCompetenceModel;
 use Plafor\Models\ObjectiveModel;
+use Plafor\Models\TrainerApprenticeModel;
 
 class PlaforRules
 {
@@ -33,6 +34,26 @@ class PlaforRules
         return true;
     }
 
+     /**
+     * Check if the given apprentice ID and the given trainer ID 
+     *  exist in the same row of the table "trainer_apprentice"
+     *
+     * @param  int $fkApprenticeId  : ID of the apprentice, required
+     * @param  int $fkTrainerId     : ID of the trainer, required
+     * @param  null $datas          : Is set to access error
+     * @param  string &$error       : Error message
+     * @return bool
+     */
+    public function AreApprenticeAndTrainerNotLinked($fkTrainerId, $fkApprenticeId, $datas, &$error) : bool{
+        $array_where = array('fk_trainer' => $fkTrainerId, 'fk_apprentice' => $fkApprenticeId);
+
+        if (empty(TrainerApprenticeModel::getInstance()->getWhere($array_where)->getResultArray())){
+            return true;
+        }
+        $error = lang('plafor_lang.apprentice_trainer_already_linked');
+        return false;
+    }
+    
     /**
      * Check if the symbol of the competence domain already exists in database
      * 

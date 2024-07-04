@@ -25,7 +25,7 @@
                     <div class = "alert alert-info" ><?= lang('plafor_lang.operational_competence_'.($operational_competence['archive']==null?'disable_explanation':'enable_explanation'))?></div>
                 </div>
                 <div class="text-right">
-                    <a href="<?= base_url('plafor/courseplan/view_competence_domain/'.$operational_competence['fk_competence_domain']); ?>" class="btn btn-default">
+                    <a href="<?= base_url('plafor/courseplan/view_competence_domain/'.$operational_competence['fk_competence_domain']); ?>" class="btn btn-secondary">
                         <?= lang('common_lang.btn_cancel'); ?>
                     </a>
                     <?php 
