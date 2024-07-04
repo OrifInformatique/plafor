@@ -47,7 +47,8 @@ class PlaforRules
     public function AreApprenticeAndTrainerNotLinked($fkTrainerId, $fkApprenticeId, $datas, &$error) : bool{
         $array_where = array('fk_trainer' => $fkTrainerId, 'fk_apprentice' => $fkApprenticeId);
 
-        if (empty(TrainerApprenticeModel::getInstance()->getWhere($array_where)->getResultArray())){
+        $trainerApprenticeModel = model('TrainerApprenticeModel');
+        if (empty($trainerApprenticeModel->getWhere($array_where)->getResultArray())){
             return true;
         }
         $error = lang('plafor_lang.apprentice_trainer_already_linked');
