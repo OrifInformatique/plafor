@@ -246,7 +246,7 @@ class Apprentice extends \App\Controllers\BaseController
     public function save_user_course($id_apprentice = 0, $id_user_course = 0)
     {
         // Access permissions
-        if ($this->session->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer) 
+        if($this->session->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer) 
         {
             $user_type_id = $this->user_type_model
                 ->where('access_level', config('\User\Config\UserConfig')->access_level_apprentice)
@@ -256,12 +256,12 @@ class Apprentice extends \App\Controllers\BaseController
                 ->where('fk_user_type', $user_type_id)
                 ->find($id_apprentice);
 
-            $user_course = $this->user_course_model->getUserCourseById($id_user_course);
+            $user_course = $this->user_course_model->find($id_user_course);
 
-            if (is_null($apprentice))
+            if(is_null($apprentice))
                 return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
 
-            if (count($_POST) > 0) 
+            if(count($_POST) > 0)
             {
                 $fk_course_plan = $this->request->getPost('course_plan');
                 $new_user_course = array(
@@ -278,7 +278,7 @@ class Apprentice extends \App\Controllers\BaseController
                 
                 else 
                 {
-                    $user_has_course = $this->user_course_model->getUserCourseByUserAndCoursePlan($user_type_id, $new_user_course['fk_course_plan']) ? true : false;
+                    $user_has_course = $this->user_course_model->where(['fk_user' => $id_apprentice, 'fk_course_plan' => $fk_course_plan])->findAll() ? true : false;
 
                     // If the apprentice already follows the course plan submitted, prevent the creation of the entry.
                     if(!$user_has_course)
@@ -322,7 +322,7 @@ class Apprentice extends \App\Controllers\BaseController
                     }
                 }
 
-                if ($this->user_course_model->errors() == null) 
+                if($this->user_course_model->errors() == null) 
                     return redirect()->to(base_url('plafor/apprentice/list_user_courses/' . $id_apprentice));
             }
 
