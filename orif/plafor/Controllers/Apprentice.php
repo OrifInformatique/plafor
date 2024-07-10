@@ -272,10 +272,10 @@ class Apprentice extends \App\Controllers\BaseController
                     'date_end'          => $this->request->getPost('date_end'),
                 );
 
-                if (!is_null($user_course)) 
+                if (!is_null($user_course)) {
                     // User's course already exists - updates it
                     $this->user_course_model->update($id_user_course, $new_user_course);
-                
+                }
                 else 
                 {
                     $user_has_course = $this->user_course_model->where(['fk_user' => $id_apprentice, 'fk_course_plan' => $fk_course_plan])->findAll() ? true : false;
@@ -330,8 +330,15 @@ class Apprentice extends \App\Controllers\BaseController
             $course_plans = [];
             $status = [];
 
-            foreach ($this->course_plan_model->findAll() as $courseplan)
-                $course_plans[$courseplan['id']] = $courseplan['official_name'];
+            if ($id_user_course == 0) {
+                // New user course can only refer to an active course plan and not to a soft deleted one
+                foreach ($this->course_plan_model->findAll() as $courseplan)
+                    $course_plans[$courseplan['id']] = $courseplan['official_name'];
+            } else {
+                // Existing user course can refer to an active or a soft deleted course plan
+                foreach ($this->course_plan_model->withDeleted()->findAll() as $courseplan)
+                    $course_plans[$courseplan['id']] = $courseplan['official_name'];
+            }
 
             foreach ($this->user_course_status_model->findAll() as $usercoursestatus)
                 $status[$usercoursestatus['id']] = $usercoursestatus['name'];
