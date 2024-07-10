@@ -67,9 +67,10 @@ return [
     'title_objective_new'       => 'Ajouter un objectif',
 
     //User course
-    'title_user_course_delete'      => 'Supprimer un cours',
-    'title_user_course_view'        => 'Détail du cours',
-    'title_user_course_plan_link'   => 'Ajouter un cours associé',
+    'title_user_course_delete'      => 'Supprimer une formation',
+    'title_user_course_view'        => 'Détail de la formation',
+    'title_add_user_course'         => 'Ajouter une nouvelle formation',
+    'btn_user_course_manage'        => 'Gérer ces formations',
 
     //Acquisition status
     'title_acquisition_status_view' => 'Afficher les détails des status d\'acquisition',
@@ -97,6 +98,7 @@ return [
     'title_trainer_new'                     => 'Ajouter un formateur',
     'title_trainer_delete'                  => 'Supprimer un formateur',
     'title_course_plan_list'                => 'Liste des plans de formation',
+    'title_user_course_plan_list'           => 'Formations suivies par %s',
     'title_course_plan_update'              => 'Modifier le plan de formation',
     'title_course_plan_new'                 => 'Ajouter un plan de formation',
     'title_course_plan_delete'              => 'Supprimer le plan de formation',
@@ -118,8 +120,8 @@ return [
     'title_objective_delete'                => 'Supprimer l\'objectif',
     'title_objective_enable'                => 'Réactiver l\'objectif',
     'title_user_course_list'                => 'Liste des formations',
-    'title_user_course_update'              => 'Modifer la formation',
-    'title_user_course_new'                 => 'Ajouter une formation',
+    'title_user_course_update'              => 'modifer la formation',
+    'title_user_course_new'                 => 'nouvelle formation',
     'title_user_course_delete'              => 'Supprimer la formation',
     'title_apprentice_link_list'            => 'Liste des formateurs',
     'title_apprentice_link_update'          => 'Modifer le formateur',
@@ -182,6 +184,8 @@ return [
     'field_linked_objectives'                   => 'Objectifs liés à la compétence opérationnelle',
     'field_user_course_date_begin'              => 'Date du début de la formation',
     'field_user_course_date_end'                => 'Date de fin de la formation',
+    'field_user_course_date_begin_short'        => 'Date début',
+    'field_user_course_date_end_short'          => 'Date fin',
     'field_user_course_course_plan'             => 'Formation',
     'field_user_course_status'                  => 'Statut de la formation',
     'field_user_course_objectives_status'       => 'Statuts d\'acquisition des objectifs',
@@ -231,7 +235,7 @@ return [
     'symbol'                                        => 'Symbole',
     'user_course'                                   => 'Formation liée',
     'user_course_delete'                            => 'Supprimer cette formation liée',
-    'user_course_delete_explanation'                => 'Toutes les informations concernant cette formation liée seront supprimées.',
+    'user_course_delete_explanation'                => 'Toutes les informations concernant le suivi de cette formation par cette personne seront supprimées.',
     'user_course_disable'                           => 'Désactiver cette formation liée',
     'apprentice_link'                               => 'Apprenti et formateur liés',
     'apprentice_link_delete'                        => 'Supprimer le lien entre cet apprenti et ce formateur',
@@ -257,6 +261,6 @@ return [
     'objective_enable_explanation'                  => 'Toutes les informations concernant cet objectif (symbole, taxonomie, nom) seront réactivées.',
     'apprentice_link_enable_explanation'            => 'Toutes les informations concernant le lien entre cet apprenti et ce formateur seront réactivées.',
     'acquisition_status_enable_explanation'         => 'Toutes les informations concernant le statut d\'acquisition seront réactivées.',
-
+    'current'                                       => 'En vigueur',
     'apprentices_already_assigned_to_course_plan'   => 'Les apprentis suivants sont associés à ce plan de formation'
 ];
