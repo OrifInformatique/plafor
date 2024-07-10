@@ -338,7 +338,7 @@ class Apprentice extends \App\Controllers\BaseController
 
             // Data to send to the view
             $output = array(
-                'title'         => lang('plafor_lang.title_user_course_plan_link'),
+                'title'         => lang('plafor_lang.title_add_user_course'),
                 'course_plans'  => $course_plans,
                 'user_course'   => $user_course,
                 'status'        => $status,

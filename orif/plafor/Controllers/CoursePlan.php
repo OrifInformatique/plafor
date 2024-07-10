@@ -383,7 +383,7 @@ class CoursePlan extends \App\Controllers\BaseController
 
         // Redirection
         if (is_null($user_course))
-            return redirect()->to(base_url('plafor/courseplan/list_user_courses'));
+            return redirect()->to(base_url());
 
         // Checks if a currently logged trainer is the trainer of the apprentice
         if($_SESSION['user_access'] === config('\User\Config\UserConfig')->access_lvl_trainer)
@@ -445,7 +445,7 @@ class CoursePlan extends \App\Controllers\BaseController
                     // Deletes user's course
                     $this->user_course_model->delete($user_course_id);
 
-                    break;
+                    return redirect()->to(base_url('plafor/apprentice/list_user_courses/'.$apprentice['id']));
 
                 default: 
                     // Do nothing

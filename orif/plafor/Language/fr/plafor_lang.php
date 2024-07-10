@@ -67,9 +67,9 @@ return [
     'title_objective_new'       => 'Ajouter un objectif',
 
     //User course
-    'title_user_course_delete'      => 'Supprimer un cours',
-    'title_user_course_view'        => 'Détail du cours',
-    'title_user_course_plan_link'   => 'Ajouter un cours associé',
+    'title_user_course_delete'      => 'Supprimer une formation',
+    'title_user_course_view'        => 'Détail de la formation',
+    'title_add_user_course'         => 'Ajouter une nouvelle formation',
     'btn_user_course_manage'        => 'Gérer ces formations',
 
     //Acquisition status
@@ -120,8 +120,8 @@ return [
     'title_objective_delete'                => 'Supprimer l\'objectif',
     'title_objective_enable'                => 'Réactiver l\'objectif',
     'title_user_course_list'                => 'Liste des formations',
-    'title_user_course_update'              => 'Modifer la formation',
-    'title_user_course_new'                 => 'Ajouter une formation',
+    'title_user_course_update'              => 'modifer la formation',
+    'title_user_course_new'                 => 'nouvelle formation',
     'title_user_course_delete'              => 'Supprimer la formation',
     'title_apprentice_link_list'            => 'Liste des formateurs',
     'title_apprentice_link_update'          => 'Modifer le formateur',
@@ -235,7 +235,7 @@ return [
     'symbol'                                        => 'Symbole',
     'user_course'                                   => 'Formation liée',
     'user_course_delete'                            => 'Supprimer cette formation liée',
-    'user_course_delete_explanation'                => 'Toutes les informations concernant cette formation liée seront supprimées.',
+    'user_course_delete_explanation'                => 'Toutes les informations concernant le suivi de cette formation par cette personne seront supprimées.',
     'user_course_disable'                           => 'Désactiver cette formation liée',
     'apprentice_link'                               => 'Apprenti et formateur liés',
     'apprentice_link_delete'                        => 'Supprimer le lien entre cet apprenti et ce formateur',
