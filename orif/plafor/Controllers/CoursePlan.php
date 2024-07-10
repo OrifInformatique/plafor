@@ -369,23 +369,24 @@ class CoursePlan extends \App\Controllers\BaseController
     /**
      * Deletes a user's course depending on $action
      *
-     * @param integer $user_course_id : ID of the user_course to affect
-     * @param integer $action         : Action to apply on the course plan:
+     * @param integer $user_course_id ID of the user_course to affect
+     * @param integer $action         Action to apply on the course plan :
      *      - 0 for displaying the confirmation
      *      - 1 for deleting (hard delete)
+     * 
      * @return void
+     * 
      */
     public function delete_user_course($user_course_id = 0, $action = 0) 
     {
         $user_course = $this->user_course_model->find($user_course_id);
 
         // Redirection
-        if (is_null($user_course)) {
+        if (is_null($user_course))
             return redirect()->to(base_url('plafor/courseplan/list_user_courses'));
-        }
 
         // Checks if a currently logged trainer is the trainer of the apprentice
-        if($_SESSION['user_access'] === 2)
+        if($_SESSION['user_access'] === config('\User\Config\UserConfig')->access_lvl_trainer)
         {
             $trainer = $this->trainer_apprentice_model->getTrainer($_SESSION['user_id']);
             $doesTrainerTrainsApprentice = false;
@@ -409,7 +410,8 @@ class CoursePlan extends \App\Controllers\BaseController
         }
 
         // Access permissions
-        if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin || (isset($doesTrainerTrainsApprentice) && $doesTrainerTrainsApprentice))
+        if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin 
+            || (isset($doesTrainerTrainsApprentice) && $doesTrainerTrainsApprentice))
         {
             // Gets data for the confirmation view
             $course_plan = $this->course_plan_model->find($user_course['fk_course_plan']);
