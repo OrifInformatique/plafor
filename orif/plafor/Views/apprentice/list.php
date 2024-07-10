@@ -50,13 +50,21 @@ helper('form');
                     <td>
                         <a href="<?= base_url('plafor/apprentice/view_apprentice/' . $apprentice['id']); ?>"><?= $apprentice['username']; ?>
                     </td>
-                    <td><a href="<?= base_url('plafor/courseplan/list_course_plan/' . $apprentice['id']) ?>"><?php
+                    <td>
+                        <?php if(isset($courses) && !empty($courses)): ?>
+                            <?php
                             $linkedCourses = "";
-                            foreach ($courses as $course) {
+                            foreach ($courses as $course)
                                 $linkedCourses .= ($course['fk_user'] == $apprentice['id'] ? $coursesList[$course['fk_course_plan']]['official_name'] . "," : "");
-                            }
+
                             echo rtrim($linkedCourses, ",");
-                            ?></a></td>
+                            ?>
+                        <?php else: ?>
+                            <a href="<?= base_url('plafor/apprentice/save_user_course/'.$apprentice['id']); ?>" class="btn btn-primary">
+                                <?= lang('common_lang.btn_new_m'); ?>
+                            </a>
+                        <?php endif ?>
+                    </td>
                     <td style="width: 30%;max-width: 300px;min-width: 200px">
                         <div class="progressContainer" apprentice_id="<?= $apprentice['id'] ?>"></div>
                     </td>
@@ -67,18 +75,32 @@ helper('form');
     </div>
 </div>
 <script type="text/babel" defer>
+const invokeInitProgress = () => {
+    try {
+        initProgress("<?=base_url("plafor/apprentice/getcourseplanprogress")?>"
+            + '/', "<?=lang('plafor_lang.details_progress')?>");
+    } catch (e) {
+      new Promise(resolve => setTimeout(resolve, 300))
+            .then(invokeInitProgress);
+    }
+};
 
-    $(document).ready(function () {
-        setTimeout(()=>{initProgress("<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/',"<?=lang('plafor_lang.details_progress')?>")},200);
-        $('#toggle_deleted').change(e => {
-            let checked = e.currentTarget.checked;
-            $.post('<?php echo base_url("plafor/apprentice/list_apprentice") . '/'?>' + ((checked == true ? '1' : '0')), {}, data => {
-                $('#apprenticeslist').empty();
-                $('#apprenticeslist')[0].innerHTML = $(data).find('#apprenticeslist')[0].innerHTML;
-            }).then(()=>{
-                initProgress("<?=base_url("plafor/apprentice/getcourseplanprogress")?>"+'/',"<?=lang('plafor_lang.details_progress')?>");
-            });
+$(document).ready(function () {
+    invokeInitProgress();
+    $('#toggle_deleted').change(e => {
+        let checked = e.currentTarget.checked;
+        let url = '<?=base_url("plafor/apprentice/list_apprentice") . '/'?>'
+            + (checked ? '1' : '0');
+        $.post(url , {}, data => {
+            $('#apprenticeslist').empty();
+            $('#apprenticeslist')[0].innerHTML = $(data)
+                .find('#apprenticeslist')[0].innerHTML;
+        }).then(()=>{
+            let url = "<?=base_url(
+                "plafor/apprentice/getcourseplanprogress")?>" + '/';
+            initProgress(url, "<?=lang('plafor_lang.details_progress')?>");
         });
     });
+});
 </script>
 

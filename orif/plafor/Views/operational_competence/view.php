@@ -91,43 +91,24 @@ helper('form');
                 ]);?>
                 </span>
             </div>
-            <table class="responsiveTable table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th><span class="font-weight-bold"><?=lang('plafor_lang.field_objectives_symbols')?></span></th>
-                    <th><span class="font-weight-bold"><?=lang('plafor_lang.field_objectives_taxonomies')?></span></th>
-                    <th><span class="font-weight-bold"><?=lang('plafor_lang.field_objectives_names')?></span></th>
-                    <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
-                        <th></th>
-                        <th></th>
-                    <?php endif;?>
-                </tr>
-            </thead>
-            <tbody><?php
-            if (isset($objectives)):
-            foreach ($objectives as $objective){
-                ?><tr>
-                    <td>
-                        <a><?=$objective['symbol']?></a>
-
-                    </td>
-                    <td>
-                        <span class="font-weight-bold descTitle" style="display: none"><?=lang('plafor_lang.field_taxonomy')?></span>
-                        <a><?=$objective['taxonomy']?></a>
-
-                    </td>
-                    <td><?=$objective['name']?></td>
-
-                <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
-                    <td><a href="<?= base_url('plafor/courseplan/view_objective/'.$objective['id']); ?>"><i class="bi bi-card-text"></i></a></td>
-                    <td><a href="<?= base_url('plafor/courseplan/save_objective/'.$objective['id'].'/'.$operational_competence['id']); ?>"><i class="bi bi-pencil"></i></a></td>
-                    <td><a href="<?= base_url('plafor/courseplan/delete_objective/'.$objective['id']); ?>" class="<?=$operational_competence['archive']==null?'bi bi-trash':'bi bi-reply-all-fill'?>"></td>
-                <?php endif;?>
-                <?php
-                }?></tr>
-            <?php endif; ?>
-            </tbody>
-            </table>
+            <?php
+            if(isset($objectives))
+            {
+                echo view('Common\Views\items_list',
+                [
+                    'columns' =>
+                    [
+                        'symbol'    => lang('plafor_lang.field_objectives_symbols'),
+                        'taxonomy'  => lang('plafor_lang.field_objectives_taxonomies'),
+                        'name'      => lang('plafor_lang.field_objectives_names')
+                    ], 
+                    'items'             => $objectives,
+                    'primary_key_field' => 'id',
+                    'url_update'        => 'plafor/courseplan/save_objective/',
+                    'url_delete'        => 'plafor/courseplan/delete_objective/',
+                    'url_detail'        => 'plafor/courseplan/view_objective/',
+                ]);
+            }?>
         </div>
     </div>
 </div>

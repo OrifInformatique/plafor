@@ -58,11 +58,29 @@ class UserCourseModel extends \CodeIgniter\Model
     }
 
     /**
+     * Gets all courses from a user.
+     * 
+     * @param int $fk_user ID of the user
+     * 
+     * @return array
+     * 
+     */
+    public static function getUserCourses($fk_user){
+        return UserCourseModel::getInstance()
+            ->join('course_plan','course_plan.id = user_course.fk_course_plan')
+            ->where('fk_user', $fk_user)
+            ->findAll();
+    }
+
+    /**
      * @param $fkCoursePlanId
      * @return array
      */
-    public static function getCoursePlan($fkCoursePlanId,$with_archived=0){
-        return CoursePlanModel::getInstance()->withDeleted($with_archived)->find($fkCoursePlanId);
+    public static function getCoursePlan($fkCoursePlanId,
+        $with_archived = false)
+    {
+        return CoursePlanModel::getInstance()->withDeleted($with_archived)
+                                             ->find($fkCoursePlanId);
     }
 
     /**

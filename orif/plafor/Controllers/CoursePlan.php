@@ -369,60 +369,93 @@ class CoursePlan extends \App\Controllers\BaseController
     /**
      * Deletes a user's course depending on $action
      *
-     * @param integer $user_course_id : ID of the user_course to affect
-     * @param integer $action         : Action to apply on the course plan:
+     * @param integer $user_course_id ID of the user_course to affect
+     * @param integer $action         Action to apply on the course plan :
      *      - 0 for displaying the confirmation
      *      - 1 for deleting (hard delete)
+     * 
      * @return void
+     * 
      */
-    public function delete_user_course($user_course_id = 0, $action = 0) {
-        // Access permissions
-        if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) {
-            // Gets data of the user's course if it exists
-            $user_course = $this->user_course_model->find($user_course_id);
+    public function delete_user_course($user_course_id = 0, $action = 0) 
+    {
+        $user_course = $this->user_course_model->find($user_course_id);
 
-            // Redirection
-            if (is_null($user_course)) {
-                /**
-                 * @todo Create method and view for list of users' courses
-                 */
-                // return redirect()->to(base_url('plafor/courseplan/list_user_course'));
-                return redirect()->to(base_url('plafor/apprentice/list_apprentice')); // Temporary redirection
+        // Redirection
+        if (is_null($user_course))
+            return redirect()->to(base_url());
+
+        // Checks if a currently logged trainer is the trainer of the apprentice
+        if($_SESSION['user_access'] === config('\User\Config\UserConfig')->access_lvl_trainer)
+        {
+            $trainer = $this->trainer_apprentice_model->getTrainer($_SESSION['user_id']);
+            $doesTrainerTrainsApprentice = false;
+
+            if(isset($trainer))
+            {
+                $trainer_apprentices = $this->trainer_apprentice_model->getApprenticeIdsFromTrainer($trainer['id']);
+
+                if(isset($trainer_apprentices))
+                {
+                    foreach($trainer_apprentices as $id_apprentice)
+                    {
+                        if($id_apprentice === $user_course['fk_user'])
+                        {
+                            $doesTrainerTrainsApprentice = true;
+                            break;
+                        }
+                    }
+                }
             }
+        }
 
+        // Access permissions
+        if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin 
+            || (isset($doesTrainerTrainsApprentice) && $doesTrainerTrainsApprentice))
+        {
             // Gets data for the confirmation view
             $course_plan = $this->course_plan_model->find($user_course['fk_course_plan']);
             $apprentice = $this->user_model->find($user_course['fk_user']);
             $status = $this->user_course_status_model->find($user_course['fk_status']);
 
             // Action to perform
-            switch ($action) {
+            switch ($action)
+            {
                 case 0: // Displays confirmation
                     $output = array(
                         'user_course' => $user_course,
                         'course_plan' => $course_plan,
-                        'apprentice' => $apprentice,
-                        'status' => $status,
-                        'title' => lang('plafor_lang.title_user_course_delete')
+                        'apprentice'  => $apprentice,
+                        'status'      => $status,
+                        'title'       => lang('plafor_lang.title_user_course_delete')
                     );
+
                     return $this->display_view('Plafor\user_course/delete', $output);
+
                 case 1: // Deletes user's course and the corresponding comments and acquisition status
                     // Deletes comments
-                    foreach ($this->acquisition_status_model->where('fk_user_course', $user_course_id)->find() as $acquisition_status) {
+                    foreach ($this->acquisition_status_model->where('fk_user_course', $user_course_id)->find() as $acquisition_status)
+                    {
                         $this->comment_model->where('fk_acquisition_status', $acquisition_status['id'])->delete();
                     };
+
                     // Deletes acquisition status
                     $this->acquisition_status_model->where('fk_user_course', $user_course_id)->delete();
+
                     // Deletes user's course
                     $this->user_course_model->delete($user_course_id);
-                    break;
-                default: // Do nothing
-                    break;
+
+                    return redirect()->to(base_url('plafor/apprentice/list_user_courses/'.$apprentice['id']));
+
+                default: 
+                    // Do nothing
             }
+
             return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
-        } else {
+        } 
+        
+        else
             return $this->display_view('\User\errors\403error');
-        }
     }
 
     /**
@@ -435,14 +468,19 @@ class CoursePlan extends \App\Controllers\BaseController
     public function save_objective($objective_id = 0, $operational_comp_id = 0) {
         // Access permissions
         if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) {
-            // Gets data of objective and operational competence if they exist
+            // Get datas of given objective and operational competence
             $objective = $this->objective_model->withDeleted()->find($objective_id);
-            $operational_comp = $this->operational_comp_model->withDeleted()->find($operational_comp_id);
+            if (!is_null($objective)) {
+                // Given objective has to be modified. Get the operational competence corresponding to it.
+                $operational_comp = $this->operational_comp_model->withDeleted()->find($objective['fk_operational_competence']);
+            } else {
+                // No objective is given, add a new objective for the operational competence given in second parameter
+                $operational_comp = $this->operational_comp_model->withDeleted()->find($operational_comp_id);
+            }
 
-            // Redirection
-            if (is_null($operational_comp) ||
-                !is_null($objective) && $objective['fk_operational_competence'] != $operational_comp_id) {
-                return redirect()->to(base_url('plafor/courseplan/view_operational_competence/'.$operational_comp_id));
+            // If no objective and no operational competence is given, redirect to courseplan list
+            if (is_null($operational_comp)) {
+                return redirect()->to(base_url('plafor/courseplan/list_course_plan'));
             }
 
             // Actions upon form submission
@@ -493,7 +531,7 @@ class CoursePlan extends \App\Controllers\BaseController
                 'title'                     => lang('plafor_lang.title_objective_' . (is_null($objective) ? 'new' : 'update')),
                 'objective'                 => $objective,
                 'operational_competences'   => $operationalCompetences,
-                'operational_competence_id' => $operational_comp_id,
+                'operational_competence_id' => $operational_comp['id'],
                 'errors'                    => $this->objective_model->errors(),
             );
 
