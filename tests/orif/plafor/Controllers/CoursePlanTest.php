@@ -1146,7 +1146,6 @@
 
     #     // Assertions
     #     $response = $result->response();
-    #     d($response);
     #     $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
     #     $this->assertNotEmpty($response->getBody());
     #     $result->assertOK();
@@ -1594,294 +1593,322 @@
     #     $result->assertRedirectTo(base_url('plafor/courseplan/list_course_plan'));
     # }
 
+    # /**
+    #  * Asserts that the view_competence_domain page is loaded correctly when a
+    #  * competence domain id is given
+    #  */
+    # public function testview_competence_domainWithCompetenceDomainId()
+    # {
+    #     // Initialize session 
+    #     $_SESSION['user_access'] = config('\User\Config\UserConfig')
+    #         ->access_lvl_admin;
+    #     $_SESSION['logged_in'] = true;
+    #     $_SERVER['QUERY_STRING'] = 'fake';
+
+    #     // Execute view_competence_domain method of CoursePlan class
+    #     $result = $this->controller(CoursePlan::class)
+    #         ->execute('view_competence_domain', 27);
+
+    #     // Assertions
+    #     $response = $result->response();
+    #     $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
+    #     $this->assertNotEmpty($response->getBody());
+    #     $result->assertOK();
+    #     $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
+    #     $result->assertSee('Détail du plan de formation', 'p');
+    #     $result->assertSee('Informaticienne / Informaticien avec CFC, '
+    #         . 'orientation développement d\'applications', 'p');
+    #     $result->assertSee('No 88611, entré en vigueur le 01.08.2021', 'p');
+    #     $result->assertSee('Détail du domaine de compétence', 'p');
+    #     $result->assertSee('A : Suivi des projets ICT', 'p');
+    #     $result->assertSee('Symbole', 'th');
+    #     $result->assertSee('Compétence opérationnelle', 'th');
+    #     $result->assertSee('A1', 'td');
+    #     $result->assertSee('Clarifier et documenter les besoins  des '
+    #         . 'parties prenantes dans le cadre d’un projet ICT', 'td');
+    #     $result->assertSee('A2', 'td');
+    #     $result->assertSee('Définir un modèle de procédure pour un projet ICT',
+    #         'td');
+    #     $result->assertSee('A3', 'td');
+    #     $result->assertSee('Rechercher des informations sur des solutions '
+    #         . 'ICT et sur les innovations', 'td');
+    # }
+
+    # /**
+    #  * Asserts that the view_competence_domain page redirects to the list_course_plan view when non existing competenvce domain id is given
+    #  */
+    # public function testview_competence_domainWithNonExistingCompetenceDomainId()
+    # {
+    #     // Initialize session
+    #     $_SESSION['user_access'] = config('\User\Config\UserConfig')
+    #         ->access_lvl_admin;
+    #     $_SESSION['logged_in'] = true;
+    #     // Execute view_competence_domain method of CoursePlan class
+    #     $result = $this->controller(CoursePlan::class)
+    #     ->execute('view_competence_domain', 999999);
+
+    #     // Assertions
+    #     $response = $result->response();
+    #     $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class, $response);
+    #     $this->assertEmpty($response->getBody());
+    #     $result->assertOK();
+    #     $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
+    #     $result->assertRedirectTo(base_url('plafor/courseplan/list_course_plan'));
+    # }
+
+    # /**
+    #  * Asserts that the view_operational_competence page redirects to the
+    #  * list_course_plan view when no operational competenvce id is given
+    #  */
+    # public function testview_operational_competenceWithNoOperationalCompetenceId()
+    # {
+    #     // Initialize session
+    #     $_SESSION['user_access'] = config('\User\Config\UserConfig')
+    #         ->access_lvl_admin;
+    #     $_SESSION['logged_in'] = true;
+    #     // Execute view_operational_competence method of CoursePlan class
+    #     $result = $this->controller(CoursePlan::class)
+    #         ->execute('view_operational_competence');
+    #     // Assertions
+    #     $response = $result->response();
+    #     $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class,
+    #         $response);
+    #     $this->assertEmpty($response->getBody());
+    #     $result->assertOK();
+    #     $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
+    #     $result->assertRedirectTo(
+    #         base_url('plafor/courseplan/list_course_plan') . '/');
+    # }
+
+    # /**
+    #  * Asserts that the view_operational_competence page is loaded correctly
+    #  * when an operational competenvce id is given
+    #  */
+    # public function testview_operational_competenceWithOperationalCompetenceId()
+    # {
+    #     // Initialize session 
+    #     $_SESSION['user_access'] = config('\User\Config\UserConfig')
+    #         ->access_lvl_admin;
+    #     $_SESSION['logged_in'] = true;
+    #     $_SERVER['QUERY_STRING'] = 'fake';
+    #     // Execute view_operational_competence method of CoursePlan class
+    #     $result = $this->controller(CoursePlan::class)
+    #         ->execute('view_operational_competence', 108);
+    #     // Assertions
+    #     $response = $result->response();
+    #     $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
+    #     $this->assertNotEmpty($response->getBody());
+    #     $result->assertOK();
+    #     $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
+    #     $result->assertSee('Détail du plan de formation', 'p');
+    #     $result->assertSee('Numéro du plan de formation', 'p');
+    #     $result->assertSeeLink('88611');
+    #     $result->assertSeeLink('Informaticienne / Informaticien avec CFC, '
+    #         . 'orientation développement d\'applications');
+    #     $result->assertSee('Détail du domaine de compétence', 'p');
+    #     $result->assertSee('Symbole du domaine de compétence', 'p');
+    #     $result->assertSeeLink('A');
+    #     $result->assertSee('Nom du domaine de compétence', 'p');
+    #     $result->assertSeeLink('Suivi des projets ICT');
+    #     $result->assertSee('Détail de la compétence opérationnelle', 'p');
+    #     $result->assertSee('Symbole de la compétence opérationnelle', 'p');
+    #     $result->assertSee('A1', 'p');
+    #     $result->assertSee('Nom de la compétence opérationnelle', 'p');
+    #     $result->assertSee('Clarifier et documenter les besoins  des parties '
+    #         . 'prenantes dans le cadre d’un projet ICT', 'p');
+    #     $result->assertSee('Compétence méthodologique', 'p');
+    #     // $result->assertSee('Travail structuré, documentation adéquate', 'p');
+    #     $result->assertSee('Compétence sociale', 'p');
+    #     // $result->assertSee('Comprendre et sentir les problèmes du client, communication avec des partenaires', 'p');
+    #     $result->assertSee('Compétence personnelle', 'p');
+    #     // $result->assertSee('Fiabilité, autoréflexion, interrogation constructive du problème', 'p');
+    #     $result->assertSee('Objectifs liés à la compétence opérationnelle',
+    #         'p');
+    #     // TODO fix typo in langfile
+    #     // $result->assertSee('Symbole des objectifs', 'th');
+    #     $result->assertSee('Taxonomie des objectifs', 'th');
+    #     $result->assertSee('Nom des objectifs', 'th');
+    #     $result->assertSee('A1.1', 'td');
+    #     $result->assertSee('5', 'td');
+    #     $result->assertSee('Ils appliquent diverses techniques '
+    #         . 'd’audition et d’observation (p. ex. questions ouvertes, '
+    #         . 'questions fermées, réunion, workshop, technique du '
+    #         . 'shadowing, simulation de la solution à rechercher en '
+    #         . 'opérant un saut dans le temps.', 'td');
+    # }
+
+    # /**
+    #  * Asserts that the view_operational_competence page redirects to the
+    #  * list_course_plan view when a non existing operational competenvce id is
+    #  * given
+    #  */
+    # public function testview_operational_competenceWithNonExistingOperationalCompetenceId()
+    # {
+    #     // Initialize session
+    #     $_SESSION['user_access'] = config('\User\Config\UserConfig')
+    #         ->access_lvl_admin;
+    #     $_SESSION['logged_in'] = true;
+    #     // Execute view_operational_competence method of CoursePlan class
+    #     $result = $this->controller(CoursePlan::class)
+    #     ->execute('view_operational_competence', 999999);
+
+    #     // Assertions
+    #     $response = $result->response();
+    #     $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class,
+    #         $response);
+    #     $this->assertEmpty($response->getBody());
+    #     $result->assertOK();
+    #     $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
+    #     $result->assertRedirectTo(
+    #         base_url('plafor/courseplan/list_course_plan') . '/');
+    # }
+
+    # /**
+    #  * Asserts that the view_objective page redirects to the list_course_plan view when no objective id is given
+    #  */
+    # public function testview_objectiveWithNoObjectiveId()
+    # {
+    #     // Initialize session
+    #     $_SESSION['user_access'] = config('\User\Config\UserConfig')
+    #         ->access_lvl_admin;
+    #     $_SESSION['logged_in'] = true;
+    #     // Execute view_objective method of CoursePlan class
+    #     $result = $this->controller(CoursePlan::class)
+    #     ->execute('view_objective');
+
+    #     // Assertions
+    #     $response = $result->response();
+    #     $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class, $response);
+    #     $this->assertEmpty($response->getBody());
+    #     $result->assertOK();
+    #     $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
+    #     $result->assertRedirectTo(base_url('plafor/courseplan/list_course_plan'));
+    # }
+
+    # /**
+    #  * Asserts that the view_objective page is loaded correctly when an
+    #  * objective id is given
+    #  */
+    # public function testview_objectiveWithObjectiveId()
+    # {
+    #     // Initialize session
+    #     $_SESSION['user_access'] = config('\User\Config\UserConfig')
+    #         ->access_lvl_admin;
+    #     $_SESSION['logged_in'] = true;
+    #     $_SERVER['QUERY_STRING'] = 'fake';
+    #     // Execute view_objective method of CoursePlan class
+    #     $result = $this->controller(CoursePlan::class)
+    #         ->execute('view_objective', 507);
+
+    #     // Assertions
+    #     $response = $result->response();
+    #     $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
+    #     $this->assertNotEmpty($response->getBody());
+    #     $result->assertOK();
+    #     $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
+    #     $result->assertSee('Détail du plan de formation', 'p');
+    #     $result->assertSee('Numéro du plan de formation', 'p');
+    #     $result->assertSeeLink('88611');
+    #     $result->assertSeeLink('Informaticienne / Informaticien avec CFC, '
+    #         . 'orientation développement d\'applications');
+    #     $result->assertSee('Détail du domaine de compétence', 'p');
+    #     $result->assertSee('Symbole du domaine de compétence', 'p');
+    #     $result->assertSeeLink('A');
+    #     $result->assertSee('Nom du domaine de compétence', 'p');
+    #     $result->assertSeeLink('Suivi des projets ICT');
+    #     $result->assertSee('Détail de la compétence opérationnelle', 'p');
+    #     $result->assertSee('Symbole de la compétence opérationnelle', 'p');
+    #     $result->assertSeeLink('A1');
+    #     $result->assertSee('Nom de la compétence opérationnelle', 'p');
+    #     $result->assertSeeLink('Clarifier et documenter les besoins  des '
+    #         . 'parties prenantes dans le cadre d’un projet ICT');
+    #     $result->assertSee('Compétence méthodologique', 'p');
+    #     // $result->assertSeeLink('Travail structuré, documentation adéquate');
+    #     $result->assertSee('Compétence sociale', 'p');
+    #     // $result->assertSeeLink('Comprendre et sentir les problèmes du client, communication avec des partenaires');
+    #     $result->assertSee('Compétence personnelle', 'p');
+    #     // $result->assertSeeLink('Fiabilité, autoréflexion, interrogation constructive du problème');
+    #     $result->assertSee('Détail de l\'objectif', 'p');
+    #     $result->assertSee('Symbole de l\'objectif', 'p');
+    #     $result->assertSee('A1.1', 'p');
+    #     $result->assertSee('Taxonomie de l\'objectif', 'p');
+    #     $result->assertSee('3', 'p');
+    #     $result->assertSee('Nom de l\'objectif', 'p');
+    #     $result->assertSee('Ils clarifient les objectifs du projet ICT et '
+    #         . 'ses paramètres généraux tels que coûts, durée, qualité, '
+    #         . 'périmètre, responsabilités et méthodologie.', 'p');
+    # }
+
+    # /**
+    #  * Asserts that the view_objective page redirects to the list_course_plan view when a non existing objective id is given
+    #  */
+    # public function testview_objectiveWithNonExistingObjectiveId()
+    # {
+    #     // Initialize session
+    #     $_SESSION['user_access'] = config('\User\Config\UserConfig')
+    #         ->access_lvl_admin;
+    #     $_SESSION['logged_in'] = true;
+    #     // Execute view_objective method of CoursePlan class
+    #     $result = $this->controller(CoursePlan::class)
+    #     ->execute('view_objective', 999999);
+
+    #     // Assertions
+    #     $response = $result->response();
+    #     $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class, $response);
+    #     $this->assertEmpty($response->getBody());
+    #     $result->assertOK();
+    #     $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
+    #     $result->assertRedirectTo(base_url('plafor/courseplan/list_course_plan'));
+    # }
+
+    # /**
+    #  * Asserts that the save_course_plan page redirects to list_course_plan when an administrator session user access is set with a posted new course plan
+    #  */
+    # public function testsave_course_planPostedWithAdministratorSessionUserAccessWithPostedNewCoursePlan()
+    # {
+    #     // Initialize session 
+    #     $_SESSION['user_access'] = config('\User\Config\UserConfig')
+    #         ->access_lvl_admin;
+    #     $_SESSION['logged_in'] = true;
+
+    #     // Prepare the POST request
+    #     $_SERVER['REQUEST_METHOD'] = 'post';
+    #     $_POST['coursePlanId'] = 0;
+    #     $_REQUEST['coursePlanId'] = 0;
+    #     $_POST['formation_number'] = 12345;
+    #     $_REQUEST['formation_number'] = 12345;
+    #     $_POST['official_name'] = 'Course Plan Unit Test';
+    #     $_REQUEST['official_name'] = 'Course Plan Unit Test';
+    #     $_POST['date_begin'] = '2023-04-05';
+    #     $_REQUEST['date_begin'] = '2023-04-05';
+
+    #     // Execute save_course_plan method of CoursePlan class
+    #     $result = $this->controller(CoursePlan::class)
+    #     ->execute('save_course_plan');
+
+    #     // Reset $_POST and $_REQUEST variables
+    #     $_POST = array();
+    #     $_REQUEST = array();
+
+    #     // Get course plan from database
+    #     $coursePlanDb = \Plafor\Models\CoursePlanModel::getInstance()->where("formation_number", 12345)->first();
+
+    #     // Delete inserted course plan
+    #     \Plafor\Models\CoursePlanModel::getInstance()->delete($coursePlanDb['id'], TRUE);
+
+    #      // Assertions
+    #      $response = $result->response();
+    #      $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class, $response);
+    #      $this->assertEmpty($response->getBody());
+    #      $result->assertOK();
+    #      $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
+    #      $result->assertRedirectTo(base_url('plafor/courseplan/list_course_plan'));
+    # }
+
     /**
-     * Asserts that the view_competence_domain page is loaded correctly when a competence domain id is given
-     */
-    public function testview_competence_domainWithCompetenceDomainId()
-    {
-        // Initialize session 
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')
-            ->access_lvl_admin;
-        $_SESSION['logged_in'] = true;
-
-        // Execute view_competence_domain method of CoursePlan class
-        $result = $this->controller(CoursePlan::class)
-        ->execute('view_competence_domain', 1);
-
-        // Assertions
-        $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
-        $this->assertNotEmpty($response->getBody());
-        $result->assertOK();
-        $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertSee('Détail du plan de formation', 'p');
-        $result->assertSee(' Informaticien/-ne CFC Développement d\'applications', 'p');
-        $result->assertSee('No 88601, entré en vigueur le 01.08.2014', 'p');
-        $result->assertSee('Détail du domaine de compétence', 'p');
-        $result->assertSee('A : Saisie, interprétation et mise en œuvre des exigences des applications', 'p');
-        $result->assertSee('Symbole', 'span');
-        $result->assertSee('Compétence opérationnelle', 'span');
-        $result->assertSeeLink('A1');
-        $result->assertSeeLink('Analyser, structurer et documenter les exigences ainsi que les besoins');
-        $result->assertSeeLink('A2');
-        $result->assertSeeLink('Elaborer diverses propositions de solutions incluant les interfaces utilisateurs requises');
-        $result->assertSeeLink('A3');
-        $result->assertSeeLink('Vérifier l’exhaustivité des exigences et des besoins dans les propositions de solution choisies');
-    }
-
-    /**
-     * Asserts that the view_competence_domain page redirects to the list_course_plan view when non existing competenvce domain id is given
-     */
-    public function testview_competence_domainWithNonExistingCompetenceDomainId()
-    {
-        // Initialize session
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')
-            ->access_lvl_admin;
-        $_SESSION['logged_in'] = true;
-        // Execute view_competence_domain method of CoursePlan class
-        $result = $this->controller(CoursePlan::class)
-        ->execute('view_competence_domain', 999999);
-
-        // Assertions
-        $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class, $response);
-        $this->assertEmpty($response->getBody());
-        $result->assertOK();
-        $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertRedirectTo(base_url('plafor/courseplan/list_course_plan'));
-    }
-
-    /**
-     * Asserts that the view_operational_competence page redirects to the list_course_plan view when no operational competenvce id is given
-     */
-    public function testview_operational_competenceWithNoOperationalCompetenceId()
-    {
-        // Initialize session
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')
-            ->access_lvl_admin;
-        $_SESSION['logged_in'] = true;
-        // Execute view_operational_competence method of CoursePlan class
-        $result = $this->controller(CoursePlan::class)
-        ->execute('view_operational_competence');
-
-        // Assertions
-        $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class, $response);
-        $this->assertEmpty($response->getBody());
-        $result->assertOK();
-        $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertRedirectTo(base_url('plafor/courseplan/list_course_plan'));
-    }
-
-    /**
-     * Asserts that the view_operational_competence page is loaded correctly when an operational competenvce id is given
-     */
-    public function testview_operational_competenceWithOperationalCompetenceId()
-    {
-        // Initialize session 
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')
-            ->access_lvl_admin;
-        $_SESSION['logged_in'] = true;
-
-        // Execute view_operational_competence method of CoursePlan class
-        $result = $this->controller(CoursePlan::class)
-        ->execute('view_operational_competence', 1);
-
-        // Assertions
-        $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
-        $this->assertNotEmpty($response->getBody());
-        $result->assertOK();
-        $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertSee('Détail du plan de formation', 'p');
-        $result->assertSee('Numéro du plan de formation', 'p');
-        $result->assertSeeLink('88601');
-        $result->assertSeeLink(' Informaticien/-ne CFC Développement d\'applications');
-        $result->assertSee('Détail du domaine de compétence', 'p');
-        $result->assertSee('Symbole du domaine de compétence', 'p');
-        $result->assertSeeLink('A');
-        $result->assertSee('Nom du domaine de compétence', 'p');
-        $result->assertSeeLink('Saisie, interprétation et mise en œuvre des exigences des applications');
-        $result->assertSee('Détail de la compétence opérationnelle', 'p');
-        $result->assertSee('Symbole de la compétence opérationnelle', 'p');
-        $result->assertSee('A1', 'p');
-        $result->assertSee('Nom de la compétence opérationnelle', 'p');
-        $result->assertSee('Analyser, structurer et documenter les exigences ainsi que les besoins', 'p');
-        $result->assertSee('Compétence méthodologique', 'p');
-        $result->assertSee('Travail structuré, documentation adéquate', 'p');
-        $result->assertSee('Compétence sociale', 'p');
-        $result->assertSee('Comprendre et sentir les problèmes du client, communication avec des partenaires', 'p');
-        $result->assertSee('Compétence personnelle', 'p');
-        $result->assertSee('Fiabilité, autoréflexion, interrogation constructive du problème', 'p');
-        $result->assertSee('Objectifs liés à la compétence opérationnelle', 'p');
-        $result->assertSee('Symbole des objectifs', 'span');
-        $result->assertSee('Taxonomie des objectifs', 'span');
-        $result->assertSee('Nom des objectifs', 'span');
-        $result->assertSeeLink('A.1.1');
-        $result->assertSeeLink('4');
-        $result->assertSeeLink('Enregistrer les besoins et discuter les solutions possibles, s’entretenir avec le client/supérieur sur les restrictions des exigences');
-    }
-
-    /**
-     * Asserts that the view_operational_competence page redirects to the list_course_plan view when a non existing operational competenvce id is given
-     */
-    public function testview_operational_competenceWithNonExistingOperationalCompetenceId()
-    {
-        // Initialize session
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')
-            ->access_lvl_admin;
-        $_SESSION['logged_in'] = true;
-        // Execute view_operational_competence method of CoursePlan class
-        $result = $this->controller(CoursePlan::class)
-        ->execute('view_operational_competence', 999999);
-
-        // Assertions
-        $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class, $response);
-        $this->assertEmpty($response->getBody());
-        $result->assertOK();
-        $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertRedirectTo(base_url('plafor/courseplan/list_course_plan'));
-    }
-
-    /**
-     * Asserts that the view_objective page redirects to the list_course_plan view when no objective id is given
-     */
-    public function testview_objectiveWithNoObjectiveId()
-    {
-        // Initialize session
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')
-            ->access_lvl_admin;
-        $_SESSION['logged_in'] = true;
-        // Execute view_objective method of CoursePlan class
-        $result = $this->controller(CoursePlan::class)
-        ->execute('view_objective');
-
-        // Assertions
-        $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class, $response);
-        $this->assertEmpty($response->getBody());
-        $result->assertOK();
-        $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertRedirectTo(base_url('plafor/courseplan/list_course_plan'));
-    }
-
-    /**
-     * Asserts that the view_objective page is loaded correctly when an objective id is given
-     */
-    public function testview_objectiveWithObjectiveId()
-    {
-        // Initialize session
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')
-            ->access_lvl_admin;
-        $_SESSION['logged_in'] = true;
-        // Execute view_objective method of CoursePlan class
-        $result = $this->controller(CoursePlan::class)
-        ->execute('view_objective', 1);
-
-        // Assertions
-        $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
-        $this->assertNotEmpty($response->getBody());
-        $result->assertOK();
-        $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertSee('Détail du plan de formation', 'p');
-        $result->assertSee('Numéro du plan de formation', 'p');
-        $result->assertSeeLink('88601');
-        $result->assertSeeLink(' Informaticien/-ne CFC Développement d\'applications');
-        $result->assertSee('Détail du domaine de compétence', 'p');
-        $result->assertSee('Symbole du domaine de compétence', 'p');
-        $result->assertSeeLink('A');
-        $result->assertSee('Nom du domaine de compétence', 'p');
-        $result->assertSeeLink('Saisie, interprétation et mise en œuvre des exigences des applications');
-        $result->assertSee('Détail de la compétence opérationnelle', 'p');
-        $result->assertSee('Symbole de la compétence opérationnelle', 'p');
-        $result->assertSeeLink('A1');
-        $result->assertSee('Nom de la compétence opérationnelle', 'p');
-        $result->assertSeeLink('Analyser, structurer et documenter les exigences ainsi que les besoins');
-        $result->assertSee('Compétence méthodologique', 'p');
-        $result->assertSeeLink('Travail structuré, documentation adéquate');
-        $result->assertSee('Compétence sociale', 'p');
-        $result->assertSeeLink('Comprendre et sentir les problèmes du client, communication avec des partenaires');
-        $result->assertSee('Compétence personnelle', 'p');
-        $result->assertSeeLink('Fiabilité, autoréflexion, interrogation constructive du problème');
-        $result->assertSee('Détails de l\'objectif', 'p');
-        $result->assertSee('Symboles de l\'objectif', 'p');
-        $result->assertSee('A.1.1', 'p');
-        $result->assertSee('Taxonomie de l\'objectif', 'p');
-        $result->assertSee('4', 'p');
-        $result->assertSee('Nom de l\'objectif', 'p');
-        $result->assertSee('Enregistrer les besoins et discuter les solutions possibles, s’entretenir avec le client/supérieur sur les restrictions des exigences', 'p');
-    }
-
-    /**
-     * Asserts that the view_objective page redirects to the list_course_plan view when a non existing objective id is given
-     */
-    public function testview_objectiveWithNonExistingObjectiveId()
-    {
-        // Initialize session
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')
-            ->access_lvl_admin;
-        $_SESSION['logged_in'] = true;
-        // Execute view_objective method of CoursePlan class
-        $result = $this->controller(CoursePlan::class)
-        ->execute('view_objective', 999999);
-
-        // Assertions
-        $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class, $response);
-        $this->assertEmpty($response->getBody());
-        $result->assertOK();
-        $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertRedirectTo(base_url('plafor/courseplan/list_course_plan'));
-    }
-
-    /**
-     * Asserts that the save_course_plan page redirects to list_course_plan when an administrator session user access is set with a posted new course plan
-     */
-    public function testsave_course_planPostedWithAdministratorSessionUserAccessWithPostedNewCoursePlan()
-    {
-        // Initialize session 
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')
-            ->access_lvl_admin;
-        $_SESSION['logged_in'] = true;
-
-        // Prepare the POST request
-        $_SERVER['REQUEST_METHOD'] = 'post';
-        $_POST['coursePlanId'] = 0;
-        $_REQUEST['coursePlanId'] = 0;
-        $_POST['formation_number'] = 12345;
-        $_REQUEST['formation_number'] = 12345;
-        $_POST['official_name'] = 'Course Plan Unit Test';
-        $_REQUEST['official_name'] = 'Course Plan Unit Test';
-        $_POST['date_begin'] = '2023-04-05';
-        $_REQUEST['date_begin'] = '2023-04-05';
-
-        // Execute save_course_plan method of CoursePlan class
-        $result = $this->controller(CoursePlan::class)
-        ->execute('save_course_plan');
-
-        // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
-
-        // Get course plan from database
-        $coursePlanDb = \Plafor\Models\CoursePlanModel::getInstance()->where("formation_number", 12345)->first();
-
-        // Delete inserted course plan
-        \Plafor\Models\CoursePlanModel::getInstance()->delete($coursePlanDb['id'], TRUE);
-
-         // Assertions
-         $response = $result->response();
-         $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class, $response);
-         $this->assertEmpty($response->getBody());
-         $result->assertOK();
-         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-         $result->assertRedirectTo(base_url('plafor/courseplan/list_course_plan'));
-    }
-
-    /**
-     * Asserts that the save_course_plan page is loaded with submitted data when an administrator session user access is set with a posted new course plan and an invalid formation number
+     * Asserts that the save_course_plan page is loaded with submitted data
+     * when an administrator session user access is set with a posted new
+     * course plan and an invalid formation number
      */
     public function testsave_course_planPostedWithAdministratorSessionUserAccessWithPostedNewCoursePlanAndInvalidFormationNumber()
     {
@@ -1889,8 +1916,8 @@
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_admin;
         $_SESSION['logged_in'] = true;
-
-        // Prepare the POST request (with an invalid course plan formation number)
+        // Prepare the POST request (with an invalid course plan formation
+        // number)
         $_SERVER['REQUEST_METHOD'] = 'post';
         $_POST['coursePlanId'] = 0;
         $_REQUEST['coursePlanId'] = 0;
@@ -1902,15 +1929,12 @@
         $_REQUEST['date_begin'] = '2023-04-05';
         $_POST['id'] = 0;
         $_REQUEST['id'] = 0;
-
         // Execute save_course_plan method of CoursePlan class
         $result = $this->controller(CoursePlan::class)
-        ->execute('save_course_plan');
-
+            ->execute('save_course_plan');
         // Reset $_POST and $_REQUEST variables
         $_POST = array();
         $_REQUEST = array();
-
          // Assertions
         $response = $result->response();
         $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
@@ -1922,7 +1946,7 @@
         $result->assertSee('Numéro du plan de formation', 'label');
         $result->assertSeeInField('formation_number', '12345678');
         $result->assertSee('Nom du plan de formation', 'label');
-        $result->assertSeeInField('official_name', ' Course Plan Unit Test');
+        $result->assertSeeInField('official_name', 'Course Plan Unit Test');
         $result->assertSee('Date de création du plan de formation', 'label');
         $result->assertSeeInField('date_begin', '2023-04-05');
         $result->assertSeeInField('coursePlanId', '');
