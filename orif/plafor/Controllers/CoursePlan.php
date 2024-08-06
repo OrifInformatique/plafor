@@ -69,12 +69,11 @@ class CoursePlan extends \App\Controllers\BaseController
 
                 // Query to perform
                 if (!is_null($course_plan)) {
-                    // Course plan already exists - updates it
-                    $this->course_plan_model->update($course_plan_id, $new_course_plan);
-                } else {
-                    // No course plan found in database - inserts a new one
-                    $this->course_plan_model->insert($new_course_plan);
+                    // Course plan already exists - add id
+                    $new_course_plan['id'] = $course_plan_id;
                 }
+                $this->course_plan_model->save($new_course_plan);
+
 
                 // Error handling
                 if ($this->course_plan_model->errors() == null) {
