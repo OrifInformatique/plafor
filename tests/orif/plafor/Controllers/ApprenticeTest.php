@@ -1167,7 +1167,6 @@
 
         // Assertions
         $response = $result->response();
-        dd($response);
         $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
         $this->assertEmpty($response->getBody());
         $result->assertStatusCode(200);
@@ -1869,7 +1868,6 @@
 
         // Assertions
         $response = $result->response();
-        d($response);
         $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
         $this->assertNotEmpty($response->getBody());
         $result->assertOK();

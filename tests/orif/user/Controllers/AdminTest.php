@@ -11,6 +11,7 @@ namespace User\Controllers;
 
 use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\Test\ControllerTestTrait;
+use CodeIgniter\Test\DatabaseTestTrait;
 
 use CodeIgniter\HTTP\Response;
 use CodeIgniter\HTTP\RedirectResponse;
@@ -22,6 +23,13 @@ use Test\UtilityFunction;
 class AdminTest extends CIUnitTestCase
 {
     use ControllerTestTrait;
+    use DatabaseTestTrait;
+
+    // For Migrations
+    protected $migrate     = true;
+    protected $migrateOnce = false;
+    protected $refresh     = true;
+    protected $namespace   = null;
 
     private function get_registered_user_type()
     {
@@ -384,9 +392,12 @@ class AdminTest extends CIUnitTestCase
      */
     public function testsave_userWithUserId() 
     {
+        $_REQUEST = array();
+        $_POST = array();
         $_SESSION = $this->get_session_data();
         // Execute save_user method of Admin class 
         $userId = 1;
+        $_SESSION['user_id'] = 1;
         $result = $this->controller(Admin::class)
                        ->execute('save_user', $userId);
         $userModel = model(User_model::class);
@@ -430,6 +441,7 @@ class AdminTest extends CIUnitTestCase
     public function testsave_userWithoutUserId() 
     {
         $_SESSION = $this->get_session_data();
+        $_SESSION['user_id'] = 1;
         // Execute save_user method of Admin class 
         $result = $this->controller(Admin::class)
             ->execute('save_user');
@@ -470,6 +482,8 @@ class AdminTest extends CIUnitTestCase
      */
     public function testsave_userWithUserIdWithSameSessionUserId() 
     {
+        $_REQUEST = array();
+        $_POST = array();
         // Initialize the session
         $_SESSION = $this->get_session_data();
         $_SESSION['user_id'] = 1;
@@ -518,8 +532,10 @@ class AdminTest extends CIUnitTestCase
      */
     public function testsave_userWithDisabledUserId()
     {
+        $_REQUEST = array();
+        $_POST = array();
         $_SESSION = $this->get_session_data();
-
+        $_SESSION['user_id'] = 1;
         // Instantiate a new user model
         $userModel = model(User_model::class);
 
