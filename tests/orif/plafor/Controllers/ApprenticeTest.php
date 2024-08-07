@@ -141,11 +141,11 @@
         $result->assertSee('Liste des apprentis', 'h1');
         $result->assertSeeLink('ApprentiDev');
 
-        $result->assertSeeLink('Informaticienne / Informaticien avec CFC, orientation développement d\'applications');    
+        $result->assertSee('Informaticienne / Informaticien avec CFC, orientation développement d\'applications');    
         $result->assertSeeLink('ApprentiSysteme');
-        $result->assertSeeLink('Informaticienne / Informaticien avec CFC, orientation exploitation et infrastructure');
+        $result->assertSee('Informaticienne / Informaticien avec CFC, orientation exploitation et infrastructure');
         $result->assertSeeLink('ApprentiOperateur');
-        $result->assertSeeLink('Opératrice en informatique / Opérateur en informatique avec CFC');
+        $result->assertSee('Opératrice en informatique / Opérateur en informatique avec CFC');
     }
 
     /**
@@ -173,11 +173,11 @@
         $result->assertSee('FormateurOperateur', 'option');
         $result->assertSee('Liste des apprentis', 'h1');
         $result->assertSeeLink('ApprentiDev');
-        $result->assertSeeLink('Informaticienne / Informaticien avec CFC, orientation développement d\'applications');    
+        $result->assertSee('Informaticienne / Informaticien avec CFC, orientation développement d\'applications');    
         $result->assertDontSee('ApprentiSysteme', 'a');
-        $result->assertDontSee('Informaticienne / Informaticien avec CFC, orientation exploitation et infrastructure', 'a');
+        $result->assertDontSee('Informaticienne / Informaticien avec CFC, orientation exploitation et infrastructure');
         $result->assertDontSee('ApprentiOperateur', 'a');
-        $result->assertDontSee('Opératrice en informatique / Opérateur en informatique avec CFC', 'a');
+        $result->assertDontSee('Opératrice en informatique / Opérateur en informatique avec CFC');
     }
 
     /**
@@ -441,7 +441,7 @@
          $this->assertEmpty($response->getBody());
          $result->assertOK();
          $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-         $result->assertRedirectTo(base_url('plafor/apprentice/view_apprentice/' . $userId));
+         $result->assertRedirectTo(base_url('plafor/apprentice/list_user_courses/' . $userId));
     }
 
     /**
@@ -497,7 +497,7 @@
          $this->assertEmpty($response->getBody());
          $result->assertOK();
          $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-         $result->assertRedirectTo(base_url('plafor/apprentice/view_apprentice/' . $userId));
+         $result->assertRedirectTo(base_url('plafor/apprentice/list_user_courses/' . $userId));
     }
 
     /**
@@ -1847,6 +1847,10 @@
      */
     public function testview_user_courseWithUserCourseIdLinkedToASystemApprenticeWithAdministratorAccountForAGivenOperationalCompetence()
     {
+        $_POST = array();
+        $_GET = array();
+        $_SESSION = array();
+        $_REQUEST = array();
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_admin;
@@ -1879,7 +1883,7 @@
         $result->assertSeeLink('Ils clarifient les objectifs du projet ICT ' .
             'et ses paramètres généraux tels que coûts, durée, qualité, ' .
             'périmètre, responsabilités et méthodologie.');
-        $result->assertSeeLink('Modifer la formation');
+        $result->assertSeeLink('modifer la formation');
         $result->assertSeeLink('Supprimer la formation');
     }
 

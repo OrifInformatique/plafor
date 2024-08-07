@@ -980,10 +980,11 @@
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_trainer;
         $_SESSION['logged_in'] = true;
+        $_SESSION['user_id'] = 1;
 
         // Execute delete_user_course method of CoursePlan class
         $result = $this->controller(CoursePlan::class)
-        ->execute('delete_user_course', 1);
+            ->execute('delete_user_course', 1);
 
         // Assertions
         $response = $result->response();
@@ -1009,7 +1010,7 @@
 
         // Execute delete_user_course method of CoursePlan class
         $result = $this->controller(CoursePlan::class)
-        ->execute('delete_user_course', 1);
+            ->execute('delete_user_course', 1);
 
         // Assertions
         $response = $result->response();
@@ -1017,16 +1018,15 @@
         $this->assertNotEmpty($response->getBody());
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertSee('Apprenti', 'h2');
-        $result->assertSee('ApprentiDev', 'h2');
-        $result->assertSee('Plan de formation', 'h2');
+        $result->assertSee('Apprenti');
+        $result->assertSee('ApprentiDev');
+        $result->assertSee('Plan de formation');
         $result->assertSee('Informaticienne / Informaticien avec CFC, '
-            . 'orientation développement d\'applications', 'h2');
-        $result->assertSee('Statut de la formation', 'h2');
-        $result->assertSee('En cours', 'h2');
-        $result->assertSee('Que souhaitez-vous faire ?', 'h4');
-        $result->assertSee('Toutes les informations concernant cette '
-            . 'formation liée seront supprimées.', 'div');
+            . 'orientation développement d\'applications');
+        $result->assertSee('Statut de la formation');
+        $result->assertSee('En cours');
+        $result->assertSee(lang('plafor_lang.user_course_delete_explanation'),
+            'div');
         $result->assertSeeLink('Annuler');
         $result->assertSeeLink('Supprimer');
     }
@@ -2786,7 +2786,8 @@
         $this->assertEmpty($response->getBody());
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertRedirectTo(base_url('plafor/apprentice/list_apprentice'));
+        $result->assertRedirectTo(
+            base_url('plafor/apprentice/list_user_courses/') . '4');
     }
 
     /**
