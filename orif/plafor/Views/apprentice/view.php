@@ -93,7 +93,7 @@
             </table>
             <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer):?>
                 <!-- List with ADMIN buttons, accessible for trainers or admin only -->
-                <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/save_user_course/'.$apprentice['id'])?>"><?= lang('plafor_lang.title_user_course_new') ?></a>
+                <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/list_user_courses/'.$apprentice['id'])?>"><?= lang('plafor_lang.btn_user_course_manage') ?></a>
             <?php endif;?>
         </div>
     </div>
