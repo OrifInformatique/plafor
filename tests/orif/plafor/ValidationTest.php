@@ -18,6 +18,24 @@ use Plafor\Models\TrainerApprenticeModel;
 
 class PlaforRulesTest extends CIUnitTestCase {
 
+    use DatabaseTestTrait;
+
+    protected $migrate     = true;
+    protected $migrateOnce = false;
+    protected $refresh     = true;
+    protected $namespace   = 'Plafor';
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+    }
+
     /**
      * Test that the Trainer is NOT already linked to the Apprentice
      */

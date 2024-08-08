@@ -25,13 +25,20 @@ class PlaforRules
      * @param $error            : string to set the error message
      * @return bool
      */
-    public function checkFormPlanNumber($number, $course_plan_id, $datas, &$error) {
-        if ($course_plan_id==0)
-        if(count((new CoursePlanModel())->getWhere(['formation_number'=>$number])->getResultArray())>0){
-            $error= lang('plafor_lang.form_number_not_unique');
-            return false;
+    public function checkFormPlanNumber($number, $course_plan_id, $datas,
+        &$error)
+    {
+        $model = model('CoursePlanModel');
+        $coursePlans = $model->getWhere(['formation_number'=>$number])
+            ->getResultArray();
+        // to update not to insert new
+        $withoutItself = array_filter($coursePlans,
+            fn($plan) => $course_plan_id != $plan['id']);
+        $isExisted = count($withoutItself) > 0;
+        if ($isExisted) {
+            $error = lang('plafor_lang.form_number_not_unique');
         }
-        return true;
+        return !$isExisted;
     }
 
      /**

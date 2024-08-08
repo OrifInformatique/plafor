@@ -26,7 +26,7 @@ helper('form');
     <!-- TITLE -->
     <div class="row">
         <div class="col">
-            <h1 class="title-section"><?= lang('plafor_lang.title_user_course_'.($update ? 'update' : 'new').''); ?></h1>
+            <h2 class="title-section"><?= $apprentice['username']." - ".lang('plafor_lang.title_user_course_'.($update ? 'update' : 'new').''); ?></h2>
         </div>
     </div>
     
@@ -54,7 +54,7 @@ helper('form');
             <div class="col-sm-6 form-group">
                 <?= form_label(lang('plafor_lang.field_user_course_course_plan'), 'course_plan', ['class' => 'form-label']); ?>
                 <br />
-                <?= form_dropdown('course_plan',$course_plans,isset($user_course['fk_course_plan'])?$user_course['fk_course_plan']:'','id="course_plan" class="form-control" '.($update?'style="pointer-events:none;background-color:rgba(0,0,0,0.2)"':''))?>
+                <?= form_dropdown('course_plan',$course_plans,$user_course['fk_course_plan'] ?? '','id="course_plan" class="form-control" '.($update?'style="pointer-events:none;background-color:rgba(0,0,0,0.2)"':''))?>
             </div>
             <div class="col-sm-6 form-group">
                 <?= form_label(lang('plafor_lang.field_user_course_status'), 'status', ['class' => 'form-label']); ?>
@@ -74,7 +74,7 @@ helper('form');
         <!-- FORM BUTTONS -->
         <div class="row">
             <div class="col text-right">
-                <a class="btn btn-secondary" href="<?= base_url('plafor/apprentice/view_apprentice/'.$apprentice['id']); ?>"><?= lang('common_lang.btn_cancel'); ?></a>
+                <a class="btn btn-secondary" href="<?= base_url('plafor/apprentice/list_user_courses/'.$apprentice['id']); ?>"><?= lang('common_lang.btn_cancel'); ?></a>
                 <?= form_submit('save', lang('common_lang.btn_save'), ['class' => 'btn btn-primary']); ?>
             </div>
         </div>
