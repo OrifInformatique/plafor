@@ -98,6 +98,7 @@ class Apprentice extends \App\Controllers\BaseController
         // Gets username of all trainers for the dropdown menu
         $trainersList = array();
         $trainersList[0] = lang('common_lang.all_m');
+        $trainersList[1] = lang('plafor_lang.unassigned');
         $apprentice_level = $this->user_type_model->where('access_level', config("\User\Config\UserConfig")->access_level_apprentice)->find();
 
         foreach ($this->user_model->getTrainers() as $trainer) {
@@ -111,6 +112,11 @@ class Apprentice extends \App\Controllers\BaseController
         {
             // User is not a trainer - lists all apprentices
             $apprentices = $this->user_model->getApprentices($withDeleted);
+        }
+
+        else if($trainer_id == 1)
+        {
+            $apprentices = $this->user_model->getUnassignedApprentices();
         }
         
         else 
