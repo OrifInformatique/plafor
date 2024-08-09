@@ -16,20 +16,20 @@ use User\Models\User_model;
 
 class TrainerApprenticeModel extends \CodeIgniter\Model
 {
-    private static $trainerApprenticeModel=null;
-    protected $table='trainer_apprentice';
-    protected $primaryKey='id';
-    protected $allowedFields=['fk_trainer','fk_apprentice'];
+    protected $table = 'trainer_apprentice';
+    protected $primaryKey = 'id';
+    protected $allowedFields = ['fk_trainer', 'fk_apprentice'];
     protected $validationRules;
 
-    public function __construct(ConnectionInterface &$db = null, ValidationInterface $validation = null)
+    public function __construct(ConnectionInterface &$db = null,
+        ValidationInterface $validation = null)
     {
         $this->validationRules = array(
-            'fk_trainer'=>[
+            'fk_trainer' => [
                 'label' => 'plafor_lang.field_trainer_link',
                 'rules' => 'required|numeric|AreApprenticeAndTrainerNotLinked[{fk_apprentice}]'
             ],
-            'fk_apprentice'=>[
+            'fk_apprentice' => [
                 'label' => 'plafor_lang.field_trainer_link',
                 'rules' => 'required|numeric'
             ]
@@ -38,35 +38,30 @@ class TrainerApprenticeModel extends \CodeIgniter\Model
     }
 
     /**
-     * @return TrainerApprenticeModel
-     */
-    public static function getInstance(){
-        if (TrainerApprenticeModel::$trainerApprenticeModel==null)
-            TrainerApprenticeModel::$trainerApprenticeModel=new TrainerApprenticeModel();
-        return TrainerApprenticeModel::$trainerApprenticeModel;
-    }
-
-    /**
      * @param $fkTrainerId
      * @return array
      */
-    public static function getTrainer($fkTrainerId){
-        return User_model::getInstance()->find($fkTrainerId);
+    public function getTrainer($fkTrainerId) {
+        $user_model = model('User_model');
+        return $user_model->find($fkTrainerId);
     }
 
     /**
      * @param $fkApprenticeId
      * @return array
      */
-    public static function getApprentice($fkApprenticeId){
-        return User_model::getInstance()->find($fkApprenticeId);
+    public function getApprentice($fkApprenticeId) {
+        $user_model = model('User_model');
+        return $user_model->find($fkApprenticeId);
 
     }
     /**
      * @param $fkTrainerId
      * @return array
      */
-    public static function getApprenticeIdsFromTrainer($fkTrainerId){
-        return TrainerApprenticeModel::getInstance()->where('fk_trainer',$fkTrainerId)->findColumn('fk_apprentice');
+    public function getApprenticeIdsFromTrainer($fkTrainerId) {
+        $trainerApprenticeModel = model('TrainerApprenticeModel');
+        return $trainerApprenticeModel->where('fk_trainer', $fkTrainerId)
+                                      ->findColumn('fk_apprentice');
     }
 }

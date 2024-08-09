@@ -32,17 +32,17 @@ class CoursePlan extends \App\Controllers\BaseController
         parent::initController($request, $response, $logger);
 
         // Loads required models
-        $this->acquisition_status_model = AcquisitionStatusModel::getInstance();
-        $this->comment_model = CommentModel::getInstance();
-        $this->comp_domain_model = CompetenceDomainModel::getInstance();
-        $this->course_plan_model = CoursePlanModel::getInstance();
-        $this->objective_model = ObjectiveModel::getInstance();
-        $this->operational_comp_model = OperationalCompetenceModel::getInstance();
-        $this->user_course_model = UserCourseModel::getInstance();
-        $this->user_course_status_model = UserCourseStatusModel::getInstance();
-        $this->trainer_apprentice_model = TrainerApprenticeModel::getInstance();
-        $this->user_model = User_model::getInstance();
-        $this->user_type_model = User_type_model::getInstance();
+        $this->acquisition_status_model = model('AcquisitionStatusModel');
+        $this->comment_model = model('CommentModel');
+        $this->comp_domain_model = model('CompetenceDomainModel');
+        $this->course_plan_model = model('CoursePlanModel');
+        $this->objective_model = model('ObjectiveModel');
+        $this->operational_comp_model = model('OperationalCompetenceModel');
+        $this->user_course_model = model('UserCourseModel');
+        $this->user_course_status_model = model('UserCourseStatusModel');
+        $this->trainer_apprentice_model = model('TrainerApprenticeModel');
+        $this->user_model = model('User_model');
+        $this->user_type_model = model('User_type_model');
     }
 
     /**

@@ -42,7 +42,7 @@ class PlaforRulesTest extends CIUnitTestCase {
     public function test_ApprenticeAndTrainerAlreadyLinked() {
 
         // Create an instance
-        $new_link = TrainerApprenticeModel::getInstance();
+        $new_link = model('TrainerApprenticeModel');
 
         // Fake fk
         $trainer_id = 5;

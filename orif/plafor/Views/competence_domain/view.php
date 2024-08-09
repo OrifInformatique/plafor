@@ -54,8 +54,10 @@
                 </span>
             </div>
             <?php
-            $datas=[];
-            foreach (\Plafor\Models\CompetenceDomainModel::getOperationalCompetences($competence_domain['id'],$with_archived) as $operational_competence){
+            $datas = [];
+            
+            $competenceDomainModel = model('\Plafor\Models\CompetenceDomainModel');
+            foreach ($competenceDomainModel->getOperationalCompetences($competence_domain['id'],$with_archived) as $operational_competence){
                 $datas[] = [
                     'id'        =>$operational_competence['id'],
                     'symbol'    =>$operational_competence['symbol'],

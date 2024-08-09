@@ -10,14 +10,14 @@ namespace User\Models;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
 
-class User_model extends \CodeIgniter\Model{
-    private static $userModel;
-    protected $table='user';
-    protected $primaryKey='id';
-    protected $allowedFields=['archive','date_creation','email','username','password','fk_user_type','azure_mail'];
-    protected $useSoftDeletes=true;
-    protected $deletedField="archive";
-    private $user_type_model=null;
+class User_model extends \CodeIgniter\Model {
+    protected $table = 'user';
+    protected $primaryKey = 'id';
+    protected $allowedFields = ['archive', 'date_creation', 'email',
+        'username', 'password', 'fk_user_type', 'azure_mail'];
+    protected $useSoftDeletes = true;
+    protected $deletedField = "archive";
+    private $user_type_model = null;
     protected $validationRules;
     protected $validationMessages;
 
@@ -64,15 +64,6 @@ class User_model extends \CodeIgniter\Model{
         ];
 
         parent::__construct($db, $validation);
-    }
-
-    /**
-     * @return User_model
-     */
-    public static function getInstance(){
-        if (User_model::$userModel==null)
-            User_model::$userModel=new User_model();
-        return User_model::$userModel;
     }
 
     /**
@@ -141,30 +132,51 @@ class User_model extends \CodeIgniter\Model{
         }
     }
 
+
+    # TODO Refactoring the User_model stays like in Packbase.
+    
     /**
      * @return array the list of apprentices
      */
-    public static function getApprentices(bool $withDeleted=false){
-
-        if ($withDeleted)
-            return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('access_level', config("\User\Config\UserConfig")->access_level_apprentice)->first()['id'])->withDeleted()->findAll();
-        return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Apprenti')->first()['id'])->findAll();
-
+    public function getApprentices(bool $withDeleted=false) {
+        $user_model = model('User_model');
+        $user_type_model = model('User_type_model');
+        if ($withDeleted) {
+            $fk_user_type = $user_type_model
+                ->where('access_level', config("\User\Config\UserConfig")
+                ->access_level_apprentice)
+                ->first()['id'];
+            return $user_model
+                ->where('fk_user_type', $fk_user_type)
+                ->withDeleted()->findAll();
+        }
+        $fk_user_type = $user_type_model->where('name', 'Apprenti')
+                                        ->first()['id'];
+        return $user_model->where('fk_user_type', $fk_user_type)->findAll();
     }
 
     /**
      * @return array the list of trainers
      */
-    public static function getTrainers(bool $withDelted=false){
+    public function getTrainers(bool $withDelted=false) {
         $indexedTrainers = array();
+        $user_model = model('User_model');
         if ($withDelted) {
-            $trainers = User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Formateur')->first()['id'])->withDeleted()->findAll();
+            $user_type_model = model('User_type_model');
+            $fk_user_type = $user_type_model->where('name','Formateur')
+                                            ->first()['id'];
+            $trainers = $user_model->where('fk_user_type', $fk_user_type)
+                                   ->withDeleted()->findAll();
             foreach ($trainers as $trainer) {
                 $indexedTrainers[$trainer['id']] = $trainer;
             }
             return $indexedTrainers;
         }
-        $trainers = User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Formateur')->first()['id'])->findAll();
+        $user_type_model = model('User_type_model');
+        $fk_user_type = $user_type_model->where('name','Formateur')
+                                        ->first()['id'];
+        $trainers = $user_model->where('fk_user_type', $fk_user_type)
+                               ->findAll();
         foreach ($trainers as $trainer) {
             $indexedTrainers[$trainer['id']] = $trainer;
         }

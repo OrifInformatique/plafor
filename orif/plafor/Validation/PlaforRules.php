@@ -54,7 +54,8 @@ class PlaforRules
     public function AreApprenticeAndTrainerNotLinked($fkTrainerId, $fkApprenticeId, $datas, &$error) : bool{
         $array_where = array('fk_trainer' => $fkTrainerId, 'fk_apprentice' => $fkApprenticeId);
 
-        if (empty(TrainerApprenticeModel::getInstance()->getWhere($array_where)->getResultArray())){
+        $trainerApprenticeModel = model('TrainerApprenticeModel');
+        if (empty($trainerApprenticeModel->getWhere($array_where)->getResultArray())){
             return true;
         }
         $error = lang('plafor_lang.apprentice_trainer_already_linked');
@@ -76,19 +77,19 @@ class PlaforRules
             case 'competence_domain':
                 // For a competence domain
                 $parent = 'course_plan';
-                $model = CompetenceDomainModel::getInstance();
+                $model = model('CompetenceDomainModel');
                 $error_str = 'same_competence_domain';
                 break;
             case 'operational_competence':
                 // For an operational competence
                 $parent = 'competence_domain';
-                $model = OperationalCompetenceModel::getInstance();
+                $model = model('OperationalCompetenceModel');
                 $error_str = 'same_operational_competence';
                 break;
             case 'objective':
                 // For an objective
                 $parent = 'operational_competence';
-                $model = ObjectiveModel::getInstance();
+                $model = model('ObjectiveModel');
                 $error_str = 'same_objective';
                 break;
         }

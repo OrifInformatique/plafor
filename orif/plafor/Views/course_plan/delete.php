@@ -8,14 +8,17 @@
  */
 ?>
 <?php
-$courses=\Plafor\Models\CoursePlanModel::getUserCourses($course_plan['id']);
-$apprentices=[];
-$userCourseStatus=[];
-$session=session();
+# TODO: remove database call in view 
+$coursePlanModel = model('\Plafor\Models\CoursePlanModel');
+$courses = $coursePlanModel->getUserCourses($course_plan['id']);
+$apprentices = [];
+$userCourseStatus = [];
+$session = session();
 
 foreach ($courses as $course){
-    $apprentices[]=\Plafor\Models\UserCourseModel::getUser($course['fk_user']);
-    $userCourseStatus[]=\Plafor\Models\UserCourseModel::getUserCourseStatus($course['fk_status']);
+    $userCourseModel = model('\Plafor\Models\UserCourseModel');
+    $apprentices[] = $userCourseModel->getUser($course['fk_user']);
+    $userCourseStatus[] = $userCourseModel->getUserCourseStatus($course['fk_status']);
 
 }
 /**@TODO
@@ -35,13 +38,20 @@ foreach ($courses as $course){
             <div class="col-12">
                 <div>
                     <p><?=count($apprentices)>0?lang('plafor_lang.apprentices_already_assigned_to_course_plan').' :':''?></p>
-
                     <ul>
                     <?php foreach ($apprentices as $apprentice): ?>
-                            <li><?= ' "'.$apprentice['username'].'"'. lang('plafor_lang.with_status') ?> "<?=\Plafor\Models\UserCourseStatusModel::getInstance()->find(\Plafor\Models\UserCourseModel::getInstance()->where('fk_user',$apprentice['id'])->where('fk_course_plan',$course_plan['id'])->first()['fk_status'])['name']?>"</li>
-                        <?php endforeach;?>
+                        <?php
+                        # TODO: remove database call in view 
+                        $UserCourseStatusModel = model('\Plafor\Models\UserCourseStatusModel');
+                        $userCourseModel = model('\Plafor\Models\UserCourseModel');
+                        $userId = $userCourseModel
+                            ->where('fk_user', $apprentice['id'])
+                            ->where('fk_course_plan', $course_plan['id'])->first()['fk_status'];
+                        $usercourse_name = $UserCourseStatusModel->find()['name'];
+                        ?>
+                        <li><?= ' "'.$apprentice['username'].'"'. lang('plafor_lang.with_status') ?> "<?= $usercourse_name ?>"</li>
+                    <?php endforeach;?>
                     </ul>
-
                     <div class = "alert alert-info" ><?= lang('plafor_lang.course_plan_'.($course_plan['archive']==null?'disable_explanation':'enable_explanation'))?></div>
                 </div>
                 <div class="text-right">
