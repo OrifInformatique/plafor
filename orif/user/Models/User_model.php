@@ -9,6 +9,7 @@
 namespace User\Models;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
+use Plafor\Models\TrainerApprenticeModel;
 
 class User_model extends \CodeIgniter\Model{
     private static $userModel;
@@ -147,27 +148,50 @@ class User_model extends \CodeIgniter\Model{
     public static function getApprentices(bool $withDeleted=false){
 
         if ($withDeleted)
-            return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('access_level', config("\User\Config\UserConfig")->access_level_apprentice)->first()['id'])->withDeleted()->findAll();
-        return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Apprenti')->first()['id'])->findAll();
+            return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('access_level', config("\User\Config\UserConfig")->access_level_apprentice)->first()['id'])->withDeleted()->orderBy('username', 'ASC')->findAll();
+        return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Apprenti')->first()['id'])->orderBy('username', 'ASC')->findAll();
 
     }
 
     /**
      * @return array the list of trainers
      */
-    public static function getTrainers(bool $withDelted=false){
+    public static function getTrainers(bool $withDeleted = false)
+    {
         $indexedTrainers = array();
-        if ($withDelted) {
-            $trainers = User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Formateur')->first()['id'])->withDeleted()->findAll();
-            foreach ($trainers as $trainer) {
-                $indexedTrainers[$trainer['id']] = $trainer;
-            }
-            return $indexedTrainers;
-        }
-        $trainers = User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Formateur')->first()['id'])->findAll();
-        foreach ($trainers as $trainer) {
+
+        $trainers = User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Formateur')->first()['id'])->withDeleted($withDeleted)->orderBy('username', 'ASC')->findAll();
+
+        foreach ($trainers as $trainer)
             $indexedTrainers[$trainer['id']] = $trainer;
-        }
+        
         return $indexedTrainers;
+    }
+
+    /**
+     * Get the apprentices unassigned to a trainer
+     * 
+     * @return array
+     * 
+     */
+    public function getUnassignedApprentices()
+    {
+        $unassigned_apprentices = array();
+        $assigned_apprentices_list = array();
+
+        $apprentices = $this->getApprentices();
+        
+        $assinged_apprentices = TrainerApprenticeModel::getInstance()->select('fk_apprentice')->distinct()->findAll();;
+
+        foreach($assinged_apprentices as $assinged_apprentice)
+            array_push($assigned_apprentices_list, $assinged_apprentice['fk_apprentice']);
+
+        foreach($apprentices as $apprentice)
+        {
+            if(!in_array($apprentice['id'], $assigned_apprentices_list))
+                array_push($unassigned_apprentices, $apprentice);
+        }
+
+        return $unassigned_apprentices;
     }
 }
