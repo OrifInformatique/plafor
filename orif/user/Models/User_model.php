@@ -147,27 +147,23 @@ class User_model extends \CodeIgniter\Model{
     public static function getApprentices(bool $withDeleted=false){
 
         if ($withDeleted)
-            return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('access_level', config("\User\Config\UserConfig")->access_level_apprentice)->first()['id'])->withDeleted()->findAll();
-        return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Apprenti')->first()['id'])->findAll();
+            return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('access_level', config("\User\Config\UserConfig")->access_level_apprentice)->first()['id'])->withDeleted()->orderBy('username', 'ASC')->findAll();
+        return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Apprenti')->first()['id'])->orderBy('username', 'ASC')->findAll();
 
     }
 
     /**
      * @return array the list of trainers
      */
-    public static function getTrainers(bool $withDelted=false){
+    public static function getTrainers(bool $withDeleted = false)
+    {
         $indexedTrainers = array();
-        if ($withDelted) {
-            $trainers = User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Formateur')->first()['id'])->withDeleted()->findAll();
-            foreach ($trainers as $trainer) {
-                $indexedTrainers[$trainer['id']] = $trainer;
-            }
-            return $indexedTrainers;
-        }
-        $trainers = User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Formateur')->first()['id'])->findAll();
-        foreach ($trainers as $trainer) {
+
+        $trainers = User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Formateur')->first()['id'])->withDeleted($withDeleted)->orderBy('username', 'ASC')->findAll();
+
+        foreach ($trainers as $trainer)
             $indexedTrainers[$trainer['id']] = $trainer;
-        }
+        
         return $indexedTrainers;
     }
 }
