@@ -34,6 +34,7 @@ class CoursePlanModel extends Model{
     {
         $this->validationRules=
             [
+                'id' => 'permit_empty',
                 'formation_number'=>[
                     'label' => 'plafor_lang.field_course_plan_formation_number',
                     'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->FORMATION_NUMBER_MAX_LENGTH.']|numeric'."|checkFormPlanNumber[{id}]",
