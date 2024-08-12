@@ -22,7 +22,7 @@ class AcquisitionLevelModel extends Model {
      */
     public function getAcquisitionStatus($acquisitionLevelId) {
         $acquisitionStatusModel = model('AcquisitionStatusModel');
-        return acquisitionStatusModel
+        return $acquisitionStatusModel
             ->where('fk_acquisition_level', $acquisitionLevelId)
             ->findAll();
     }
