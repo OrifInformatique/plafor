@@ -90,7 +90,7 @@ class addTeachingDomain extends Seeder {
                 "domain_weight" => 0.4,
                 "is_eliminatory" => true,
             ],
-            // ****** Maturité profesionnelle technique ******
+            // ****** Maturité professionnelle technique ******
             [
                 "fk_course_plan" => 5,
                 "fk_teaching_domain_title" => 4,

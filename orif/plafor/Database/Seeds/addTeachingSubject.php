@@ -103,7 +103,7 @@ class addTeachingSubject extends Seeder{
                 "name" => "Travail pratique individuel (TPI)",
                 "subject_weight" => 0.0,
             ],
-            // ****** Maturité profesionnelle technique ******
+            // ****** Maturité professionnelle technique ******
             [ 
                 "fk_teaching_domain" => 13,
                 "name" => "Allemand",

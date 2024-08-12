@@ -24,7 +24,7 @@ class addTeachingDomainTitle extends Seeder {
                 "title" => "Informatique"
             ],
             [
-                "title" => "Maturité profesionnelle technique"
+                "title" => "Maturité professionnelle technique"
             ],
             [
                 "title" => "Travail pratique individuel"

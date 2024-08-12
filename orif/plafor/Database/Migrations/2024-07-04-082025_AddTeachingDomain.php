@@ -16,18 +16,18 @@ class AddTeachingDomain extends Migration{
         $this->db->disableForeignKeyChecks();
         $this->forge->addField([
             "id" => [
-                "type" => "int",
+                "type" => "INT",
                 "constraint" => "11",
                 "unsigned" => true,
                 "auto_increment" => true,
             ],
             "fk_course_plan" => [
-                "type" => "int",
+                "type" => "INT",
                 "null" => true,
                 "unsigned" => true,
             ],
             "fk_teaching_domain_title" => [
-                "type" => "int",
+                "type" => "INT",
                 "null" => true,
                 "unsigned" => true,
             ],

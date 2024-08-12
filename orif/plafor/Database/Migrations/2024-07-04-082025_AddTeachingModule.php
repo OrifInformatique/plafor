@@ -16,7 +16,7 @@ class AddTeachingModule extends Migration{
         $this->db->disableForeignKeyChecks();
         $this->forge->addField([
             "id" => [
-                "type" => "int",
+                "type" => "INT",
                 "constraint" => "11",
                 "unsigned" => true,
                 "auto_increment" => true,
@@ -30,7 +30,7 @@ class AddTeachingModule extends Migration{
                 "constraint" => "200"
             ],
             "version" => [
-                "type" => "int",
+                "type" => "INT",
                 "unsigned" => true,
             ],
             "archive TIMESTAMP NULL",

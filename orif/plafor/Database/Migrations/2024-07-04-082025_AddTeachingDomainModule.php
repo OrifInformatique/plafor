@@ -16,18 +16,18 @@ class AddTeachingDomainModule extends Migration{
         $this->db->disableForeignKeyChecks();
         $this->forge->addField([
             "id" => [
-                "type" => "int",
+                "type" => "INT",
                 "constraint" => "11",
                 "unsigned" => true,
                 "auto_increment" => true,
             ],
             "fk_teaching_domain" => [
-                "type" => "int",
+                "type" => "INT",
                 "null" => true,
                 "unsigned" => true,
             ],
             "fk_teaching_module" => [
-                "type" => "int",
+                "type" => "INT",
                 "null" => true,
                 "unsigned" => true,
             ],
@@ -38,6 +38,8 @@ class AddTeachingDomainModule extends Migration{
         $this->forge->addForeignKey("fk_teaching_domain", "teaching_domain", "id");
         $this->forge->addForeignKey("fk_teaching_module", "teaching_module", "id");
         $this->forge->createTable("teaching_domain_module");
+        $seeder = \Config\Database::seeder();
+        $seeder->call("\Plafor\Database\Seeds\addTeachingDomainModule");
     }
 
     public function down(){

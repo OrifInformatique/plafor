@@ -16,23 +16,23 @@ class AddGrade extends Migration{
         $this->db->disableForeignKeyChecks();
         $this->forge->addField([
             "id" => [
-                "type" => "int",
+                "type" => "INT",
                 "constraint" => "11",
                 "unsigned" => true,
                 "auto_increment" => true,
             ],
             "fk_user_course" => [
-                "type" => "int",
+                "type" => "INT",
                 "null" => true,
                 "unsigned" => true,
             ],
             "fk_teaching_subject" => [
-                "type" => "int",
+                "type" => "INT",
                 "null" => true,
                 "unsigned" => true,
             ],
             "fk_teaching_module" => [
-                "type" => "int",
+                "type" => "INT",
                 "null" => true,
                 "unsigned" => true,
             ],
