@@ -427,21 +427,28 @@
         $_REQUEST = array();
         
         // Get user course from database
-        $userCourseDb = \Plafor\Models\UserCourseModel::getInstance()->where("fk_user ", $userId)->where("fk_course_plan", $coursePlanId)->first();
+        $userCourseModel = model('\Plafor\Models\UserCourseModel');
+        $userCourseDb = $userCourseModel->where("fk_user ", $userId)
+                            ->where("fk_course_plan", $coursePlanId)->first();
 
         // Delete acquisition statuses linked to the inserted user course
-        \Plafor\Models\AcquisitionStatusModel::getInstance()->where('fk_user_course', $userCourseDb['id'])->delete();
+        $acquisitionStatusModel = model('\Plafor\Models\AcquisitionStatusModel');
+        $acquisitionStatusModel->where('fk_user_course', $userCourseDb['id'])
+                               ->delete();
 
         // Delete inserted user course        
-        \Plafor\Models\UserCourseModel::getInstance()->delete($userCourseDb['id'], TRUE);
+        $userCourseModel = model('\Plafor\Models\userCourseModel');
+        $userCourseModel->delete($userCourseDb['id'], true);
 
         // Assertions
          $response = $result->response();
-         $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class, $response);
+        $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class,
+            $response);
          $this->assertEmpty($response->getBody());
          $result->assertOK();
          $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-         $result->assertRedirectTo(base_url('plafor/apprentice/list_user_courses/' . $userId));
+         $result->assertRedirectTo(
+             base_url('plafor/apprentice/list_user_courses/' . $userId));
     }
 
     /**
@@ -480,24 +487,31 @@
         $_REQUEST = array();
         
         // Get user course from database
-        $userCourseDb = \Plafor\Models\UserCourseModel::getInstance()->where("fk_user ", $userId)->where("fk_course_plan", $coursePlanId)->first();
+        $userCourseModel = model('\Plafor\Models\userCourseModel');
+        $userCourseDb = $userCourseModel->where("fk_user ", $userId)
+                        ->where("fk_course_plan", $coursePlanId)->first();
 
         // Delete acquisition statuses linked to the inserted user course
-        \Plafor\Models\AcquisitionStatusModel::getInstance()->where('fk_user_course', $userCourseDb['id'])->delete();
+        $acquisitionStatusModel = model('\Plafor\Models\acquisitionStatusModel');
+        $acquisitionStatusModel->where('fk_user_course', $userCourseDb['id'])
+                               ->delete();
 
         // Delete inserted user course        
-        \Plafor\Models\UserCourseModel::getInstance()->delete($userCourseDb['id'], TRUE);
+        $userCourseModel->delete($userCourseDb['id'], true);
 
         // Delete inserted course plan
-        \Plafor\Models\CoursePlanModel::getInstance()->delete($coursePlanId, TRUE);
+        $coursePlanModel = model('\Plafor\Models\coursePlanModel');
+        $coursePlanModel->delete($coursePlanId, true);
 
         // Assertions
          $response = $result->response();
-         $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class, $response);
+        $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class,
+            $response);
          $this->assertEmpty($response->getBody());
          $result->assertOK();
          $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-         $result->assertRedirectTo(base_url('plafor/apprentice/list_user_courses/' . $userId));
+         $result->assertRedirectTo(
+             base_url('plafor/apprentice/list_user_courses/' . $userId));
     }
 
     /**
@@ -613,8 +627,8 @@
                            $apprenticeLinkId);
 
         // Delete inserted link
-        \Plafor\Models\TrainerApprenticeModel::getInstance()
-            ->delete($apprenticeLinkId, true);
+        $trainerApprenticeModel = model('\Plafor\Models\trainerApprenticeModel');
+        $trainerApprenticeModel->delete($apprenticeLinkId, true);
 
         // Assertions
         $response = $result->response();
@@ -663,31 +677,37 @@
 
         // Execute save_apprentice_link method of Apprentice class
         $result = $this->controller(Apprentice::class)
-        ->execute('save_apprentice_link', $apprenticeId);
+            ->execute('save_apprentice_link', $apprenticeId);
 
         // Reset $_POST and $_REQUEST variables
         $_POST = array();
         $_REQUEST = array();
 
         // Get inserted apprentice link from database
-        $apprenticeLink = \Plafor\Models\TrainerApprenticeModel::getInstance()->where("fk_trainer ", $trainerId)->where("fk_apprentice", $apprenticeId)->first();
+        $trainerApprenticeModel = model('\Plafor\Models\trainerApprenticeModel');
+        $apprenticeLink = $trainerApprenticeModel
+            ->where("fk_trainer ", $trainerId)
+            ->where("fk_apprentice", $apprenticeId)->first();
 
         // Delete inserted apprentice link
-        \Plafor\Models\TrainerApprenticeModel::getInstance()->delete($apprenticeLink['id'], TRUE);
+        $trainerApprenticeModel->delete($apprenticeLink['id'], true);
 
         // Delete inserted apprentice
-        \User\Models\User_model::getInstance()->delete($apprenticeId, TRUE);
+        $user_model = model('\User\Models\user_model');
+        $user_model->delete($apprenticeId, true);
 
         // Delete inserted trainer
-        \User\Models\User_model::getInstance()->delete($trainerId, TRUE);
+        $user_model->delete($trainerId, true);
 
         // Assertions
         $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class, $response);
+        $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class,
+            $response);
         $this->assertEmpty($response->getBody());
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertRedirectTo(base_url('plafor/apprentice/view_apprentice/' . $apprenticeId));
+        $result->assertRedirectTo(
+            base_url('plafor/apprentice/view_apprentice/' . $apprenticeId));
     }
 
     /**
@@ -731,20 +751,19 @@
         $_REQUEST = array();
 
         // Delete inserted and updated apprentice link
-        \Plafor\Models\TrainerApprenticeModel::getInstance()
+        $trainerApprenticeModel = model('\Plafor\Models\trainerApprenticeModel');
+        $trainerApprenticeModel
             ->delete($apprenticeLinkId, true);
 
         // Delete inserted apprentice
-        \User\Models\User_model::getInstance()
-            ->delete($apprenticeId, true);
+        $user_model = model('\User\Models\user_model');
+        $user_model->delete($apprenticeId, true);
 
         // Delete inserted trainer
-        \User\Models\User_model::getInstance()
-            ->delete($trainerId, true);
+        $user_model->delete($trainerId, true);
 
         // Delete second inserted trainer
-        \User\Models\User_model::getInstance()
-            ->delete($trainer2Id, true);
+        $user_model->delete($trainer2Id, true);
 
         // Assertions
         $response = $result->response();
@@ -800,11 +819,11 @@
 
         // Execute delete_apprentice_link method of Apprentice class
         $result = $this->controller(Apprentice::class)
-        ->execute('delete_apprentice_link', $apprenticeLinkId);
+            ->execute('delete_apprentice_link', $apprenticeLinkId);
 
         // Delete inserted link
-        \Plafor\Models\TrainerApprenticeModel::getInstance()
-            ->delete($apprenticeLinkId, true);
+        $trainerApprenticeModel = model('\Plafor\Models\trainerApprenticeModel');
+        $trainerApprenticeModel->delete($apprenticeLinkId, true);
 
         // Assertions
         $response = $result->response();
@@ -832,7 +851,8 @@
 
         // Initialize session
         $_SESSION['_ci_previous_url'] = 'url';
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')->access_lvl_trainer;
+        $_SESSION['user_access'] = config('\User\Config\UserConfig')
+            ->access_lvl_trainer;
 
         // Insert apprentice link 
         $apprenticeLinkId = self::insertTrainerApprenticeLink($trainerId, $apprenticeId);
@@ -842,15 +862,18 @@
         ->execute('delete_apprentice_link', $apprenticeLinkId, 9);
 
         // Delete inserted link
-        \Plafor\Models\TrainerApprenticeModel::getInstance()->delete($apprenticeLinkId, TRUE);
+        $trainerApprenticeModel = model('\Plafor\Models\trainerApprenticeModel');
+        $trainerApprenticeModel->delete($apprenticeLinkId, true);
 
         // Assertions
         $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class, $response);
+        $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class,
+            $response);
         $this->assertEmpty($response->getBody());
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertRedirectTo(base_url('plafor/apprentice/list_apprentice/' . $apprenticeId));
+        $result->assertRedirectTo(
+            base_url('plafor/apprentice/list_apprentice/' . $apprenticeId));
     }
 
     /**
@@ -860,7 +883,8 @@
     {
         // Initialize session
         $_SESSION['_ci_previous_url'] = 'url';
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')->access_lvl_trainer;
+        $_SESSION['user_access'] = config('\User\Config\UserConfig')
+            ->access_lvl_trainer;
 
         // Insert new apprentice user       
         $apprenticeId = self::insertApprentice('ApprenticeUnitTest');
@@ -869,25 +893,29 @@
         $trainerId = self::insertTrainer('TrainerUnitTest');
 
         // Insert apprentice link 
-        $apprenticeLinkId = self::insertTrainerApprenticeLink($trainerId, $apprenticeId);
+        $apprenticeLinkId = self::insertTrainerApprenticeLink($trainerId,
+            $apprenticeId);
 
         // Execute delete_apprentice_link method of Apprentice class
         $result = $this->controller(Apprentice::class)
         ->execute('delete_apprentice_link', $apprenticeLinkId, 1);
 
         // Delete inserted apprentice
-        \User\Models\User_model::getInstance()->delete($apprenticeId, TRUE);
+        $user_model = model('\User\Models\user_model');
+        $user_model->delete($apprenticeId, true);
 
         // Delete inserted trainer
-        \User\Models\User_model::getInstance()->delete($trainerId, TRUE);
+        $user_model->delete($trainerId, true);
 
         // Assertions
         $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class, $response);
+        $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class,
+            $response);
         $this->assertEmpty($response->getBody());
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertRedirectTo(base_url('plafor/apprentice/list_apprentice/' . $apprenticeId));
+        $result->assertRedirectTo(base_url('plafor/apprentice/list_apprentice/'
+            . $apprenticeId));
     }
 
     /**
@@ -1020,7 +1048,8 @@
             ->execute('view_acquisition_status', $acquisitionStatusId);
 
         // Delete inserted comment
-        \Plafor\Models\CommentModel::getInstance()->delete($commentId, true);
+        $commentModel = model('\Plafor\Models\commentModel');
+        $commentModel->delete($commentId, true);
 
         // Assertions
         $response = $result->response();
@@ -1162,8 +1191,9 @@
             'fk_acquisition_level' => $acquisitionLevel
         ];
 
-        \Plafor\Models\AcquisitionStatusModel::getInstance()
-            ->update($acquisitionStatusId, $acquisitionStatus);
+        $acquisitionStatusModel = model('\Plafor\Models\acquisitionStatusModel');
+        $acquisitionStatusModel->update($acquisitionStatusId,
+            $acquisitionStatus);
 
         // Assertions
         $response = $result->response();
@@ -1338,32 +1368,32 @@
         $_REQUEST = array();
 
         // Delete inserted comment
-        \Plafor\Models\CommentModel::getInstance()
-            ->where('comment', 'Comment Unit Test')->delete();
+        $commentModel = model('\Plafor\Models\commentModel');
+        $commentModel->where('comment', 'Comment Unit Test')->delete();
 
         // Delete inserted acquisition status
-        \Plafor\Models\AcquisitionStatusModel::getInstance()
-            ->delete($acquisitionStatusId, true);
+        $acquisitionStatusModel = model('\Plafor\Models\acquisitionStatusModel');
+        $acquisitionStatusModel->delete($acquisitionStatusId, true);
 
         // Delete inserted user course
-        \Plafor\Models\UserCourseModel::getInstance()
-            ->delete($userCourseId, true);
+        $userCourseModel = model('\Plafor\Models\userCourseModel');
+        $userCourseModel->delete($userCourseId, true);
 
         // Delete inserted objective
-        \Plafor\Models\ObjectiveModel::getInstance()
-            ->delete($objectiveId, true);
+        $objectiveModel = model('\Plafor\Models\objectiveModel');
+        $objectiveModel->delete($objectiveId, true);
 
         // Delete inserted operational competence
-        \Plafor\Models\OperationalCompetenceModel::getInstance()
-            ->delete($operationalCompetenceId, true);
+        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $operationalCompetenceModel->delete($operationalCompetenceId, true);
 
         // Delete inserted competence domain
-        \Plafor\Models\CompetenceDomainModel::getInstance()
-            ->delete($competenceDomainId, true);
+        $competenceDomainModel = model('\Plafor\Models\competenceDomainModel');
+        $competenceDomainModel->delete($competenceDomainId, true);
 
         // Delete inserted course plan
-        \Plafor\Models\CoursePlanModel::getInstance()
-            ->delete($coursePlanId, true);
+        $coursePlanModel = model('\Plafor\Models\coursePlanModel');
+        $coursePlanModel->delete($coursePlanId, true);
 
         // Assertions
         $response = $result->response();
@@ -1420,22 +1450,28 @@
         $_REQUEST = array();
 
         // Delete inserted acquisition status
-        \Plafor\Models\AcquisitionStatusModel::getInstance()->delete($acquisitionStatusId, TRUE);
+        $acquisitionStatusModel = model('\Plafor\Models\acquisitionStatusModel');
+        $acquisitionStatusModel->delete($acquisitionStatusId, true);
 
         // Delete inserted user course
-        \Plafor\Models\UserCourseModel::getInstance()->delete($userCourseId, TRUE);
+        $userCourseModel = model('\Plafor\Models\userCourseModel');
+        $userCourseModel->delete($userCourseId, true);
 
         // Delete inserted objective
-        \Plafor\Models\ObjectiveModel::getInstance()->delete($objectiveId, TRUE);
+        $objectiveModel = model('\Plafor\Models\objectiveModel');
+        $objectiveModel->delete($objectiveId, true);
 
         // Delete inserted operational competence
-        \Plafor\Models\OperationalCompetenceModel::getInstance()->delete($operationalCompetenceId, TRUE);
+        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $operationalCompetenceModel->delete($operationalCompetenceId, true);
 
         // Delete inserted competence domain
-        \Plafor\Models\CompetenceDomainModel::getInstance()->delete($competenceDomainId, TRUE);
+        $competenceDomainModel = model('\Plafor\Models\competenceDomainModel');
+        $competenceDomainModel->delete($competenceDomainId, true);
 
         // Delete inserted course plan
-        \Plafor\Models\CoursePlanModel::getInstance()->delete($coursePlanId, TRUE);
+        $coursePlanModel = model('\Plafor\Models\coursePlanModel');
+        $coursePlanModel->delete($coursePlanId, true);
 
         // Assertions
         $response = $result->response();
@@ -1492,33 +1528,42 @@
         $_REQUEST = array();
 
         // Delete inserted comment
-        \Plafor\Models\CommentModel::getInstance()->delete($commentId, TRUE);
+        $commentModel = model('\Plafor\Models\commentModel');
+        $commentModel->delete($commentId, true);
 
         // Delete inserted acquisition status
-        \Plafor\Models\AcquisitionStatusModel::getInstance()->delete($acquisitionStatusId, TRUE);
+        $acquisitionStatusModel = model('\Plafor\Models\acquisitionStatusModel');
+        $acquisitionStatusModel->delete($acquisitionStatusId, true);
 
         // Delete inserted user course
-        \Plafor\Models\UserCourseModel::getInstance()->delete($userCourseId, TRUE);
+        $userCourseModel = model('\Plafor\Models\userCourseModel');
+        $userCourseModel->delete($userCourseId, true);
 
         // Delete inserted objective
-        \Plafor\Models\ObjectiveModel::getInstance()->delete($objectiveId, TRUE);
+        $objectiveModel = model('\Plafor\Models\objectiveModel');
+        $objectiveModel->delete($objectiveId, true);
 
         // Delete inserted operational competence
-        \Plafor\Models\OperationalCompetenceModel::getInstance()->delete($operationalCompetenceId, TRUE);
+        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $operationalCompetenceModel->delete($operationalCompetenceId, true);
 
         // Delete inserted competence domain
-        \Plafor\Models\CompetenceDomainModel::getInstance()->delete($competenceDomainId, TRUE);
+        $competenceDomainModel = model('\Plafor\Models\competenceDomainModel');
+        $competenceDomainModel->delete($competenceDomainId, true);
 
         // Delete inserted course plan
-        \Plafor\Models\CoursePlanModel::getInstance()->delete($coursePlanId, TRUE);
+        $coursePlanModel = model('\Plafor\Models\coursePlanModel');
+        $coursePlanModel->delete($coursePlanId, true);
 
         // Assertions
         $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class, $response);
+        $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class,
+            $response);
         $this->assertEmpty($response->getBody());
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertRedirectTo(base_url('plafor/apprentice/view_acquisition_status/' . $acquisitionStatusId));
+        $result->assertRedirectTo(base_url('plafor/apprentice/view_acquisition_status/'
+            . $acquisitionStatusId));
     }
 
     /**
@@ -2006,7 +2051,8 @@
         $result->assertRedirectTo(base_url('/user/admin/list_user'));
 
         // Enable user id 4
-        \User\Models\User_model::getInstance()->update($user_id, ['archive' => NULL]);
+        $user_model = model('\User\Models\user_model');
+        $user_model->update($user_id, ['archive' => NULL]);
     }
 
     /**
@@ -2081,23 +2127,24 @@
         ->execute('delete_user', $apprenticeId, 2);
 
         // Delete inserted objective
-        \Plafor\Models\ObjectiveModel::getInstance()
-            ->delete($objectiveId, true);
+        $objectiveModel = model('\Plafor\Models\objectiveModel');
+        $objectiveModel->delete($objectiveId, true);
 
         // Delete inserted operational competence
-        \Plafor\Models\OperationalCompetenceModel::getInstance()
-            ->delete($operationalCompetenceId, true);
+        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $operationalCompetenceModel->delete($operationalCompetenceId, true);
 
         // Delete inserted competence domain
-        \Plafor\Models\CompetenceDomainModel::getInstance()
-            ->delete($competenceDomainId, true);
+        $competenceDomainModel = model('\Plafor\Models\competenceDomainModel');
+        $competenceDomainModel->delete($competenceDomainId, true);
 
         // Delete inserted course plan
-        \Plafor\Models\CoursePlanModel::getInstance()
-            ->delete($coursePlanId, true);
+        $coursePlanModel = model('\Plafor\Models\coursePlanModel');
+        $coursePlanModel->delete($coursePlanId, true);
 
         // Delete inserted trainer user
-        \User\Models\User_model::getInstance()->delete($trainerId, true);
+        $user_model = model('\User\Models\user_model');
+        $user_model->delete($trainerId, true);
 
         // Assertions
         $response = $result->response();
@@ -2137,8 +2184,8 @@
             'official_name' => 'Course Plan Unit Test',
             'date_begin' => '2023-04-05'
         );
-        $id = \Plafor\Models\CoursePlanModel::getInstance()
-            ->insert($coursePlan);
+        $coursePlanModel = model('\Plafor\Models\coursePlanModel');
+        $id = $coursePlanModel->insert($coursePlan);
         assert($id, 'CoursePlan is not created.');
         return $id;
     }
@@ -2178,8 +2225,8 @@
             'personal' => 'Operational Competence Unit Test',
             'fk_competence_domain' => $competenceDomainId
         );
-        $id = \Plafor\Models\OperationalCompetenceModel::getInstance()
-            ->insert($operationalCompetence);
+        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $id = $operationalCompetenceModel->insert($operationalCompetence);
         assert($id, 'OperationalCompetence is not created');
         return $id;
     }
@@ -2195,8 +2242,8 @@
             'name' => 'Objective Unit Test',
             'fk_operational_competence' => $operationalCompetenceId
         );
-        $id = \Plafor\Models\ObjectiveModel::getInstance()
-            ->insert($objective);
+        $objectiveModel = model('\Plafor\Models\objectiveModel');
+        $id = $objectiveModel->insert($objective);
         assert($id, 'Objective is not created.');
         return $id;
     }
@@ -2214,8 +2261,8 @@
             'date_begin' => '2023-04-19',
             'date_end' => '0000-00-00',
         );
-        $id = \Plafor\Models\UserCourseModel::getInstance()
-            ->insert($userCourse);
+        $userCourseModel = model('\Plafor\Models\userCourseModel');
+        $id = $userCourseModel->insert($userCourse);
         assert($id, 'UserCourse is not created.');
         return $id;
     }
@@ -2232,8 +2279,8 @@
             'fk_user_course' => $userCourseId,
             'fk_acquisition_level' => 1
         );
-        $id = \Plafor\Models\AcquisitionStatusModel::getInstance()
-                ->insert($acquisitionStatus);
+        $acquisitionStatusModel = model('\Plafor\Models\acquisitionStatusModel');
+        $id = $acquisitionStatusModel->insert($acquisitionStatus);
         assert($id, 'AcquisitionStatus is not created.');
         return $id;
     }
@@ -2250,7 +2297,8 @@
             'date_creation' => date('Y-m-d H:i:s'),
         );
 
-        return \Plafor\Models\CommentModel::getInstance()->insert($comment);
+        $commentModel = model('\Plafor\Models\commentModel');
+        return $commentModel->insert($comment);
     }
 
     /**
@@ -2264,8 +2312,8 @@
             'fk_apprentice' => $apprenticeId,
         );
 
-        return \Plafor\Models\TrainerApprenticeModel::getInstance()
-            ->insert($apprenticeLink);
+        $trainerApprenticeModel = model('\Plafor\Models\trainerApprenticeModel');
+        return $trainerApprenticeModel->insert($apprenticeLink);
     }
 
     /**

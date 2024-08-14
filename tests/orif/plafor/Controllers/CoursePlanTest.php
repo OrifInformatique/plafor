@@ -265,10 +265,11 @@
         ->execute('delete_course_plan', $coursePlanId, 0);
 
         // Delete inserted user course
-        \Plafor\Models\UserCourseModel::getInstance()->delete($userCourseId, TRUE);
+        $userCourseModel = model('\Plafor\Models\userCourseModel');
+        $userCourseModel->delete($userCourseId, true);
 
         // Delete inserted archived course plan
-        \Plafor\Models\CoursePlanModel::getInstance()->delete($coursePlanId, TRUE);
+        $coursePlanModel->delete($coursePlanId, true);
 
         // Assertions
         $response = $result->response();
@@ -347,8 +348,8 @@
         $course_plan_id = 1;
 
         // Disable course plan
-        \Plafor\Models\CoursePlanModel::getInstance()->delete($course_plan_id,
-            false);
+        $coursePlanModel = model('\Plafor\Models\coursePlanModel');
+        $coursePlanModel->delete($course_plan_id, false);
 
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
@@ -652,7 +653,8 @@
         $competence_domain_id = 1;
 
         // Disable competence domain
-        \Plafor\Models\CompetenceDomainModel::getInstance()->delete($competence_domain_id, FALSE);
+        $competenceDomainModel = model('\Plafor\Models\competenceDomainModel');
+        $competenceDomainModel->delete($competence_domain_id, false);
 
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
@@ -924,7 +926,8 @@
         $operational_competence_id = 1;
 
         // Disable operational competence
-        \Plafor\Models\OperationalCompetenceModel::getInstance()->delete($operational_competence_id, FALSE);
+        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $operationalCompetenceModel->delete($operational_competence_id, false);
 
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
@@ -1187,7 +1190,8 @@
         ->execute('save_objective', $objectiveId);
 
         // Delete inserted archived objective
-        \Plafor\Models\ObjectiveModel::getInstance()->delete($objectiveId, TRUE);
+        $objectiveModel = model('\Plafor\Models\objectiveModel');
+        $objectiveModel->delete($objectiveId, true);
 
         // Assertions
         $response = $result->response();
@@ -1318,7 +1322,8 @@
         ->execute('delete_objective', $objectiveId);
 
         // Delete inserted archived objective
-        \Plafor\Models\ObjectiveModel::getInstance()->delete($objectiveId, TRUE);
+        $objectiveModel = model('\Plafor\Models\objectiveModel');
+        $objectiveModel->delete($objectiveId, true);
 
         // Assertions
         $response = $result->response();
@@ -1370,10 +1375,12 @@
 
         // Execute delete_objective method of CoursePlan class
         $result = $this->controller(CoursePlan::class)
-        ->execute('delete_objective', $objective_id, 1);
+            ->execute('delete_objective', $objective_id, 1);
 
         // Enable objective
-        \Plafor\Models\ObjectiveModel::getInstance()->withDeleted()->update($objective_id, ['archive' => null]);
+        $objectiveModel = model('\Plafor\Models\objectiveModel');
+        $objectiveModel->withDeleted()
+                       ->update($objective_id, ['archive' => null]);
 
         // Assertions
         $response = $result->response();
@@ -1392,7 +1399,8 @@
         $objective_id = 1;
 
         // Disable objective
-        \Plafor\Models\ObjectiveModel::getInstance()->delete($objective_id, FALSE);
+        $objectiveModel = model('\Plafor\Models\objectiveModel');
+        $objectiveModel->delete($objective_id, false);
 
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
@@ -1405,11 +1413,13 @@
 
         // Assertions
         $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class, $response);
+        $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class,
+            $response);
         $this->assertEmpty($response->getBody());
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertRedirectTo(base_url('plafor/courseplan/view_operational_competence/1'));
+        $result->assertRedirectTo(
+            base_url('plafor/courseplan/view_operational_competence/1'));
     }
 
     /**
@@ -1891,10 +1901,11 @@
         $_REQUEST = array();
 
         // Get course plan from database
-        $coursePlanDb = \Plafor\Models\CoursePlanModel::getInstance()->where("formation_number", 12345)->first();
-
+        $coursePlanModel = model('\Plafor\Models\coursePlanModel');
+        $coursePlanDb = $coursePlanModel->where("formation_number", 12345)
+                                        ->first();
         // Delete inserted course plan
-        \Plafor\Models\CoursePlanModel::getInstance()->delete($coursePlanDb['id'], TRUE);
+        $coursePlanModel->delete($coursePlanDb['id'], true);
 
          // Assertions
          $response = $result->response();
@@ -2044,8 +2055,8 @@
         $_REQUEST = array();
 
         // Delete inserted course plan
-        \Plafor\Models\CoursePlanModel::getInstance()->delete($coursePlanId,
-            true);
+        $coursePlanModel = model('\Plafor\Models\coursePlanModel');
+        $coursePlanModel->delete($coursePlanId, true);
  
         // Assertions
         $response = $result->response();
@@ -2087,13 +2098,12 @@
         $_POST = array();
         $_REQUEST = array();
         // Get competence domain from database
-        $competenceDomainDb =
-            \Plafor\Models\CompetenceDomainModel::getInstance()
-                ->where("name", 'Competence Domain Unit Test')
-                ->first();
+        $competenceDomainModel = model('\Plafor\Models\competenceDomainModel');
+        $competenceDomainDb = $competenceDomainModel
+            ->where("name", 'Competence Domain Unit Test')->first();
+
         // Delete inserted competence domain
-        \Plafor\Models\CompetenceDomainModel::getInstance()
-            ->delete($competenceDomainDb['id'], TRUE);
+        $competenceDomainModel->delete($competenceDomainDb['id'], true);
         // Assertions
         $response = $result->response();
         $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class,
@@ -2189,7 +2199,8 @@
         $_REQUEST = array();
 
         // Delete inserted competence domain
-        \Plafor\Models\CompetenceDomainModel::getInstance()->delete($competenceDomainId, TRUE);
+        $competenceDomainModel = model('\Plafor\Models\competenceDomainModel');
+        $competenceDomainModel->delete($competenceDomainId, true);
 
         // Assertions
         $response = $result->response();
@@ -2245,7 +2256,8 @@
         $_REQUEST = array();
 
         // Delete inserted competence domain
-        \Plafor\Models\CompetenceDomainModel::getInstance()->delete($competenceDomainId, TRUE);
+        $competenceDomainModel = model('\Plafor\Models\competenceDomainModel');
+        $competenceDomainModel->delete($competenceDomainId, true);
 
         // Assertions
         $response = $result->response();
@@ -2292,10 +2304,12 @@
         $_REQUEST = array();
 
         // Get operational competence from database
-        $operationalCompetenceDb = \Plafor\Models\OperationalCompetenceModel::getInstance()->where("name", 'Operational Competence Unit Test')->first();
-
+        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $operationalCompetenceDb = $operationalCompetenceModel
+            ->where("name", 'Operational Competence Unit Test')->first();
         // Delete inserted operational competence
-        \Plafor\Models\OperationalCompetenceModel::getInstance()->delete($operationalCompetenceDb['id'], TRUE);
+        $operationalCompetenceModel
+            ->delete($operationalCompetenceDb['id'], true);
 
         // Assertions
         $response = $result->response();
@@ -2412,8 +2426,8 @@
         $_REQUEST = array();
 
         // Delete inserted operational competence
-        \Plafor\Models\OperationalCompetenceModel::getInstance()
-            ->delete($operationalCompetenceId, true);
+        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $operationalCompetenceModel->delete($operationalCompetenceId, true);
 
         // Assertions
         $response = $result->response();
@@ -2462,18 +2476,20 @@
         $_REQUEST = array();
 
         // Get objective from database
-        $objectiveDb = \Plafor\Models\ObjectiveModel::getInstance()
-            ->where("name", 'Objective Unit Test')->first();
+        $objectiveModel = model('\Plafor\Models\objectiveModel');
+        $objectiveDb = $objectiveModel->where("name", 'Objective Unit Test')
+                                      ->first();
         $objectiveId = $objectiveDb['id'];
 
         // Delete automatically inserted acquisition statuses for the inserted
         // objective
-        \Plafor\Models\AcquisitionStatusModel::getInstance()
-            ->where('fk_objective ', $objectiveId)->delete();
+        $acquisitionStatusModel = model('\Plafor\Models\acquisitionStatusModel');
+        $acquisitionStatusModel->where('fk_objective ', $objectiveId)
+                               ->delete();
 
         // Delete inserted objective
-        \Plafor\Models\ObjectiveModel::getInstance()->delete($objectiveId,
-            true);
+        $objectiveModel = model('\Plafor\Models\objectiveModel');
+        $objectiveModel->delete($objectiveId, true);
  
         // Assertions
         $response = $result->response();
@@ -2579,7 +2595,8 @@
         $_REQUEST = array();
 
         // Delete inserted objective
-        \Plafor\Models\ObjectiveModel::getInstance()->delete($objectiveId, TRUE);
+        $objectiveModel = model('\Plafor\Models\objectiveModel');
+        $objectiveModel->delete($objectiveId, true);
  
         // Assertions
         $response = $result->response();
@@ -2636,7 +2653,9 @@
         ->execute('delete_operational_competence', $operationalCompetenceId, 1);
 
         // Delete disabled operational competence
-        \Plafor\Models\OperationalCompetenceModel::getInstance()->delete($operationalCompetenceId, TRUE);
+        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $operationalCompetenceModel->delete($operationalCompetenceId,
+            true);
 
         // Assertions
         $response = $result->response();
@@ -2672,13 +2691,16 @@
         ->execute('delete_competence_domain', $competenceDomainId, 1);
 
         // Delete disabled objective
-        \Plafor\Models\ObjectiveModel::getInstance()->delete($objectiveId, TRUE);
+        $objectiveModel = model('\Plafor\Models\objectiveModel');
+        $objectiveModel->delete($objectiveId, true);
 
         // Delete disabled operational competence
-        \Plafor\Models\OperationalCompetenceModel::getInstance()->delete($operationalCompetenceId, TRUE);
+        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $operationalCompetenceModel->delete($operationalCompetenceId, true);
 
         // Delete disabled competence domain
-        \Plafor\Models\CompetenceDomainModel::getInstance()->delete($competenceDomainId, TRUE);
+        $competenceDomainModel = model('\Plafor\Models\competenceDomainModel');
+        $competenceDomainModel->delete($competenceDomainId, true);
 
         // Assertions
         $response = $result->response();
@@ -2716,16 +2738,20 @@
         ->execute('delete_course_plan', $coursePlanId, 1);
 
         // Delete disabled objective
-        \Plafor\Models\ObjectiveModel::getInstance()->delete($objectiveId, TRUE);
+        $objectiveModel = model('\Plafor\Models\objectiveModel');
+        $objectiveModel->delete($objectiveId, true);
 
         // Delete disabled operational competence
-        \Plafor\Models\OperationalCompetenceModel::getInstance()->delete($operationalCompetenceId, TRUE);
+        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $operationalCompetenceModel->delete($operationalCompetenceId, true);
 
         // Delete disabled competence domain
-        \Plafor\Models\CompetenceDomainModel::getInstance()->delete($competenceDomainId, TRUE);
+        $competenceDomainModel = model('\Plafor\Models\competenceDomainModel');
+        $competenceDomainModel->delete($competenceDomainId, true);
 
         // Delete disabled course plan
-        \Plafor\Models\CoursePlanModel::getInstance()->delete($coursePlanId, TRUE);
+        $coursePlanModel = model('\Plafor\Models\coursePlanModel');
+        $coursePlanModel->delete($coursePlanId, true);
 
         // Assertions
         $response = $result->response();
@@ -2769,16 +2795,20 @@
         ->execute('delete_user_course', $userCourseId, 1);
 
         // Delete inserted objective
-        \Plafor\Models\ObjectiveModel::getInstance()->delete($objectiveId, TRUE);
+        $objectiveModel = model('\Plafor\Models\objectiveModel');
+        $objectiveModel->delete($objectiveId, true);
 
         // Delete inserted operational competence
-        \Plafor\Models\OperationalCompetenceModel::getInstance()->delete($operationalCompetenceId, TRUE);
+        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $operationalCompetenceModel->delete($operationalCompetenceId, true);
 
         // Delete inserted competence domain
-        \Plafor\Models\CompetenceDomainModel::getInstance()->delete($competenceDomainId, TRUE);
+        $competenceDomainModel = model('\Plafor\Models\competenceDomainModel');
+        $competenceDomainModel->delete($competenceDomainId, true);
 
         // Delete inserted course plan
-        \Plafor\Models\CoursePlanModel::getInstance()->delete($coursePlanId, TRUE);
+        $coursePlanModel = model('\Plafor\Models\coursePlanModel');
+        $coursePlanModel->delete($coursePlanId, true);
 
         // Assertions
         $response = $result->response();
@@ -2799,8 +2829,8 @@
             'official_name' => 'Course Plan Unit Test',
             'date_begin' => '2023-04-05'
         );
-
-        return \Plafor\Models\CoursePlanModel::getInstance()->insert($coursePlan);
+        $coursePlanModel = model('\Plafor\Models\coursePlanModel');
+        return $coursePlanModel->insert($coursePlan);
     }
 
     /**
@@ -2814,8 +2844,9 @@
             'archive' => '2023-04-26'
         );
 
-        return \Plafor\Models\CoursePlanModel::getInstance()->insert($coursePlan);
-    } 
+        $coursePlanModel = model('\Plafor\Models\coursePlanModel');
+        return $coursePlanModel->insert($coursePlan);
+    }
 
     /**
      * Insert a competence domain linked to a course plan into database
@@ -2883,7 +2914,8 @@
             'fk_operational_competence' => $operationalCompetenceId
         );
 
-        return \Plafor\Models\ObjectiveModel::getInstance()->insert($objective);
+        $objectiveModel = model('\Plafor\Models\objectiveModel');
+        return $objectiveModel->insert($objective);
     }
 
     /**
@@ -2898,7 +2930,8 @@
             'date_end' => '0000-00-00',
         );
 
-        return \Plafor\Models\UserCourseModel::getInstance()->insert($userCourse);
+        $userCourseModel = model('\Plafor\Models\userCourseModel');
+        return $userCourseModel->insert($userCourse);
     }
 
     /**
@@ -2911,6 +2944,7 @@
             'fk_acquisition_level' => 1
         );
 
-        return \Plafor\Models\AcquisitionStatusModel::getInstance()->insert($acquisitionStatus);
+        $acquisitionStatusModel = model('\Plafor\Models\acquisitionStatusModel');
+        return $acquisitionStatusModel->insert($acquisitionStatus);
     }
 }
