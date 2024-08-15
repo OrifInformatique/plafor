@@ -116,7 +116,7 @@ class Apprentice extends \App\Controllers\BaseController
 
         else if($trainer_id == 1)
         {
-            $apprentices = $this->user_model->getUnassignedApprentices();
+            $apprentices = $this->trainer_apprentice_model->getUnassignedApprentices();
         }
         
         else 

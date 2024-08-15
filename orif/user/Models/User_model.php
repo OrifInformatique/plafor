@@ -159,29 +159,21 @@ class User_model extends \CodeIgniter\Model {
     /**
      * @return array the list of trainers
      */
-    public function getTrainers(bool $withDelted=false) {
+    public function getTrainers(bool $withDeleted=false) {
         $indexedTrainers = array();
         $user_model = model('User_model');
-        if ($withDelted) {
-            $user_type_model = model('User_type_model');
-            $fk_user_type = $user_type_model->where('name','Formateur')
-                                            ->first()['id'];
-            $trainers = $user_model->where('fk_user_type', $fk_user_type)
-                                   ->withDeleted()->findAll();
-            foreach ($trainers as $trainer) {
-                $indexedTrainers[$trainer['id']] = $trainer;
-            }
-            return $indexedTrainers;
-        }
+
         $user_type_model = model('User_type_model');
         $fk_user_type = $user_type_model->where('name','Formateur')
                                         ->first()['id'];
+
         $trainers = $user_model->where('fk_user_type', $fk_user_type)
-                               ->findAll();
-        foreach ($trainers as $trainer) {
+                                ->withDeleted($withDeleted)
+                                ->findAll();
+
+        foreach ($trainers as $trainer)
             $indexedTrainers[$trainer['id']] = $trainer;
-        
+
         return $indexedTrainers;
-        }
     }
 }
