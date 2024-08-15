@@ -32,17 +32,17 @@ class CoursePlan extends \App\Controllers\BaseController
         parent::initController($request, $response, $logger);
 
         // Loads required models
-        $this->acquisition_status_model = AcquisitionStatusModel::getInstance();
-        $this->comment_model = CommentModel::getInstance();
-        $this->comp_domain_model = CompetenceDomainModel::getInstance();
-        $this->course_plan_model = CoursePlanModel::getInstance();
-        $this->objective_model = ObjectiveModel::getInstance();
-        $this->operational_comp_model = OperationalCompetenceModel::getInstance();
-        $this->user_course_model = UserCourseModel::getInstance();
-        $this->user_course_status_model = UserCourseStatusModel::getInstance();
-        $this->trainer_apprentice_model = TrainerApprenticeModel::getInstance();
-        $this->user_model = User_model::getInstance();
-        $this->user_type_model = User_type_model::getInstance();
+        $this->acquisition_status_model = model('AcquisitionStatusModel');
+        $this->comment_model = model('CommentModel');
+        $this->comp_domain_model = model('CompetenceDomainModel');
+        $this->course_plan_model = model('CoursePlanModel');
+        $this->objective_model = model('ObjectiveModel');
+        $this->operational_comp_model = model('OperationalCompetenceModel');
+        $this->user_course_model = model('UserCourseModel');
+        $this->user_course_status_model = model('UserCourseStatusModel');
+        $this->trainer_apprentice_model = model('TrainerApprenticeModel');
+        $this->user_model = model('User_model');
+        $this->user_type_model = model('User_type_model');
     }
 
     /**
@@ -69,12 +69,11 @@ class CoursePlan extends \App\Controllers\BaseController
 
                 // Query to perform
                 if (!is_null($course_plan)) {
-                    // Course plan already exists - updates it
-                    $this->course_plan_model->update($course_plan_id, $new_course_plan);
-                } else {
-                    // No course plan found in database - inserts a new one
-                    $this->course_plan_model->insert($new_course_plan);
+                    // Course plan already exists - add id
+                    $new_course_plan['id'] = $course_plan_id;
                 }
+                $this->course_plan_model->save($new_course_plan);
+
 
                 // Error handling
                 if ($this->course_plan_model->errors() == null) {
