@@ -137,6 +137,7 @@ return [
     'title_comment_new'                     => 'Ajouter un commentaire',
     'title_comment_delete'                  => 'Supprimer le commentaire',
     'title_progress'                        => 'Avancement',
+    'title_delete_entry'                    => 'Suppression d\'entrée',
 
     // Details labels
     'details_apprentice'                => 'Détail de l\'apprenti',
@@ -262,5 +263,7 @@ return [
     'apprentice_link_enable_explanation'            => 'Toutes les informations concernant le lien entre cet apprenti et ce formateur seront réactivées.',
     'acquisition_status_enable_explanation'         => 'Toutes les informations concernant le statut d\'acquisition seront réactivées.',
     'current'                                       => 'En vigueur',
-    'apprentices_already_assigned_to_course_plan'   => 'Les apprentis suivants sont associés à ce plan de formation'
+    'apprentices_already_assigned_to_course_plan'   => 'Les apprentis suivants sont associés à ce plan de formation',
+    'delete_entry_confirmation'                     => 'Êtes-vous sûr(e) de vouloir supprimer cette entrée ?',
+    'entries_linked_to_entry_being_deleted'         => 'Entrées liées à l\'entrée sur le point d\'être supprimée'
 ];

@@ -235,11 +235,19 @@ class CoursePlan extends \App\Controllers\BaseController
             // Action to perform
             switch ($action) {
                 case 0: // Displays confirmation
-                    $output = array(
-                        'competence_domain' => $competence_domain
+                    $output = array
+                    (
+                        'entry' => $competence_domain['name'],
+                        'type' => lang('plafor_lang.competence_domain'),
+                        'cancel_btn_url' => base_url('plafor/courseplan/view_course_plan/'.$competence_domain_id),
+                        'primary_action' =>
+                        [
+                            'name' => lang('common_lang.btn_disable'),
+                            'url' => base_url(uri_string().'/1')
+                        ]
                     );
 
-                    return $this->display_view('\Plafor/competence_domain/delete', $output);
+                    return $this->display_view('\Plafor/common/delete_entry', $output);
                 case 1: // Deactivates (soft delete) competence domain
                     $this->comp_domain_model->delete($competence_domain_id);
                     break;
