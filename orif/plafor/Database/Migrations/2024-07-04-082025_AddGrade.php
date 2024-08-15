@@ -37,7 +37,7 @@ class AddGrade extends Migration{
                 "unsigned" => true,
             ],
             "date" => [
-                "TIMESTAMP",
+                "type" => "date",
             ],
             "grade" => [
                 "type" => "DECIMAL",
