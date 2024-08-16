@@ -98,31 +98,40 @@ class Apprentice extends \App\Controllers\BaseController
         // Gets username of all trainers for the dropdown menu
         $trainersList = array();
         $trainersList[0] = lang('common_lang.all_m');
+        $trainersList[1] = lang('plafor_lang.unassigned');
         $apprentice_level = $this->user_type_model->where('access_level', config("\User\Config\UserConfig")->access_level_apprentice)->find();
 
         foreach ($this->user_model->getTrainers() as $trainer) {
             $trainersList[$trainer['id']] = $trainer['username'];
         }
 
+        $apprentices = array();
+
         // Gets data of apprentices, depending on the logged-in user
-        if ($trainer_id == null || $trainer_id == 0) {
+        if ($trainer_id == null || $trainer_id == 0)
+        {
             // User is not a trainer - lists all apprentices
             $apprentices = $this->user_model->getApprentices($withDeleted);
-
-            $coursesList=[];
-            foreach ($this->course_plan_model->withDeleted(true)->findAll() as $courseplan)
-                $coursesList[$courseplan['id']]=$courseplan;
-            $courses = $this->user_course_model->withDeleted(true)->findAll();
-        } else {
-            // User is a trainer - lists their linked apprentices
-            $apprentices=[];
-            if (count($this->trainer_apprentice_model->where('fk_trainer', $trainer_id)->findAll()))
-                $apprentices = $this->user_model->whereIn('id', array_column($this->trainer_apprentice_model->where('fk_trainer', $trainer_id)->findAll(), 'fk_apprentice'))->findAll();
-            $coursesList=[];
-            foreach ($this->course_plan_model->withDeleted(true)->findAll() as $courseplan)
-                $coursesList[$courseplan['id']]=$courseplan;
-            $courses = $this->user_course_model->withDeleted(true)->findAll();
         }
+
+        else if($trainer_id == 1)
+        {
+            $apprentices = $this->trainer_apprentice_model->getUnassignedApprentices();
+        }
+        
+        else 
+        {
+            // User is a trainer - lists their linked apprentices
+            if (count($this->trainer_apprentice_model->where('fk_trainer', $trainer_id)->findAll()))
+                $apprentices = $this->user_model->whereIn('id', array_column($this->trainer_apprentice_model->where('fk_trainer', $trainer_id)->findAll(), 'fk_apprentice'))->orderBy('username', 'ASC')->findAll();
+        }
+
+        $coursesList = array();
+
+        foreach ($this->course_plan_model->withDeleted(true)->findAll() as $courseplan)
+            $coursesList[$courseplan['id']]=$courseplan;
+
+        $courses = $this->user_course_model->withDeleted(true)->findAll();
 
         // Data to send to the view
         $output = array(

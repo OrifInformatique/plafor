@@ -64,4 +64,33 @@ class TrainerApprenticeModel extends \CodeIgniter\Model
         return $trainerApprenticeModel->where('fk_trainer', $fkTrainerId)
                                       ->findColumn('fk_apprentice');
     }
+
+    /**
+     * Get the apprentices unassigned to a trainer
+     * 
+     * @return array
+     * 
+     */
+    public function getUnassignedApprentices()
+    {
+        $user_model = model('User_model');
+
+        $unassigned_apprentices = array();
+        $assigned_apprentices_list = array();
+
+        $apprentices = $user_model->getApprentices();
+        
+        $assinged_apprentices = $this->select('fk_apprentice')->distinct()->findAll();;
+
+        foreach($assinged_apprentices as $assinged_apprentice)
+            array_push($assigned_apprentices_list, $assinged_apprentice['fk_apprentice']);
+
+        foreach($apprentices as $apprentice)
+        {
+            if(!in_array($apprentice['id'], $assigned_apprentices_list))
+                array_push($unassigned_apprentices, $apprentice);
+        }
+
+        return $unassigned_apprentices;
+    }
 }

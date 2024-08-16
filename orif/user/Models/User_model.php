@@ -9,6 +9,7 @@
 namespace User\Models;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
+use Plafor\Models\TrainerApprenticeModel;
 
 class User_model extends \CodeIgniter\Model {
     protected $table = 'user';
@@ -134,52 +135,59 @@ class User_model extends \CodeIgniter\Model {
 
 
     # TODO Refactoring the User_model stays like in Packbase.
-    
+
     /**
-     * @return array the list of apprentices
+     * Gets the list of apprentices
+     *
+     * @param bool $withDeleted If true, returns also deactivated apprentices
+     *
+     * @return array
+     *
      */
-    public function getApprentices(bool $withDeleted=false) {
+    public function getApprentices(bool $withDeleted = false)
+    {
         $user_model = model('User_model');
         $user_type_model = model('User_type_model');
-        if ($withDeleted) {
-            $fk_user_type = $user_type_model
-                ->where('access_level', config("\User\Config\UserConfig")
-                ->access_level_apprentice)
-                ->first()['id'];
-            return $user_model
-                ->where('fk_user_type', $fk_user_type)
-                ->withDeleted()->findAll();
-        }
-        $fk_user_type = $user_type_model->where('name', 'Apprenti')
-                                        ->first()['id'];
-        return $user_model->where('fk_user_type', $fk_user_type)->findAll();
+
+        $fk_user_type = $user_type_model
+            ->where('name', 'Apprenti')
+            ->first()['id'];
+
+        return $user_model
+            ->where('fk_user_type', $fk_user_type)
+            ->orderBy('username', 'ASC')
+            ->withDeleted($withDeleted)
+            ->findAll();
     }
 
     /**
-     * @return array the list of trainers
+     * Gets the list of trainers
+     *
+     * @param bool $withDeleted If true, returns also deactivated trainers
+     *
+     * @return array
+     *
      */
-    public function getTrainers(bool $withDelted=false) {
+    public function getTrainers(bool $withDeleted = false)
+    {
         $indexedTrainers = array();
+
         $user_model = model('User_model');
-        if ($withDelted) {
-            $user_type_model = model('User_type_model');
-            $fk_user_type = $user_type_model->where('name','Formateur')
-                                            ->first()['id'];
-            $trainers = $user_model->where('fk_user_type', $fk_user_type)
-                                   ->withDeleted()->findAll();
-            foreach ($trainers as $trainer) {
-                $indexedTrainers[$trainer['id']] = $trainer;
-            }
-            return $indexedTrainers;
-        }
         $user_type_model = model('User_type_model');
-        $fk_user_type = $user_type_model->where('name','Formateur')
-                                        ->first()['id'];
-        $trainers = $user_model->where('fk_user_type', $fk_user_type)
-                               ->findAll();
-        foreach ($trainers as $trainer) {
+
+        $fk_user_type = $user_type_model
+            ->where('name','Formateur')
+            ->first()['id'];
+
+        $trainers = $user_model
+            ->where('fk_user_type', $fk_user_type)
+            ->withDeleted($withDeleted)
+            ->orderBy('username', 'ASC')
+            ->findAll();
+
+        foreach ($trainers as $trainer)
             $indexedTrainers[$trainer['id']] = $trainer;
-        }
+
         return $indexedTrainers;
     }
 }
