@@ -127,9 +127,12 @@ class CoursePlan extends \App\Controllers\BaseController
 
                 $output = array
                 (
-                    'entry'          => $course_plan['official_name'],
-                    'type'           => lang('plafor_lang.course_plan'),
-                    'message'        => lang('plafor_lang.course_plan_disable_explanation'),
+                    'entry' =>
+                    [
+                        'type'    => lang('plafor_lang.course_plan'),
+                        'name'    => $course_plan['official_name'],
+                        'message' => lang('plafor_lang.course_plan_disable_explanation')
+                    ],
                     'cancel_btn_url' => base_url('plafor/courseplan/list_course_plan'),
                     'primary_action' =>
                     [
@@ -255,14 +258,17 @@ class CoursePlan extends \App\Controllers\BaseController
             case 0:
                 $output = array
                 (
-                    'entry' => $competence_domain['name'],
-                    'type' => lang('plafor_lang.competence_domain'),
-                    'message' => lang('plafor_lang.competence_domain_disable_explanation'),
+                    'entry' =>
+                    [
+                        'type'    => lang('plafor_lang.competence_domain'),
+                        'name'    => $competence_domain['name'],
+                        'message' => lang('plafor_lang.competence_domain_disable_explanation')
+                    ],
                     'cancel_btn_url' => base_url('plafor/courseplan/view_course_plan/'.$competence_domain_id),
                     'primary_action' =>
                     [
                         'name' => lang('common_lang.btn_disable'),
-                        'url' => base_url(uri_string().'/1')
+                        'url'  => base_url(uri_string().'/1')
                     ]
                 );
 
@@ -378,14 +384,17 @@ class CoursePlan extends \App\Controllers\BaseController
             case 0:
                 $output = array
                 (
-                    'entry' => $operational_comp['name'],
-                    'type' => lang('plafor_lang.operational_competence'),
-                    'message' => lang('plafor_lang.operational_competence_disable_explanation'),
+                    'entry' =>
+                    [
+                        'type'    => lang('plafor_lang.operational_competence'),
+                        'name'    => $operational_comp['name'],
+                        'message' => lang('plafor_lang.operational_competence_disable_explanation')
+                    ],
                     'cancel_btn_url' => base_url('plafor/courseplan/view_competence_domain/'.$operational_comp['fk_competence_domain']),
                     'primary_action' =>
                     [
                         'name' => lang('common_lang.btn_disable'),
-                        'url' => base_url(uri_string().'/1')
+                        'url'  => base_url(uri_string().'/1')
                     ]
                 );
 
@@ -419,8 +428,8 @@ class CoursePlan extends \App\Controllers\BaseController
     public function delete_user_course($user_course_id = 0, $action = 0)
     {
         $user_course = $this->user_course_model->find($user_course_id);
+        $doesTrainerTrainsApprentice = false;
 
-        // Redirection
         if (is_null($user_course))
             return redirect()->to(base_url());
 
@@ -428,7 +437,6 @@ class CoursePlan extends \App\Controllers\BaseController
         if($_SESSION['user_access'] === config('\User\Config\UserConfig')->access_lvl_trainer)
         {
             $trainer = $this->trainer_apprentice_model->getTrainer($_SESSION['user_id']);
-            $doesTrainerTrainsApprentice = false;
 
             if(isset($trainer))
             {
@@ -448,53 +456,60 @@ class CoursePlan extends \App\Controllers\BaseController
             }
         }
 
-        // Access permissions
-        if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin
-            || (isset($doesTrainerTrainsApprentice) && $doesTrainerTrainsApprentice))
+        if ($_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_admin && !$doesTrainerTrainsApprentice)
         {
-            // Gets data for the confirmation view
-            $course_plan = $this->course_plan_model->find($user_course['fk_course_plan']);
-            $apprentice = $this->user_model->find($user_course['fk_user']);
-            $status = $this->user_course_status_model->find($user_course['fk_status']);
-
-            // Action to perform
-            switch ($action)
-            {
-                case 0: // Displays confirmation
-                    $output = array(
-                        'user_course' => $user_course,
-                        'course_plan' => $course_plan,
-                        'apprentice'  => $apprentice,
-                        'status'      => $status,
-                        'title'       => lang('plafor_lang.title_user_course_delete')
-                    );
-
-                    return $this->display_view('Plafor\user_course/delete', $output);
-
-                case 1: // Deletes user's course and the corresponding comments and acquisition status
-                    // Deletes comments
-                    foreach ($this->acquisition_status_model->where('fk_user_course', $user_course_id)->find() as $acquisition_status)
-                    {
-                        $this->comment_model->where('fk_acquisition_status', $acquisition_status['id'])->delete();
-                    };
-
-                    // Deletes acquisition status
-                    $this->acquisition_status_model->where('fk_user_course', $user_course_id)->delete();
-
-                    // Deletes user's course
-                    $this->user_course_model->delete($user_course_id);
-
-                    return redirect()->to(base_url('plafor/apprentice/list_user_courses/'.$apprentice['id']));
-
-                default:
-                    // Do nothing
-            }
-
-            return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
+            return $this->display_view('\User\errors\403error');
         }
 
-        else
-            return $this->display_view('\User\errors\403error');
+        $course_plan = $this->course_plan_model->withDeleted()->find($user_course['fk_course_plan']);
+        $apprentice = $this->user_model->withDeleted()->find($user_course['fk_user']);
+        $status = $this->user_course_status_model->find($user_course['fk_status']);
+
+        // Action to perform
+        switch ($action)
+        {
+            // Displays confirmation
+            case 0:
+                $output = array
+                (
+                    'entry' =>
+                    [
+                        'type' => sprintf(lang('plafor_lang.course_plan_of'), $apprentice['username']),
+                        'name' => $course_plan['official_name'],
+                        'message' => lang('plafor_lang.user_course_delete_explanation'),
+                        'data' =>
+                        [
+                            'user_course_status' =>
+                            [
+                                'name' => lang('plafor_lang.status'),
+                                'value' => $status['name']
+                            ]
+                        ]
+                    ],
+                    'cancel_btn_url' => base_url('plafor/apprentice/list_user_courses/'.$apprentice['id']),
+                    'primary_action' =>
+                    [
+                        'name' => lang('common_lang.btn_delete'),
+                        'url' => base_url(uri_string().'/1')
+                    ]
+                );
+
+                return $this->display_view('\Common/delete_entry', $output);
+
+            // Deletes user's course and the corresponding comments and acquisition status
+            case 1:
+                // Deletes comments
+                foreach($this->acquisition_status_model->where('fk_user_course', $user_course_id)->find() as $acquisition_status)
+                    $this->comment_model->where('fk_acquisition_status', $acquisition_status['id'])->delete();
+
+                $this->acquisition_status_model->where('fk_user_course', $user_course_id)->delete();
+
+                $this->user_course_model->delete($user_course_id);
+
+                return redirect()->to(base_url('plafor/apprentice/list_user_courses/'.$apprentice['id']));
+        }
+
+        return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
     }
 
     /**
@@ -611,14 +626,17 @@ class CoursePlan extends \App\Controllers\BaseController
             case 0:
                 $output = array
                 (
-                    'entry' => $objective['name'],
-                    'type' => lang('plafor_lang.objective'),
-                    'message' => lang('plafor_lang.objective_disable_explanation'),
+                    'entry' =>
+                    [
+                        'type'    => lang('plafor_lang.objective'),
+                        'name'    => $objective['name'],
+                        'message' => lang('plafor_lang.objective_disable_explanation')
+                    ],
                     'cancel_btn_url' => base_url('plafor/courseplan/view_operational_competence/'.$objective['fk_operational_competence']),
                     'primary_action' =>
                     [
                         'name' => lang('common_lang.btn_disable'),
-                        'url' => base_url(uri_string().'/1')
+                        'url'  => base_url(uri_string().'/1')
                     ]
                 );
 
@@ -632,10 +650,10 @@ class CoursePlan extends \App\Controllers\BaseController
             // Deletes (hard delete) objective
             /**
              * Hard delete dysfunctional - temporarily disabled
-             * 
+             *
              * // TODO : Delete the acquisition_status entry linked to the objective before
              * // TODO : Add a delete button in the (common) delete_entry view
-             * 
+             *
              */
             // case 2:
             //     $this->objective_model->delete($objective_id, TRUE);
