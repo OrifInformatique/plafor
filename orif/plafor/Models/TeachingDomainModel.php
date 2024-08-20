@@ -13,7 +13,8 @@ class TeachingDomainModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = true;
     protected $protectFields    = true;
-    protected $allowedFields    = ['domain_weight', 'is_eliminatory'];
+    protected $allowedFields    = ['fk_teaching_domain_title',
+        'fk_course_pan', 'domain_weight', 'is_eliminatory'];
 
     // Dates
     protected $useTimestamps = false;
@@ -34,21 +35,46 @@ class TeachingDomainModel extends Model
     protected $afterInsert    = [];
     protected $beforeUpdate   = [];
     protected $afterUpdate    = [];
-    protected $beforeFind     = ['getDomains'];
-    protected $afterFind      = [];
+    protected $beforeFind     = [];
+    protected $afterFind      = ['afterFind'];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    protected function getDomains(array $data) {
-        $data['data'] = $this
-            ->select('teaching_domain.id, title, official_name as '
-            . 'course_plan_name, domain_weight, is_eliminatory, '
-            . 'teaching_domain.archive')
-            ->join('teaching_domain_title',
-                'teaching_domain.id = fk_teaching_domain_title', 'left')
-            ->join('course_plan', 'course_plan.id = fk_course_plan', 'left')
-            ->allowCallbacks(false)->find($data['id']);
-        $data['returnData'] = true;
+
+    protected function afterFind(array $data): array
+    {
+        $data['data'] = match ($data['method']) {
+            'first' => $this->afterFindFind($data['data']),
+            'find' => $this->afterFindFind($data['data']),
+            'findAll' => $this->afterFindFindAll($data['data']),
+            default => $data
+        };
         return $data;
     }
+
+    // this call when findAll is used
+    protected function afterFindFindAll(array $data): array
+    {
+        return array_map(fn($row) => $this->afterFindFind($row), $data);
+    }
+
+    // this call when find or first is used
+    protected function afterFindFind(array $data): array
+    {
+        if (array_key_exists('fk_teaching_domain_title', $data)) { 
+            $data['title'] = $this->select('title')
+                                  ->join('teaching_domain_title',
+             'teaching_domain.id = fk_teaching_domain_title', 'left')
+             ->allowCallbacks(false)
+             ->find($data['id'])['title'];
+        }
+        if (array_key_exists('fk_course_plan', $data)) { 
+            $data['course_plan_name'] = $this->select('official_name')
+             ->join('course_plan', 'course_plan.id = fk_course_plan', 'left')
+             ->allowCallbacks(false)
+             ->find($data['id'])['official_name'];
+        }
+        return $data;
+    }
+
 }

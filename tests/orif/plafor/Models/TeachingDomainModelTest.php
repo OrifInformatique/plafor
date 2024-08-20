@@ -40,7 +40,44 @@ class TeachingDomainModelTest extends CIUnitTestCase
             . 'orientation exploitation et infrastructure',
             'domain_weight' => 0.1,
             'is_eliminatory' => 0,
-            'archive' => null
+            'archive' => null,
+            'fk_teaching_domain_title' => 1,
+            'fk_course_plan' => 5
+        ];
+        $this->assertEquals($expect, $data);
+    }
+
+    public function testFindAll()
+    {
+        $teachingDomainModel = model('TeachingDomainModel');
+        $data = $teachingDomainModel->findAll();
+        $this->assertIsArray($data);
+    }
+
+    public function testFirst()
+    {
+        $teachingDomainModel = model('TeachingDomainModel');
+        $data = $teachingDomainModel->first();
+        $expect = [
+            'id' => 1,
+            'title' => 'Compétences de base élargies',
+            'course_plan_name' => 'Informaticienne / Informaticien avec CFC, '
+            . 'orientation exploitation et infrastructure',
+            'domain_weight' => 0.1,
+            'is_eliminatory' => 0,
+            'archive' => null,
+            'fk_teaching_domain_title' => 1,
+            'fk_course_plan' => 5
+        ];
+        $this->assertEquals($expect, $data);
+    }
+
+    public function testFirstCustom()
+    {
+        $teachingDomainModel = model('TeachingDomainModel');
+        $data = $teachingDomainModel->select('domain_weight')->first();
+        $expect = [
+            'domain_weight' => 0.1,
         ];
         $this->assertEquals($expect, $data);
     }
