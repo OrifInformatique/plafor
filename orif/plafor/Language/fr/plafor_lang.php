@@ -216,7 +216,7 @@ return [
     'course_plan_delete'                            => 'Supprimer ce plan de formation',
     'course_plan_delete_explanation'                => 'Toutes les informations concernant ce plan de formation (domaines de compétences, compétences oppérationnelles et objectifs) seront supprimées.',
     'course_plan_disable'                           => 'Désactiver ce plan de formation',
-    'course_plan_disable_explanation'               => 'Les apprentis listés garderont le lien avec ce plan de formation, mais il sera désactivé et ne pourra plus être attribué à de nouveaux apprentis.',
+    'course_plan_disable_explanation'               => 'Les apprentis listés garderont le lien avec ce plan de formation. Cependant, il ne pourra plus être attribué à de nouveaux apprentis.',
     'number_abr'                                    => 'No',
     'competence_domain'                             => 'Domaine de compétence',
     'competence_domain_delete'                      => 'Supprimer ce domaine de compétence',

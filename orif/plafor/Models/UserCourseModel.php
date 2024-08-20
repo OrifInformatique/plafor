@@ -52,14 +52,15 @@ class UserCourseModel extends \CodeIgniter\Model
 
     /**
      * Gets all courses from a user.
-     * 
+     *
      * @param int $fk_user ID of the user
-     * 
+     *
      * @return array
-     * 
+     *
      */
-    public static function getUserCourses($fk_user){
-        return UserCourseModel::getInstance()
+    public function getUserCourses($fk_user)
+    {
+        return $this
             ->join('course_plan','course_plan.id = user_course.fk_course_plan')
             ->where('fk_user', $fk_user)
             ->findAll();
