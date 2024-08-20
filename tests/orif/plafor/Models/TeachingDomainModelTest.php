@@ -81,4 +81,15 @@ class TeachingDomainModelTest extends CIUnitTestCase
         ];
         $this->assertEquals($expect, $data);
     }
+
+    public function testInsert()
+    {
+        $teachingDomainModel = model('TeachingDomainModel');
+        $teachingDomain = [
+            'domain_weight' => 0.1,
+            'is_eliminatory' => 0,
+        ];
+        $isSuccess = $teachingDomainModel->insert($teachingDomain, false);
+        $this->assertTrue($isSuccess);
+    }
 }
