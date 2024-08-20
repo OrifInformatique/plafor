@@ -135,32 +135,19 @@ class User_model extends \CodeIgniter\Model {
 
 
     # TODO Refactoring the User_model stays like in Packbase.
-    
+
     /**
      * Gets the list of apprentices
-     * 
+     *
      * @param bool $withDeleted If true, returns also deactivated apprentices
-     * 
+     *
      * @return array
-     * 
+     *
      */
     public function getApprentices(bool $withDeleted = false)
     {
         $user_model = model('User_model');
         $user_type_model = model('User_type_model');
-
-        if ($withDeleted) 
-        {
-            $fk_user_type = $user_type_model
-                ->where('access_level', config("\User\Config\UserConfig")->access_level_apprentice)
-                ->first()['id'];
-
-            return $user_model
-                ->where('fk_user_type', $fk_user_type)
-                ->withDeleted()
-                ->orderBy('username', 'ASC')
-                ->findAll();
-        }
 
         $fk_user_type = $user_type_model
             ->where('name', 'Apprenti')
@@ -169,16 +156,17 @@ class User_model extends \CodeIgniter\Model {
         return $user_model
             ->where('fk_user_type', $fk_user_type)
             ->orderBy('username', 'ASC')
+            ->withDeleted($withDeleted)
             ->findAll();
     }
 
     /**
      * Gets the list of trainers
-     * 
+     *
      * @param bool $withDeleted If true, returns also deactivated trainers
-     * 
+     *
      * @return array
-     * 
+     *
      */
     public function getTrainers(bool $withDeleted = false)
     {
