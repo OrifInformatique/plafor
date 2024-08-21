@@ -1,6 +1,6 @@
 <?php
 /**
- * Common view for entry deltetion
+ * Common view for entry management
  *
  * @author      Orif (DeDy)
  * @link        https://github.com/OrifInformatique
@@ -11,18 +11,18 @@
 /**
  * Values needed
  *
- * @param array entry            => The entry being deleted. Required.
+ * @param array entry            => The entry being managed. Required.
  *     [
- *          'type'               => string, required, Type of the entry being deleted.
- *          'name'               => string, required, Name of the entry being deleted. Can be empty.
- *          'message'            => string, optional. Addidional info about the entry about to be deleted.
- *          'data'               => array, optional, Additional data about the entry being deleted.
+ *          'type'               => string, required, Type of the entry being managed.
+ *          'name'               => string, required, Name of the entry being managed. Can be empty.
+ *          'message'            => string, optional. Addidional info about the entry about to be managed.
+ *          'data'               => array, optional, Additional data about the entry being managed.
  *              [
  *                  'name'       => Name of the additional data
  *                  'value'      => Value of the additional data
  *              ]
  *     ]
- * @param array linked_entries   => Entries that are linked with the entry being deleted. Required.
+ * @param array linked_entries   => Entries that are linked with the entry being managed. Required.
  *     [
  *         'type'                => string, required, Type of the linked entry
  *         'name'                => string, required, Name of the linked entry
@@ -48,9 +48,9 @@
 
 <div id="page-content-wrapper">
     <div class="container">
-        <h1><?= lang('plafor_lang.title_delete_entry') ?></h1>
+        <h1><?= lang('plafor_lang.title_manage_entry') ?></h1>
 
-        <p><?= lang('plafor_lang.delete_entry_confirmation') ?></p>
+        <p><?= lang('plafor_lang.manage_entry_confirmation') ?></p>
 
         <div class="alert alert-primary">
             <p class="mb-0">
@@ -72,7 +72,7 @@
 
         <?php if(isset($linked_entries) && !empty($linked_entries)): ?>
             <div>
-                <h2><?= lang('plafor_lang.entries_linked_to_entry_being_deleted') ?></h2>
+                <h2><?= lang('plafor_lang.entries_linked_to_entry_being_managed') ?></h2>
 
                 <div>
                     <?php foreach($linked_entries as $linked_entry): ?>

@@ -131,15 +131,29 @@ class CoursePlan extends \App\Controllers\BaseController
                     [
                         'type'    => lang('plafor_lang.course_plan'),
                         'name'    => $course_plan['official_name'],
-                        'message' => lang('plafor_lang.course_plan_disable_explanation')
                     ],
-                    'cancel_btn_url' => base_url('plafor/courseplan/list_course_plan'),
-                    'primary_action' =>
+                    'cancel_btn_url' => base_url('plafor/courseplan/list_course_plan')
+                );
+
+                if($course_plan['archive'])
+                {
+                    $output['entry']['message'] = lang('plafor_lang.course_plan_enable_explanation');
+                    $output['primary_action'] =
+                    [
+                        'name' => lang('common_lang.btn_reactivate'),
+                        'url'  => base_url(uri_string().'/3')
+                    ];
+                }
+
+                else
+                {
+                    $output['entry']['message'] = lang('plafor_lang.course_plan_disable_explanation');
+                    $output['primary_action'] =
                     [
                         'name' => lang('common_lang.btn_disable'),
                         'url'  => base_url(uri_string().'/1')
-                    ]
-                );
+                    ];
+                }
 
                 foreach($apprentices as $apprentice)
                 {
@@ -150,7 +164,7 @@ class CoursePlan extends \App\Controllers\BaseController
                     ];
                 }
 
-                return $this->display_view('\Common/delete_entry', $output);
+                return $this->display_view('\Common/manage_entry', $output);
 
             // Deactivates (soft delete) course plan
             case 1:
@@ -261,18 +275,32 @@ class CoursePlan extends \App\Controllers\BaseController
                     'entry' =>
                     [
                         'type'    => lang('plafor_lang.competence_domain'),
-                        'name'    => $competence_domain['name'],
-                        'message' => lang('plafor_lang.competence_domain_disable_explanation')
+                        'name'    => $competence_domain['name']
                     ],
-                    'cancel_btn_url' => base_url('plafor/courseplan/view_course_plan/'.$competence_domain_id),
-                    'primary_action' =>
+                    'cancel_btn_url' => base_url('plafor/courseplan/view_course_plan/'.$competence_domain_id)
+                );
+
+                if($competence_domain['archive'])
+                {
+                    $output['entry']['message'] = lang('plafor_lang.competence_domain_enable_explanation');
+                    $output['primary_action'] =
+                    [
+                        'name' => lang('common_lang.btn_reactivate'),
+                        'url'  => base_url(uri_string().'/3')
+                    ];
+                }
+
+                else
+                {
+                    $output['entry']['message'] = lang('plafor_lang.competence_domain_disable_explanation');
+                    $output['primary_action'] =
                     [
                         'name' => lang('common_lang.btn_disable'),
                         'url'  => base_url(uri_string().'/1')
-                    ]
-                );
+                    ];
+                }
 
-                return $this->display_view('\Common/delete_entry', $output);
+                return $this->display_view('\Common/manage_entry', $output);
 
             // Deactivates (soft delete) competence domain
             case 1:
@@ -388,7 +416,6 @@ class CoursePlan extends \App\Controllers\BaseController
                     [
                         'type'    => lang('plafor_lang.operational_competence'),
                         'name'    => $operational_comp['name'],
-                        'message' => lang('plafor_lang.operational_competence_disable_explanation')
                     ],
                     'cancel_btn_url' => base_url('plafor/courseplan/view_competence_domain/'.$operational_comp['fk_competence_domain']),
                     'primary_action' =>
@@ -397,8 +424,28 @@ class CoursePlan extends \App\Controllers\BaseController
                         'url'  => base_url(uri_string().'/1')
                     ]
                 );
+                
+                if($operational_comp['archive'])
+                {
+                    $output['entry']['message'] = lang('plafor_lang.operational_competence_enable_explanation');
+                    $output['primary_action'] =
+                    [
+                        'name' => lang('common_lang.btn_reactivate'),
+                        'url'  => base_url(uri_string().'/3')
+                    ];
+                }
+                
+                else
+                {
+                    $output['entry']['message'] = lang('plafor_lang.operational_competence_disable_explanation');
+                    $output['primary_action'] =
+                    [
+                        'name' => lang('common_lang.btn_disable'),
+                        'url'  => base_url(uri_string().'/1')
+                    ];
+                }
 
-                return $this->display_view('\Common/delete_entry', $output);
+                return $this->display_view('\Common/manage_entry', $output);
 
             // Deactivates (soft delete) operational competence
             case 1:
@@ -494,7 +541,7 @@ class CoursePlan extends \App\Controllers\BaseController
                     ]
                 );
 
-                return $this->display_view('\Common/delete_entry', $output);
+                return $this->display_view('\Common/manage_entry', $output);
 
             // Deletes user's course and the corresponding comments and acquisition status
             case 1:
@@ -629,18 +676,32 @@ class CoursePlan extends \App\Controllers\BaseController
                     'entry' =>
                     [
                         'type'    => lang('plafor_lang.objective'),
-                        'name'    => $objective['name'],
-                        'message' => lang('plafor_lang.objective_disable_explanation')
+                        'name'    => $objective['name']
                     ],
-                    'cancel_btn_url' => base_url('plafor/courseplan/view_operational_competence/'.$objective['fk_operational_competence']),
-                    'primary_action' =>
+                    'cancel_btn_url' => base_url('plafor/courseplan/view_operational_competence/'.$objective['fk_operational_competence'])
+                );
+
+                if($objective['archive'])
+                {
+                    $output['entry']['message'] = lang('plafor_lang.objective_enable_explanation');
+                    $output['primary_action'] =
+                    [
+                        'name' => lang('common_lang.btn_reactivate'),
+                        'url'  => base_url(uri_string().'/3')
+                    ];
+                }
+
+                else
+                {
+                    $output['entry']['message'] = lang('plafor_lang.objective_disable_explanation');
+                    $output['primary_action'] =
                     [
                         'name' => lang('common_lang.btn_disable'),
                         'url'  => base_url(uri_string().'/1')
-                    ]
-                );
+                    ];
+                }
 
-                return $this->display_view('\Common/delete_entry', $output);
+                return $this->display_view('\Common/manage_entry', $output);
 
             // Deactivates (soft delete) objective
             case 1:

@@ -500,7 +500,7 @@ class Apprentice extends \App\Controllers\BaseController
                     ]
                 );
 
-                return $this->display_view('\Common/delete_entry', $output);
+                return $this->display_view('\Common/manage_entry', $output);
 
             // Deletes apprentice link
             case 1:
