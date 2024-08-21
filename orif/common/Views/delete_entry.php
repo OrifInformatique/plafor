@@ -14,7 +14,7 @@
  * @param array entry            => The entry being deleted. Required.
  *     [
  *          'type'               => string, required, Type of the entry being deleted.
- *          'name'               => string, required, Name of the entry being deleted.
+ *          'name'               => string, required, Name of the entry being deleted. Can be empty.
  *          'message'            => string, optional. Addidional info about the entry about to be deleted.
  *          'data'               => array, optional, Additional data about the entry being deleted.
  *              [

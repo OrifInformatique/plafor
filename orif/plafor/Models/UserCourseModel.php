@@ -12,7 +12,6 @@ namespace Plafor\Models;
 
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
-use User\Models\User_model;
 
 class UserCourseModel extends \CodeIgniter\Model
 {

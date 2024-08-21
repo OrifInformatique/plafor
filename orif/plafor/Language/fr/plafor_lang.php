@@ -25,6 +25,7 @@ return [
     'title_administrator' => 'Administrateur',
     'title_trainer'       => 'Formateur',
     'title_apprentice'    => 'Apprenti',
+    'title_user'    => 'Utilisateur',
 
     //Apprentice
     'title_list_apprentice'             => 'Liste des apprentis',
@@ -264,6 +265,7 @@ return [
     'apprentice_link_enable_explanation'          => 'Toutes les informations concernant le lien entre cet apprenti et ce formateur seront réactivées.',
     'acquisition_status_enable_explanation'       => 'Toutes les informations concernant le statut d\'acquisition seront réactivées.',
     'current'                                     => 'En vigueur',
+    'unassigned'                                  => 'Non assigné',
     'apprentices_already_assigned_to_course_plan' => 'Les apprentis suivants sont associés à ce plan de formation',
     'delete_entry_confirmation'                   => 'Êtes-vous sûr(e) de vouloir supprimer cette entrée ?',
     'entries_linked_to_entry_being_deleted'       => 'Entrées liées à l\'entrée sur le point d\'être supprimée'
