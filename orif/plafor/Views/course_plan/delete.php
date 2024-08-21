@@ -47,6 +47,7 @@ foreach ($courses as $course){
                         $userId = $userCourseModel
                             ->where('fk_user', $apprentice['id'])
                             ->where('fk_course_plan', $course_plan['id'])->first()['fk_status'];
+                        // FIX : Array key "name" nonexistent. Array one level above the key at this point.
                         $usercourse_name = $UserCourseStatusModel->find()['name'];
                         ?>
                         <li><?= ' "'.$apprentice['username'].'"'. lang('plafor_lang.with_status') ?> "<?= $usercourse_name ?>"</li>

@@ -73,8 +73,10 @@ class UserCourseModel extends \CodeIgniter\Model
     public function getCoursePlan($fkCoursePlanId, $with_archived = false)
     {
         $coursePlanModel = model('CoursePlanModel');
-        return $coursePlanModel->withDeleted($with_archived)
-                                             ->find($fkCoursePlanId);
+
+        return $coursePlanModel
+            ->withDeleted($with_archived)
+            ->find($fkCoursePlanId);
     }
 
     /**
