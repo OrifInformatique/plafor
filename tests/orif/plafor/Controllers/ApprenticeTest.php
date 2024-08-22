@@ -14,7 +14,7 @@
  use CodeIgniter\Test\DatabaseTestTrait;
 
  use User\Models;
- 
+
  class ApprenticeTest extends CIUnitTestCase
 {
     use ControllerTestTrait;
@@ -123,7 +123,7 @@
     /**
      * Asserts that the list_apprentice page is loaded correctly
      */
-    public function testlist_apprentice() 
+    public function testlist_apprentice()
     {
         // Execute list_apprentice method of Apprentice class
         $result = $this->controller(Apprentice::class)
@@ -141,7 +141,7 @@
         $result->assertSee('Liste des apprentis', 'h1');
         $result->assertSeeLink('ApprentiDev');
 
-        $result->assertSee('Informaticienne / Informaticien avec CFC, orientation développement d\'applications');    
+        $result->assertSee('Informaticienne / Informaticien avec CFC, orientation développement d\'applications');
         $result->assertSeeLink('ApprentiSysteme');
         $result->assertSee('Informaticienne / Informaticien avec CFC, orientation exploitation et infrastructure');
         $result->assertSeeLink('ApprentiOperateur');
@@ -151,13 +151,13 @@
     /**
      * Asserts that the list_apprentice page is loaded correctly for a given connected development trainer
      */
-    public function testlist_apprenticeWithDevelopmentTrainerSession() 
+    public function testlist_apprenticeWithDevelopmentTrainerSession()
     {
         // Initialize session for a development trainer
         $_SESSION['logged_in'] = true;
         $_SESSION['user_access'] = config('\User\Config\UserConfig')->access_lvl_trainer;
         $_SESSION['user_id'] = 4;
-        
+
         // Execute list_apprentice method of Apprentice class
         $result = $this->controller(Apprentice::class)
             ->execute('list_apprentice');
@@ -173,7 +173,7 @@
         $result->assertSee('FormateurOperateur', 'option');
         $result->assertSee('Liste des apprentis', 'h1');
         $result->assertSeeLink('ApprentiDev');
-        $result->assertSee('Informaticienne / Informaticien avec CFC, orientation développement d\'applications');    
+        $result->assertSee('Informaticienne / Informaticien avec CFC, orientation développement d\'applications');
         $result->assertDontSee('ApprentiSysteme', 'a');
         $result->assertDontSee('Informaticienne / Informaticien avec CFC, orientation exploitation et infrastructure');
         $result->assertDontSee('ApprentiOperateur', 'a');
@@ -425,7 +425,7 @@
         // Reset $_POST and $_REQUEST variables
         $_POST = array();
         $_REQUEST = array();
-        
+
         // Get user course from database
         $userCourseModel = model('\Plafor\Models\UserCourseModel');
         $userCourseDb = $userCourseModel->where("fk_user ", $userId)
@@ -436,7 +436,7 @@
         $acquisitionStatusModel->where('fk_user_course', $userCourseDb['id'])
                                ->delete();
 
-        // Delete inserted user course        
+        // Delete inserted user course
         $userCourseModel = model('\Plafor\Models\userCourseModel');
         $userCourseModel->delete($userCourseDb['id'], true);
 
@@ -485,7 +485,7 @@
         // Reset $_POST and $_REQUEST variables
         $_POST = array();
         $_REQUEST = array();
-        
+
         // Get user course from database
         $userCourseModel = model('\Plafor\Models\userCourseModel');
         $userCourseDb = $userCourseModel->where("fk_user ", $userId)
@@ -496,7 +496,7 @@
         $acquisitionStatusModel->where('fk_user_course', $userCourseDb['id'])
                                ->delete();
 
-        // Delete inserted user course        
+        // Delete inserted user course
         $userCourseModel->delete($userCourseDb['id'], true);
 
         // Delete inserted course plan
@@ -617,7 +617,7 @@
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_trainer;
 
-        // Insert apprentice link 
+        // Insert apprentice link
         $apprenticeLinkId = self::insertTrainerApprenticeLink($trainerId,
             $apprenticeId);
 
@@ -662,13 +662,13 @@
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_trainer;
 
-        // Insert new apprentice user       
+        // Insert new apprentice user
         $apprenticeId = self::insertApprentice('ApprenticeUnitTest');
 
         // Insert new trainer user
         $trainerId = self::insertTrainer('TrainerUnitTest');
 
-        // Prepare the POST request 
+        // Prepare the POST request
         $_SERVER['REQUEST_METHOD'] = 'post';
         $_POST['trainer'] = $trainerId;
         $_REQUEST['trainer'] = $trainerId;
@@ -722,7 +722,7 @@
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_trainer;
 
-        // Insert new apprentice user       
+        // Insert new apprentice user
         $apprenticeId = self::insertApprentice('ApprenticeUnitTest');
 
         // Insert new trainer user
@@ -731,11 +731,11 @@
         // Insert new second trainer user
         $trainer2Id = self::insertTrainer('Trainer2UnitTest');
 
-        // Insert apprentice link 
+        // Insert apprentice link
         $apprenticeLinkId = self::insertTrainerApprenticeLink($trainerId,
             $apprenticeId);
 
-        // Prepare the POST request 
+        // Prepare the POST request
         $_SERVER['REQUEST_METHOD'] = 'post';
         $_POST['trainer'] = $trainer2Id;
         $_REQUEST['trainer'] = $trainer2Id;
@@ -811,9 +811,9 @@
         // Initialize session
         $_SESSION['_ci_previous_url'] = 'url';
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
-            ->access_lvl_trainer;     
+            ->access_lvl_trainer;
 
-        // Insert apprentice link 
+        // Insert apprentice link
         $apprenticeLinkId = self::insertTrainerApprenticeLink($trainerId,
             $apprenticeId);
 
@@ -831,18 +831,28 @@
         $this->assertNotEmpty($response->getBody());
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertSee('Apprenti et formateur lié', 'h1');
-        $result->assertSee('Toutes les informations concernant le lien entre cet apprenti et ce formateur seront désactivées.', 'div');
-        $result->assertSeeLink('Annuler');
-        $result->assertSeeLink('Désactiver');
-        $result->assertSee('Apprenti', 'h2');
-        $result->assertSee('ApprentiSysteme', 'h2');
-        $result->assertSee('Formateur', 'h2');
-        $result->assertSee('FormateurDev', 'h2');
+
+        $result->assertSee(lang('plafor_lang.title_manage_entry'), 'h1');
+        $result->assertSee(lang('plafor_lang.manage_entry_confirmation'), 'p');
+
+        $result->assertSee(lang('plafor_lang.apprentice_link'), 'strong');
+        $result->assertSee(lang('plafor_lang.apprentice').' : ApprentiSysteme', 'p');
+        $result->assertSee(lang('plafor_lang.trainer').' : FormateurDev', 'p');
+
+        $result->assertDontSee(lang('plafor_lang.entries_linked_to_entry_being_managed'),
+            'h2');
+        $result->assertDontSeeElement('.alert-secondary');
+
+        $result->assertSee(lang('plafor_lang.apprentice_link_delete_explanation'),
+            '.alert alert-info');
+
+        $result->assertSeeLink(lang('common_lang.btn_cancel'));
+        $result->assertDontSeeElement('.btn-primary');
+        $result->assertSeeLink(lang('common_lang.btn_delete'));
     }
 
     /**
-     * Asserts that the delete_apprentice_link redirects to the list_apprentice view (trainer session and fake action) 
+     * Asserts that the delete_apprentice_link redirects to the list_apprentice view (trainer session and fake action)
      */
     public function testdelete_apprentice_linkWithTrainerSessionAndFakeAction()
     {
@@ -854,9 +864,9 @@
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_trainer;
 
-        // Insert apprentice link 
+        // Insert apprentice link
         $apprenticeLinkId = self::insertTrainerApprenticeLink($trainerId, $apprenticeId);
-        
+
         // Execute delete_apprentice_link method of Apprentice class
         $result = $this->controller(Apprentice::class)
         ->execute('delete_apprentice_link', $apprenticeLinkId, 9);
@@ -877,7 +887,7 @@
     }
 
     /**
-     * Asserts that the delete_apprentice_link redirects to the list_apprentice view (trainer session and delete action) 
+     * Asserts that the delete_apprentice_link redirects to the list_apprentice view (trainer session and delete action)
      */
     public function testdelete_apprentice_linkWithTrainerSessionAndDeleteAction()
     {
@@ -886,13 +896,13 @@
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_trainer;
 
-        // Insert new apprentice user       
+        // Insert new apprentice user
         $apprenticeId = self::insertApprentice('ApprenticeUnitTest');
 
         // Insert new trainer user
         $trainerId = self::insertTrainer('TrainerUnitTest');
 
-        // Insert apprentice link 
+        // Insert apprentice link
         $apprenticeLinkId = self::insertTrainerApprenticeLink($trainerId,
             $apprenticeId);
 
@@ -943,7 +953,7 @@
     /**
      * Asserts that the view_acquisition_status page redirects to the list_apprentice view when no status id is provided
      */
-    public function testview_acquisition_statusWithoutStatusId() 
+    public function testview_acquisition_statusWithoutStatusId()
     {
         // Execute view_acquisition_status method of Apprentice class
         $result = $this->controller(Apprentice::class)
@@ -962,7 +972,7 @@
      * Asserts that the view_acquisition_status page is loaded correctly when a
      * status id is provided (apprentice session)
      */
-    public function testview_acquisition_statusWithStatusIdWithApprenticeSession() 
+    public function testview_acquisition_statusWithStatusIdWithApprenticeSession()
     {
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
@@ -998,7 +1008,7 @@
     /**
      * Asserts that the view_acquisition_status page is loaded correctly when a status id is provided (trainer session)
      */
-    public function testview_acquisition_statusWithStatusIdWithTrainerSession() 
+    public function testview_acquisition_statusWithStatusIdWithTrainerSession()
     {
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')->access_lvl_trainer;
@@ -1032,7 +1042,7 @@
     /**
      * Asserts that the view_acquisition_status page is loaded correctly when a status id is provided (trainer session) after inserting a temporary comment
      */
-    public function testview_acquisition_statusWithStatusIdWithTrainerSessionAfterCommentInsert() 
+    public function testview_acquisition_statusWithStatusIdWithTrainerSessionAfterCommentInsert()
     {
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
@@ -1077,7 +1087,7 @@
     /**
      * Asserts that the save_acquisition_status page redirects to the list_apprentice view when no status id is provided (no session)
      */
-    public function testsave_acquisition_statusWithoutStatusIdWithoutSession() 
+    public function testsave_acquisition_statusWithoutStatusIdWithoutSession()
     {
         $_SESSION['user_access'] = '';
         // Execute save_acquisition_status method of Apprentice class
@@ -1097,7 +1107,7 @@
     /**
      * Asserts that the save_acquisition_status page redirects to the list_apprentice view when a status id is provided (system apprentice session)
      */
-    public function testsave_acquisition_statusWithStatusIdWithSystemApprenticeSession() 
+    public function testsave_acquisition_statusWithStatusIdWithSystemApprenticeSession()
     {
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
@@ -1125,7 +1135,7 @@
      * Asserts that the save_acquisition_status page is loaded correctly when a
      * status id is provided (development apprentice session)
      */
-    public function testsave_acquisition_statusWithStatusIdWithDevelopmentApprenticeSession() 
+    public function testsave_acquisition_statusWithStatusIdWithDevelopmentApprenticeSession()
     {
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
@@ -1171,7 +1181,7 @@
             ->access_lvl_guest;
         $_SESSION['user_id'] = 6;
 
-        // Prepare the POST request 
+        // Prepare the POST request
         $_SERVER['REQUEST_METHOD'] = 'post';
         $_POST['field_acquisition_level'] = 3;
         $_REQUEST['field_acquisition_level'] = 3;
@@ -1214,7 +1224,7 @@
             ->access_lvl_guest;
         $_SESSION['user_id'] = 6;
 
-        // Prepare the POST request 
+        // Prepare the POST request
         $_SERVER['REQUEST_METHOD'] = 'post';
         $_POST['field_acquisition_level'] = 5;
         $_REQUEST['field_acquisition_level'] = 5;
@@ -1252,7 +1262,7 @@
      * Asserts that the add_comment page redirects to the list_apprentice view
      * when no status id is provided (no session)
      */
-    public function testadd_commentWithoutStatusIdWithoutSession() 
+    public function testadd_commentWithoutStatusIdWithoutSession()
     {
         // Execute add_comment method of Apprentice class
         $result = $this->controller(Apprentice::class)
@@ -1273,7 +1283,7 @@
      * Asserts that the add_comment page redirects to the list_apprentice view
      * when a status id is provided (apprentice session)
      */
-    public function testadd_commentWithStatusIdWithApprenticeSession() 
+    public function testadd_commentWithStatusIdWithApprenticeSession()
     {
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
@@ -1297,7 +1307,7 @@
     /**
      * Asserts that the add_comment page is loaded correctly when a status id is provided (trainer session)
      */
-    public function testadd_commentWithStatusIdWithTrainerSession() 
+    public function testadd_commentWithStatusIdWithTrainerSession()
     {
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
@@ -1337,12 +1347,12 @@
 
         // Insert a new competence domain linked to the inserted course plan
         $competenceDomainId = self::insertCompetenceDomain($coursePlanId);
-        
+
         // Insert a new operational competence linked to the inserted
         // competence domain
         $operationalCompetenceId = self::insertOperationalCompetence(
             $competenceDomainId);
-        
+
         // Insert a new objective linked to the inserted operational competence
         $objectiveId = self::insertObjective($operationalCompetenceId);
 
@@ -1423,10 +1433,10 @@
 
         // Insert a new competence domain linked to the inserted course plan
         $competenceDomainId = self::insertCompetenceDomain($coursePlanId);
-        
+
         // Insert a new operational competence linked to the inserted competence domain
         $operationalCompetenceId = self::insertOperationalCompetence($competenceDomainId);
-        
+
         // Insert a new objective linked to the inserted operational competence
         $objectiveId = self::insertObjective($operationalCompetenceId);
 
@@ -1498,10 +1508,10 @@
 
         // Insert a new competence domain linked to the inserted course plan
         $competenceDomainId = self::insertCompetenceDomain($coursePlanId);
-        
+
         // Insert a new operational competence linked to the inserted competence domain
         $operationalCompetenceId = self::insertOperationalCompetence($competenceDomainId);
-        
+
         // Insert a new objective linked to the inserted operational competence
         $objectiveId = self::insertObjective($operationalCompetenceId);
 
@@ -1570,7 +1580,7 @@
      * Asserts that getCoursePlanProgress method returns empty body when
      * no user id and no course plan id are given (no session)
      */
-    public function testgetCoursePlanProgressWithoutUserIdAndCoursePlanIdWithoutSession() 
+    public function testgetCoursePlanProgressWithoutUserIdAndCoursePlanIdWithoutSession()
     {
         // Execute getCoursePlanProgress method of Apprentice class
         $result = $this->controller(Apprentice::class)
@@ -1585,7 +1595,7 @@
     /**
      * Asserts that getCoursePlanProgress method returns a 403 status code when an user id and no course plan id are given (no session)
      */
-    public function testgetCoursePlanProgressWithUserIdWithoutCoursePlanIdWithoutSession() 
+    public function testgetCoursePlanProgressWithUserIdWithoutCoursePlanIdWithoutSession()
     {
         // Execute getCoursePlanProgress method of Apprentice class
         $result = $this->controller(Apprentice::class)
@@ -1601,7 +1611,7 @@
     /**
      * Asserts that getCoursePlanProgress method returns a 403 status code when an user id (development apprentice) and no course plan id are given (system apprentice session)
      */
-    public function testgetCoursePlanProgressWithDevelopmentApprenticeUserIdWithoutCoursePlanIdWithSystemApprenticeSession() 
+    public function testgetCoursePlanProgressWithDevelopmentApprenticeUserIdWithoutCoursePlanIdWithSystemApprenticeSession()
     {
         // Initialize session
         $_SESSION['user_id'] = 5;
@@ -1620,7 +1630,7 @@
     /**
      * Asserts that getCoursePlanProgress method returns a JSON object when an user id (development apprentice) and no course plan id are given (development apprentice session)
      */
-    public function testgetCoursePlanProgressWithDevelopmentApprenticeUserIdWithoutCoursePlanIdWithDevelopmentApprenticeSession() 
+    public function testgetCoursePlanProgressWithDevelopmentApprenticeUserIdWithoutCoursePlanIdWithDevelopmentApprenticeSession()
     {
         // Initialize session
         $_SESSION['user_id'] = 4;
@@ -1643,7 +1653,7 @@
      * user id (development apprentice) and a course plan id are given
      * (development apprentice session)
      */
-    public function testgetCoursePlanProgressWithDevelopmentApprenticeUserIdWithCoursePlanIdWithDevelopmentApprenticeSession() 
+    public function testgetCoursePlanProgressWithDevelopmentApprenticeUserIdWithCoursePlanIdWithDevelopmentApprenticeSession()
     {
         // Initialize session
         $_SESSION['user_id'] = 6;
@@ -1665,7 +1675,7 @@
     /**
      * Asserts that getCoursePlanProgress method returns a JSON object when an user id (development apprentice) and no course plan id are given (administrator session)
      */
-    public function testgetCoursePlanProgressWithDevelopmentApprenticeUserIdWithoutCoursePlanIdWithAdministratorSession() 
+    public function testgetCoursePlanProgressWithDevelopmentApprenticeUserIdWithoutCoursePlanIdWithAdministratorSession()
     {
         // Initialize session
         $_SESSION['user_id'] = 1;
@@ -1687,7 +1697,7 @@
     /**
      * Asserts that getCoursePlanProgress method returns a JSON object when an user id (development apprentice) and a course plan id are given (administrator session)
      */
-    public function testgetCoursePlanProgressWithDevelopmentApprenticeUserIdWithCoursePlanIdWithAdministratorSession() 
+    public function testgetCoursePlanProgressWithDevelopmentApprenticeUserIdWithCoursePlanIdWithAdministratorSession()
     {
         // Initialize session
         $_SESSION['user_id'] = 6;
@@ -1709,7 +1719,7 @@
     /**
      * Asserts that getCoursePlanProgress method returns a JSON object when an user id (development apprentice) and no course plan id are given (trainer session)
      */
-    public function testgetCoursePlanProgressWithDevelopmentApprenticeUserIdWithoutCoursePlanIdWithTrainerSession() 
+    public function testgetCoursePlanProgressWithDevelopmentApprenticeUserIdWithoutCoursePlanIdWithTrainerSession()
     {
         // Initialize session
         $_SESSION['user_id'] = 4;
@@ -1733,7 +1743,7 @@
     /**
      * Asserts that getCoursePlanProgress method returns a JSON object when an user id (development apprentice) and a course plan id are given (trainer session)
      */
-    public function testgetCoursePlanProgressWithhDevelopmentApprenticeUserIdWithCoursePlanIdWithTrainerSession() 
+    public function testgetCoursePlanProgressWithhDevelopmentApprenticeUserIdWithCoursePlanIdWithTrainerSession()
     {
         // Initialize session
         $_SESSION['user_id'] = 4;
@@ -2088,13 +2098,13 @@
             ->access_lvl_admin;
         $_SESSION['user_id'] = 1;
 
-        // Insert new apprentice user       
+        // Insert new apprentice user
         $apprenticeId = self::insertApprentice('ApprenticeUnitTest');
 
         // Insert new trainer user
         $trainerId = self::insertTrainer('TrainerUnitTest');
 
-        // Insert apprentice link 
+        // Insert apprentice link
         $apprenticeLinkId = self::insertTrainerApprenticeLink($trainerId,
             $apprenticeId);
 
@@ -2103,13 +2113,13 @@
 
         // Insert a new competence domain linked to the inserted course plan
         $competenceDomainId = self::insertCompetenceDomain($coursePlanId);
-        
+
         // Insert a new operational competence linked to the inserted
         // competence domain
         $operationalCompetenceId = self::insertOperationalCompetence($competenceDomainId);
-        
+
         // Insert a new objective linked to the inserted operational competence
-        $objectiveId = self::insertObjective($operationalCompetenceId); 
+        $objectiveId = self::insertObjective($operationalCompetenceId);
 
         // Insert a new user course linked to the inserted course plan
         $userCourseId = self::insertUserCourse($apprenticeId, $coursePlanId);
@@ -2158,7 +2168,7 @@
 
     /**
      * Assert that the delete_comment is error message.
-     * 
+     *
      */
     public function testdelete_comment() {
         $_SESSION['user_access'] = '';
@@ -2204,7 +2214,7 @@
             'id' => 0
         );
         $model = model('\Plafor\Models\CompetenceDomainModel');
-        
+
         $id = $model->insert($competenceDomain);
         assert($id, 'CompetenceDomain is not created.');
         return $id;

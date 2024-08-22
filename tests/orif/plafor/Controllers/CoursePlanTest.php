@@ -14,7 +14,7 @@
  use CodeIgniter\Test\DatabaseTestTrait;
 
  use Plafor\Models;
- 
+
  class CoursePlanTest extends CIUnitTestCase
 {
     use ControllerTestTrait;
@@ -94,7 +94,7 @@
     public function testsave_course_planWithAdministratorSessionUserAccessWithoutCoursePlanId()
     {
         // $_POST = array();
-        // Initialize session 
+        // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_admin;
         $_SESSION['logged_in'] = true;
@@ -127,7 +127,7 @@
      */
     public function testsave_course_planWithAdministratorSessionUserAccessWithCoursePlanId()
     {
-        // Initialize session 
+        // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_admin;
         $_SESSION['logged_in'] = true;
@@ -217,7 +217,7 @@
     {
         // Initialize session
         // (needed for delete_course_plan view)
-        $_SESSION['_ci_previous_url'] = 'url'; 
+        $_SESSION['_ci_previous_url'] = 'url';
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_admin;
         $_SESSION['logged_in'] = true;
@@ -231,15 +231,26 @@
         $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
         $this->assertNotEmpty($response->getBody());
         $result->assertOK();
+
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        // $result->assertSee('Apprenti \'ApprentiDev\'', 'h1');
+
+        $result->assertSee(lang('plafor_lang.title_manage_entry'), 'h1');
+        $result->assertSee(lang('plafor_lang.manage_entry_confirmation'), 'p');
+
+        $result->assertSee(lang('plafor_lang.course_plan'), 'strong');
         $result->assertSee('[2014-2020] Informaticienne, Informaticien avec '
-            . 'CFC, orientation développement d\'applications', 'h2');
-        // $result->assertSee('Statut de la formation \'En cours\'', 'h1');
+            . 'CFC, orientation développement d\'applications', 'p');
+
+        $result->assertDontSee(lang('plafor_lang.entries_linked_to_entry_being_managed'),
+            'h2');
+        $result->assertDontSeeElement('.alert-secondary');
+
         $result->assertSee(lang('plafor_lang.course_plan_disable_explanation'),
-            'div');
-        $result->assertSeeLink('Annuler');
-        $result->assertSeeLink('Désactiver');
+            '.alert alert-info');
+
+        $result->assertSeeLink(lang('common_lang.btn_cancel'));
+        $result->assertDontSeeElement('.btn-primary');
+        $result->assertSeeLink(lang('common_lang.btn_disable'));
     }
 
     /**
@@ -276,12 +287,28 @@
         $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
         $this->assertNotEmpty($response->getBody());
         $result->assertOK();
+
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertSee('Apprenti \'ApprentiDev\'', 'h1');
         $result->assertSee('Plan de formation \'Course Plan Unit Test\'', 'h1');
-        $result->assertSee('Statut de la formation \'En cours\'', 'h1');
-        $result->assertSeeLink('Annuler');
-        $result->assertSeeLink('Réactiver');
+
+        $result->assertSee(lang('plafor_lang.title_manage_entry'), 'h1');
+        $result->assertSee(lang('plafor_lang.manage_entry_confirmation'), 'p');
+
+        $result->assertSee(lang('plafor_lang.course_plan'), 'strong');
+        $result->assertSee('[2014-2020] Informaticienne, Informaticien avec '
+            . 'CFC, orientation développement d\'applications', 'p');
+
+        $result->assertSee(lang('plafor_lang.entries_linked_to_entry_being_managed'),
+            'h2');
+        $result->assertSee(lang('plafor_lang.apprentice'), '.alert-secondary');
+        $result->assertSee('FormateurDev', '.alert-secondary');
+
+        $result->assertSee(lang('plafor_lang.course_plan_enable_explanation'),
+            '.alert alert-info');
+
+        $result->assertSeeLink(lang('common_lang.btn_cancel'));
+        $result->assertDontSeeElement('.btn-primary');
+        $result->assertSeeLink(lang('common_lang.btn_reactivate'));
     }
 
     /**
@@ -611,15 +638,23 @@
         $this->assertNotEmpty($response->getBody());
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertSee('Domaine de compétence', 'h2');
+
+        $result->assertSee(lang('plafor_lang.title_manage_entry'), 'h1');
+        $result->assertSee(lang('plafor_lang.manage_entry_confirmation'), 'p');
+
+        $result->assertSee(lang('plafor_lang.competence_domain'), 'strong');
         $result->assertSee('Saisie, interprétation et mise en œuvre des '
-            . 'exigences des applications', 'h2');
-        $result->assertSee('Que souhaitez-vous faire ?', 'h4');
-        $result->assertSee('Toutes les informations concernant ce domaine '
-            . 'de compétence (symbole, nom, compétences oppérationnelles et '
-            . 'objectifs) seront désactivées.', 'div');
-        $result->assertSeeLink('Annuler');
-        $result->assertSeeLink('Désactiver');
+            . 'exigences des applications', 'p');
+
+        $result->assertDontSee(lang('plafor_lang.entries_linked_to_entry_being_managed'), 'h2');
+        $result->assertDontSeeElement('.alert-secondary');
+
+        $result->assertSee(lang('plafor_lang.competence_domain_disable_explanation'),
+            '.alert alert-info');
+
+        $result->assertSeeLink(lang('common_lang.btn_cancel'));
+        $result->assertDontSeeElement('.btn-primary');
+        $result->assertSeeLink(lang('common_lang.btn_disable'));
     }
 
     /**
@@ -861,15 +896,23 @@
         $this->assertNotEmpty($response->getBody());
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertSee('Compétence opérationnelle', 'h2');
+
+        $result->assertSee(lang('plafor_lang.title_manage_entry'), 'h1');
+        $result->assertSee(lang('plafor_lang.manage_entry_confirmation'), 'p');
+
+        $result->assertSee(lang('plafor_lang.operational_competence'), 'strong');
         $result->assertSee('Clarifier et documenter les besoins  des '
-            . 'parties prenantes dans le cadre d’un projet ICT', 'h2');
-        $result->assertSee('Que souhaitez-vous faire ?', 'h4');
-        $result->assertSee('Toutes les informations concernant cette '
-            . 'compétence opérationnelle (nom, symbole, compétences, '
-            . 'objectifs) seront désactivées.', 'div');
-        $result->assertSeeLink('Annuler');
-        $result->assertSeeLink('Désactiver');
+            . 'parties prenantes dans le cadre d’un projet ICT', 'p');
+
+        $result->assertDontSee(lang('plafor_lang.entries_linked_to_entry_being_managed'), 'h2');
+        $result->assertDontSeeElement('.alert-secondary');
+
+        $result->assertSee(lang('plafor_lang.operational_competence_disable_explanation'),
+            '.alert alert-info');
+
+        $result->assertSeeLink(lang('common_lang.btn_cancel'));
+        $result->assertDontSeeElement('.btn-primary');
+        $result->assertSeeLink(lang('common_lang.btn_disable'));
     }
 
     /**
@@ -1021,17 +1064,27 @@
         $this->assertNotEmpty($response->getBody());
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertSee('Apprenti');
-        $result->assertSee('ApprentiDev');
-        $result->assertSee('Plan de formation');
+
+        $result->assertSee(lang('plafor_lang.title_manage_entry'), 'h1');
+        $result->assertSee(lang('plafor_lang.manage_entry_confirmation'), 'p');
+
+        $result->assertSee(sprintf(lang('plafor_lang.course_plan_of'), 'ApprentiDev'),
+            'strong');
         $result->assertSee('Informaticienne / Informaticien avec CFC, '
-            . 'orientation développement d\'applications');
-        $result->assertSee('Statut de la formation');
-        $result->assertSee('En cours');
+        . 'orientation développement d\'applications', 'p');
+        $result->assertSee(lang('plafor_lang.status').' : '
+            .lang('plafor_lang.title_in_progress'));
+
+        $result->assertDontSee(lang('plafor_lang.entries_linked_to_entry_being_managed'),
+        'h2');
+        $result->assertDontSeeElement('.alert-secondary');
+
         $result->assertSee(lang('plafor_lang.user_course_delete_explanation'),
-            'div');
-        $result->assertSeeLink('Annuler');
-        $result->assertSeeLink('Supprimer');
+            '.alert alert-info');
+
+        $result->assertSeeLink(lang('common_lang.btn_cancel'));
+        $result->assertDontSeeElement('.btn-primary');
+        $result->assertSeeLink(lang('common_lang.btn_delete'));
     }
 
     /**
@@ -1291,15 +1344,23 @@
         $this->assertNotEmpty($response->getBody());
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertSee('Objectif', 'h2');
+
+        $result->assertSee(lang('plafor_lang.title_manage_entry'), 'h1');
+        $result->assertSee(lang('plafor_lang.manage_entry_confirmation'), 'p');
+
+        $result->assertSee(lang('plafor_lang.objective'), 'strong');
         $result->assertSee('Ils clarifient les objectifs du projet ICT et '
             . 'ses paramètres généraux tels que coûts, durée, qualité, '
-            . 'périmètre, responsabilités et méthodologie.', 'h2');
-        $result->assertSee('Que souhaitez-vous faire ?', 'h4');
-        $result->assertSee('Toutes les informations concernant cet objectif '
-            . '(symbole, taxonomie, nom) seront désactivées.', 'div');
-        $result->assertSeeLink('Annuler');
-        $result->assertSeeLink('Désactiver');
+            . 'périmètre, responsabilités et méthodologie.', 'p');
+
+        $result->assertDontSee(lang('plafor_lang.entries_linked_to_entry_being_managed'), 'h2');
+        $result->assertDontSeeElement('.alert-secondary');
+
+        $result->assertSee(lang('plafor_lang.objective_disable_explanation'));
+
+        $result->assertSeeLink(lang('common_lang.btn_cancel'));
+        $result->assertDontSeeElement('.btn-primary');
+        $result->assertSeeLink(lang('common_lang.btn_disable'));
     }
 
     /**
@@ -1330,12 +1391,26 @@
         $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
         $this->assertNotEmpty($response->getBody());
         $result->assertOK();
+
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertSee('Objectif \'Objective Unit Test\'', 'h1');
-        $result->assertSee('Que souhaitez-vous faire ?', 'h4');
-        $result->assertSee('Toutes les informations concernant cet objectif (symbole, taxonomie, nom) seront réactivées.', 'div');
-        $result->assertSeeLink('Annuler');
-        $result->assertSeeLink('Réactiver');
+
+        $result->assertSee(lang('plafor_lang.title_manage_entry'), 'h1');
+        $result->assertSee(lang('plafor_lang.manage_entry_confirmation'), 'p');
+
+        $result->assertSee(lang('plafor_lang.objective'), 'strong');
+        $result->assertSee('Ils clarifient les objectifs du projet ICT et '
+            . 'ses paramètres généraux tels que coûts, durée, qualité, '
+            . 'périmètre, responsabilités et méthodologie.', 'p');
+
+        $result->assertDontSee(lang('plafor_lang.entries_linked_to_entry_being_managed'), 'h2');
+        $result->assertDontSeeElement('.alert-secondary');
+
+        $result->assertSee(lang('plafor_lang.objective_enable_explanation'),
+            '.alert alert-info');
+
+        $result->assertSeeLink(lang('common_lang.btn_cancel'));
+        $result->assertDontSeeElement('.btn-primary');
+        $result->assertSeeLink(lang('common_lang.btn_reactivate'));
     }
 
     /**
@@ -1426,7 +1501,7 @@
      * Asserts that the list_course_plan page is loaded correctly when no
      * apprentice id is given
      */
-    public function testlist_course_planWithNoApprenticeId() 
+    public function testlist_course_planWithNoApprenticeId()
     {
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
@@ -1462,7 +1537,7 @@
      * Asserts that the list_course_plan page is loaded correctly when an
      * apprentice id is given
      */
-    public function testlist_course_planWithApprenticeId() 
+    public function testlist_course_planWithApprenticeId()
     {
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
@@ -1609,7 +1684,7 @@
      */
     public function testview_competence_domainWithCompetenceDomainId()
     {
-        // Initialize session 
+        // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_admin;
         $_SESSION['logged_in'] = true;
@@ -1696,7 +1771,7 @@
      */
     public function testview_operational_competenceWithOperationalCompetenceId()
     {
-        // Initialize session 
+        // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_admin;
         $_SESSION['logged_in'] = true;
@@ -1876,7 +1951,7 @@
      */
     public function testsave_course_planPostedWithAdministratorSessionUserAccessWithPostedNewCoursePlan()
     {
-        // Initialize session 
+        // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_admin;
         $_SESSION['logged_in'] = true;
@@ -1923,7 +1998,7 @@
      */
     public function testsave_course_planPostedWithAdministratorSessionUserAccessWithPostedNewCoursePlanAndInvalidFormationNumber()
     {
-        // Initialize session 
+        // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_admin;
         $_SESSION['logged_in'] = true;
@@ -1972,7 +2047,7 @@
      */
     public function testsave_course_planPostedWithAdministratorSessionUserAccessWithPostedNewCoursePlanAndExistingFormationNumber()
     {
-        // Initialize session 
+        // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_admin;
         $_SESSION['logged_in'] = true;
@@ -2021,11 +2096,11 @@
     /**
      * Asserts that the save_course_plan page redirects to list_course_plan
      * when an administrator session user access is set with a posted existing
-     * course plan 
+     * course plan
      */
     public function testsave_course_planPostedWithAdministratorSessionUserAccessWithPostedExistingCoursePlanId()
     {
-        // Initialize session 
+        // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_admin;
         $_SESSION['logged_in'] = true;
@@ -2057,7 +2132,7 @@
         // Delete inserted course plan
         $coursePlanModel = model('\Plafor\Models\coursePlanModel');
         $coursePlanModel->delete($coursePlanId, true);
- 
+
         // Assertions
         $response = $result->response();
         $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class,
@@ -2138,7 +2213,7 @@
         $_REQUEST['name'] = 'Competence Domain Unit Test';
         $_POST['course_plan'] = 1;
         $_REQUEST['course_plan'] = 1;
-        
+
         // Execute save_competence_domain method of CoursePlan class
         $result = $this->controller(CoursePlan::class)
             ->execute('save_competence_domain', 1);
@@ -2189,7 +2264,7 @@
         $_REQUEST['name'] = 'Competence Domain Unit Test';
         $_POST['course_plan'] = $coursePlanId;
         $_REQUEST['course_plan'] = $coursePlanId;
-        
+
         // Execute save_competence_domain method of CoursePlan class (to insert the already inserted competence domain)
         $result = $this->controller(CoursePlan::class)
         ->execute('save_competence_domain');
@@ -2246,7 +2321,7 @@
         $_REQUEST['name'] = 'Competence Domain Update Unit Test';
         $_POST['course_plan'] = $coursePlanId;
         $_REQUEST['course_plan'] = $coursePlanId;
-        
+
         // Execute save_competence_domain method of CoursePlan class (to insert the already inserted competence domain)
         $result = $this->controller(CoursePlan::class)
         ->execute('save_competence_domain');
@@ -2490,7 +2565,7 @@
         // Delete inserted objective
         $objectiveModel = model('\Plafor\Models\objectiveModel');
         $objectiveModel->delete($objectiveId, true);
- 
+
         // Assertions
         $response = $result->response();
         $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class,
@@ -2526,7 +2601,7 @@
         $_REQUEST['taxonomy'] = 99999;
         $_POST['operational_competence'] = 1;
         $_REQUEST['operational_competence'] = 1;
-        
+
         // Execute save_objective method of CoursePlan class
         $result = $this->controller(CoursePlan::class)
             ->execute('save_objective', 0, 1);
@@ -2534,7 +2609,7 @@
         // Reset $_POST and $_REQUEST variables
         $_POST = array();
         $_REQUEST = array();
- 
+
         // Assertions
         $response = $result->response();
         $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
@@ -2585,7 +2660,7 @@
         $_REQUEST['taxonomy'] = 99999;
         $_POST['operational_competence'] = $operationalCompetenceId;
         $_REQUEST['operational_competence'] = $operationalCompetenceId;
-        
+
         // Execute save_objective method of CoursePlan class
         $result = $this->controller(CoursePlan::class)
         ->execute('save_objective', $objectiveId, $operationalCompetenceId);
@@ -2597,7 +2672,7 @@
         // Delete inserted objective
         $objectiveModel = model('\Plafor\Models\objectiveModel');
         $objectiveModel->delete($objectiveId, true);
- 
+
         // Assertions
         $response = $result->response();
         $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class, $response);
@@ -2679,10 +2754,10 @@
         // Insert a new competence domain
         $coursePlanId = 1;
         $competenceDomainId = self::insertCompetenceDomain($coursePlanId);
-        
+
         // Insert a new operational competence linked to the inserted competence domain
         $operationalCompetenceId = self::insertOperationalCompetence($competenceDomainId);
-        
+
         // Insert a new objective linked to the inserted operational competence
         $objectiveId = self::insertObjective($operationalCompetenceId);
 
@@ -2726,10 +2801,10 @@
 
         // Insert a new competence domain
         $competenceDomainId = self::insertCompetenceDomain($coursePlanId);
-        
+
         // Insert a new operational competence linked to the inserted competence domain
         $operationalCompetenceId = self::insertOperationalCompetence($competenceDomainId);
-        
+
         // Insert a new objective linked to the inserted operational competence
         $objectiveId = self::insertObjective($operationalCompetenceId);
 
@@ -2777,10 +2852,10 @@
 
         // Insert a new competence domain
         $competenceDomainId = self::insertCompetenceDomain($coursePlanId);
-        
+
         // Insert a new operational competence linked to the inserted competence domain
         $operationalCompetenceId = self::insertOperationalCompetence($competenceDomainId);
-        
+
         // Insert a new objective linked to the inserted operational competence
         $objectiveId = self::insertObjective($operationalCompetenceId);
 
