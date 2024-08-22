@@ -832,8 +832,8 @@
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
 
-        $result->assertSee(lang('plafor_lang.title_manage_entry'), 'h1');
-        $result->assertSee(lang('plafor_lang.manage_entry_confirmation'), 'p');
+        $result->assertSee(lang('common_lang.title_manage_entry'), 'h1');
+        $result->assertSee(lang('common_lang.manage_entry_confirmation'), 'p');
 
         $result->assertSee(lang('plafor_lang.apprentice_link'), 'strong');
         $result->assertSee(lang('plafor_lang.apprentice').' : ApprentiSysteme', 'p');
