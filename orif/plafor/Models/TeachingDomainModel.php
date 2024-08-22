@@ -64,7 +64,7 @@ class TeachingDomainModel extends Model
         if (array_key_exists('fk_teaching_domain_title', $data)) { 
             $data['title'] = $this->select('title')
                                   ->join('teaching_domain_title',
-             'teaching_domain.id = fk_teaching_domain_title', 'left')
+             'teaching_domain_title.id = fk_teaching_domain_title', 'left')
              ->allowCallbacks(false)
              ->find($data['id'])['title'];
         }

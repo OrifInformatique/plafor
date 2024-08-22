@@ -28,4 +28,67 @@ class TeachingModuleModelTest extends CIUnitTestCase
         $this->assertInstanceOf(TeachingModuleModel::class,
             $teachingModuleModel);
     }
+    public function testFind()
+    {
+        $teachingModuleModel = model('TeachingModuleModel');
+        $data = $teachingModuleModel->find(1);
+        $expect = [
+            'id' => '1',
+            'module_number' => '106',
+            'official_name' => 'Interroger, traiter et assurer la maintenance '
+            . 'des bases de données',
+            'version' => '1',
+            'archive' => null,
+        ];
+        foreach (array_keys($expect) as $key) {
+            $this->assertEquals($expect[$key], $data[$key]);
+        }
+    }
+
+    public function testFindAll()
+    {
+        $teachingModuleModel = model('TeachingModuleModel');
+        $data = $teachingModuleModel->findAll();
+        $this->assertIsArray($data);
+    }
+
+    public function testFirst()
+    {
+        $teachingModuleModel = model('TeachingModuleModel');
+        $data = $teachingModuleModel->first();
+        $expect = [
+            'id' => '1',
+            'module_number' => '106',
+            'official_name' => 'Interroger, traiter et assurer la maintenance '
+            . 'des bases de données',
+            'version' => '1',
+            'archive' => null,
+        ];
+        foreach (array_keys($expect) as $key) {
+            $this->assertEquals($expect[$key], $data[$key]);
+        }
+    }
+
+    public function testFirstCustom()
+    {
+        $teachingModuleModel = model('TeachingModuleModel');
+        $data = $teachingModuleModel->select('official_name')->first();
+        $expect = [
+           'official_name' => 'Interroger, traiter et assurer la maintenance '
+           . 'des bases de données'
+        ];
+        $this->assertEquals($expect, $data);
+    }
+
+    public function testInsert()
+    {
+        $teachingModuleModel = model('TeachingModuleModel');
+        $teachingDomain = [
+            'module_number' => '1',
+            'official_name' => 'Modéliser',
+            'version' => 'V4'
+        ];
+        $isSuccess = $teachingModuleModel->insert($teachingDomain, false);
+        $this->assertTrue($isSuccess);
+    }
 }

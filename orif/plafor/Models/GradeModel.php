@@ -4,17 +4,17 @@ namespace Plafor\Models;
 
 use CodeIgniter\Model;
 
-class TeachingModuleModel extends Model
+class GradeModel extends Model
 {
     // protected $DBGroup          = 'default';
-    protected $table            = 'teaching_module';
+    protected $table            = 'grade';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = true;
     protected $protectFields    = true;
-    protected $allowedFields    = ['module_number', 'official_name',
-        'version'];
+    protected $allowedFields    = ['fk_user_course', 'fk_teaching_subject',
+        'fk_teaching_module', 'date', 'grade', 'is_school'];
 
     // Dates
     protected $useTimestamps = false;
@@ -42,6 +42,8 @@ class TeachingModuleModel extends Model
 
     protected function afterFind(array $data): array
     {
+        if (is_null($data['data'])) return $data;
+
         $data['data'] = match ($data['method']) {
             'first' => $this->afterFindFind($data['data']),
             'find' => $this->afterFindFind($data['data']),
@@ -60,13 +62,17 @@ class TeachingModuleModel extends Model
     // this call when find or first is used
     protected function afterFindFind(array $data): array
     {
-        if (array_key_exists('id', $data)) { 
-            $teachingDomainModel = model('TeachingDomainModel');
-            $data['teaching_domains'] = $teachingDomainModel
-                ->join('teaching_domain_module',
-                    'teaching_domain.id = fk_teaching_domain', 'left')
-                ->where('fk_teaching_module = ', $data['id'])
-                ->find();
+        if (array_key_exists('fk_teaching_subject', $data)) { 
+            $teachingSubjectModel = model('TeachingSubjectModel');
+            $data['teaching_subject_name'] = $teachingSubjectModel
+                ->select('teaching_subject.name')
+                ->find($data['fk_teaching_subject'])['name'];
+        }
+        if (array_key_exists('fk_teaching_module', $data)) { 
+            $teachingModuleModel = model('TeachingModuleModel');
+            $data['teaching_module_name'] = $teachingModuleModel
+                ->select('teaching_module.official_name')
+                ->find($data['fk_teaching_module'])['official_name'];
         }
         return $data;
     }
