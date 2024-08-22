@@ -138,7 +138,6 @@ return [
     'title_comment_new'                   => 'Ajouter un commentaire',
     'title_comment_delete'                => 'Supprimer le commentaire',
     'title_progress'                      => 'Avancement',
-    'title_manage_entry'                  => 'Gestion d\'entrée',
 
     // Details labels
     'details_apprentice'             => 'Détail de l\'apprenti',
@@ -267,6 +266,4 @@ return [
     'current'                                     => 'En vigueur',
     'unassigned'                                  => 'Non assigné',
     'apprentices_already_assigned_to_course_plan' => 'Les apprentis suivants sont associés à ce plan de formation',
-    'manage_entry_confirmation'                   => 'Êtes-vous sûr(e) de vouloir altérer cette entrée ?',
-    'entries_linked_to_entry_being_managed'       => 'Entrées liées à l\'entrée sur le point d\'être altérée',
 ];

@@ -47,4 +47,9 @@ return[
     'for'                            => 'Pour',
     'click_on_the_button'            => 'Cliquez sur le bouton',
     'above'                          => 'Ci-dessous',
+
+// Manage entry
+    'title_manage_entry'                    => 'Gestion d\'entrée',
+    'manage_entry_confirmation'             => 'Êtes-vous sûr(e) de vouloir altérer cette entrée ?',
+    'entries_linked_to_entry_being_managed' => 'Entrées liées à l\'entrée sur le point d\'être altérée',
 ];

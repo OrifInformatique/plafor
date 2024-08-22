@@ -48,9 +48,9 @@
 
 <div id="page-content-wrapper">
     <div class="container">
-        <h1><?= lang('plafor_lang.title_manage_entry') ?></h1>
+        <h1><?= lang('common_lang.title_manage_entry') ?></h1>
 
-        <p><?= lang('plafor_lang.manage_entry_confirmation') ?></p>
+        <p><?= lang('common_lang.manage_entry_confirmation') ?></p>
 
         <div class="alert alert-primary">
             <p class="mb-0">
@@ -72,7 +72,7 @@
 
         <?php if(isset($linked_entries) && !empty($linked_entries)): ?>
             <div>
-                <h2><?= lang('plafor_lang.entries_linked_to_entry_being_managed') ?></h2>
+                <h2><?= lang('common_lang.entries_linked_to_entry_being_managed') ?></h2>
 
                 <div>
                     <?php foreach($linked_entries as $linked_entry): ?>
