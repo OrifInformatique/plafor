@@ -839,7 +839,7 @@
         $result->assertSee(lang('plafor_lang.apprentice').' : ApprentiSysteme', 'p');
         $result->assertSee(lang('plafor_lang.trainer').' : FormateurDev', 'p');
 
-        $result->assertDontSee(lang('plafor_lang.entries_linked_to_entry_being_managed'),
+        $result->assertDontSee(lang('common_lang.entries_linked_to_entry_being_managed'),
             'h2');
         $result->assertDontSeeElement('.alert-secondary');
 

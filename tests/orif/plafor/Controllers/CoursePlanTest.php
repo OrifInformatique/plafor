@@ -241,7 +241,7 @@
         $result->assertSee('[2014-2020] Informaticienne, Informaticien avec '
             . 'CFC, orientation développement d\'applications', 'p');
 
-        $result->assertDontSee(lang('plafor_lang.entries_linked_to_entry_being_managed'),
+        $result->assertDontSee(lang('common_lang.entries_linked_to_entry_being_managed'),
             'h2');
         $result->assertDontSeeElement('.alert-secondary');
 
@@ -298,7 +298,7 @@
         $result->assertSee('[2014-2020] Informaticienne, Informaticien avec '
             . 'CFC, orientation développement d\'applications', 'p');
 
-        $result->assertSee(lang('plafor_lang.entries_linked_to_entry_being_managed'),
+        $result->assertSee(lang('common_lang.entries_linked_to_entry_being_managed'),
             'h2');
         $result->assertSee(lang('plafor_lang.apprentice'), '.alert-secondary');
         $result->assertSee('FormateurDev', '.alert-secondary');
@@ -646,7 +646,8 @@
         $result->assertSee('Saisie, interprétation et mise en œuvre des '
             . 'exigences des applications', 'p');
 
-        $result->assertDontSee(lang('plafor_lang.entries_linked_to_entry_being_managed'), 'h2');
+        $result->assertDontSee(lang('common_lang.entries_linked_to_entry_being_managed'),
+            'h2');
         $result->assertDontSeeElement('.alert-secondary');
 
         $result->assertSee(lang('plafor_lang.competence_domain_disable_explanation'),
@@ -904,7 +905,8 @@
         $result->assertSee('Clarifier et documenter les besoins  des '
             . 'parties prenantes dans le cadre d’un projet ICT', 'p');
 
-        $result->assertDontSee(lang('plafor_lang.entries_linked_to_entry_being_managed'), 'h2');
+        $result->assertDontSee(lang('common_lang.entries_linked_to_entry_being_managed'),
+            'h2');
         $result->assertDontSeeElement('.alert-secondary');
 
         $result->assertSee(lang('plafor_lang.operational_competence_disable_explanation'),
@@ -1075,8 +1077,8 @@
         $result->assertSee(lang('plafor_lang.status').' : '
             .lang('plafor_lang.title_in_progress'));
 
-        $result->assertDontSee(lang('plafor_lang.entries_linked_to_entry_being_managed'),
-        'h2');
+        $result->assertDontSee(lang('common_lang.entries_linked_to_entry_being_managed'),
+            'h2');
         $result->assertDontSeeElement('.alert-secondary');
 
         $result->assertSee(lang('plafor_lang.user_course_delete_explanation'),
@@ -1353,7 +1355,8 @@
             . 'ses paramètres généraux tels que coûts, durée, qualité, '
             . 'périmètre, responsabilités et méthodologie.', 'p');
 
-        $result->assertDontSee(lang('plafor_lang.entries_linked_to_entry_being_managed'), 'h2');
+        $result->assertDontSee(lang('common_lang.entries_linked_to_entry_being_managed'),
+            'h2');
         $result->assertDontSeeElement('.alert-secondary');
 
         $result->assertSee(lang('plafor_lang.objective_disable_explanation'));
@@ -1402,7 +1405,8 @@
             . 'ses paramètres généraux tels que coûts, durée, qualité, '
             . 'périmètre, responsabilités et méthodologie.', 'p');
 
-        $result->assertDontSee(lang('plafor_lang.entries_linked_to_entry_being_managed'), 'h2');
+        $result->assertDontSee(lang('common_lang.entries_linked_to_entry_being_managed'),
+            'h2');
         $result->assertDontSeeElement('.alert-secondary');
 
         $result->assertSee(lang('plafor_lang.objective_enable_explanation'),
