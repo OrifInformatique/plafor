@@ -24,7 +24,14 @@ class GradeModel extends Model
     protected $deletedField  = 'archive';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        'fk_user_course' => 'is_natural_no_zero',
+        'fk_teaching_subject' => 'required_without[fk_teaching_module]',
+        'fk_teaching_module' => 'required_without[fk_teaching_subject]',
+        'date' => 'valid_date',
+        'grade' => 'greater_than[0]|less_than_equal_to[6]',
+        'is_school' => 'required'
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
@@ -62,18 +69,141 @@ class GradeModel extends Model
     // this call when find or first is used
     protected function afterFindFind(array $data): array
     {
-        if (array_key_exists('fk_teaching_subject', $data)) { 
+        if (isset($data['fk_teaching_subject'])) { 
             $teachingSubjectModel = model('TeachingSubjectModel');
             $data['teaching_subject_name'] = $teachingSubjectModel
                 ->select('teaching_subject.name')
                 ->find($data['fk_teaching_subject'])['name'];
+        } else {
+            unset($data['fk_teaching_subject']);
         }
-        if (array_key_exists('fk_teaching_module', $data)) { 
+        if (isset($data['fk_teaching_module'])) { 
             $teachingModuleModel = model('TeachingModuleModel');
             $data['teaching_module_name'] = $teachingModuleModel
                 ->select('teaching_module.official_name')
                 ->find($data['fk_teaching_module'])['official_name'];
+        } else {
+            unset($data['fk_teaching_module']);
         }
         return $data;
+    }
+
+    /**
+     * Gets all grades from a specific subject, from a specific user_course
+     * (apprentice).
+     *
+     * @param int $id_user_course ID of the user_course
+     * @param int $id_subject ID of the subject
+     * 
+     * @return array
+     *
+     */
+    public function getApprenticeSubjectGrades(int $id_user_course,
+        int $id_subject): array
+    {
+        $data = $this
+            ->select('fk_user_course, fk_teaching_subject, date, grade,'
+                . 'grade.archive, name')
+            ->join('teaching_subject',
+            'teaching_subject.id = fk_teaching_subject', 'left')
+            ->join('user_course', 'user_course.id = fk_user_course ', 'left')
+            ->where('fk_user_course = ', $id_user_course)
+            ->where('fk_teaching_subject = ', $id_subject)
+            ->allowCallbacks(false)
+            ->find();
+        return $data;
+    }
+
+    /**
+     * Gets all grades from all modules, from a specific user_course
+     * (apprentice).
+     *
+     * @param int $id_user_course ID of the user_course
+     * @param bool $is_school "true" to get only school modules grades
+     *                        "false" to get only non school modules grades
+     *                        NULL to get all modules grades
+     * 
+     * @return array
+     *
+     */
+    public function getApprenticeModulesGrades(int $id_user_course,
+        ?bool $is_school = null): array
+    {
+        $this->select('fk_user_course, fk_teaching_module, date, grade,'
+                . 'is_school, grade.archive, official_name')
+            ->join('teaching_module',
+            'teaching_module.id = fk_teaching_module', 'left')
+            ->join('user_course', 'user_course.id = fk_user_course ', 'left')
+            ->where('fk_user_course = ', $id_user_course)
+            ->where('fk_teaching_module is not null')
+            ->where('fk_teaching_subject is null')
+            ->allowCallbacks(false);
+        if (isset($is_school)) $this->where('is_school = ', $is_school);
+        $data = $this->find();
+        if (isset($is_school)) {
+            $data = array_map(function($row) {
+                unset($row['is_school']);
+                return $row;
+            }, $data);
+        }
+        return $data;
+    }
+
+    /**
+     * Gets a grade from a specific module, from a specific user_course
+     * (apprentice).
+     *
+     * @param int $id_user_course ID of the user_course
+     * @param int $id_module ID of the module
+     * 
+     * @return array
+     *
+     */
+    public function getApprenticeModuleGrade(int $id_user_course,
+        int $id_module): array
+    {
+        // TODO: Jointure avec la table "teaching_module" pour retourner le
+        // nom du module.
+        // TODO: Rechercher les entrées dont le champ 'fk_user_course' ===
+        // $id_user_course et le champ 'fk_module' === $id_module.
+        $data = $this->select('fk_user_course, fk_teaching_module, date, '
+            . 'grade, is_school, grade.archive, official_name')
+            ->join('teaching_module',
+            'teaching_module.id = fk_teaching_module', 'left')
+            ->join('user_course', 'user_course.id = fk_user_course ', 'left')
+            ->where('fk_user_course = ', $id_user_course)
+            ->where('fk_teaching_module = ', $id_module)
+            ->allowCallbacks(false)
+            ->first();
+        return $data;
+    }
+
+    private function getAverageFromArray(array $grades): float
+    {
+        $onlyGrades = array_map(fn($row) => $row['grade'], $grades);
+        $sum = array_sum($onlyGrades);
+        $average = $sum / count($onlyGrades);
+        return $average;
+    }
+
+    public function getApprenticeSubjectAverage(int $id_user_course,
+        int $id_subject): float
+    {
+        // TODO: Retourner la moyenne de la matière correspondant à id_subject
+        $grades = $this
+            ->getApprenticeSubjectGrades($id_user_course, $id_subject);
+        $average = $this->getAverageFromArray($grades);
+        return $average;
+    }
+
+    public function getApprenticeModuleAverage(int $id_user_course,
+        ?bool $is_school = null)
+    {
+        // TODO: Retourner la moyenne des modules école ou non école en
+        // fonction du paramètre is_school
+        $grades = $this->getApprenticeModulesGrades($id_user_course,
+            $is_school);
+        $average = $this->getAverageFromArray($grades);
+        return $average;
     }
 }
