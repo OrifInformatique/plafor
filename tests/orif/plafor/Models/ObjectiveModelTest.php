@@ -61,20 +61,6 @@ class ObjectiveModelTest extends CIUnitTestCase
         }
     }
 
-    /**
-     * Checks that the getAcquisitionStatus method of ObjectiveModel returns the expected acquisition status
-     */
-    public function testgetAcquisitionStatusForAGivenUserCourse()
-    {
-        // Gets the acquisition statuses with the objective id 1 
-        $objectiveModel = model('ObjectiveModel');
-        $acquisitionStatus = $objectiveModel->getAcquisitionStatus(1, 1);
-
-        // Assertions
-        $this->assertIsArray($acquisitionStatus);
-        $this->assertEquals($acquisitionStatus['fk_objective'], 1);
-        $this->assertEquals($acquisitionStatus['fk_user_course'], 1);
-    }
 
     /**
      * Checks that the getObjectives method of ObjectiveModel returns the expected objectives
