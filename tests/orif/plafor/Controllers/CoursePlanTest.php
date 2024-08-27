@@ -862,7 +862,7 @@
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
         $result->assertSee('Compétence opérationnelle', 'h2');
-        $result->assertSee('Clarifier et documenter les besoins  des '
+        $result->assertSee('Clarifier et documenter les besoins des '
             . 'parties prenantes dans le cadre d’un projet ICT', 'h2');
         $result->assertSee('Que souhaitez-vous faire ?', 'h4');
         $result->assertSee('Toutes les informations concernant cette '
