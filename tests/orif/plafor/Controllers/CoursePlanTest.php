@@ -1634,7 +1634,7 @@
         $result->assertSee('Symbole', 'th');
         $result->assertSee('Compétence opérationnelle', 'th');
         $result->assertSee('A1', 'td');
-        $result->assertSee('Clarifier et documenter les besoins  des '
+        $result->assertSee('Clarifier et documenter les besoins des '
             . 'parties prenantes dans le cadre d’un projet ICT', 'td');
         $result->assertSee('A2', 'td');
         $result->assertSee('Définir un modèle de procédure pour un projet ICT',
