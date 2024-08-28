@@ -1724,7 +1724,7 @@
         $result->assertSee('Symbole de la compétence opérationnelle', 'p');
         $result->assertSee('A1', 'p');
         $result->assertSee('Nom de la compétence opérationnelle', 'p');
-        $result->assertSee('Clarifier et documenter les besoins  des parties '
+        $result->assertSee('Clarifier et documenter les besoins des parties '
             . 'prenantes dans le cadre d’un projet ICT', 'p');
         $result->assertSee('Compétence méthodologique', 'p');
         // $result->assertSee('Travail structuré, documentation adéquate', 'p');
@@ -1830,7 +1830,7 @@
         $result->assertSee('Symbole de la compétence opérationnelle', 'p');
         $result->assertSeeLink('A1');
         $result->assertSee('Nom de la compétence opérationnelle', 'p');
-        $result->assertSeeLink('Clarifier et documenter les besoins  des '
+        $result->assertSeeLink('Clarifier et documenter les besoins des '
             . 'parties prenantes dans le cadre d’un projet ICT');
         $result->assertSee('Compétence méthodologique', 'p');
         // $result->assertSeeLink('Travail structuré, documentation adéquate');
