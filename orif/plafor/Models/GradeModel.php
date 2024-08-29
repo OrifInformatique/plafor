@@ -26,10 +26,13 @@ class GradeModel extends Model
     // Validation
     protected $validationRules      = [
         'fk_user_course' => 'is_natural_no_zero',
+        // TODO create a custom rule for only fk_teaching_subject or
+        // fk_teaching_subject
         'fk_teaching_subject' => 'required_without[fk_teaching_module]',
         'fk_teaching_module' => 'required_without[fk_teaching_subject]',
         'date' => 'valid_date',
-        'grade' => 'greater_than[0]|less_than_equal_to[6]',
+        'grade' => 'greater_than_equal_to[0]|less_than_equal_to[6]',
+        // TODO create a custom rule for 0 1 true false
         'is_school' => 'required'
     ];
     protected $validationMessages   = [];
@@ -162,10 +165,6 @@ class GradeModel extends Model
     public function getApprenticeModuleGrade(int $id_user_course,
         int $id_module): array
     {
-        // TODO: Jointure avec la table "teaching_module" pour retourner le
-        // nom du module.
-        // TODO: Rechercher les entrées dont le champ 'fk_user_course' ===
-        // $id_user_course et le champ 'fk_module' === $id_module.
         $data = $this->select('fk_user_course, fk_teaching_module, date, '
             . 'grade, is_school, grade.archive, official_name')
             ->join('teaching_module',
@@ -189,7 +188,6 @@ class GradeModel extends Model
     public function getApprenticeSubjectAverage(int $id_user_course,
         int $id_subject): float
     {
-        // TODO: Retourner la moyenne de la matière correspondant à id_subject
         $grades = $this
             ->getApprenticeSubjectGrades($id_user_course, $id_subject);
         $average = $this->getAverageFromArray($grades);
@@ -197,10 +195,8 @@ class GradeModel extends Model
     }
 
     public function getApprenticeModuleAverage(int $id_user_course,
-        ?bool $is_school = null)
+        ?bool $is_school = null): float
     {
-        // TODO: Retourner la moyenne des modules école ou non école en
-        // fonction du paramètre is_school
         $grades = $this->getApprenticeModulesGrades($id_user_course,
             $is_school);
         $average = $this->getAverageFromArray($grades);

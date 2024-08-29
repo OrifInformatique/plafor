@@ -14,7 +14,7 @@ class TeachingDomainModel extends Model
     protected $useSoftDeletes   = true;
     protected $protectFields    = true;
     protected $allowedFields    = ['fk_teaching_domain_title',
-        'fk_course_pan', 'domain_weight', 'is_eliminatory'];
+        'fk_course_plan', 'domain_weight', 'is_eliminatory'];
 
     // Dates
     protected $useTimestamps = false;
@@ -24,7 +24,14 @@ class TeachingDomainModel extends Model
     protected $deletedField  = 'archive';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        'fk_teaching_domain_title'     => 'is_natural_no_zero',
+        'fk_course_plan'        => 'is_natural_no_zero',
+        'domain_weight'     => 'decimal',
+
+         // TODO custom rule to accept 0 1 false true
+        'is_eliminatory' => 'required',
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;

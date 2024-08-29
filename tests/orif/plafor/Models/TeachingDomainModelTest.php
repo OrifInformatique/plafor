@@ -20,7 +20,7 @@ class TeachingDomainModelTest extends CIUnitTestCase
     // protected $seed     = 'apprenticeTestSeed';
     // protected $basePath = 'tests/_support/Database';
 
-    public function testTeachingDomainModelInstance()
+    public function testTeachingDomainModelInstance(): void
     {
         $teachingDomainModel = model('TeachingDomainModel');
         $this->assertTrue($teachingDomainModel instanceof
@@ -29,7 +29,7 @@ class TeachingDomainModelTest extends CIUnitTestCase
             $teachingDomainModel);
     }
 
-    public function testFind()
+    public function testFind(): void
     {
         $teachingDomainModel = model('TeachingDomainModel');
         $data = $teachingDomainModel->find(1);
@@ -47,14 +47,14 @@ class TeachingDomainModelTest extends CIUnitTestCase
         $this->assertEquals($expect, $data);
     }
 
-    public function testFindAll()
+    public function testFindAll(): void
     {
         $teachingDomainModel = model('TeachingDomainModel');
         $data = $teachingDomainModel->findAll();
         $this->assertIsArray($data);
     }
 
-    public function testFirst()
+    public function testFirst(): void
     {
         $teachingDomainModel = model('TeachingDomainModel');
         $data = $teachingDomainModel->first();
@@ -72,7 +72,7 @@ class TeachingDomainModelTest extends CIUnitTestCase
         $this->assertEquals($expect, $data);
     }
 
-    public function testFirstCustom()
+    public function testFirstCustom(): void
     {
         $teachingDomainModel = model('TeachingDomainModel');
         $data = $teachingDomainModel->select('domain_weight')->first();
@@ -82,12 +82,14 @@ class TeachingDomainModelTest extends CIUnitTestCase
         $this->assertEquals($expect, $data);
     }
 
-    public function testInsert()
+    public function testInsert(): void
     {
         $teachingDomainModel = model('TeachingDomainModel');
         $teachingDomain = [
+            'fk_teaching_domain_title' => 1,
+            'fk_course_plan' => 1,
             'domain_weight' => 0.1,
-            'is_eliminatory' => 0,
+            'is_eliminatory' => 1,
         ];
         $isSuccess = $teachingDomainModel->insert($teachingDomain, false);
         $this->assertTrue($isSuccess);

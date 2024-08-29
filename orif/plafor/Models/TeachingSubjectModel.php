@@ -24,7 +24,11 @@ class TeachingSubjectModel extends Model
     protected $deletedField  = 'archive';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        'fk_teaching_domain' => 'is_natural_no_zero',
+        'name' => 'string',
+        'subject_weight' => 'numeric', 
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;

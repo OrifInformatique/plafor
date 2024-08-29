@@ -86,7 +86,7 @@ class TeachingModuleModelTest extends CIUnitTestCase
         $teachingDomain = [
             'module_number' => '1',
             'official_name' => 'Modéliser',
-            'version' => 'V4'
+            'version' => '4'
         ];
         $isSuccess = $teachingModuleModel->insert($teachingDomain, false);
         $this->assertTrue($isSuccess);

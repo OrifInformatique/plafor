@@ -99,6 +99,7 @@ class TeachingSubjectModelTest extends CIUnitTestCase
     {
         $teachingSubjectModel = model('TeachingSubjectModel');
         $teachingDomain = [
+            'fk_teaching_domain' => 1,
             'name' => 'test',
             'subject_weight' => 0.1,
         ];

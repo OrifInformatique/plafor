@@ -24,7 +24,11 @@ class TeachingModuleModel extends Model
     protected $deletedField  = 'archive';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        'module_number' => 'is_natural_no_zero',
+        'official_name' => 'string',
+        'version' => 'is_natural_no_zero',
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
