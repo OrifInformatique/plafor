@@ -20,6 +20,9 @@ class TeachingModuleModelTest extends CIUnitTestCase
     // protected $seed     = 'apprenticeTestSeed';
     // protected $basePath = 'tests/_support/Database';
 
+    /**
+     * Verifies the creation of a TeachingModuleModel instance.
+     */
     public function testTeachingModuleModelInstance()
     {
         $teachingModuleModel = model('TeachingModuleModel');
@@ -28,12 +31,17 @@ class TeachingModuleModelTest extends CIUnitTestCase
         $this->assertInstanceOf(TeachingModuleModel::class,
             $teachingModuleModel);
     }
+
+    /**
+     * Tests the retrieval of a single record by ID using the find method.
+     */
     public function testFind()
     {
+        $id = 1;
         $teachingModuleModel = model('TeachingModuleModel');
-        $data = $teachingModuleModel->find(1);
+        $data = $teachingModuleModel->find($id);
         $expect = [
-            'id' => '1',
+            'id' => $id,
             'module_number' => '106',
             'official_name' => 'Interroger, traiter et assurer la maintenance '
             . 'des bases de données',
@@ -45,6 +53,9 @@ class TeachingModuleModelTest extends CIUnitTestCase
         }
     }
 
+    /**
+     * Tests the retrieval of all records using the findAll method.
+     */
     public function testFindAll()
     {
         $teachingModuleModel = model('TeachingModuleModel');
@@ -52,6 +63,9 @@ class TeachingModuleModelTest extends CIUnitTestCase
         $this->assertIsArray($data);
     }
 
+    /**
+     * Tests the retrieval of the first record using the first method.
+     */
     public function testFirst()
     {
         $teachingModuleModel = model('TeachingModuleModel');
@@ -69,6 +83,10 @@ class TeachingModuleModelTest extends CIUnitTestCase
         }
     }
 
+    /**
+     * Test that the first method with a custom select returns the expected
+     * data.
+     */
     public function testFirstCustom()
     {
         $teachingModuleModel = model('TeachingModuleModel');
@@ -80,6 +98,9 @@ class TeachingModuleModelTest extends CIUnitTestCase
         $this->assertEquals($expect, $data);
     }
 
+    /**
+     * Tests the insertion of a new record using the insert method.
+     */
     public function testInsert()
     {
         $teachingModuleModel = model('TeachingModuleModel');
