@@ -46,6 +46,7 @@ class TrainerApprenticeModel extends \CodeIgniter\Model
         return $user_model->find($fkTrainerId);
     }
 
+
     /**
      * @param $fkApprenticeId
      * @return array
@@ -55,6 +56,8 @@ class TrainerApprenticeModel extends \CodeIgniter\Model
         return $user_model->find($fkApprenticeId);
 
     }
+
+
     /**
      * @param $fkTrainerId
      * @return array
@@ -64,6 +67,7 @@ class TrainerApprenticeModel extends \CodeIgniter\Model
         return $trainerApprenticeModel->where('fk_trainer', $fkTrainerId)
                                       ->findColumn('fk_apprentice');
     }
+
 
     /**
      * Get the apprentices unassigned to a trainer
@@ -93,4 +97,17 @@ class TrainerApprenticeModel extends \CodeIgniter\Model
 
         return $unassigned_apprentices;
     }
+
+    
+    /**
+     * Check if the given trainer is linked to the given apprentice
+     *
+     * @param  int $apprentice_id
+     * @param  int $trainer_id
+     * @return bool
+     */
+    public function isTrainerLinkedToApprentice(int $apprentice_id, int $trainer_id ) : bool {
+        $list_apprentice[] = $this->getApprenticeIdsFromTrainer($trainer_id);
+        return in_array($apprentice_id, $list_apprentice);
+    }          
 }
