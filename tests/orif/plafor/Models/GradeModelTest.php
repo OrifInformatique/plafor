@@ -318,6 +318,28 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertEquals($expect, $data);
     }
 
+    public function testGetApprenticeSubjectAverageRoundHalfPoint(): void
+    {
+        $id_user_course = 1;
+        $id_subject = 1;
+        $gradeModel = model('GradeModel');
+        $data = $gradeModel->getApprenticeSubjectAverage($id_user_course,
+            $id_subject, [$gradeModel, 'roundHalfPoint']);
+        $expect = 4.5;
+        $this->assertEquals($expect, $data);
+    }
+
+    public function testGetApprenticeSubjectAverageRoundOneDecimalPoint(): void
+    {
+        $id_user_course = 1;
+        $id_subject = 1;
+        $gradeModel = model('GradeModel');
+        $data = $gradeModel->getApprenticeSubjectAverage($id_user_course,
+            $id_subject, [$gradeModel, 'roundOneDecimalPoint']);
+        $expect = 4.3;
+        $this->assertEquals($expect, $data);
+    }
+
     /**
      * Tests the retrieval of apprentice module average for school grades.
      */
@@ -330,6 +352,19 @@ class GradeModelTest extends CIUnitTestCase
         $data = $gradeModel->getApprenticeModuleAverage($id_user_course,
             $is_school);
         $expect = 4.75;
+        $this->assertEquals($expect, $data);
+    }
+
+    public function
+        testGetApprenticeModuleAverageIsSchoolRoundHalfPoint(): void
+    {
+        $id_user_course = 1;
+        $is_school = true;
+
+        $gradeModel = model('GradeModel');
+        $data = $gradeModel->getApprenticeModuleAverage($id_user_course,
+            $is_school, [$gradeModel, 'roundHalfPoint']);
+        $expect = 5;
         $this->assertEquals($expect, $data);
     }
 

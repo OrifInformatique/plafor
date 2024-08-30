@@ -185,21 +185,36 @@ class GradeModel extends Model
         return $average;
     }
 
+    // 4.25 -> 4.5
+    private function roundHalfPoint(float $number): float
+    {
+        return round($number * 2) / 2;
+    }
+
+    // 4.25 -> 4.3
+    private function roundOneDecimalPoint(float $number): float
+    {
+        return round($number * 10) / 10;
+    }
+
     public function getApprenticeSubjectAverage(int $id_user_course,
-        int $id_subject): float
+        int $id_subject, ?callable $round_method = null): float
     {
         $grades = $this
             ->getApprenticeSubjectGrades($id_user_course, $id_subject);
         $average = $this->getAverageFromArray($grades);
-        return $average;
+        if (is_null($round_method)) return $average;
+        return $round_method($average);
+
     }
 
     public function getApprenticeModuleAverage(int $id_user_course,
-        ?bool $is_school = null): float
+        ?bool $is_school = null, ?callable $round_method = null): float
     {
         $grades = $this->getApprenticeModulesGrades($id_user_course,
             $is_school);
         $average = $this->getAverageFromArray($grades);
-        return $average;
+        if (is_null($round_method)) return $average;
+        return $round_method($average);
     }
 }
