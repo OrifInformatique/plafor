@@ -20,6 +20,9 @@ class TeachingSubjectModelTest extends CIUnitTestCase
     // protected $seed     = 'apprenticeTestSeed';
     // protected $basePath = 'tests/_support/Database';
 
+    /**
+     * Verifies the creation of a TeachingSubjectModel instance.
+     */
     public function testTeachingSubjectModelInstance()
     {
         $teachingSubjectModel = model('TeachingSubjectModel');
@@ -29,12 +32,16 @@ class TeachingSubjectModelTest extends CIUnitTestCase
             $teachingSubjectModel);
     }
 
+    /**
+     * Tests the retrieval of a single record by ID using the find method.
+     */
     public function testFind()
     {
+        $id = 1;
         $teachingSubjectModel = model('TeachingSubjectModel');
-        $data = $teachingSubjectModel->find(1);
+        $data = $teachingSubjectModel->find($id);
         $expect = [
-            'id' => "1",
+            'id' => $id,
             'name' => "Mathématiques",
             'subject_weight' => "0.0",
             'archive' => null,
@@ -54,6 +61,9 @@ class TeachingSubjectModelTest extends CIUnitTestCase
         $this->assertEquals($expect, $data);
     }
 
+    /**
+     * Test that the findAll method returns an array of data.
+     */
     public function testFindAll()
     {
         $teachingSubjectModel = model('TeachingSubjectModel');
@@ -61,6 +71,9 @@ class TeachingSubjectModelTest extends CIUnitTestCase
         $this->assertIsArray($data);
     }
 
+    /**
+     * Tests the retrieval of the first record using the first method.
+     */
     public function testFirst()
     {
         $teachingSubjectModel = model('TeachingSubjectModel');
@@ -85,6 +98,10 @@ class TeachingSubjectModelTest extends CIUnitTestCase
         $this->assertEquals($expect, $data);
     }
 
+    /**
+     * Tests the retrieval of the first record using the first method with a
+     * select clause.
+     */
     public function testFirstCustom()
     {
         $teachingSubjectModel = model('TeachingSubjectModel');
@@ -95,6 +112,9 @@ class TeachingSubjectModelTest extends CIUnitTestCase
         $this->assertEquals($expect, $data);
     }
 
+    /**
+     * Tests the insertion of a new record using the insert method.
+     */
     public function testInsert()
     {
         $teachingSubjectModel = model('TeachingSubjectModel');
