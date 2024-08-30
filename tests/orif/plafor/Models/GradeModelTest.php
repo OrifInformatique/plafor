@@ -20,6 +20,9 @@ class GradeModelTest extends CIUnitTestCase
     protected $seed     = 'gradeModelTestSeed';
     protected $basePath = 'tests/_support/Database';
 
+    /**
+     * Verifies the creation of a GradeModel instance.
+     */
     public function testGradeModelInstance(): void
     {
         $gradeModel = model('GradeModel');
@@ -27,12 +30,17 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertInstanceOf(GradeModel::class, $gradeModel);
     }
 
-    public function testFind(): void
+    /**
+     * Tests the retrieval of a single record by ID using the find method.
+     * (school subject)
+     */
+    public function testFindExpectSubject(): void
     {
+        $id = 1;
         $gradeModel = model('GradeModel');
-        $data = $gradeModel->find(1);
+        $data = $gradeModel->find($id);
         $expect = [
-            'id' => '1',
+            'id' => $id,
             'fk_user_course' => '1',
             'fk_teaching_subject' => '1',
             'date' => '2024-08-22',
@@ -44,12 +52,17 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertEquals($expect, $data);
     }
 
-    public function testFind2(): void
+    /**
+     * Tests the retrieval of a single record by ID using the find method.
+     * (module)
+     */
+    public function testFindExpectModule(): void
     {
+        $id = 2;
         $gradeModel = model('GradeModel');
-        $data = $gradeModel->find(2);
+        $data = $gradeModel->find($id);
         $expect = [
-            'id' => '2',
+            'id' => $id,
             'fk_user_course' => '1',
             'date' => '2024-08-23',
             'grade' => '4.5',
@@ -62,6 +75,9 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertEquals($expect, $data);
     }
 
+    /**
+     * Tests the retrieval of all records using the findAll method.
+     */
     public function testFindAll(): void
     {
         $gradeModel = model('GradeModel');
@@ -69,6 +85,9 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertIsArray($data);
     }
 
+    /**
+     * Tests the retrieval of the first record using the first method.
+     */
     public function testFirst(): void
     {
         $gradeModel = model('GradeModel');
@@ -85,7 +104,10 @@ class GradeModelTest extends CIUnitTestCase
         ];
         $this->assertEquals($expect, $data);
     }
-    
+
+     /**
+     * Tests the retrieval of the first record using the first method.
+     */   
     public function testFirstCustom(): void
     {
         $gradeModel = model('GradeModel');
@@ -96,6 +118,9 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertEquals($expect, $data);
     }
 
+    /**
+     * Tests the insertion of a new record using the insert method.
+     */
     public function testInsert(): void
     {
         $gradeModel = model('GradeModel');
@@ -114,6 +139,9 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertTrue($isSuccess);
     }
 
+    /**
+     * Tests the retrieval of apprentice subject grades.
+     */
     public function testGetApprenticeSubjectGrades(): void
     {
         $gradeModel = model('GradeModel');
@@ -139,6 +167,9 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertEquals($expect, $data);
     }
 
+    /**
+     * Tests the retrieval of apprentice module grades for school grades.
+     */
     public function testGetApprenticeModulesGradesIsSchool(): void
     {
         $id_user_course = 1;
@@ -172,6 +203,10 @@ class GradeModelTest extends CIUnitTestCase
 
     }
 
+    /**
+     * Tests the retrieval of apprentice module grades for non-school
+     * (interentreprises) grades.
+     */
     public function testGetApprenticeModulesGradesIsNotSchool(): void
     {
         $id_user_course = 1;
@@ -196,6 +231,9 @@ class GradeModelTest extends CIUnitTestCase
 
     }
 
+    /**
+     * Tests the retrieval of apprentice module grades for all grades.
+     */
     public function testGetApprenticeModulesGradesIsSchoolNull(): void
     {
         $id_user_course = 1;
@@ -241,6 +279,9 @@ class GradeModelTest extends CIUnitTestCase
 
     }
 
+    /**
+     * Tests the retrieval of apprentice module grade.
+     */
     public function testGetApprenticeModuleGrade(): void
     {
         $id_user_course = 1;
@@ -261,6 +302,9 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertEquals($expect, $data);
     }
 
+    /**
+     * Tests the retrieval of apprentice subject average.
+     */
     public function testGetApprenticeSubjectAverage(): void
     {
         $id_user_course = 1;
@@ -272,6 +316,9 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertEquals($expect, $data);
     }
 
+    /**
+     * Tests the retrieval of apprentice module average for school grades.
+     */
     public function testGetApprenticeModuleAverageIsSchool(): void
     {
         $id_user_course = 1;
@@ -284,6 +331,10 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertEquals($expect, $data);
     }
 
+    /**
+     * Tests the retrieval of apprentice module average for non-school
+     * (interentreprises) grades.
+     */
     public function testGetApprenticeModuleAverageIsNotSchool(): void
     {
         $id_user_course = 1;
