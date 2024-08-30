@@ -69,6 +69,8 @@ class TeachingSubjectModelTest extends CIUnitTestCase
         $teachingSubjectModel = model('TeachingSubjectModel');
         $data = $teachingSubjectModel->findAll();
         $this->assertIsArray($data);
+        $this->assertEquals(1, $data[0]['id']);
+        $this->assertEquals(2, $data[1]['id']);
     }
 
     /**
