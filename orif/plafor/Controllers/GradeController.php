@@ -45,10 +45,10 @@ class GradeController extends \App\Controllers\BaseController{
     /**
      * Method to initialize controller attributes
      */
-    public function initController(\CodeIgniter\HTTP\RequestInterface $request, 
-                                    \CodeIgniter\HTTP\ResponseInterface $response, 
+    public function initController(\CodeIgniter\HTTP\RequestInterface $request,
+                                    \CodeIgniter\HTTP\ResponseInterface $response,
                                     \Psr\Log\LoggerInterface $logger) : void {
-        
+
         $this->access_level = "@";
         parent::initController($request, $response, $logger);
 
@@ -69,7 +69,7 @@ class GradeController extends \App\Controllers\BaseController{
      * Helper function for Access permissions
      * Check if the user is a Trainer or higher
      * Check if the user is an Apprentice and is not in is personnal page
-     * 
+     *
      * @return bool
      */
     private function isSelfApprentice($apprentice_id) : bool {
@@ -79,10 +79,10 @@ class GradeController extends \App\Controllers\BaseController{
         // }
 
         // if ($_SESSION["user_access"] == config("\User\Config\UserConfig")->access_level_apprentice){
-           
+
             // $user_course = $this->m_user_course_model->find($apprentice_id);
             // $apprentice = $this->m_user_model->find($user_course["fk_user"]);
-            
+
         //     // if ($apprentice["id"] == $_SESSION["user_id"]) {
         //     if ($apprentice_id == $_SESSION["user_id"]) {
         //         return true;
@@ -90,13 +90,13 @@ class GradeController extends \App\Controllers\BaseController{
         // }
         // return false;
 
-        return $this->isTrainer() 
-            || ($_SESSION["user_access"] == config("\User\Config\UserConfig")->access_level_apprentice 
+        return $this->isTrainer()
+            || ($_SESSION["user_access"] == config("\User\Config\UserConfig")->access_level_apprentice
             && $apprentice_id == $_SESSION["user_id"]);
     }
 
 
-    
+
     /**
      * Helper function for Access permissions
      * Check if the user is a Apprentice or higher
@@ -106,7 +106,7 @@ class GradeController extends \App\Controllers\BaseController{
     private function isApprentice() : bool {
         return $_SESSION["user_access"] >= config("\User\Config\UserConfig")->access_level_apprentice;
     }
-    
+
 
 
     /**
@@ -120,7 +120,7 @@ class GradeController extends \App\Controllers\BaseController{
         // return $_SESSION["user_access"] < config(UserConfig::class)->access_lvl_trainer; // Test if this work
         return $_SESSION["user_access"] >= config(ConfigUserConfig::class)->access_lvl_trainer; // Test if this work        }
     }
-    
+
 
 
     /**
@@ -150,34 +150,17 @@ class GradeController extends \App\Controllers\BaseController{
         return $total_grade / $nbr_grade;
     }
 
-
     
-    /**
-     * Helper function who check if the date is in format: Y-m-d H:i:s
-     *  for save in the DB
-     *
-     * @param  string $date
-     * 
-     * @return bool
-     */
-    private function isDateValidToSave(string $date) : bool {
-        $format = "Y-m-d H:i:s";
-        $dateTime = \DateTime::createFromFormat($format, $date);
-
-        return $dateTime && $dateTime->format($format) === $date;
-    }
-    
-        
 
     /**
      * Insert/Modify the grade of an apprentice
-     * 
+     *
      * @param  int $apprentice_id   => ID of the apprentice, default 0
      * @param  int $trainer_id      => ID of the trainer, default 0
      * @param  ?int $grade_id       => ID of the grade, can be null
-     * 
+     *
      * @return string|Response
-     */    
+    */
     public function saveGrade(
         int $apprentice_id = 0, 
         int $trainer_id = 0, 
@@ -186,45 +169,48 @@ class GradeController extends \App\Controllers\BaseController{
         : string|Response 
         {
 
+
         // Access permissions
         if (!$this->isSelfApprentice($apprentice_id)){
+
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         } 
         if (!$this->m_trainer_apprentice_model->isTrainerLinkedToApprentice($apprentice_id, $trainer_id)){
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
+
         }
 
         // Gets data related to the grade (for update)
         if (!is_null($grade_id)){
             $old_grade = $this->m_grade_model->find("id", $grade_id);
-            
-            return $this->display_view("/* @TODO */", $old_grade);
+
+            return $this->display_view("plafor/grade/save", $old_grade);
         }
 
         // Error if subject AND module have an id over 0
         $subject_id = $this->request->getPost("subject");
         $module_id = $this->request->getPost("module");
         if ($subject_id > 0 && $module_id > 0){
-            return redirect()->to(base_url("/* @TODO */"));
+            return redirect()->to(base_url("plafor/grade/save"));
         }
 
         // Error if subject don't exist in DB
         if ($subject_id > 0){
             if (!$this->m_teaching_subject_model->find($subject_id)){
-                return redirect()->to(base_url("/* @TODO */"));
+                return redirect()->to(base_url("plafor/grade/save"));
             }
         }
         // Error if module don't exist in DB
         else{
             if (!$this->m_teaching_module_model->find($module_id)){
-                return redirect()->to(base_url("/* @TODO */"));
+                return redirect()->to(base_url("plafor/grade/save"));
             }
         }
 
         // Error if grade is not in range
         $grade = $this->request->getPost("grade");
         if ($grade < 0 || $grade > 6) {
-            return redirect()->to(base_url("/* @TODO */"));
+            return redirect()->to(base_url("plafor/grade/save"));
         }
 
         // Error if date is in wrong format
@@ -246,11 +232,24 @@ class GradeController extends \App\Controllers\BaseController{
             ];
         }
 
+
         // Insert or update grade in DB
         $this->m_grade_model->save($new_grade);
 
+
         // Return to the previous view
-        return $this->display_view("/* @TODO */");
+        return $this->display_view("plafor/grade/view"); */
+
+        if(empty($_POST))
+        {
+            $data = 
+            [
+                'id' => $id_grade
+            ];
+            return $this->display_view('\Plafor/grade/save', $data);
+        }
+
+        return redirect()->to('plafor/grade/showAllGrade');
     }
 
     
@@ -347,10 +346,13 @@ class GradeController extends \App\Controllers\BaseController{
 
     public function showAllGrade() : string|Response  {
         // @TODO
-        return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
-    }
 
-    
+        $data = ['items' => []];
+        return $this->display_view('\Plafor/grade/view', $data);
+
+        return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
+
+    }
 
     /**
      * Show the average grade of all modules
@@ -362,14 +364,13 @@ class GradeController extends \App\Controllers\BaseController{
      * 
      * @return string|Response
      */
+
     public function showModuleAverageGrade(int $apprentice_id, ?int $is_school = null) : string|Response {
         
         // Access permissions
         if (!$this->isSelfApprentice($apprentice_id)){
             return $this->display_view();
         } 
-
-        
 
         // Get the average of all modules
         $average_grade = $this->m_grade_model->getApprenticeModuleAverage($apprentice_id, $is_school);
@@ -381,10 +382,10 @@ class GradeController extends \App\Controllers\BaseController{
         ];
 
         // Return the view
-        return $this->display_view("/* @TODO */", $data);
+        return $this->display_view("/plafor/grade/module_grade/", $data);
     }
 
-    
+
 
     /**
      * Show the average grade of 1 subject
@@ -394,24 +395,26 @@ class GradeController extends \App\Controllers\BaseController{
      * @return string|Response
      */
     public function showSubjectAverageGrade(int $subject_id, int $apprentice_id) : string|Response {
-        
+
         // Access permissions
         if (!$this->isSelfApprentice($apprentice_id)){
+
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         } 
 
+
         // Get grade from one subject
-        $all_subject = $this->m_grade_model->"/* getAllGradeFromSubject($subject_id) */";
+        $all_subject = []; //$this->m_grade_model->getAllGradeFromSubject($subject_id);
         // Error if empty array
         if (is_null($all_subject)){
-            return $this->display_view("/* @TODO */");
+            return $this->display_view("/plafor/grade/subject_grades");
         }
 
         // Get the name of the selected subject
         $subject_name = $this->m_grade_model->find();
 
         // Calculate the average of all grades of one subject
-        $average_grade = calculateAverageGrade($all_subject);
+        $average_grade = $this->calculateAverageGrade($all_subject);
 
         // Data do send to the view
         $data = [
@@ -420,7 +423,7 @@ class GradeController extends \App\Controllers\BaseController{
         ];
 
         // Return the view
-        return $this->display_view("/* @TODO */", $data);
+        return $this->display_view("/plafor/grade/subject_grades", $data);
     }
 
 
@@ -430,14 +433,6 @@ class GradeController extends \App\Controllers\BaseController{
         // Access permissions
         if ($_SESSION["user_access"] >= config("\User\Config\UserConfig")->access_level_apprentice){
 
-            $data["list_title"] = lang("plafor_lang.list_title_domain"); 
-
-            $data["columns"] = ["title"             => lang("plafor_lang.name_domain"),
-                                "course_plan"       => lang("plafor_lang.parent_course_plan_domain"),
-                                "domain_weight"     => lang("plafor_lang.weight_domain"),
-                                "is_eliminatory"    => lang("plafor_lang.eliminatory_domain"),
-            ]; 
-
             $data["items"] = [
                 // @TODO
             ];
@@ -448,29 +443,42 @@ class GradeController extends \App\Controllers\BaseController{
                 ]);
             }
 
-            return $this->display_view("Common\items_list", $data);
+            return $this->display_view("\Plafor/domain/view", $data);
         }
 
         // Missing permissions
         return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
+
     }
-    
+
 
     public function saveTeachingDomain(
-        string $domain_title,
+        /* string $domain_title,
         int $course_plan_id,
         float $domain_weight,
         bool $is_eliminatory,
-        bool $archive
-        ) : string {
+        bool $archive */
+        int $id_domain = 0
+        ) : string|Response {
 
         // Access permissions
         if ($_SESSION["user_access"] >= config("\User\Config\UserConfig")->access_level_apprentice){
 
+            if(empty($_POST))
+            {
+                $data =
+                [
+                    'id' => $id_domain
+                ];
+                return $this->display_view('\Plafor/domain/save', $data);
+            }
+
+            return redirect()->to('plafor/grade/showAllTeachingDomain');
         }
 
         // Missing permissions
         return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
+
     }
 
 
@@ -478,13 +486,6 @@ class GradeController extends \App\Controllers\BaseController{
         // Access permissions
         if ($_SESSION["user_access"] >= config("\User\Config\UserConfig")->access_level_apprentice){
 
-            $data["list_title"] = lang("plafor_lang.list_title_subject"); 
-
-            $data["columns"] = ["name"              => lang("plafor_lang.name_subject"),
-                                "title"             => lang("plafor_lang.parent_domain_subject"),
-                                "subject_weight"    => lang("plafor_lang.weight_subject"),
-            ]; 
-
             $data["items"] = [
                 // @TODO
             ];
@@ -495,23 +496,35 @@ class GradeController extends \App\Controllers\BaseController{
                 ]);
             }
 
-            return $this->display_view("Common\items_list", $data);
+            return $this->display_view("\Plafor/subject/view", $data);
         }
 
         // Missing permissions
         return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
-    }
-    
 
-    public function saveTeachingSubject() : string|Response {
-        
+    }
+
+
+    public function saveTeachingSubject(int $id_subject = 0) : string|Response {
+
         // Access permissions
         if ($_SESSION["user_access"] >= config("\User\Config\UserConfig")->access_level_apprentice){
 
+            if(empty($_POST))
+            {
+                $data =
+                [
+                    'id' => $id_subject
+                ];
+                return $this->display_view('\Plafor/subject/save', $data);
+            }
+
+            return redirect()->to('plafor/grade/showAllTeachingSubject');
         }
 
         // Missing permissions
         return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
+
     }
 
 
@@ -519,14 +532,6 @@ class GradeController extends \App\Controllers\BaseController{
         // Access permissions
         if ($_SESSION["user_access"] >= config("\User\Config\UserConfig")->access_level_apprentice){
 
-            $data["list_title"] = lang("plafor_lang.list_title_module"); 
-
-            $data["columns"] = ["module_number"     => lang("plafor_lang.number_module"),
-                                "official_name"     => lang("plafor_lang.name_module"),
-                                "version"           => lang("plafor_lang.version_module"),
-                                "title"             => lang("plafor_lang.parent_domain_module"),
-            ]; 
-
             $data["items"] = [
                 // @TODO
             ];
@@ -537,43 +542,37 @@ class GradeController extends \App\Controllers\BaseController{
                 ]);
             }
 
-            return $this->display_view("Common\items_list", $data);
+            return $this->display_view("\Plafor/module/view", $data);
         }
 
         // Missing permissions
         return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
-    }
-    
 
-    public function saveTeachingModule() : string|Response {
-        
+    }
+
+
+    public function saveTeachingModule(int $id_module = 0) : string|Response {
+
         // Access permissions
         if ($_SESSION["user_access"] >= config("\User\Config\UserConfig")->access_level_apprentice){
 
+            if(empty($_POST))
+            {
+                $data =
+                [
+                    'id' => $id_module
+                ];
+                return $this->display_view('\Plafor/module/save', $data);
+            }
+
+            return redirect()->to('plafor/grade/showAllTeachingModule');
         }
 
         // Missing permissions
         return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
+
     }
 
 
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
