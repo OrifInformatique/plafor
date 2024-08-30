@@ -20,6 +20,9 @@ class TeachingDomainModelTest extends CIUnitTestCase
     // protected $seed     = 'apprenticeTestSeed';
     // protected $basePath = 'tests/_support/Database';
 
+    /**
+     * Test that the TeachingDomainModel instance is correctly created.
+     */
     public function testTeachingDomainModelInstance(): void
     {
         $teachingDomainModel = model('TeachingDomainModel');
@@ -28,13 +31,17 @@ class TeachingDomainModelTest extends CIUnitTestCase
         $this->assertInstanceOf(TeachingDomainModel::class,
             $teachingDomainModel);
     }
-
+ 
+    /**
+     * Test that the find method returns the expected data for a given ID.
+     */
     public function testFind(): void
     {
+        $id = 1;
         $teachingDomainModel = model('TeachingDomainModel');
-        $data = $teachingDomainModel->find(1);
+        $data = $teachingDomainModel->find($id);
         $expect = [
-            'id' => 1,
+            'id' => $id,
             'title' => 'Compétences de base élargies',
             'course_plan_name' => 'Informaticienne / Informaticien avec CFC, '
             . 'orientation exploitation et infrastructure',
@@ -47,6 +54,10 @@ class TeachingDomainModelTest extends CIUnitTestCase
         $this->assertEquals($expect, $data);
     }
 
+
+    /**
+     * Test that the findAll method returns an array of data.
+     */
     public function testFindAll(): void
     {
         $teachingDomainModel = model('TeachingDomainModel');
@@ -54,6 +65,10 @@ class TeachingDomainModelTest extends CIUnitTestCase
         $this->assertIsArray($data);
     }
 
+    /**
+     * Test that the first method returns the expected data for the first
+     * record.
+     */
     public function testFirst(): void
     {
         $teachingDomainModel = model('TeachingDomainModel');
@@ -72,6 +87,10 @@ class TeachingDomainModelTest extends CIUnitTestCase
         $this->assertEquals($expect, $data);
     }
 
+    /**
+     * Test that the first method with a custom select returns the expected
+     * data.
+     */
     public function testFirstCustom(): void
     {
         $teachingDomainModel = model('TeachingDomainModel');
@@ -82,6 +101,9 @@ class TeachingDomainModelTest extends CIUnitTestCase
         $this->assertEquals($expect, $data);
     }
 
+    /**
+     * Test that the insert method successfully inserts a new record.
+     */
     public function testInsert(): void
     {
         $teachingDomainModel = model('TeachingDomainModel');
