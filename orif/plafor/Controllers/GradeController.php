@@ -39,6 +39,9 @@ use User\Models\User_type_model;
 
 class GradeController extends \App\Controllers\BaseController{
 
+    // Class Constant
+    const m_ERROR_MISSING_PERMISSIONS = "\User/errors/403error";
+
     /**
      * Method to initialize controller attributes
      */
@@ -56,6 +59,8 @@ class GradeController extends \App\Controllers\BaseController{
         $this->m_grade_model = model("GradeModel");
         $this->m_user_course_model = model("UserCourseModel");
         $this->m_user_model = model("User_model");
+        $this->m_trainer_apprentice_model = model("TrainerApprenticeModel");
+
     }
 
 
@@ -88,24 +93,6 @@ class GradeController extends \App\Controllers\BaseController{
         return $this->isTrainer() 
             || ($_SESSION["user_access"] == config("\User\Config\UserConfig")->access_level_apprentice 
             && $apprentice_id == $_SESSION["user_id"]);
-    }
-
-
-    
-    /**
-     * Helper function for Access permissions
-     * Check if the user is an Admin
-     * Check if the user is a Trainer and he is linked to the Apprentice
-     *
-     * @return bool
-     */
-    private function isTrainerLinkedToApprentice(int $apprentice_id, int $trainer_id) : bool {
-
-        if ($this->isAdmin()){
-            return true;
-        }
-
-        // @TODO
     }
 
 
@@ -152,6 +139,7 @@ class GradeController extends \App\Controllers\BaseController{
      * Calculate the average of all grades
      *
      * @param  array $array => an array of module or an array of subject
+     * 
      * @return int
      */
     private function calculateAverageGrade(array $array) : int {
@@ -160,6 +148,23 @@ class GradeController extends \App\Controllers\BaseController{
         $total_grade = array_sum($all_grade);
 
         return $total_grade / $nbr_grade;
+    }
+
+
+    
+    /**
+     * Helper function who check if the date is in format: Y-m-d H:i:s
+     *  for save in the DB
+     *
+     * @param  string $date
+     * 
+     * @return bool
+     */
+    private function isDateValidToSave(string $date) : bool {
+        $format = "Y-m-d H:i:s";
+        $dateTime = \DateTime::createFromFormat($format, $date);
+
+        return $dateTime && $dateTime->format($format) === $date;
     }
     
         
@@ -173,14 +178,20 @@ class GradeController extends \App\Controllers\BaseController{
      * 
      * @return string|Response
      */    
-    public function saveGrade(int $apprentice_id = 0, int $trainer_id = 0, ?int $grade_id) : string|Response {
+    public function saveGrade(
+        int $apprentice_id = 0, 
+        int $trainer_id = 0, 
+        ?int $grade_id = null
+        ) 
+        : string|Response 
+        {
 
         // Access permissions
         if (!$this->isSelfApprentice($apprentice_id)){
-            return $this->display_view("\User\errors\403error");
+            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         } 
-        if (!$this->isTrainerLinkedToApprentice($apprentice_id, $trainer_id)){
-            return $this->display_view("\User\errors\403error");
+        if (!$this->m_trainer_apprentice_model->isTrainerLinkedToApprentice($apprentice_id, $trainer_id)){
+            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
 
         // Gets data related to the grade (for update)
@@ -216,48 +227,127 @@ class GradeController extends \App\Controllers\BaseController{
             return redirect()->to(base_url("/* @TODO */"));
         }
 
+        // Error if date is in wrong format
+        $date = $this->request->getPost("date");
+        if (!$this->isDateValidToSave($date)){
+            return redirect()->to(base_url("/* @TODO */"));
+        }
+
         // Actions upon form submission
         if (count($_POST) > 0){
             $new_grade = [
+                "id"                    => $grade_id,
                 "fk_user_course"        => $apprentice_id,
                 "fk_teaching_subject"   => $subject_id,
                 "fk_teaching_module"    => $module_id,
-                "date"                  => date("Y-m-d H:i:s"),
+                "date"                  => $date,
                 "grade"                 => $grade,
                 "is_school"             => $this->request->getPost("is_school"),
             ];
         }
 
-        // Insert grade in DB
-        if (is_null($grade_id)){
-            $this->m_grade_model->insert($new_grade);
-        }
-        // Update grade in DB
-        else{
-            $this->m_grade_model->update($grade_id, $new_grade);
-        }
-
-        // Error handling
-        if ($this->m_grade_model->errors() != null) {
-            return redirect()->to(base_url("/* @TODO */"));
-        }
+        // Insert or update grade in DB
+        $this->m_grade_model->save($new_grade);
 
         // Return to the previous view
         return $this->display_view("/* @TODO */");
     }
 
     
+    
+    /**
+     * Delete
+     *
+     * @return void
+     */
+    public function deleteGrade(
+        int $apprentice_id, 
+        int $trainer_id, 
+        int $grade_id, 
+        int $action = 0
+        ) 
+        : string|Response 
+        {
+        
+        // Access permissions
+        if (!$this->m_trainer_apprentice_model->isTrainerLinkedToApprentice($apprentice_id, $trainer_id)){
+            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
+        }
 
-    public function deleteGrade(int $grade_id) : string|Response {
-        // @TODO 
-        return $this->display_view("\User\errors\403error");
+        $grade = $this->m_grade_model->withDeleted()->find($grade_id);
+
+        // Error if grade don't exist
+        if(is_null($grade)){
+            return redirect()->to(base_url("/* @TODO */"));
+        }
+        
+        // Get the subject 
+        if($grade["fk_teaching_subject"] > 0){
+
+        }
+        // OR the module
+        else {
+
+        }
+        
+        // Action to perform
+        switch($action){
+            case 0: // Display confirmation
+                $output = [
+
+                    "entry" => [
+                        "type"  => lang("plafor_lang.name_grade"),
+                        "name"  => "",
+                        "data"  => [
+                            [
+                                "name" => "N/A",
+                                "value" => $grade["grade"]
+                            ]
+                        ]
+                    ],
+
+                    "cancel_btn_url" => base_url("/* @TODO */".$grade_id)
+                ];
+
+                // Enable the grade
+                if($grade["archive"]){
+                    $output["entry"]["message"] = lang("plafor_lang.enable_explanation_grade");
+                    $output["primary_action"] =
+                    [
+                        "name" => lang("common_lang.btn_reactivate"),
+                        "url"  => base_url(uri_string()."/3")
+                    ];
+                }
+
+                // Disable the grade
+                else{
+                    $output["entry"]["message"] = lang("plafor_lang.disable_explanation_grade");
+                    $output["primary_action"] =
+                    [
+                        "name" => lang("common_lang.btn_disable"),
+                        "url"  => base_url(uri_string()."/1")
+                    ];
+                }
+
+                return $this->display_view("/* @TODO */", $output);
+            
+            case 1: // Soft delete
+                $this->m_grade_model->delete($grade_id);
+                break;
+            
+            case 3: // Reactivate grade and is links
+                $this->m_grade_model->withDeleted()->update($grade_id, ["archive" => null]);
+                break;
+        }
+
+        return redirect()->to(base_url("/* @TODO */"));
     }
 
 
 
     public function showAllGrade() : string|Response  {
         // @TODO
-        return $this->display_view("\User\errors\403error");
+        return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
     }
 
     
@@ -265,25 +355,24 @@ class GradeController extends \App\Controllers\BaseController{
     /**
      * Show the average grade of all modules
      *
-     * @param  int $apprentice_id
+     * @param  int $apprentice_id   => ID of the apprentice
+     * @param  ?int $is_school      => true, average grades done in school
+     *                              => false, average grades done outside school
+     *                              => null, average grades of all modules
+     * 
      * @return string|Response
      */
-    public function showModuleAverageGrade(int $apprentice_id) : string|Response {
+    public function showModuleAverageGrade(int $apprentice_id, ?int $is_school = null) : string|Response {
         
         // Access permissions
         if (!$this->isSelfApprentice($apprentice_id)){
-            return $this->display_view("\User\errors\403error");
+            return $this->display_view();
         } 
 
-        // Get all module
-        $all_module = $this->m_grade_model->"/* getAllModuleGrade() */";
-        // Error if empty array
-        if (is_null($all_module)){
-            return $this->display_view("/* @TODO */");
-        }
+        
 
-        // Calculate the average of all modules
-        $average_grade = calculateAverageGrade($all_module);
+        // Get the average of all modules
+        $average_grade = $this->m_grade_model->getApprenticeModuleAverage($apprentice_id, $is_school);
         
         // Data do send to the view
         $data = [
@@ -308,7 +397,7 @@ class GradeController extends \App\Controllers\BaseController{
         
         // Access permissions
         if (!$this->isSelfApprentice($apprentice_id)){
-            return $this->display_view("\User\errors\403error");
+            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         } 
 
         // Get grade from one subject
@@ -363,7 +452,7 @@ class GradeController extends \App\Controllers\BaseController{
         }
 
         // Missing permissions
-        return $this->display_view("\User\errors\403error");
+        return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
     }
     
 
@@ -381,7 +470,7 @@ class GradeController extends \App\Controllers\BaseController{
         }
 
         // Missing permissions
-        return $this->display_view("\User\errors\403error");
+        return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
     }
 
 
@@ -410,7 +499,7 @@ class GradeController extends \App\Controllers\BaseController{
         }
 
         // Missing permissions
-        return $this->display_view("\User\errors\403error");
+        return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
     }
     
 
@@ -422,7 +511,7 @@ class GradeController extends \App\Controllers\BaseController{
         }
 
         // Missing permissions
-        return $this->display_view("\User\errors\403error");
+        return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
     }
 
 
@@ -452,7 +541,7 @@ class GradeController extends \App\Controllers\BaseController{
         }
 
         // Missing permissions
-        return $this->display_view("\User\errors\403error");
+        return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
     }
     
 
@@ -464,7 +553,7 @@ class GradeController extends \App\Controllers\BaseController{
         }
 
         // Missing permissions
-        return $this->display_view("\User\errors\403error");
+        return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
     }
 
 

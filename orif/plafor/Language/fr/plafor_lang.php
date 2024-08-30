@@ -122,6 +122,9 @@ return [
     "new_grade"                             => "Entrer une nouvelle note",
     "title_average_subject_grade"           => "Moyenne de la matière : ",
     "title_average_module_grade"            => "Moyenne des modules",
+    "enable_explanation_grade"              => "Toutes les informations concernant cette note seront réactivées.",
+    "disable_explanation_grade"             => "Toutes les informations concernant cette note seront désactivées.",
+
 
     // Page titles
     'title_apprentice_list'                 => 'Liste des apprentis',
