@@ -48,6 +48,7 @@ class GradeModelTest extends CIUnitTestCase
             'is_school' => '1',
             'archive' => null,
             'teaching_subject_name' => 'Mathématiques',
+            'user_id' => 6,
         ];
         $this->assertEquals($expect, $data);
     }
@@ -70,7 +71,8 @@ class GradeModelTest extends CIUnitTestCase
             'archive' => null,
             'fk_teaching_module' => '1',
             'teaching_module_name' => 'Interroger, traiter et assurer la '
-                . 'maintenance des bases de données'
+                . 'maintenance des bases de données',
+            'user_id' => 6,
         ];
         $this->assertEquals($expect, $data);
     }
@@ -103,6 +105,7 @@ class GradeModelTest extends CIUnitTestCase
             'is_school' => '1',
             'archive' => null,
             'teaching_subject_name' => 'Mathématiques',
+            'user_id' => 6,
         ];
         $this->assertEquals($expect, $data);
     }

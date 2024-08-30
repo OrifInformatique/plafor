@@ -88,6 +88,11 @@ class GradeModel extends Model
         } else {
             unset($data['fk_teaching_module']);
         }
+        if (isset($data['fk_user_course'])) { 
+            $userCouseModel = model('UserCourseModel');
+            $data['user_id'] = $userCouseModel
+                ->find($data['fk_user_course'])['fk_user'];
+        }
         return $data;
     }
 
