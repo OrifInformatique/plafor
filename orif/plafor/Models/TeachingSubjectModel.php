@@ -50,7 +50,7 @@ class TeachingSubjectModel extends Model
             'first' => $this->afterFindFind($data['data']),
             'find' => $this->afterFindFind($data['data']),
             'findAll' => $this->afterFindFindAll($data['data']),
-            default => $data
+            default => $data['data']
         };
         return $data;
     }
