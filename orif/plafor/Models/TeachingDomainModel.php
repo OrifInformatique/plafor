@@ -53,9 +53,9 @@ class TeachingDomainModel extends Model
         if (is_null($data['data'])) return $data;
         $data['data'] = match ($data['method']) {
             'first' => $this->afterFindFind($data['data']),
-            'find' => array_key_exists('id', $data) ?
-            $this->afterFindFind($data['data']) :
-            $this->afterFindFindAll($data['data']),
+            'find' => array_key_exists(0, $data['data']) ?
+            $this->afterFindFindAll($data['data']) :
+            $this->afterFindFind($data['data']),
             'findAll' => $this->afterFindFindAll($data['data']),
             default => $data['data']
         };

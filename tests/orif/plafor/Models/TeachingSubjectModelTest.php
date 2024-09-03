@@ -169,9 +169,7 @@ class TeachingSubjectModelTest extends CIUnitTestCase
     }
     public function testFindAllEqualsFindWithoutId(): void
     {
-        $idToDelete = 1;
         $teachingSubjectModel = model('TeachingSubjectModel');
-        $teachingSubjectModel->delete($idToDelete);
         $subjects = $teachingSubjectModel->findAll();
         $subjects2 = $teachingSubjectModel->find();
         $this->assertEquals($subjects, $subjects2);

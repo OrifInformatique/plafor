@@ -159,9 +159,7 @@ class TeachingDomainModelTest extends CIUnitTestCase
     }
     public function testFindAllEqualsFindWithoutId(): void
     {
-        $idToDelete = 1;
         $teachingDomainModel = model('TeachingDomainModel');
-        $teachingDomainModel->delete($idToDelete);
         $domains = $teachingDomainModel->findAll();
         $domains2 = $teachingDomainModel->find();
         $this->assertEquals($domains, $domains2);
