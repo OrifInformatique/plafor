@@ -49,7 +49,9 @@ class TeachingModuleModel extends Model
         if (is_null($data['data'])) return $data;
         $data['data'] = match ($data['method']) {
             'first' => $this->afterFindFind($data['data']),
-            'find' => $this->afterFindFind($data['data']),
+            'find' => array_key_exists('id', $data) ?
+            $this->afterFindFind($data['data']) :
+            $this->afterFindFindAll($data['data']),
             'findAll' => $this->afterFindFindAll($data['data']),
             default => $data['data']
         };

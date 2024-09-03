@@ -106,12 +106,12 @@ class TeachingModuleModelTest extends CIUnitTestCase
     public function testInsert()
     {
         $teachingModuleModel = model('TeachingModuleModel');
-        $teachingDomain = [
+        $teachingModule = [
             'module_number' => '1',
             'official_name' => 'Modéliser',
             'version' => '4'
         ];
-        $isSuccess = $teachingModuleModel->insert($teachingDomain, false);
+        $isSuccess = $teachingModuleModel->insert($teachingModule, false);
         $this->assertTrue($isSuccess);
     }
 
@@ -124,5 +124,41 @@ class TeachingModuleModelTest extends CIUnitTestCase
         $deletedModule = $teachingModuleModel->withDeleted()->find($id);
         $this->assertNull($module);
         $this->assertEquals($id, $deletedModule['id']);
+    }
+    public function testFindAllWithDeleted(): void
+    {
+        $idToDelete = 1;
+        $teachingModuleModel = model('TeachingModuleModel');
+        $teachingModuleModel->delete($idToDelete);
+        $modules = $teachingModuleModel->withDeleted()->findAll();
+        $this->assertEquals($modules[0]['id'], $idToDelete);
+    }
+
+    public function testFindAllOnlyDeleted(): void
+    {
+        $idToDelete = 1;
+        $teachingModuleModel = model('TeachingModuleModel');
+        $teachingModuleModel->delete($idToDelete);
+        $modules = $teachingModuleModel->onlyDeleted()->findAll();
+        $this->assertEquals($modules[0]['id'], $idToDelete);
+        $this->assertFalse(isset($modules[1]));
+    }
+    public function testFindAllWithoutDeleted(): void
+    {
+        $idToDelete = 1;
+        $teachingModuleModel = model('TeachingModuleModel');
+        $teachingModuleModel->delete($idToDelete);
+        $modules = $teachingModuleModel->findAll();
+        $this->assertNotEquals($modules[0]['id'], $idToDelete);
+        $this->assertTrue(isset($modules[1]));
+    }
+    public function testFindAllEqualsFindWithoutId(): void
+    {
+        $idToDelete = 1;
+        $teachingModuleModel = model('TeachingModuleModel');
+        $teachingModuleModel->delete($idToDelete);
+        $modules = $teachingModuleModel->findAll();
+        $modules2 = $teachingModuleModel->find();
+        $this->assertEquals($modules, $modules2);
     }
 }
