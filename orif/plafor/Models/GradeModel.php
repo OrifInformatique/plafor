@@ -120,8 +120,9 @@ class GradeModel extends Model
         int $id_subject): array
     {
         $data = $this
-            ->select('fk_user_course, fk_teaching_subject, date, grade,'
-                . 'grade.archive, name')
+            ->select('grade.fk_user_course, grade.fk_teaching_subject, '
+                . 'grade.date, grade.grade, grade.archive, '
+                . 'teaching_subject.name')
             ->join('teaching_subject',
             'teaching_subject.id = fk_teaching_subject', 'left')
             ->join('user_course', 'user_course.id = fk_user_course ', 'left')
@@ -147,8 +148,9 @@ class GradeModel extends Model
     public function getApprenticeModulesGrades(int $id_user_course,
         ?bool $is_school = null): array
     {
-        $this->select('fk_user_course, fk_teaching_module, date, grade,'
-                . 'is_school, grade.archive, official_name')
+        $this->select('grade.fk_user_course, grade.fk_teaching_module, '
+            . 'grade.date, grade.grade,' . 'grade.is_school, '
+            . 'grade.archive, teaching_module.official_name')
             ->join('teaching_module',
             'teaching_module.id = fk_teaching_module', 'left')
             ->join('user_course', 'user_course.id = fk_user_course ', 'left')
@@ -180,8 +182,9 @@ class GradeModel extends Model
     public function getApprenticeModuleGrade(int $id_user_course,
         int $id_module): array
     {
-        $data = $this->select('fk_user_course, fk_teaching_module, date, '
-            . 'grade, is_school, grade.archive, official_name')
+        $data = $this->select('grade.fk_user_course, '
+            . 'grade.fk_teaching_module, grade.date, grade.grade, '
+            . 'grade.is_school, grade.archive, teaching_module.official_name')
             ->join('teaching_module',
             'teaching_module.id = fk_teaching_module', 'left')
             ->join('user_course', 'user_course.id = fk_user_course ', 'left')

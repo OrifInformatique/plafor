@@ -71,15 +71,15 @@ class TeachingModuleModel extends Model
         if (array_key_exists('id', $data)) { 
             $teachingDomainModel = model('TeachingDomainModel');
             $data['teaching_domains'] = $teachingDomainModel
-                ->join('teaching_domain_module',
-                    'teaching_domain.id = fk_teaching_domain', 'left')
-                ->where('fk_teaching_module = ', $data['id'])
-                ->withDeleted()
                 ->select('teaching_domain.id,'
                     . ' teaching_domain.fk_teaching_domain_title,'
                     . ' teaching_domain.fk_course_plan,'
                     . ' teaching_domain.domain_weight, is_eliminatory,'
                     . ' teaching_domain.archive')
+                ->join('teaching_domain_module',
+                    'teaching_domain.id = fk_teaching_domain', 'left')
+                ->where('fk_teaching_module = ', $data['id'])
+                ->withDeleted()
                 ->find();
         }
         return $data;

@@ -36,6 +36,7 @@ class GradeModelTest extends CIUnitTestCase
      */
     public function testFindExpectSubject(): void
     {
+        dd();
         $id = 1;
         $gradeModel = model('GradeModel');
         $data = $gradeModel->find($id);

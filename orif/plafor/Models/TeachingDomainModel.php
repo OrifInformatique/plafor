@@ -72,14 +72,15 @@ class TeachingDomainModel extends Model
     protected function afterFindFind(array $data): array
     {
         if (array_key_exists('fk_teaching_domain_title', $data)) { 
-            $data['title'] = $this->select('title')
+            $data['title'] = $this->select('teaching_domain_title.title')
                                   ->join('teaching_domain_title',
              'teaching_domain_title.id = fk_teaching_domain_title', 'left')
              ->allowCallbacks(false)->withDeleted()
              ->find($data['id'])['title'];
         }
         if (array_key_exists('fk_course_plan', $data)) { 
-            $data['course_plan_name'] = $this->select('official_name')
+            $data['course_plan_name'] = $this
+                ->select('course_plan.official_name')
              ->join('course_plan', 'course_plan.id = fk_course_plan', 'left')
              ->allowCallbacks(false)->withDeleted()
              ->find($data['id'])['official_name'];
