@@ -386,5 +386,18 @@ class GradeModelTest extends CIUnitTestCase
         $expect = 3;
         $this->assertEquals($expect, $data);
     }
+
+    public function testDelete(): void
+    {
+        $id = 1;
+        $gradeModel = model('GradeModel');
+        $gradeModel->delete($id);
+        $grade = $gradeModel->find($id);
+        $deletedGrade = $gradeModel->withDeleted()->find($id);
+        $this->assertNull($grade);
+        $this->assertEquals($id, $deletedGrade['id']);
+    }
+
+
 }
 

@@ -78,6 +78,7 @@ class GradeModel extends Model
             $teachingSubjectModel = model('TeachingSubjectModel');
             $data['teaching_subject_name'] = $teachingSubjectModel
                 ->select('teaching_subject.name')
+                ->withDeleted()
                 ->find($data['fk_teaching_subject'])['name'];
         } else {
             unset($data['fk_teaching_subject']);
@@ -86,6 +87,7 @@ class GradeModel extends Model
             $teachingModuleModel = model('TeachingModuleModel');
             $data['teaching_module_name'] = $teachingModuleModel
                 ->select('teaching_module.official_name')
+                ->withDeleted()
                 ->find($data['fk_teaching_module'])['official_name'];
         } else {
             unset($data['fk_teaching_module']);
@@ -93,6 +95,7 @@ class GradeModel extends Model
         if (isset($data['fk_user_course'])) { 
             $userCouseModel = model('UserCourseModel');
             $data['user_id'] = $userCouseModel
+                ->withDeleted()
                 ->find($data['fk_user_course'])['fk_user'];
         }
         return $data;
