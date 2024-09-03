@@ -114,4 +114,15 @@ class TeachingModuleModelTest extends CIUnitTestCase
         $isSuccess = $teachingModuleModel->insert($teachingDomain, false);
         $this->assertTrue($isSuccess);
     }
+
+    public function testDelete(): void
+    {
+        $id = 1;
+        $teachingModuleModel = model('TeachingModuleModel');
+        $teachingModuleModel->delete($id);
+        $module = $teachingModuleModel->find($id);
+        $deletedModule = $teachingModuleModel->withDeleted()->find($id);
+        $this->assertNull($module);
+        $this->assertEquals($id, $deletedModule['id']);
+    }
 }
