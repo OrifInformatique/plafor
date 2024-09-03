@@ -120,12 +120,12 @@ class TeachingSubjectModelTest extends CIUnitTestCase
     public function testInsert()
     {
         $teachingSubjectModel = model('TeachingSubjectModel');
-        $teachingDomain = [
+        $teachingSubject = [
             'fk_teaching_domain' => 1,
             'name' => 'test',
             'subject_weight' => 0.1,
         ];
-        $isSuccess = $teachingSubjectModel->insert($teachingDomain, false);
+        $isSuccess = $teachingSubjectModel->insert($teachingSubject, false);
         $this->assertTrue($isSuccess);
     }
 
@@ -138,6 +138,43 @@ class TeachingSubjectModelTest extends CIUnitTestCase
         $deletedSubject = $teachingSubjectModel->withDeleted()->find($id);
         $this->assertNull($subject);
         $this->assertEquals($id, $deletedSubject['id']);
+    }
+
+    public function testFindAllWithDeleted(): void
+    {
+        $idToDelete = 1;
+        $teachingSubjectModel = model('TeachingSubjectModel');
+        $teachingSubjectModel->delete($idToDelete);
+        $subjects = $teachingSubjectModel->withDeleted()->findAll();
+        $this->assertEquals($subjects[0]['id'], $idToDelete);
+    }
+
+    public function testFindAllOnlyDeleted(): void
+    {
+        $idToDelete = 1;
+        $teachingSubjectModel = model('TeachingSubjectModel');
+        $teachingSubjectModel->delete($idToDelete);
+        $subjects = $teachingSubjectModel->onlyDeleted()->findAll();
+        $this->assertEquals($subjects[0]['id'], $idToDelete);
+        $this->assertFalse(isset($subjects[1]));
+    }
+    public function testFindAllWithoutDeleted(): void
+    {
+        $idToDelete = 1;
+        $teachingSubjectModel = model('TeachingSubjectModel');
+        $teachingSubjectModel->delete($idToDelete);
+        $subjects = $teachingSubjectModel->findAll();
+        $this->assertNotEquals($subjects[0]['id'], $idToDelete);
+        $this->assertTrue(isset($subjects[1]));
+    }
+    public function testFindAllEqualsFindWithoutId(): void
+    {
+        $idToDelete = 1;
+        $teachingSubjectModel = model('TeachingSubjectModel');
+        $teachingSubjectModel->delete($idToDelete);
+        $subjects = $teachingSubjectModel->findAll();
+        $subjects2 = $teachingSubjectModel->find();
+        $this->assertEquals($subjects, $subjects2);
     }
 
 }
