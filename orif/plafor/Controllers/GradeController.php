@@ -253,7 +253,7 @@ class GradeController extends \App\Controllers\BaseController{
      *
      * @return string|Response
      */
-    public function showAllGrade() : string|Response  {
+    public function getAllGrade() : string|Response  {
 
         return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
 
@@ -264,7 +264,7 @@ class GradeController extends \App\Controllers\BaseController{
 
 
     /**
-     * Show the average grade of all modules
+     * Return the average grade of all modules
      *
      * @param  int $course_plan_id  => ID of the apprentice
      * @param  ?int $is_school      => true, average grades done in school
@@ -273,7 +273,7 @@ class GradeController extends \App\Controllers\BaseController{
      *
      * @return string|Response
      */
-    public function showModuleAverageGrade(int $course_plan_id, ?int $is_school = null) : string|Response {
+    public function getModuleAverageGrade(int $course_plan_id, ?int $is_school = null) : string|Response {
 
         // Access permissions
         if (!isCurrentUserSelfApprentice($course_plan_id)){
@@ -296,14 +296,14 @@ class GradeController extends \App\Controllers\BaseController{
 
 
     /**
-     * Show the average grade of 1 subject
+     * Return the average grade of 1 subject
      *
      * @param  int $course_plan_id  => ID of the apprentice
      * @param  int $subject_id      => ID of the subject
      *
      * @return string|Response
      */
-    public function showSubjectAverageGrade(int $course_plan_id, int $subject_id) : string|Response {
+    public function getSubjectAverageGrade(int $course_plan_id, int $subject_id) : string|Response {
 
         // Access permissions
         if (!isCurrentUserSelfApprentice($course_plan_id)){
