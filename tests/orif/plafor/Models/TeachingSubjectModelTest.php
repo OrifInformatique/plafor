@@ -129,5 +129,16 @@ class TeachingSubjectModelTest extends CIUnitTestCase
         $this->assertTrue($isSuccess);
     }
 
+    public function testDelete(): void
+    {
+        $id = 1;
+        $teachingSubjectModel = model('TeachingSubjectModel');
+        $teachingSubjectModel->delete($id);
+        $subject = $teachingSubjectModel->find($id);
+        $deletedSubject = $teachingSubjectModel->withDeleted()->find($id);
+        $this->assertNull($subject);
+        $this->assertEquals($id, $deletedSubject['id']);
+    }
+
 }
 

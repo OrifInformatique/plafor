@@ -46,6 +46,7 @@ class TeachingSubjectModel extends Model
 
     protected function afterFind(array $data): array
     {
+        if (is_null($data['data'])) return $data;
         $data['data'] = match ($data['method']) {
             'first' => $this->afterFindFind($data['data']),
             'find' => $this->afterFindFind($data['data']),
@@ -67,6 +68,7 @@ class TeachingSubjectModel extends Model
         if (array_key_exists('fk_teaching_domain', $data)) { 
             $teachingDomainModel = model('TeachingDomainModel');
             $data['teaching_domain'] = $teachingDomainModel
+                ->withDeleted()
                 ->find($data['fk_teaching_domain']);
         }
         unset($data['fk_teaching_domain']);
