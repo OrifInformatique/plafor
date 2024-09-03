@@ -129,4 +129,42 @@ class TeachingDomainModelTest extends CIUnitTestCase
         $this->assertNull($domain);
         $this->assertEquals($id, $deletedDomain['id']);
     }
+
+    public function testFindAllWithDeleted(): void
+    {
+        $idToDelete = 1;
+        $teachingDomainModel = model('TeachingDomainModel');
+        $teachingDomainModel->delete($idToDelete);
+        $domains = $teachingDomainModel->withDeleted()->findAll();
+        $this->assertEquals($domains[0]['id'], $idToDelete);
+    }
+
+    public function testFindAllOnlyDeleted(): void
+    {
+        $idToDelete = 1;
+        $teachingDomainModel = model('TeachingDomainModel');
+        $teachingDomainModel->delete($idToDelete);
+        $domains = $teachingDomainModel->onlyDeleted()->findAll();
+        $this->assertEquals($domains[0]['id'], $idToDelete);
+        $this->assertFalse(isset($domains[1]));
+    }
+    public function testFindAllWithoutDeleted(): void
+    {
+        $idToDelete = 1;
+        $teachingDomainModel = model('TeachingDomainModel');
+        $teachingDomainModel->delete($idToDelete);
+        $domains = $teachingDomainModel->findAll();
+        $this->assertNotEquals($domains[0]['id'], $idToDelete);
+        $this->assertTrue(isset($domains[1]));
+    }
+    public function testFindAllEqualsFindWithoutId(): void
+    {
+        $idToDelete = 1;
+        $teachingDomainModel = model('TeachingDomainModel');
+        $teachingDomainModel->delete($idToDelete);
+        $domains = $teachingDomainModel->findAll();
+        $domains2 = $teachingDomainModel->find();
+        $this->assertEquals($domains, $domains2);
+    }
+
 }
