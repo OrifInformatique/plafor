@@ -50,6 +50,10 @@ class GradeModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
+    /*
+     * findAll and find without id in param call afterFindFindAll
+     * first and find with id in param call afterFindFind 
+     */
     protected function afterFind(array $data): array
     {
         if (is_null($data['data'])) return $data;
