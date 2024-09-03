@@ -50,6 +50,7 @@ class TeachingDomainModel extends Model
 
     protected function afterFind(array $data): array
     {
+        if (is_null($data['data'])) return $data;
         $data['data'] = match ($data['method']) {
             'first' => $this->afterFindFind($data['data']),
             'find' => $this->afterFindFind($data['data']),
@@ -72,13 +73,13 @@ class TeachingDomainModel extends Model
             $data['title'] = $this->select('title')
                                   ->join('teaching_domain_title',
              'teaching_domain_title.id = fk_teaching_domain_title', 'left')
-             ->allowCallbacks(false)
+             ->allowCallbacks(false)->withDeleted()
              ->find($data['id'])['title'];
         }
         if (array_key_exists('fk_course_plan', $data)) { 
             $data['course_plan_name'] = $this->select('official_name')
              ->join('course_plan', 'course_plan.id = fk_course_plan', 'left')
-             ->allowCallbacks(false)
+             ->allowCallbacks(false)->withDeleted()
              ->find($data['id'])['official_name'];
         }
         return $data;

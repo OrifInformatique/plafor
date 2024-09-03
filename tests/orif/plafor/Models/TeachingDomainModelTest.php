@@ -118,4 +118,15 @@ class TeachingDomainModelTest extends CIUnitTestCase
         $isSuccess = $teachingDomainModel->insert($teachingDomain, false);
         $this->assertTrue($isSuccess);
     }
+
+    public function testDelete(): void
+    {
+        $id = 1;
+        $teachingDomainModel = model('TeachingDomainModel');
+        $teachingDomainModel->delete($id);
+        $domain = $teachingDomainModel->find($id);
+        $deletedDomain = $teachingDomainModel->withDeleted()->find($id);
+        $this->assertNull($domain);
+        $this->assertEquals($id, $deletedDomain['id']);
+    }
 }
