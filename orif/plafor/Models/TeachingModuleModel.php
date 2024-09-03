@@ -65,6 +65,7 @@ class TeachingModuleModel extends Model
     }
 
     // this call when find or first is used
+    // add teaching_domain
     protected function afterFindFind(array $data): array
     {
         if (array_key_exists('id', $data)) { 
@@ -74,6 +75,11 @@ class TeachingModuleModel extends Model
                     'teaching_domain.id = fk_teaching_domain', 'left')
                 ->where('fk_teaching_module = ', $data['id'])
                 ->withDeleted()
+                ->select('teaching_domain.id,'
+                    . ' teaching_domain.fk_teaching_domain_title,'
+                    . ' teaching_domain.fk_course_plan,'
+                    . ' teaching_domain.domain_weight, is_eliminatory,'
+                    . ' teaching_domain.archive')
                 ->find();
         }
         return $data;
