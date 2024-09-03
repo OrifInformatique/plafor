@@ -27,7 +27,7 @@ class GradeModel extends Model
     protected $validationRules      = [
         'fk_user_course' => 'is_natural_no_zero',
         // TODO create a custom rule for only fk_teaching_subject or
-        // fk_teaching_subject
+        // fk_teaching_module
         'fk_teaching_subject' => 'required_without[fk_teaching_module]',
         'fk_teaching_module' => 'required_without[fk_teaching_subject]',
         'date' => 'valid_date',
@@ -64,12 +64,14 @@ class GradeModel extends Model
     }
 
     // this call when findAll is used
+    // execute afterFindFind on all element of the return off FindAll
     protected function afterFindFindAll(array $data): array
     {
         return array_map(fn($row) => $this->afterFindFind($row), $data);
     }
 
     // this call when find or first is used
+    // add subject name, module name and user id
     protected function afterFindFind(array $data): array
     {
         if (isset($data['fk_teaching_subject'])) { 
@@ -202,6 +204,9 @@ class GradeModel extends Model
         return round($number * 10) / 10;
     }
 
+    // exemple call with round_method :
+    // $data = $gradeModel->getApprenticeSubjectAverage($id_user_course,
+    // $id_subject, [$gradeModel, 'roundHalfPoint']);
     public function getApprenticeSubjectAverage(int $id_user_course,
         int $id_subject, ?callable $round_method = null): float
     {
@@ -213,6 +218,9 @@ class GradeModel extends Model
 
     }
 
+    // exemple call with round_method :
+    // $data = $gradeModel->getApprenticeModuleAverage($id_user_course,
+    //     $is_school, [$gradeModel, 'roundHalfPoint']);
     public function getApprenticeModuleAverage(int $id_user_course,
         ?bool $is_school = null, ?callable $round_method = null): float
     {
