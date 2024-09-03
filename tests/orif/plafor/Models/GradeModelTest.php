@@ -398,6 +398,40 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertEquals($id, $deletedGrade['id']);
     }
 
+    public function testFindAllWithDeleted(): void
+    {
+        $idToDelete = 1;
+        $gradeModel = model('GradeModel');
+        $gradeModel->delete($idToDelete);
+        $domains = $gradeModel->withDeleted()->findAll();
+        $this->assertEquals($domains[0]['id'], $idToDelete);
+    }
+
+    public function testFindAllOnlyDeleted(): void
+    {
+        $idToDelete = 1;
+        $gradeModel = model('GradeModel');
+        $gradeModel->delete($idToDelete);
+        $domains = $gradeModel->onlyDeleted()->findAll();
+        $this->assertEquals($domains[0]['id'], $idToDelete);
+        $this->assertFalse(isset($domains[1]));
+    }
+    public function testFindAllWithoutDeleted(): void
+    {
+        $idToDelete = 1;
+        $gradeModel = model('GradeModel');
+        $gradeModel->delete($idToDelete);
+        $domains = $gradeModel->findAll();
+        $this->assertNotEquals($domains[0]['id'], $idToDelete);
+        $this->assertTrue(isset($domains[1]));
+    }
+    public function testFindAllEqualsFindWithoutId(): void
+    {
+        $gradeModel = model('GradeModel');
+        $domains = $gradeModel->findAll();
+        $domains2 = $gradeModel->find();
+        $this->assertEquals($domains, $domains2);
+    }
 
 }
 
