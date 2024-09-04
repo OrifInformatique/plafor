@@ -50,9 +50,21 @@ class GradeModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    /*
-     * findAll and find without id in param call afterFindFindAll
-     * first and find with id in param call afterFindFind 
+    /**
+     * Post-processing hook for find operations.
+     * 
+     * @param array $data Contains the result from the find operation, along
+     * with additional metadata.
+     *   - $data['data']: The result data from the find operation.
+     *   - $data['method']: The name of the find method that was called (e.g.
+     *   'findAll', 'find', 'first').
+     * 
+     * @return array $data The edited result data.
+     * 
+     * This method applies additional processing to the result data based on
+     * the type of find operation:
+     * - findAll and find without an ID in the parameter call afterFindFindAll.
+     * - first and find with an ID in the parameter call afterFindFind.
      */
     protected function afterFind(array $data): array
     {
@@ -68,15 +80,32 @@ class GradeModel extends Model
         return $data;
     }
 
-    // this call when findAll is used
-    // execute afterFindFind on all element of the return off FindAll
+    /**
+     * Post-processing hook for findAll operations.
+     * 
+     * Applies the afterFindFind method to each element of the result set
+     * returned by findAll.
+     * 
+     * @param array $data The result set from the findAll operation.
+     * @return array The result set with each element processed by
+     * afterFindFind.
+     */
     protected function afterFindFindAll(array $data): array
     {
         return array_map(fn($row) => $this->afterFindFind($row), $data);
     }
 
-    // this call when find or first is used
-    // add subject name, module name and user id
+    /**
+     * Post-processing hook for find and first operations.
+     * 
+     * Enhances the result data by adding related information:
+     * - Teaching subject name (if fk_teaching_subject is present)
+     * - Teaching module name (if fk_teaching_module is present)
+     * - User ID (if fk_user_course is present)
+     * 
+     * @param array $data The result data from the find or first operation.
+     * @return array The enhanced result data with additional information.
+     */
     protected function afterFindFind(array $data): array
     {
         if (isset($data['fk_teaching_subject'])) { 
@@ -195,6 +224,15 @@ class GradeModel extends Model
         return $data;
     }
 
+    /**
+     * Calculates the average of an array of grades returned by the
+     * getApprenticeSubjectGrades or getApprenticeModulesGrades methods.
+     * 
+     * @param array $grades The array of grades returned by
+     * getApprenticeSubjectGrades or getApprenticeModulesGrades, where each
+     * grade is an associative array containing the grade data.
+     * @return float The average grade.
+     */
     private function getAverageFromArray(array $grades): float
     {
         $onlyGrades = array_map(fn($row) => $row['grade'], $grades);
@@ -203,21 +241,41 @@ class GradeModel extends Model
         return $average;
     }
 
-    // 4.25 -> 4.5
+    /**
+     * Rounds a number to the nearest half point (e.g. 4.25 -> 4.5).
+     * 
+     * @param float $number The number to round.
+     * @return float The rounded number.
+     */
     private function roundHalfPoint(float $number): float
     {
         return round($number * 2) / 2;
     }
 
-    // 4.25 -> 4.3
+    /**
+     * Rounds a number to one decimal point (e.g. 4.25 -> 4.3).
+     * 
+     * @param float $number The number to round.
+     * @return float The rounded number.
+     */
     private function roundOneDecimalPoint(float $number): float
     {
         return round($number * 10) / 10;
     }
 
-    // exemple call with round_method :
-    // $data = $gradeModel->getApprenticeSubjectAverage($id_user_course,
-    // $id_subject, [$gradeModel, 'roundHalfPoint']);
+    /**
+     * Calculates the average grade of an apprentice for a specific subject.
+     * 
+     * @param int $id_user_course The ID of the user course.
+     * @param int $id_subject The ID of the subject.
+     * @param callable|null $round_method A callback function to round the
+     * average grade. Defaults to rounding to one decimal point.
+     * @return float The average grade of the apprentice for the subject.
+     * 
+     * Example usage:
+     * $data = $gradeModel->getApprenticeSubjectAverage($id_user_course,
+     *     $id_subject, [$gradeModel, 'roundHalfPoint']);
+     */
     public function getApprenticeSubjectAverage(int $id_user_course,
         int $id_subject, ?callable $round_method = null): float
     {
@@ -229,9 +287,20 @@ class GradeModel extends Model
 
     }
 
-    // exemple call with round_method :
-    // $data = $gradeModel->getApprenticeModuleAverage($id_user_course,
-    //     $is_school, [$gradeModel, 'roundHalfPoint']);
+    /**
+     * Calculates the average grade of an apprentice for a module.
+     * 
+     * @param int $id_user_course The ID of the user course.
+     * @param bool|null $is_school Whether to consider school grades or not.
+     * Defaults to null.
+     * @param callable|null $round_method A callback function to round the
+     * average grade. Defaults to rounding to one decimal point.
+     * @return float The average grade of the apprentice for the module.
+     * 
+     * Example usage:
+     * $data = $gradeModel->getApprenticeModuleAverage($id_user_course,
+     *     $is_school, [$gradeModel, 'roundHalfPoint']);
+     */
     public function getApprenticeModuleAverage(int $id_user_course,
         ?bool $is_school = null, ?callable $round_method = null): float
     {

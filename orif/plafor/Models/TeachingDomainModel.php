@@ -48,6 +48,22 @@ class TeachingDomainModel extends Model
     protected $afterDelete    = [];
 
 
+    /**
+     * Post-processing hook for find operations.
+     * 
+     * @param array $data Contains the result from the find operation, along
+     * with additional metadata.
+     *   - $data['data']: The result data from the find operation.
+     *   - $data['method']: The name of the find method that was called (e.g.
+     *   'findAll', 'find', 'first').
+     * 
+     * @return array $data The edited result data.
+     * 
+     * This method applies additional processing to the result data based on
+     * the type of find operation:
+     * - findAll and find without an ID in the parameter call afterFindFindAll.
+     * - first and find with an ID in the parameter call afterFindFind.
+     */
     protected function afterFind(array $data): array
     {
         if (is_null($data['data'])) return $data;
@@ -62,13 +78,34 @@ class TeachingDomainModel extends Model
         return $data;
     }
 
-    // this call when findAll is used
+    /**
+     * Post-processing hook for findAll operations.
+     * 
+     * Applies the afterFindFind method to each element of the result set
+     * returned by findAll.
+     * 
+     * @param array $data The result set from the findAll operation.
+     * @return array The result set with each element processed by
+     * afterFindFind.
+     */
     protected function afterFindFindAll(array $data): array
     {
         return array_map(fn($row) => $this->afterFindFind($row), $data);
     }
 
-    // this call when find or first is used
+    /**
+     * Post-processing hook for find and first operations.
+     * 
+     * Enhances the result data by adding related information:
+     * - Teaching domain title (if fk_teaching_domain_title is present)
+     * - Course plan name (if fk_course_plan is present)
+     * 
+     * These enhancements are achieved through joins with the
+     * teaching_domain_title and course_plan tables.
+     * 
+     * @param array $data The result data from the find or first operation.
+     * @return array The enhanced result data with additional information.
+     */
     protected function afterFindFind(array $data): array
     {
         if (array_key_exists('fk_teaching_domain_title', $data)) { 
