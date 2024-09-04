@@ -224,7 +224,7 @@ class GradeModel extends Model
         $grades = $this
             ->getApprenticeSubjectGrades($id_user_course, $id_subject);
         $average = $this->getAverageFromArray($grades);
-        if (is_null($round_method)) return $average;
+        $round_method = $round_method ?? [$this, 'roundOneDecimalPoint'];
         return $round_method($average);
 
     }
@@ -238,7 +238,7 @@ class GradeModel extends Model
         $grades = $this->getApprenticeModulesGrades($id_user_course,
             $is_school);
         $average = $this->getAverageFromArray($grades);
-        if (is_null($round_method)) return $average;
+        $round_method = $round_method ?? [$this, 'roundOneDecimalPoint'];
         return $round_method($average);
     }
 }

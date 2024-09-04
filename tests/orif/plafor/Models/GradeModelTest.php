@@ -36,7 +36,6 @@ class GradeModelTest extends CIUnitTestCase
      */
     public function testFindExpectSubject(): void
     {
-        dd();
         $id = 1;
         $gradeModel = model('GradeModel');
         $data = $gradeModel->find($id);
@@ -317,7 +316,7 @@ class GradeModelTest extends CIUnitTestCase
         $id_subject = 1;
         $gradeModel = model('GradeModel');
         $data = $gradeModel->getApprenticeSubjectAverage($id_user_course,
-            $id_subject);
+            $id_subject, fn($e) => $e);
         $expect = 4.25;
         $this->assertEquals($expect, $data);
     }
@@ -339,7 +338,7 @@ class GradeModelTest extends CIUnitTestCase
         $id_subject = 1;
         $gradeModel = model('GradeModel');
         $data = $gradeModel->getApprenticeSubjectAverage($id_user_course,
-            $id_subject, [$gradeModel, 'roundOneDecimalPoint']);
+            $id_subject);
         $expect = 4.3;
         $this->assertEquals($expect, $data);
     }
@@ -354,7 +353,7 @@ class GradeModelTest extends CIUnitTestCase
 
         $gradeModel = model('GradeModel');
         $data = $gradeModel->getApprenticeModuleAverage($id_user_course,
-            $is_school);
+            $is_school, fn($e) => $e);
         $expect = 4.75;
         $this->assertEquals($expect, $data);
     }
