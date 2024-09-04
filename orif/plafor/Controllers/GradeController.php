@@ -139,7 +139,7 @@ class GradeController extends \App\Controllers\BaseController{
      * Calculate the average of all grades
      *
      * @param  array $array => an array of module or an array of subject
-     * 
+     *
      * @return int
      */
     private function calculateAverageGrade(array $array) : int {
@@ -150,7 +150,7 @@ class GradeController extends \App\Controllers\BaseController{
         return $total_grade / $nbr_grade;
     }
 
-    
+
 
     /**
      * Insert/Modify the grade of an apprentice
@@ -162,11 +162,11 @@ class GradeController extends \App\Controllers\BaseController{
      * @return string|Response
     */
     public function saveGrade(
-        int $apprentice_id = 0, 
-        int $trainer_id = 0, 
+        int $apprentice_id = 0,
+        int $trainer_id = 0,
         ?int $grade_id = null
-        ) 
-        : string|Response 
+        )
+        : string|Response
         {
 
 
@@ -174,7 +174,7 @@ class GradeController extends \App\Controllers\BaseController{
         if (!$this->isSelfApprentice($apprentice_id)){
 
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
-        } 
+        }
         if (!$this->m_trainer_apprentice_model->isTrainerLinkedToApprentice($apprentice_id, $trainer_id)){
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
 
@@ -238,11 +238,11 @@ class GradeController extends \App\Controllers\BaseController{
 
 
         // Return to the previous view
-        return $this->display_view("plafor/grade/view"); */
+        return $this->display_view("plafor/grade/view");
 
         if(empty($_POST))
         {
-            $data = 
+            $data =
             [
                 'id' => $id_grade
             ];
@@ -252,22 +252,22 @@ class GradeController extends \App\Controllers\BaseController{
         return redirect()->to('plafor/grade/showAllGrade');
     }
 
-    
-    
+
+
     /**
      * Delete
      *
      * @return void
      */
     public function deleteGrade(
-        int $apprentice_id, 
-        int $trainer_id, 
-        int $grade_id, 
+        int $apprentice_id,
+        int $trainer_id,
+        int $grade_id,
         int $action = 0
-        ) 
-        : string|Response 
+        )
+        : string|Response
         {
-        
+
         // Access permissions
         if (!$this->m_trainer_apprentice_model->isTrainerLinkedToApprentice($apprentice_id, $trainer_id)){
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
@@ -279,8 +279,8 @@ class GradeController extends \App\Controllers\BaseController{
         if(is_null($grade)){
             return redirect()->to(base_url("/* @TODO */"));
         }
-        
-        // Get the subject 
+
+        // Get the subject
         if($grade["fk_teaching_subject"] > 0){
 
         }
@@ -288,7 +288,7 @@ class GradeController extends \App\Controllers\BaseController{
         else {
 
         }
-        
+
         // Action to perform
         switch($action){
             case 0: // Display confirmation
@@ -329,11 +329,11 @@ class GradeController extends \App\Controllers\BaseController{
                 }
 
                 return $this->display_view("/* @TODO */", $output);
-            
+
             case 1: // Soft delete
                 $this->m_grade_model->delete($grade_id);
                 break;
-            
+
             case 3: // Reactivate grade and is links
                 $this->m_grade_model->withDeleted()->update($grade_id, ["archive" => null]);
                 break;
@@ -361,20 +361,20 @@ class GradeController extends \App\Controllers\BaseController{
      * @param  ?int $is_school      => true, average grades done in school
      *                              => false, average grades done outside school
      *                              => null, average grades of all modules
-     * 
+     *
      * @return string|Response
      */
 
     public function showModuleAverageGrade(int $apprentice_id, ?int $is_school = null) : string|Response {
-        
+
         // Access permissions
         if (!$this->isSelfApprentice($apprentice_id)){
             return $this->display_view();
-        } 
+        }
 
         // Get the average of all modules
         $average_grade = $this->m_grade_model->getApprenticeModuleAverage($apprentice_id, $is_school);
-        
+
         // Data do send to the view
         $data = [
             "title"     => lang("plafor_lang.title_average_module_grade"),
@@ -400,7 +400,7 @@ class GradeController extends \App\Controllers\BaseController{
         if (!$this->isSelfApprentice($apprentice_id)){
 
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
-        } 
+        }
 
 
         // Get grade from one subject
@@ -575,4 +575,3 @@ class GradeController extends \App\Controllers\BaseController{
 
 
 }
-
