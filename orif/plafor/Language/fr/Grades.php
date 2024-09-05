@@ -12,19 +12,21 @@
 return [
 
     // Teaching domain
-    "domain"                    => "Domaine d'ensignement",
-    "domains"                   => "Domaine d'enseignements",
-    "domains_list"              => "Liste des domaines d'enseignements",
-    "parent_course_plan_domain" => "Plan de formation parent",
+    "domain"                    => "Domaine d'enseignement",
+    "domains"                   => "Domaines d'enseignement",
+    "domains_list"              => "Liste des domaines d'enseignement",
+    "domain_parent_course_plan" => "Plan de formation parent",
     "create_domain"             => "Créer un domaine",
+    "update_domain"             => "Modifer un domaine",
     "delete_domain"             => "Supprimer un domaine",
 
     // Teaching subject
     "subject"               => "Matière",
     "subjects"              => "Matières",
     "subjects_list"         => "Liste des matières",
-    "parent_domain_subject" => "Domaine parent",
+    "subject_parent_domain" => "Domaine parent",
     "create_subject"        => "Créer une matière",
+    "update_subject"        => "Modifier une matière",
     "delete_subject"        => "Supprimer une matière",
 
     "ECG_acronym" => "ECG",
@@ -43,8 +45,9 @@ return [
     "module_name"          => "Titre",
     "module_version"       => "Version",
     "module_parent_domain" => "Domaine parent",
-    "create_module"        => "Créer une matière",
-    "delete_module"        => "Supprimer une matière",
+    "create_module"        => "Créer un module",
+    "update_module"        => "Modifier un module",
+    "delete_module"        => "Supprimer un module",
 
     "school_modules"     => "Modules professionnels",
     "non_school_modules" => "Modules inter-entreprises",

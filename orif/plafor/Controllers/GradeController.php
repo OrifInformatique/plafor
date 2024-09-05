@@ -473,7 +473,9 @@ class GradeController extends \App\Controllers\BaseController{
                 return $this->display_view('\Plafor/domain/save', $data);
             }
 
-            return redirect()->to('plafor/grade/showAllTeachingDomain');
+            /* TODO : Get the course_plan id to redirect to the course_plan details */
+            $course_plan_id = 1;
+            return redirect()->to('plafor/courseplan/view_course_plan/'.$course_plan_id);
         }
 
         // Missing permissions

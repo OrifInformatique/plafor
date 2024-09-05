@@ -23,11 +23,11 @@
  * [
  *      'school' => array, All school modules teached to the apprentice. Required.
  *      [
- *          'modules'    => array, List of school modules teached to the apprentice. Structure of one module below. Required
+ *          'modules'    => array, List of school modules teached to the apprentice. Structure of one module below. Required.
  *          [
- *              'number' => int|string, Number of the module. Required.
- *              'name'   => string,     Name of the module. Required.
- *              'grade'  => int,        Grade obtained by the apprentice to the module. Can be empty.
+ *              'number' => int,    Number of the module. Required.
+ *              'name'   => string, Name of the module. Required.
+ *              'grade'  => int,    Grade obtained by the apprentice to the module. Can be empty.
  *          ]
  *          'weighting' => int, Weighting of school modules. Required.
  *          'average'   => int, Average of school modules. Can be empty.
@@ -49,7 +49,7 @@
  *      'subjects'  => array, All subjects teached to the apprentice. Required.
  *      [
  *          'name'      => string,     Name of the subject. Required.
- *          'grades'    => array[int], Grades of the apprentice in the subject. Can be empty. Must be ordered by date (semester).
+ *          'grades'    => array[int], Grades of the apprentice in the subject. Must be 8 values length. Values can be empty. Must be ordered by date (semester).
  *          'weighting' => int,        Weighting of the subject. Required.
  *          'average'   => int,        Average of the subject. Can be empty.
  *      ]
@@ -57,18 +57,7 @@
  *      'average'   => int, Average of all subjects. Can be empty.
  * ]
  *
- * @param ?array $ecg ECG subjects
- * [
- *      'subjects'  => array, All subjects teached to the apprentice. Required.
- *      [
- *          'name'      => string,     Name of the subject. Required.
- *          'grades'    => array[int], Grades of the apprentice in the subject. Can be empty. Must be ordered by date (semester).
- *          'weighting' => int,        Weighting of the subject. Required.
- *          'average'   => int,        Average of the subject. Can be empty.
- *      ]
- *      'weighting' => int, Weighting of school modules.
- *      'average'   => int, Average of all subjects. Can be empty.
- * ]
+ * @param ?array $ecg All ECG subjects teached to the apprentice. Same structure as CBE.
  *
  * === NOTES ===
  *
@@ -86,6 +75,88 @@
  * No data is sent by this view.
  *
  */
+
+
+
+/* Random data set for testing, can be deleted anytime */
+$cfc_average = 4.2; // Exemple de moyenne des domaines
+
+$modules = [
+    'school' => [
+        'modules' => [
+            [
+                'number' => 'M101',
+                'name' => 'Mathematics',
+                'grade' => 5, // Grade facultatif, peut être vide
+            ],
+            [
+                'number' => 'M102',
+                'name' => 'Physics',
+                // Grade laissé vide
+            ],
+        ],
+        'weighting' => 80,
+        // Moyenne des modules scolaires laissée vide
+    ],
+    'non-school' => [
+        'modules' => [
+            [
+                'number' => 'NS201',
+                'name' => 'Work Experience',
+                'grade' => 4,
+            ],
+            [
+                'number' => 'NS202',
+                'name' => 'Team Project',
+                // Grade laissé vide
+            ],
+        ],
+        'weighting' => 20,
+        // Moyenne des modules non-scolaires laissée vide
+    ],
+    'weighting' => 100,
+    // Moyenne des modules globale laissée vide
+];
+
+$tpi_grade = 5.0; // Grade du TPI (peut être laissé vide)
+
+$cbe = [
+    'subjects' => [
+        [
+            'name' => 'Computer Science',
+            'grades' => [5, 4, '', '', '', '', '', ''], // Notes par semestre
+            'weighting' => 40,
+            // Moyenne laissée vide
+        ],
+        [
+            'name' => 'Programming',
+            'grades' => [5, 5, 4.5, 3, 2, 6, 6, 1.5], // Liste vide si pas de notes
+            'weighting' => 60,
+            // Moyenne laissée vide
+        ],
+    ],
+    'weighting' => 100,
+    // Moyenne des matières CBE laissée vide
+];
+
+$ecg = [
+    'subjects' => [
+        [
+            'name' => 'History',
+            'grades' => [5, 4, '', '', '', '', '', ''], // Notes par semestre
+            'weighting' => 50,
+            // Moyenne laissée vide
+        ],
+        [
+            'name' => 'Geography',
+            'grades' => ['', '', '', '', '', '', '', ''], // Notes par semestre
+            'weighting' => 50,
+            // Moyenne laissée vide
+        ],
+    ],
+    'weighting' => 100,
+    // Moyenne des matières ECG laissée vide
+];
 
 
 
@@ -177,7 +248,7 @@ if(empty($modules)
 
 else
 {
-    foreach($modules['school'] as $school_module)
+    foreach($modules['school']['modules'] as $school_module)
     {
         if(empty($school_module['number'])
             || empty($school_module['name']))
@@ -187,7 +258,7 @@ else
         }
     }
 
-    foreach($modules['non-school'] as $non_school_module)
+    foreach($modules['non-school']['modules'] as $non_school_module)
     {
         if(empty($non_school_module['number'])
             || empty($non_school_module['name']))
@@ -220,6 +291,12 @@ else
             $errors[] = "Values are missing in cbe['subjects'] variable.";
             break;
         }
+
+        else if(empty($cbe_subject['grades']) || count($cbe_subject['grades']) !== 8)
+        {
+            $errors[] = "Array cbe['subjects']['grades'] does not contain 8 values.";
+            break;
+        }
     }
 }
 
@@ -241,8 +318,14 @@ else
     {
         if(empty($ecg_subject['name'])
         || empty($ecg_subject['weighting']))
-    {
+        {
             $errors[] = "Values are missing in ecg['subjects'] variable.";
+            break;
+        }
+
+        else if(empty($ecg_subject['grades']) || count($ecg_subject['grades']) !== 8)
+        {
+            $errors[] = "Array ecg['subjects']['grades'] does not contain 8 values.";
             break;
         }
     }
@@ -288,19 +371,23 @@ else
                     </p>
                 </div>
 
-                <div class="col-sm-3 border-right border-primary">
-                    <p class="text-center">
-                        <strong><?= lang('Grades.ECG_acronym') ?></strong><br>
-                        <span class="display-4"><?= $ecg_average ?></span>
-                    </p>
-                </div>
+                <?php if(!empty($ecg)): ?>
+                    <div class="col-sm-3 border-right border-primary">
+                        <p class="text-center">
+                            <strong><?= lang('Grades.ECG_acronym') ?></strong><br>
+                            <span class="display-4"><?= $ecg['average'] ?></span>
+                        </p>
+                    </div>
+                <?php endif ?>
 
-                <div class="col-sm-3">
-                    <p class="text-center">
-                        <strong><?= lang('Grades.CBE_acronym') ?></strong><br>
-                        <span class="display-4"><?= $cbe_average?></span>
-                    </p>
-                </div>
+                <?php if(!empty($cbe)): ?>
+                    <div class="col-sm-3">
+                        <p class="text-center">
+                            <strong><?= lang('Grades.CBE_acronym') ?></strong><br>
+                            <span class="display-4"><?= $cbe['average']?></span>
+                        </p>
+                    </div>
+                <?php endif ?>
             </div>
         </div>
 
@@ -309,7 +396,6 @@ else
             <p class="bg-secondary"><?= lang('Grades.modules') ?></p>
 
             <p class="border-left border-bottom border-primary pl-1"><?= lang('Grades.school_modules') ?></p>
-
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -320,19 +406,19 @@ else
                 </thead>
 
                 <tbody>
-                    <?php foreach ($modules['school']['modules'] as $school_module): ?>
+                    <?php foreach($modules['school']['modules'] as $school_module): ?>
                         <tr>
                             <td><?= $school_module['number'] ?></td>
                             <td><?= $school_module['name'] ?></td>
-                            <td><?= $school_module['grade'] ?></td>
+                            <td><?= $school_module['grade'] ?? '' ?></td>
                         </tr>
                     <?php endforeach ?>
                 </tbody>
 
                 <tfoot>
                     <tr>
-                        <td colspan="2" class="text-right"><?= lang('Grades.weighting')?> : <?= $modules['school']['weighing'] ?></td>
-                        <td><strong><?= $modules['school']['average'] ?></strong></td>
+                        <td colspan="2" class="text-right"><?= lang('Grades.weighting')?> : <?= $modules['school']['weighting'] ?></td>
+                        <td><strong><?= $modules['school']['average'] ?? lang('Grades.unavailable_short') ?></strong></td>
                     </tr>
                 </tfoot>
             </table>
@@ -353,7 +439,7 @@ else
                         <tr>
                             <td><?= $non_school_module['number'] ?></td>
                             <td><?= $non_school_module['name'] ?></td>
-                            <td><?= $non_school_module['grade'] ?></td>
+                            <td><?= $non_school_module['grade'] ?? '' ?></td>
                         </tr>
                     <?php endforeach ?>
                 </tbody>
@@ -361,7 +447,7 @@ else
                 <tfoot>
                     <tr>
                         <td colspan="2" class="text-right"><?= lang('Grades.weighting')?> : <?= $modules['non-school']['weighting'] ?></td>
-                        <td><strong><?= $modules['non-school']['average'] ?></strong></td>
+                        <td><strong><?= $modules['non-school']['average'] ?? lang('Grades.unavailable_short') ?></strong></td>
                     </tr>
                 </tfoot>
             </table>
@@ -371,7 +457,7 @@ else
             <table class="table table-borderless">
                 <tr>
                     <td class="text-right"><?= lang('Grades.weighting')?> : <?= $modules['weighting'] ?></td>
-                    <td><strong><?= $modules['average'] ?></strong></td>
+                    <td><strong><?= $modules['average'] ?? lang('Grades.unavailable_short') ?></strong></td>
                 </tr>
             </table>
         </div>
@@ -398,85 +484,87 @@ else
         </div>
 
         <!-- CBE -->
-        <div class="mb-5">
-            <p class="bg-secondary"><?= lang('Grades.CBE_long') ?></p>
+        <?php if(!empty($cbe)): ?>
+            <div class="mb-5">
+                <p class="bg-secondary"><?= lang('Grades.CBE_long') ?></p>
 
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th><?= lang('Grades.subject') ?></th>
-
-                        <?php for($i=1; $i <= 8; $i++): ?>
-                            <th class="text-center"><?= substr(lang('Grades.semester'), 0, 3).'. '.$i ?></th>
-                        <?php endfor ?>
-
-                        <th><?= lang('Grades.average') ?></th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <?php foreach($cbe['subjects'] as $cbe_subject): ?>
+                <table class="table table-striped">
+                    <thead>
                         <tr>
-                            <td><?= $cbe_subject['name'] ?> (<?= $cbe_subject['weighting'] ?>)</td>
+                            <th><?= lang('Grades.subject') ?></th>
 
-                            <?php foreach($cbe_subject['grades'] as $subject_grade): ?>
-                                <td class="text-center"><?= $subject_grade ?></td>
-                            <?php endforeach ?>
+                            <?php for($i=1; $i <= 8; $i++): ?>
+                                <th class="text-center"><?= substr(lang('Grades.semester'), 0, 3).'. '.$i ?></th>
+                            <?php endfor ?>
 
-                            <td><?= $cbe_subject['average'] ?></td>
+                            <th><?= lang('Grades.average') ?></th>
                         </tr>
-                    <?php endforeach ?>
-                </tbody>
+                    </thead>
 
-                <tfoot>
-                    <tr>
-                        <td colspan="9" class="text-right"><?= lang('Grades.weighting')?> : <?= $cbe['weighting'] ?></td>
-                        <td><strong><?= $cbe['average'] ?></strong></td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
+                    <tbody>
+                        <?php foreach($cbe['subjects'] as $cbe_subject): ?>
+                            <tr>
+                                <td><?= $cbe_subject['name'] ?> (<?= $cbe_subject['weighting'] ?>)</td>
+
+                                <?php foreach($cbe_subject['grades'] as $subject_grade): ?>
+                                    <td class="text-center"><?= $subject_grade ?? lang('Grades.unavailable_short') ?></td>
+                                <?php endforeach ?>
+
+                                <td><?= $cbe_subject['average'] ?? lang('Grades.unavailable_short') ?></td>
+                            </tr>
+                        <?php endforeach ?>
+                    </tbody>
+
+                    <tfoot>
+                        <tr>
+                            <td colspan="9" class="text-right"><?= lang('Grades.weighting')?> : <?= $cbe['weighting'] ?></td>
+                            <td><strong><?= $cbe['average'] ?? lang('Grades.unavailable_short') ?></strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        <?php endif ?>
 
         <!-- ECG -->
-        <div class="mb-5">
-            <p class="bg-secondary"><?= lang('Grades.ECG_long') ?></p>
+        <?php if(!empty($ecg)): ?>
+            <div class="mb-5">
+                <p class="bg-secondary"><?= lang('Grades.ECG_long') ?></p>
 
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th><?= lang('Grades.subject') ?></th>
-
-                        <?php for($i=1; $i <= 8; $i++): ?>
-                            <th class="text-center"><?= substr(lang('Grades.semester'), 0, 3).'. '.$i ?></th>
-                        <?php endfor ?>
-
-                        <th><?= lang('Grades.average') ?></th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <?php foreach($ecg['subjects'] as $ecg_subject): ?>
+                <table class="table table-striped">
+                    <thead>
                         <tr>
-                            <td><?= $ecg_subject['name'] ?> (<?= $ecg_subject['weighting'] ?>)</td>
+                            <th><?= lang('Grades.subject') ?></th>
 
-                            <?php foreach($ecg_subject['grades'] as $subject_grade): ?>
-                                <td class="text-center"><?= $subject_grade ?></td>
-                            <?php endforeach ?>
+                            <?php for($i=1; $i <= 8; $i++): ?>
+                                <th class="text-center"><?= substr(lang('Grades.semester'), 0, 3).'. '.$i ?></th>
+                            <?php endfor ?>
 
-                            <td><?= $ecg_subject['average'] ?></td>
+                            <th><?= lang('Grades.average') ?></th>
                         </tr>
-                    <?php endforeach ?>
-                </tbody>
+                    </thead>
 
-                <tfoot>
-                    <tr>
-                        <td colspan="9" class="text-right"><?= lang('Grades.weighting')?> : <?= $ecg['weighing'] ?>s</td>
-                        <td><strong><?= $ecg['average'] ?></strong></td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-    </div>
+                    <tbody>
+                        <?php foreach($ecg['subjects'] as $ecg_subject): ?>
+                            <tr>
+                                <td><?= $ecg_subject['name'] ?> (<?= $ecg_subject['weighting'] ?>)</td>
 
+                                <?php foreach($ecg_subject['grades'] as $subject_grade): ?>
+                                    <td class="text-center"><?= $subject_grade ?? lang('Grades.unavailable_short') ?></td>
+                                <?php endforeach ?>
+
+                                <td><?= $ecg_subject['average'] ?? lang('Grades.unavailable_short') ?></td>
+                            </tr>
+                        <?php endforeach ?>
+                    </tbody>
+
+                    <tfoot>
+                        <tr>
+                            <td colspan="9" class="text-right"><?= lang('Grades.weighting')?> : <?= $ecg['weighting'] ?></td>
+                            <td><strong><?= $ecg['average'] ?? lang('Grades.unavailable_short') ?></strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        <?php endif ?>
     <?php endif ?>
 </div>
