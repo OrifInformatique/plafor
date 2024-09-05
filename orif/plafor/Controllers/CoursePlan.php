@@ -519,11 +519,9 @@ class CoursePlan extends \App\Controllers\BaseController
                 $this->acquisition_status_model->where('fk_user_course', $user_course_id)->delete();
 
                 $this->user_course_model->delete($user_course_id);
-
-                return redirect()->to(base_url('plafor/apprentice/list_user_courses/'.$apprentice['id']));
         }
 
-        return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
+        return redirect()->to(base_url('plafor/apprentice/list_user_courses/'.$apprentice['id']));
     }
 
     /**

@@ -234,16 +234,16 @@
 
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
 
-        $result->assertSee(lang('common_lang.title_manage_entry'), 'h1');
-        $result->assertSee(lang('common_lang.manage_entry_confirmation'), 'p');
+        $result->assertSee(lang('common_lang.title_disable_entry'), 'h1');
+        $result->assertSee(lang('common_lang.subtitle_disable_entry'), 'p');
 
         $result->assertSee(lang('plafor_lang.course_plan'), 'strong');
         $result->assertSee('[2014-2020] Informaticienne, Informaticien avec '
             . 'CFC, orientation développement d\'applications', 'p');
 
-        $result->assertDontSee(lang('common_lang.entries_linked_to_entry_being_managed'),
+        $result->assertDontSee(lang('common_lang.entries_linked'),
             'h2');
-        $result->assertDontSeeElement('.alert-secondary');
+        $result->assertDontSeeElement('.alert alert-secondary');
 
         $result->assertSee(lang('plafor_lang.course_plan_disable_explanation'),
             '.alert alert-info');
@@ -639,16 +639,16 @@
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
 
-        $result->assertSee(lang('common_lang.title_manage_entry'), 'h1');
-        $result->assertSee(lang('common_lang.manage_entry_confirmation'), 'p');
+        $result->assertSee(lang('common_lang.title_disable_entry'), 'h1');
+        $result->assertSee(lang('common_lang.subtitle_disable_entry'), 'p');
 
         $result->assertSee(lang('plafor_lang.competence_domain'), 'strong');
         $result->assertSee('Saisie, interprétation et mise en œuvre des '
             . 'exigences des applications', 'p');
 
-        $result->assertDontSee(lang('common_lang.entries_linked_to_entry_being_managed'),
+        $result->assertDontSee(lang('common_lang.entries_linked'),
             'h2');
-        $result->assertDontSeeElement('.alert-secondary');
+        $result->assertDontSeeElement('.alert alert-secondary');
 
         $result->assertSee(lang('plafor_lang.competence_domain_disable_explanation'),
             '.alert alert-info');
@@ -898,14 +898,14 @@
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
 
-        $result->assertSee(lang('common_lang.title_manage_entry'), 'h1');
-        $result->assertSee(lang('common_lang.manage_entry_confirmation'), 'p');
+        $result->assertSee(lang('common_lang.title_disable_entry'), 'h1');
+        $result->assertSee(lang('common_lang.subtitle_disable_entry'), 'p');
 
         $result->assertSee(lang('plafor_lang.operational_competence'), 'strong');
         $result->assertSee('Clarifier et documenter les besoins  des '
             . 'parties prenantes dans le cadre d’un projet ICT', 'p');
 
-        $result->assertDontSee(lang('common_lang.entries_linked_to_entry_being_managed'),
+        $result->assertDontSee(lang('common_lang.entries_linked'),
             'h2');
         $result->assertDontSeeElement('.alert-secondary');
 
@@ -1067,8 +1067,8 @@
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
 
-        $result->assertSee(lang('common_lang.title_manage_entry'), 'h1');
-        $result->assertSee(lang('common_lang.manage_entry_confirmation'), 'p');
+        $result->assertSee(lang('common_lang.title_delete_entry'), 'h1');
+        $result->assertSee(lang('common_lang.subtitle_delete_entry'), 'p');
 
         $result->assertSee(sprintf(lang('plafor_lang.course_plan_of'), 'ApprentiDev'),
             'strong');
@@ -1077,9 +1077,9 @@
         $result->assertSee(lang('plafor_lang.status').' : '
             .lang('plafor_lang.title_in_progress'));
 
-        $result->assertDontSee(lang('common_lang.entries_linked_to_entry_being_managed'),
+        $result->assertDontSee(lang('common_lang.entries_linked'),
             'h2');
-        $result->assertDontSeeElement('.alert-secondary');
+        $result->assertDontSeeElement('.alert alert-secondary');
 
         $result->assertSee(lang('plafor_lang.user_course_delete_explanation'),
             '.alert alert-info');
@@ -1109,7 +1109,7 @@
         $this->assertEmpty($response->getBody());
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertRedirectTo(base_url('plafor/apprentice/list_apprentice'));
+        $result->assertRedirectTo(base_url('plafor/apprentice/list_user_courses/6'));
     }
 
     /**
@@ -1347,8 +1347,8 @@
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
 
-        $result->assertSee(lang('common_lang.title_manage_entry'), 'h1');
-        $result->assertSee(lang('common_lang.manage_entry_confirmation'), 'p');
+        $result->assertSee(lang('common_lang.title_disable_entry'), 'h1');
+        $result->assertSee(lang('common_lang.subtitle_disable_entry'), 'p');
 
         $result->assertSee(lang('plafor_lang.objective'), 'strong');
         $result->assertSee('Ils clarifient les objectifs du projet ICT et '
@@ -1357,7 +1357,7 @@
 
         $result->assertDontSee(lang('common_lang.entries_linked_to_entry_being_managed'),
             'h2');
-        $result->assertDontSeeElement('.alert-secondary');
+        $result->assertDontSeeElement('.alert alert-secondary');
 
         $result->assertSee(lang('plafor_lang.objective_disable_explanation'));
 
@@ -1397,17 +1397,17 @@
 
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
 
-        $result->assertSee(lang('common_lang.title_manage_entry'), 'h1');
-        $result->assertSee(lang('common_lang.manage_entry_confirmation'), 'p');
+        $result->assertSee(lang('common_lang.title_reactivate_entry'), 'h1');
+        $result->assertSee(lang('common_lang.subtitle_reactivate_entry'), 'p');
 
         $result->assertSee(lang('plafor_lang.objective'), 'strong');
         $result->assertSee('Ils clarifient les objectifs du projet ICT et '
             . 'ses paramètres généraux tels que coûts, durée, qualité, '
             . 'périmètre, responsabilités et méthodologie.', 'p');
 
-        $result->assertDontSee(lang('common_lang.entries_linked_to_entry_being_managed'),
+        $result->assertDontSee(lang('common_lang.entries_linked'),
             'h2');
-        $result->assertDontSeeElement('.alert-secondary');
+        $result->assertDontSeeElement('.alert alert-secondary');
 
         $result->assertSee(lang('plafor_lang.objective_enable_explanation'),
             '.alert alert-info');

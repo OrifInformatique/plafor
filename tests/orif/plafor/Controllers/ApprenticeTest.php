@@ -832,16 +832,16 @@
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
 
-        $result->assertSee(lang('common_lang.title_manage_entry'), 'h1');
-        $result->assertSee(lang('common_lang.manage_entry_confirmation'), 'p');
+        $result->assertSee(lang('common_lang.title_delete_entry'), 'h1');
+        $result->assertSee(lang('common_lang.subtitle_delete_entry'), 'p');
 
         $result->assertSee(lang('plafor_lang.apprentice_link'), 'strong');
         $result->assertSee(lang('plafor_lang.apprentice').' : ApprentiSysteme', 'p');
         $result->assertSee(lang('plafor_lang.trainer').' : FormateurDev', 'p');
 
-        $result->assertDontSee(lang('common_lang.entries_linked_to_entry_being_managed'),
+        $result->assertDontSee(lang('common_lang.entries_linked'),
             'h2');
-        $result->assertDontSeeElement('.alert-secondary');
+        $result->assertDontSeeElement('.alert alert-secondary');
 
         $result->assertSee(lang('plafor_lang.apprentice_link_delete_explanation'),
             '.alert alert-info');
