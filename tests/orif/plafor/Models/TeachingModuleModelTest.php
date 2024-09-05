@@ -48,6 +48,7 @@ class TeachingModuleModelTest extends CIUnitTestCase
             'version' => '1',
             'archive' => null,
         ];
+        dd($data);
         foreach (array_keys($expect) as $key) {
             $this->assertEquals($expect[$key], $data[$key]);
         }
@@ -115,6 +116,9 @@ class TeachingModuleModelTest extends CIUnitTestCase
         $this->assertTrue($isSuccess);
     }
 
+    /**
+     * Test that deleting a teaching module removes it from the active records.
+     */
     public function testDelete(): void
     {
         $id = 1;
@@ -125,6 +129,11 @@ class TeachingModuleModelTest extends CIUnitTestCase
         $this->assertNull($module);
         $this->assertEquals($id, $deletedModule['id']);
     }
+
+    /**
+     * Test that finding all teaching module with deleted records includes the
+     * deleted records.
+     */
     public function testFindAllWithDeleted(): void
     {
         $idToDelete = 1;
@@ -134,6 +143,10 @@ class TeachingModuleModelTest extends CIUnitTestCase
         $this->assertEquals($modules[0]['id'], $idToDelete);
     }
 
+    /**
+     * Test that finding all teaching module with only deleted records returns
+     * only the deleted records.
+     */
     public function testFindAllOnlyDeleted(): void
     {
         $idToDelete = 1;
@@ -143,6 +156,11 @@ class TeachingModuleModelTest extends CIUnitTestCase
         $this->assertEquals($modules[0]['id'], $idToDelete);
         $this->assertFalse(isset($modules[1]));
     }
+
+    /**
+     * Test that finding all teaching module without deleted records excludes
+     * the deleted records.
+     */
     public function testFindAllWithoutDeleted(): void
     {
         $idToDelete = 1;
@@ -152,6 +170,11 @@ class TeachingModuleModelTest extends CIUnitTestCase
         $this->assertNotEquals($modules[0]['id'], $idToDelete);
         $this->assertTrue(isset($modules[1]));
     }
+
+    /**
+     * Test that finding all teaching module is equivalent to finding without
+     * an ID.
+     */
     public function testFindAllEqualsFindWithoutId(): void
     {
         $teachingModuleModel = model('TeachingModuleModel');

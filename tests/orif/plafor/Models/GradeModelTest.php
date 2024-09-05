@@ -146,6 +146,7 @@ class GradeModelTest extends CIUnitTestCase
 
     /**
      * Tests the retrieval of apprentice subject grades.
+     * @covers GradeModel::getApprenticeSubjectGrades
      */
     public function testGetApprenticeSubjectGrades(): void
     {
@@ -174,6 +175,8 @@ class GradeModelTest extends CIUnitTestCase
 
     /**
      * Tests the retrieval of apprentice module grades for school grades.
+     *
+     * @covers GradeModel::getApprenticeModulesGrades
      */
     public function testGetApprenticeModulesGradesIsSchool(): void
     {
@@ -211,6 +214,8 @@ class GradeModelTest extends CIUnitTestCase
     /**
      * Tests the retrieval of apprentice module grades for non-school
      * (interentreprises) grades.
+     *
+     * @covers GradeModel::getApprenticeModulesGrades
      */
     public function testGetApprenticeModulesGradesIsNotSchool(): void
     {
@@ -238,6 +243,8 @@ class GradeModelTest extends CIUnitTestCase
 
     /**
      * Tests the retrieval of apprentice module grades for all grades.
+     *
+     * @covers GradeModel::getApprenticeModulesGrades
      */
     public function testGetApprenticeModulesGradesIsSchoolNull(): void
     {
@@ -286,6 +293,8 @@ class GradeModelTest extends CIUnitTestCase
 
     /**
      * Tests the retrieval of apprentice module grade.
+     *
+     * @covers GradeModel::getApprenticeModuleGrade
      */
     public function testGetApprenticeModuleGrade(): void
     {
@@ -309,6 +318,8 @@ class GradeModelTest extends CIUnitTestCase
 
     /**
      * Tests the retrieval of apprentice subject average.
+     *
+     * @covers GradeModel::getApprenticeSubjectAverage
      */
     public function testGetApprenticeSubjectAverage(): void
     {
@@ -321,6 +332,13 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertEquals($expect, $data);
     }
 
+    /**
+     * Tests that the average grade is correctly rounded to the nearest half
+     * point.
+     *
+     * @covers GradeModel::getApprenticeSubjectAverage
+     * @covers GradeModel::roundHalfPoint
+     */
     public function testGetApprenticeSubjectAverageRoundHalfPoint(): void
     {
         $id_user_course = 1;
@@ -331,7 +349,12 @@ class GradeModelTest extends CIUnitTestCase
         $expect = 4.5;
         $this->assertEquals($expect, $data);
     }
-
+    /**
+     * Tests that the average grade is correctly rounded to one decimal point
+     * by default.
+     *
+     * @covers GradeModel::getApprenticeSubjectAverage
+     */
     public function testGetApprenticeSubjectAverageRoundOneDecimalPoint(): void
     {
         $id_user_course = 1;
@@ -345,6 +368,8 @@ class GradeModelTest extends CIUnitTestCase
 
     /**
      * Tests the retrieval of apprentice module average for school grades.
+     *
+     * @covers GradeModel::getApprenticeModuleAverage
      */
     public function testGetApprenticeModuleAverageIsSchool(): void
     {
@@ -358,6 +383,14 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertEquals($expect, $data);
     }
 
+    /**
+     * Tests that the getApprenticeModuleAverage method returns the correct
+     * average
+     * when the school rounding rule is half point.
+     *
+     * @covers GradeModel::getApprenticeModuleAverage
+     * @covers GradeModel::roundHalfPoint
+     */
     public function
         testGetApprenticeModuleAverageIsSchoolRoundHalfPoint(): void
     {
@@ -374,6 +407,8 @@ class GradeModelTest extends CIUnitTestCase
     /**
      * Tests the retrieval of apprentice module average for non-school
      * (interentreprises) grades.
+     *
+     * @covers GradeModel::getApprenticeModuleAverage
      */
     public function testGetApprenticeModuleAverageIsNotSchool(): void
     {
@@ -387,6 +422,9 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertEquals($expect, $data);
     }
 
+    /**
+     * Test that deleting a grade removes it from the active records.
+     */
     public function testDelete(): void
     {
         $id = 1;
@@ -398,6 +436,10 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertEquals($id, $deletedGrade['id']);
     }
 
+    /**
+     * Test that finding all grades with deleted records includes the deleted
+     * records.
+     */
     public function testFindAllWithDeleted(): void
     {
         $idToDelete = 1;
@@ -407,6 +449,10 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertEquals($domains[0]['id'], $idToDelete);
     }
 
+    /**
+     * Test that finding all grades with only deleted records returns only the
+     * deleted records.
+     */
     public function testFindAllOnlyDeleted(): void
     {
         $idToDelete = 1;
@@ -416,6 +462,11 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertEquals($domains[0]['id'], $idToDelete);
         $this->assertFalse(isset($domains[1]));
     }
+
+    /**
+     * Test that finding all grades without deleted records excludes the
+     * deleted records.
+     */
     public function testFindAllWithoutDeleted(): void
     {
         $idToDelete = 1;
@@ -425,6 +476,10 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertNotEquals($domains[0]['id'], $idToDelete);
         $this->assertTrue(isset($domains[1]));
     }
+
+    /**
+     * Test that finding all grades is equivalent to finding without an ID.
+     */
     public function testFindAllEqualsFindWithoutId(): void
     {
         $gradeModel = model('GradeModel');
@@ -434,4 +489,3 @@ class GradeModelTest extends CIUnitTestCase
     }
 
 }
-

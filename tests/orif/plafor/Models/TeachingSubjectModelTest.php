@@ -129,6 +129,10 @@ class TeachingSubjectModelTest extends CIUnitTestCase
         $this->assertTrue($isSuccess);
     }
 
+    /**
+     * Test that deleting a teaching subject removes it from the active
+     * records.
+     */
     public function testDelete(): void
     {
         $id = 1;
@@ -140,6 +144,10 @@ class TeachingSubjectModelTest extends CIUnitTestCase
         $this->assertEquals($id, $deletedSubject['id']);
     }
 
+    /**
+     * Test that finding all teaching subjects with deleted records includes
+     * the deleted records.
+     */
     public function testFindAllWithDeleted(): void
     {
         $idToDelete = 1;
@@ -149,6 +157,10 @@ class TeachingSubjectModelTest extends CIUnitTestCase
         $this->assertEquals($subjects[0]['id'], $idToDelete);
     }
 
+    /**
+     * Test that finding all teaching subjects with deleted records includes
+     * the deleted records.
+     */
     public function testFindAllOnlyDeleted(): void
     {
         $idToDelete = 1;
@@ -158,6 +170,11 @@ class TeachingSubjectModelTest extends CIUnitTestCase
         $this->assertEquals($subjects[0]['id'], $idToDelete);
         $this->assertFalse(isset($subjects[1]));
     }
+
+    /**
+     * Test that finding all teaching subjects with only deleted records
+     * returns only the deleted records.
+     */
     public function testFindAllWithoutDeleted(): void
     {
         $idToDelete = 1;
@@ -167,6 +184,11 @@ class TeachingSubjectModelTest extends CIUnitTestCase
         $this->assertNotEquals($subjects[0]['id'], $idToDelete);
         $this->assertTrue(isset($subjects[1]));
     }
+
+    /**
+     * Test that finding all teaching subjects without deleted records excludes
+     * the deleted records.
+     */
     public function testFindAllEqualsFindWithoutId(): void
     {
         $teachingSubjectModel = model('TeachingSubjectModel');

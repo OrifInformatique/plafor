@@ -119,6 +119,9 @@ class TeachingDomainModelTest extends CIUnitTestCase
         $this->assertTrue($isSuccess);
     }
 
+    /**
+     * Test that deleting a teaching domain removes it from the active records.
+     */
     public function testDelete(): void
     {
         $id = 1;
@@ -130,6 +133,11 @@ class TeachingDomainModelTest extends CIUnitTestCase
         $this->assertEquals($id, $deletedDomain['id']);
     }
 
+
+    /**
+     * Test that finding all teaching domains with deleted records includes the
+     * deleted records.
+     */
     public function testFindAllWithDeleted(): void
     {
         $idToDelete = 1;
@@ -139,6 +147,11 @@ class TeachingDomainModelTest extends CIUnitTestCase
         $this->assertEquals($domains[0]['id'], $idToDelete);
     }
 
+
+    /**
+     * Test that finding all teaching domains with only deleted records returns
+     * only the deleted records.
+     */
     public function testFindAllOnlyDeleted(): void
     {
         $idToDelete = 1;
@@ -148,6 +161,11 @@ class TeachingDomainModelTest extends CIUnitTestCase
         $this->assertEquals($domains[0]['id'], $idToDelete);
         $this->assertFalse(isset($domains[1]));
     }
+
+    /**
+     * Test that finding all teaching domains without deleted records excludes
+     * the deleted records.
+     */
     public function testFindAllWithoutDeleted(): void
     {
         $idToDelete = 1;
@@ -157,6 +175,11 @@ class TeachingDomainModelTest extends CIUnitTestCase
         $this->assertNotEquals($domains[0]['id'], $idToDelete);
         $this->assertTrue(isset($domains[1]));
     }
+
+    /**
+     * Test that finding all teaching domains is equivalent to finding without
+     * an ID.
+     */
     public function testFindAllEqualsFindWithoutId(): void
     {
         $teachingDomainModel = model('TeachingDomainModel');
