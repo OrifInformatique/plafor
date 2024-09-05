@@ -475,6 +475,7 @@ class Apprentice extends \App\Controllers\BaseController
             case 0:
                 $output = array
                 (
+                    'type' => 'delete',
                     'entry' =>
                     [
                         'type'    => lang('plafor_lang.apprentice_link'),
@@ -493,11 +494,6 @@ class Apprentice extends \App\Controllers\BaseController
                         ]
                     ],
                     'cancel_btn_url' => base_url('plafor/apprentice/list_apprentice/' . $apprentice['id']),
-                    'primary_action' =>
-                    [
-                        'name' => lang('common_lang.btn_delete'),
-                        'url'  => base_url(uri_string().'/1')
-                    ]
                 );
 
                 return $this->display_view('\Common/manage_entry', $output);

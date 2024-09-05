@@ -137,22 +137,14 @@ class CoursePlan extends \App\Controllers\BaseController
 
                 if($course_plan['archive'])
                 {
+                    $output['type'] = 'reactivate';
                     $output['entry']['message'] = lang('plafor_lang.course_plan_enable_explanation');
-                    $output['primary_action'] =
-                    [
-                        'name' => lang('common_lang.btn_reactivate'),
-                        'url'  => base_url(uri_string().'/3')
-                    ];
                 }
 
                 else
                 {
+                    $output['type'] = 'disable';
                     $output['entry']['message'] = lang('plafor_lang.course_plan_disable_explanation');
-                    $output['primary_action'] =
-                    [
-                        'name' => lang('common_lang.btn_disable'),
-                        'url'  => base_url(uri_string().'/1')
-                    ];
                 }
 
                 foreach($apprentices as $apprentice)
@@ -282,22 +274,14 @@ class CoursePlan extends \App\Controllers\BaseController
 
                 if($competence_domain['archive'])
                 {
+                    $output['type'] = 'reactivate';
                     $output['entry']['message'] = lang('plafor_lang.competence_domain_enable_explanation');
-                    $output['primary_action'] =
-                    [
-                        'name' => lang('common_lang.btn_reactivate'),
-                        'url'  => base_url(uri_string().'/3')
-                    ];
                 }
 
                 else
                 {
+                    $output['type'] = 'disable';
                     $output['entry']['message'] = lang('plafor_lang.competence_domain_disable_explanation');
-                    $output['primary_action'] =
-                    [
-                        'name' => lang('common_lang.btn_disable'),
-                        'url'  => base_url(uri_string().'/1')
-                    ];
                 }
 
                 return $this->display_view('\Common/manage_entry', $output);
@@ -417,32 +401,19 @@ class CoursePlan extends \App\Controllers\BaseController
                         'type'    => lang('plafor_lang.operational_competence'),
                         'name'    => $operational_comp['name'],
                     ],
-                    'cancel_btn_url' => base_url('plafor/courseplan/view_competence_domain/'.$operational_comp['fk_competence_domain']),
-                    'primary_action' =>
-                    [
-                        'name' => lang('common_lang.btn_disable'),
-                        'url'  => base_url(uri_string().'/1')
-                    ]
+                    'cancel_btn_url' => base_url('plafor/courseplan/view_competence_domain/'.$operational_comp['fk_competence_domain'])
                 );
-                
+
                 if($operational_comp['archive'])
                 {
+                    $output['type'] = 'reactivate';
                     $output['entry']['message'] = lang('plafor_lang.operational_competence_enable_explanation');
-                    $output['primary_action'] =
-                    [
-                        'name' => lang('common_lang.btn_reactivate'),
-                        'url'  => base_url(uri_string().'/3')
-                    ];
                 }
-                
+
                 else
                 {
+                    $output['type'] = 'disable';
                     $output['entry']['message'] = lang('plafor_lang.operational_competence_disable_explanation');
-                    $output['primary_action'] =
-                    [
-                        'name' => lang('common_lang.btn_disable'),
-                        'url'  => base_url(uri_string().'/1')
-                    ];
                 }
 
                 return $this->display_view('\Common/manage_entry', $output);
@@ -467,7 +438,7 @@ class CoursePlan extends \App\Controllers\BaseController
      * @param integer $user_course_id ID of the user_course to affect
      * @param integer $action         Action to apply on the course plan :
      *      - 0 for displaying the confirmation
-     *      - 1 for deleting (hard delete)
+     *      - 2 for deleting (hard delete)
      *
      * @return void
      *
@@ -519,6 +490,7 @@ class CoursePlan extends \App\Controllers\BaseController
             case 0:
                 $output = array
                 (
+                    'type' => 'delete',
                     'entry' =>
                     [
                         'type' => sprintf(lang('plafor_lang.course_plan_of'), $apprentice['username']),
@@ -533,18 +505,13 @@ class CoursePlan extends \App\Controllers\BaseController
                             ]
                         ]
                     ],
-                    'cancel_btn_url' => base_url('plafor/apprentice/list_user_courses/'.$apprentice['id']),
-                    'primary_action' =>
-                    [
-                        'name' => lang('common_lang.btn_delete'),
-                        'url' => base_url(uri_string().'/1')
-                    ]
+                    'cancel_btn_url' => base_url('plafor/apprentice/list_user_courses/'.$apprentice['id'])
                 );
 
                 return $this->display_view('\Common/manage_entry', $output);
 
             // Deletes user's course and the corresponding comments and acquisition status
-            case 1:
+            case 2:
                 // Deletes comments
                 foreach($this->acquisition_status_model->where('fk_user_course', $user_course_id)->find() as $acquisition_status)
                     $this->comment_model->where('fk_acquisition_status', $acquisition_status['id'])->delete();
@@ -683,22 +650,14 @@ class CoursePlan extends \App\Controllers\BaseController
 
                 if($objective['archive'])
                 {
+                    $output['type'] = 'reactivate';
                     $output['entry']['message'] = lang('plafor_lang.objective_enable_explanation');
-                    $output['primary_action'] =
-                    [
-                        'name' => lang('common_lang.btn_reactivate'),
-                        'url'  => base_url(uri_string().'/3')
-                    ];
                 }
 
                 else
                 {
+                    $output['type'] = 'disable';
                     $output['entry']['message'] = lang('plafor_lang.objective_disable_explanation');
-                    $output['primary_action'] =
-                    [
-                        'name' => lang('common_lang.btn_disable'),
-                        'url'  => base_url(uri_string().'/1')
-                    ];
                 }
 
                 return $this->display_view('\Common/manage_entry', $output);
@@ -713,7 +672,7 @@ class CoursePlan extends \App\Controllers\BaseController
              * Hard delete dysfunctional - temporarily disabled
              *
              * // TODO : Delete the acquisition_status entry linked to the objective before
-             * // TODO : Add a delete button in the (common) delete_entry view
+             * // TODO : Add a delete button in the (common) manage_entry view
              *
              */
             // case 2:
