@@ -51,9 +51,6 @@ class GradeController extends \App\Controllers\BaseController{
         parent::initController($request, $response, $logger);
 
         // Loads required models
-        $this->m_teaching_domain_model = model("TeachingDomainModel");
-        $this->m_teaching_subject_model = model("TeachingSubjectModel");
-        $this->m_teaching_module_model = model("TeachingModuleModel");
         $this->m_grade_model = model("GradeModel");
         $this->m_user_course_model = model("UserCourseModel");
         $this->m_user_model = model("User_model");
@@ -208,7 +205,7 @@ class GradeController extends \App\Controllers\BaseController{
                         ]
                     ],
 
-                    "cancel_btn_url" => base_url("/* TODO */".$grade_id)
+                    "cancel_btn_url" => base_url("plafor/grade/view/".$grade_id)
                 ];
 
                 // Enable the grade
