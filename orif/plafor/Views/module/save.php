@@ -94,7 +94,7 @@ helper('form')
 
         <div class="row">
             <div class="col text-right">
-                <a class="btn btn-secondary" href="<?= base_url('plafor/grade/showAllTeachingModule') ?>">
+                <a class="btn btn-secondary" href="<?= base_url('plafor/teachingdomain/getAllTeachingModule') ?>">
                     <?= lang('common_lang.btn_cancel') ?>
                 </a>
                 <?= form_submit('', lang('common_lang.btn_save'), ['class' => 'btn btn-primary']) ?>
