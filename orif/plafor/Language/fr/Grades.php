@@ -55,12 +55,13 @@ return [
     // Teaching grade
     "grade"                     => "Note",
     "grades"                    => "Notes",
-    "title_save_grade"          => "Ajout d'une note",
-    "to_school_grade"           => "Examen effectué à l'école",
-    "grade_date"                => "Date de l'examen",
-    "new_grade"                 => "Entrer une nouvelle note",
-    "enable_explanation_grade"  => "Toutes les informations concernant cette note seront réactivées.",
-    "disable_explanation_grade" => "Toutes les informations concernant cette note seront désactivées.",
+    "is_exam_made_at_school"    => "Examen effectué à l'école ?",
+    "exam_date"                 => "Date de l'examen",
+    "add_grade"                 => "Ajouter une note",
+    "update_grade"              => "Modifier une note",
+    "delete_grade"              => "Supprimer une note",
+    "grade_enable_explanation"  => "Toutes les informations concernant cette note seront réactivées.",
+    "grade_disable_explanation" => "Toutes les informations concernant cette note seront désactivées.",
 
     // Common text
     "average"        => "Moyenne",
@@ -69,6 +70,7 @@ return [
     "global_average" => "Moyenne générale",
     "name"           => "Nom",
     "of the"         => "des",
+    "or"             => "ou",
     "semester"       => "Semestre",
     "semesters"      => "Semestres",
     "weighting"      => "Pondération",

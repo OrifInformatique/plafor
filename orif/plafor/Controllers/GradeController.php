@@ -1,4 +1,6 @@
 <?php
+
+// TODO : Order the functions by element and action (CRUD) in this order : Show/Read, Create/Save/Update, Delete
 /**
  * Controller who manage modules and subjects grades
  * Required level connected
@@ -161,10 +163,11 @@ class GradeController extends \App\Controllers\BaseController{
      *
      * @return string|Response
     */
+    // TODO : Remove all function params except $grade_id
     public function saveGrade(
         int $apprentice_id = 0,
         int $trainer_id = 0,
-        ?int $grade_id = null
+        int $id_grade = 0
         )
         : string|Response
         {
@@ -216,7 +219,7 @@ class GradeController extends \App\Controllers\BaseController{
         // Error if date is in wrong format
         $date = $this->request->getPost("date");
         if (!$this->isDateValidToSave($date)){
-            return redirect()->to(base_url("/* @TODO */"));
+            return redirect()->to(base_url());
         }
 
         // Actions upon form submission
@@ -238,6 +241,7 @@ class GradeController extends \App\Controllers\BaseController{
 
 
         // Return to the previous view
+        // TODO : Redirect to plafor/apprentice/view_apprentce and append apprentice id
         return $this->display_view("plafor/grade/view");
 
         if(empty($_POST))
@@ -249,6 +253,7 @@ class GradeController extends \App\Controllers\BaseController{
             return $this->display_view('\Plafor/grade/save', $data);
         }
 
+        // TODO : Redirect to plafor/apprentice/view_apprentce and append apprentice id
         return redirect()->to('plafor/grade/showAllGrade');
     }
 
@@ -292,6 +297,7 @@ class GradeController extends \App\Controllers\BaseController{
         // Action to perform
         switch($action){
             case 0: // Display confirmation
+                // TODO : Edit the common view call to match new specifications
                 $output = [
 
                     "entry" => [
@@ -305,7 +311,7 @@ class GradeController extends \App\Controllers\BaseController{
                         ]
                     ],
 
-                    "cancel_btn_url" => base_url("/* @TODO */".$grade_id)
+                    "cancel_btn_url" => base_url("".$grade_id)
                 ];
 
                 // Enable the grade
@@ -328,7 +334,7 @@ class GradeController extends \App\Controllers\BaseController{
                     ];
                 }
 
-                return $this->display_view("/* @TODO */", $output);
+                return $this->display_view("", $output);
 
             case 1: // Soft delete
                 $this->m_grade_model->delete($grade_id);
@@ -343,7 +349,7 @@ class GradeController extends \App\Controllers\BaseController{
     }
 
 
-
+    // TODO : Delete this function ; unused
     public function showAllGrade() : string|Response  {
         // @TODO
 
@@ -364,7 +370,7 @@ class GradeController extends \App\Controllers\BaseController{
      *
      * @return string|Response
      */
-
+    // TODO : Delete this function ; unused
     public function showModuleAverageGrade(int $apprentice_id, ?int $is_school = null) : string|Response {
 
         // Access permissions
@@ -394,6 +400,7 @@ class GradeController extends \App\Controllers\BaseController{
      * @param  int $apprentice_id
      * @return string|Response
      */
+    // TODO : Delete this function ; unused
     public function showSubjectAverageGrade(int $subject_id, int $apprentice_id) : string|Response {
 
         // Access permissions
@@ -427,7 +434,7 @@ class GradeController extends \App\Controllers\BaseController{
     }
 
 
-
+    // TODO : Delete this function ; unused
     public function showAllTeachingDomain(bool $with_deleted = false) : string|Response {
 
         // Access permissions
@@ -473,7 +480,7 @@ class GradeController extends \App\Controllers\BaseController{
                 return $this->display_view('\Plafor/domain/save', $data);
             }
 
-            /* TODO : Get the course_plan id to redirect to the course_plan details */
+            // TODO : Get the course_plan id to redirect to the course_plan details
             $course_plan_id = 1;
             return redirect()->to('plafor/courseplan/view_course_plan/'.$course_plan_id);
         }
@@ -483,7 +490,7 @@ class GradeController extends \App\Controllers\BaseController{
 
     }
 
-
+    // TODO : Delete this function ; unused
     public function showAllTeachingSubject(bool $with_deleted = false) : string|Response {
         // Access permissions
         if ($_SESSION["user_access"] >= config("\User\Config\UserConfig")->access_level_apprentice){
@@ -521,6 +528,7 @@ class GradeController extends \App\Controllers\BaseController{
                 return $this->display_view('\Plafor/subject/save', $data);
             }
 
+            // TODO : Redirect to the course_plan where we came from
             return redirect()->to('plafor/grade/showAllTeachingSubject');
         }
 

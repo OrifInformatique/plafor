@@ -5,6 +5,8 @@
 /**
  * Apprentice school report view
  *
+ * Called by \Views/apprentice/view
+ *
  * @author      Orif (DeDy)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c), Orif (https://www.orif.ch)
@@ -27,14 +29,20 @@
  *          [
  *              'number' => int,    Number of the module. Required.
  *              'name'   => string, Name of the module. Required.
- *              'grade'  => int,    Grade obtained by the apprentice to the module. Can be empty.
+ *              'grade'  => array,  Grade obtained by the apprentice to the module. Can be empty.
+ *              One grade per module.
+ *              [
+ *                  'id'    => int,   ID of the grade. Required.
+ *                  'value' => float, Value of the grade. Required.
+ *              ]
  *          ]
  *          'weighting' => int, Weighting of school modules. Required.
  *          'average'   => int, Average of school modules. Can be empty.
  *      ]
  *      'non-school' => All non-school modules teached to the apprentice. Required.
  *      [
- *          'modules'    => List of non-school module teached to an apprentice. Same structure as school module.
+ *          'modules'    => List of non-school module teached to an apprentice.
+ *          Same structure as school module.
  *          'weighting' => int, Weighting of non-school modules. Required.
  *          'average'   => Average of non-school modules. Can be empty.
  *      ]
@@ -42,16 +50,27 @@
  *      'average' => Average of school (80%) and non-school (20%) averages. Can be empty.
  * ]
  *
- * @param ?float $tpi_grade Grade of the TPI obtained by the apprentice.
+ * @param ?array $tpi_grade Grade of the TPI obtained by the apprentice.
+ * [
+ *      'id'    => int,   ID of the grade. Can be empty. Required if 'value' is provided.
+ *      'value' => float, Value of the grade. Can be empty. Required if 'id' is provided.
+ * ]
  *
  * @param ?array $cbe All CBE subjects teached to the apprentice.
  * [
  *      'subjects'  => array, All subjects teached to the apprentice. Required.
  *      [
- *          'name'      => string,     Name of the subject. Required.
- *          'grades'    => array[int], Grades of the apprentice in the subject. Must be 8 values length. Values can be empty. Must be ordered by date (semester).
- *          'weighting' => int,        Weighting of the subject. Required.
- *          'average'   => int,        Average of the subject. Can be empty.
+ *          'name'      => string, Name of the subject. Required.
+ *          'grades'    => array,  Grades of the apprentice in the subject. Required.
+ *          Must be 8 values length. Empty values are allowed.
+ *          Must be ordered by date (semester).
+ *          Structure of one grade below.
+*           [
+ *              'id'    => int,   ID of the grade. Can be empty. Required if 'value' is provided.
+ *              'value' => float, Value of the grade. Can be empty. Required if 'id' is provided.
+ *          ]
+ *          'weighting' => int,    Weighting of the subject. Required.
+ *          'average'   => int,    Average of the subject. Can be empty.
  *      ]
  *      'weighting' => int, Weighting of school modules. Required.
  *      'average'   => int, Average of all subjects. Can be empty.
@@ -79,20 +98,26 @@
 
 
 /* Random data set for testing, can be deleted anytime */
-$cfc_average = 4.2; // Exemple de moyenne des domaines
+$cfc_average = 4.5; // Exemple de moyenne des domaines
 
 $modules = [
     'school' => [
         'modules' => [
             [
-                'number' => 'M101',
+                'number' => 101,
                 'name' => 'Mathematics',
-                'grade' => 5, // Grade facultatif, peut être vide
+                'grade' => [
+                    'id' => 1,
+                    'value' => 5.0,
+                ],
             ],
             [
-                'number' => 'M102',
+                'number' => 102,
                 'name' => 'Physics',
-                // Grade laissé vide
+                'grade' => [
+                    'id' => 2,
+                    'value' => 4.5,
+                ],
             ],
         ],
         'weighting' => 80,
@@ -101,14 +126,20 @@ $modules = [
     'non-school' => [
         'modules' => [
             [
-                'number' => 'NS201',
+                'number' => 201,
                 'name' => 'Work Experience',
-                'grade' => 4,
+                'grade' => [
+                    'id' => 3,
+                    'value' => 4.0,
+                ],
             ],
             [
-                'number' => 'NS202',
+                'number' => 202,
                 'name' => 'Team Project',
-                // Grade laissé vide
+                'grade' => [
+                    'id' => 4,
+                    'value' => 4.8,
+                ],
             ],
         ],
         'weighting' => 20,
@@ -118,19 +149,41 @@ $modules = [
     // Moyenne des modules globale laissée vide
 ];
 
-$tpi_grade = 5.0; // Grade du TPI (peut être laissé vide)
+// Grade du TPI (peut être laissé vide)
+$tpi_grade = [
+    'id' => 43,
+    'value' => 5.2
+];
 
 $cbe = [
     'subjects' => [
         [
             'name' => 'Computer Science',
-            'grades' => [5, 4, '', '', '', '', '', ''], // Notes par semestre
+            'grades' => [
+                ['id' => 1, 'value' => 5.0],
+                ['id' => 2, 'value' => 4.8],
+                ['id' => 3, 'value' => 4.5],
+                ['id' => 4, 'value' => 5.0],
+                ['id' => 5, 'value' => null], // Notes facultatives laissées vides
+                ['id' => 6, 'value' => null],
+                ['id' => 7, 'value' => null],
+                ['id' => 8, 'value' => null],
+            ],
             'weighting' => 40,
             // Moyenne laissée vide
         ],
         [
             'name' => 'Programming',
-            'grades' => [5, 5, 4.5, 3, 2, 6, 6, 1.5], // Liste vide si pas de notes
+            'grades' => [
+                ['id' => 9, 'value' => 4.8],
+                ['id' => 10, 'value' => 5.0],
+                ['id' => 11, 'value' => 4.7],
+                ['id' => 12, 'value' => 4.9],
+                ['id' => 13, 'value' => null], // Notes facultatives laissées vides
+                ['id' => 14, 'value' => null],
+                ['id' => 15, 'value' => null],
+                ['id' => 16, 'value' => null],
+            ],
             'weighting' => 60,
             // Moyenne laissée vide
         ],
@@ -143,13 +196,31 @@ $ecg = [
     'subjects' => [
         [
             'name' => 'History',
-            'grades' => [5, 4, '', '', '', '', '', ''], // Notes par semestre
+            'grades' => [
+                ['id' => 17, 'value' => 3.8],
+                ['id' => 18, 'value' => 4.2],
+                ['id' => 19, 'value' => 4.0],
+                ['id' => 20, 'value' => 4.3],
+                ['id' => 21, 'value' => null], // Notes facultatives laissées vides
+                ['id' => 22, 'value' => null],
+                ['id' => 23, 'value' => null],
+                ['id' => 24, 'value' => null],
+            ],
             'weighting' => 50,
             // Moyenne laissée vide
         ],
         [
             'name' => 'Geography',
-            'grades' => ['', '', '', '', '', '', '', ''], // Notes par semestre
+            'grades' => [
+                ['id' => 25, 'value' => 4.5],
+                ['id' => 26, 'value' => 4.7],
+                ['id' => 27, 'value' => 4.8],
+                ['id' => 28, 'value' => 4.6],
+                ['id' => 29, 'value' => null], // Notes facultatives laissées vides
+                ['id' => 30, 'value' => null],
+                ['id' => 31, 'value' => null],
+                ['id' => 32, 'value' => null],
+            ],
             'weighting' => 50,
             // Moyenne laissée vide
         ],
@@ -157,6 +228,7 @@ $ecg = [
     'weighting' => 100,
     // Moyenne des matières ECG laissée vide
 ];
+
 
 
 
@@ -184,9 +256,9 @@ if(empty($cfc_average)
 }
 
 if(empty($tpi_grade)
-    || !is_float($tpi_grade)
-    || $tpi_grade < 0
-    || $tpi_grade > 6)
+    || !is_float($tpi_grade['value'])
+    || $tpi_grade['value'] < 0
+    || $tpi_grade['value'] > 6)
 {
     $tpi_grade = lang('Grades.unavailable_short');
 }
@@ -367,7 +439,7 @@ else
                 <div class="col-sm-3 border-right border-primary">
                     <p class="text-center">
                         <strong><?= lang('Grades.TPI_acronym') ?></strong><br>
-                        <span class="display-4"><?= $tpi_grade ?></span>
+                        <span class="display-4"><?= $tpi_grade['value'] ?></span>
                     </p>
                 </div>
 
@@ -395,6 +467,12 @@ else
         <div class="mb-5">
             <p class="bg-secondary"><?= lang('Grades.modules') ?></p>
 
+            <div class="mb-3">
+                <a href="<?= base_url('plafor/grade/saveGrade') ?>" class="btn btn-primary">
+                    <?= lang('Grades.add_grade') ?>
+                </a>
+            </div>
+
             <p class="border-left border-bottom border-primary pl-1"><?= lang('Grades.school_modules') ?></p>
             <table class="table table-striped">
                 <thead>
@@ -410,7 +488,11 @@ else
                         <tr>
                             <td><?= $school_module['number'] ?></td>
                             <td><?= $school_module['name'] ?></td>
-                            <td><?= $school_module['grade'] ?? '' ?></td>
+                            <td>
+                                <a href="<?= base_url('plafor/grade/saveGrade/'.$school_module['grade']['id']) ?>">
+                                    <?= $school_module['grade']['value'] ?? '' ?>
+                                </a>
+                            </td>
                         </tr>
                     <?php endforeach ?>
                 </tbody>
@@ -439,7 +521,11 @@ else
                         <tr>
                             <td><?= $non_school_module['number'] ?></td>
                             <td><?= $non_school_module['name'] ?></td>
-                            <td><?= $non_school_module['grade'] ?? '' ?></td>
+                            <td>
+                                <a href="<?= base_url('plafor/grade/saveGrade/'.$non_school_module['grade']['id']) ?>">
+                                    <?= $non_school_module['grade']['value'] ?? '' ?>
+                                </a>
+                            </td>
                         </tr>
                     <?php endforeach ?>
                 </tbody>
@@ -466,6 +552,12 @@ else
         <div class="mb-5">
             <p class="bg-secondary"><?= lang('Grades.TPI_long') ?></p>
 
+            <div class="mb-3">
+                <a href="<?= base_url('plafor/grade/saveGrade') ?>" class="btn btn-primary">
+                    <?= lang('Grades.add_grade') ?>
+                </a>
+            </div>
+
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -477,7 +569,11 @@ else
                 <tbody>
                     <tr>
                         <td><?= lang('Grades.TPI_long') ?></td>
-                        <td><strong><?= $tpi_grade ?></strong></td>
+                        <td><strong>
+                            <a href="<?= base_url('plafor/grade/saveGrade/'.$tpi_grade['id']) ?>">
+                                <?= $tpi_grade['value'] ?>
+                            </a>
+                        </strong></td>
                     </tr>
                 </tbody>
             </table>
@@ -487,6 +583,12 @@ else
         <?php if(!empty($cbe)): ?>
             <div class="mb-5">
                 <p class="bg-secondary"><?= lang('Grades.CBE_long') ?></p>
+
+                <div class="mb-3">
+                    <a href="<?= base_url('plafor/grade/saveGrade') ?>" class="btn btn-primary">
+                        <?= lang('Grades.add_grade') ?>
+                    </a>
+                </div>
 
                 <table class="table table-striped">
                     <thead>
@@ -506,8 +608,12 @@ else
                             <tr>
                                 <td><?= $cbe_subject['name'] ?> (<?= $cbe_subject['weighting'] ?>)</td>
 
-                                <?php foreach($cbe_subject['grades'] as $subject_grade): ?>
-                                    <td class="text-center"><?= $subject_grade ?? lang('Grades.unavailable_short') ?></td>
+                                <?php foreach($cbe_subject['grades'] as $cbe_subject_grade): ?>
+                                    <td class="text-center">
+                                        <a href="<?= base_url('plafor/grade/saveGrade/'.$cbe_subject_grade['id']) ?>">
+                                            <?= $cbe_subject_grade['value'] ?? '' ?>
+                                        </a>
+                                    </td>
                                 <?php endforeach ?>
 
                                 <td><?= $cbe_subject['average'] ?? lang('Grades.unavailable_short') ?></td>
@@ -530,6 +636,12 @@ else
             <div class="mb-5">
                 <p class="bg-secondary"><?= lang('Grades.ECG_long') ?></p>
 
+                <div class="mb-3">
+                    <a href="<?= base_url('plafor/grade/saveGrade') ?>" class="btn btn-primary">
+                        <?= lang('Grades.add_grade') ?>
+                    </a>
+                </div>
+
                 <table class="table table-striped">
                     <thead>
                         <tr>
@@ -548,8 +660,12 @@ else
                             <tr>
                                 <td><?= $ecg_subject['name'] ?> (<?= $ecg_subject['weighting'] ?>)</td>
 
-                                <?php foreach($ecg_subject['grades'] as $subject_grade): ?>
-                                    <td class="text-center"><?= $subject_grade ?? lang('Grades.unavailable_short') ?></td>
+                                <?php foreach($ecg_subject['grades'] as $ecg_subject_grade): ?>
+                                    <td class="text-center">
+                                        <a href="<?= base_url('plafor/grade/saveGrade/'.$ecg_subject_grade['id']) ?>">
+                                            <?= $ecg_subject_grade['value'] ?? '' ?>
+                                        </a>
+                                    </td>
                                 <?php endforeach ?>
 
                                 <td><?= $ecg_subject['average'] ?? lang('Grades.unavailable_short') ?></td>
