@@ -26,10 +26,10 @@ class GradeModel extends Model
     // Validation
     protected $validationRules      = [
         'fk_user_course' => 'is_natural_no_zero',
-        // TODO create a custom rule for only fk_teaching_subject or
-        // fk_teaching_module
-        'fk_teaching_subject' => 'required_without[fk_teaching_module]',
-        'fk_teaching_module' => 'required_without[fk_teaching_subject]',
+        'fk_teaching_subject' => 'required_without[fk_teaching_module]|'
+            . 'is_module_xor_subject[]',
+        'fk_teaching_module' => 'required_without[fk_teaching_subject]|'
+            . 'is_module_xor_subject[]',
         'date' => 'valid_date',
         'grade' => 'greater_than_equal_to[0]|less_than_equal_to[6]',
         // TODO create a custom rule for 0 1 true false
