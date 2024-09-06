@@ -17,7 +17,7 @@ return [
 
     // Field labels
     'field_identity' => 'id',
-    
+
     //Usefull Links
     'plafor_module' => 'Module Plafor',
 
@@ -76,7 +76,7 @@ return [
     'title_acquisition_status_view' => 'Afficher les détails des status d\'acquisition',
     'title_acquisition_status_save' => 'Ajouter un statut d\'acquisition',
     'title_acquisition_status_edit' => 'Modifier un statut d\'acquisition',
-    
+
     //Comment
     'title_comment_save'    => 'Ajouter un commentaire',
     'comment_delete'        => 'Souhaitez-vous supprimer le commentaire ?',
@@ -87,44 +87,6 @@ return [
     'title_failed'                   => 'Échouée',
     'title_suspended'                => 'Suspendue',
     'title_abandoned'                => 'Abandonnée',
-
-    // Teaching domain
-    "list_title_domain"                     => "Domaine d'enseignement",
-    "name_domain"                           => "Nom",
-    "parent_course_plan_domain"             => "Plan de formation parent",
-    "weight_domain"                         => "Pondération",
-    "eliminatory_domain"                    => "Est éliminatoire",
-    "create_domain"                         => "Créer un domaine",
-    "delete_domain"                         => "Supprimer un domaine",
-
-    // Teaching subject
-    "title_list_subject"                    => "Liste des matières",
-    "name_subject"                          => "Nom",
-    "parent_domain_subject"                 => "Domaine parent",
-    "weight_subject"                        => "Pondération",
-    "create_subject"                        => "Créer une matière",
-    "delete_subject"                        => "Supprimer une matière",
-
-    // Teaching module
-    "title_list_module"                     => "Liste des modules",
-    "number_module"                         => "Numéro",
-    "name_module"                           => "Titre",
-    "version_module"                        => "Version",
-    "parent_domain_module"                  => "Domaine parent",
-    "create_module"                         => "Créer une matière",
-    "delete_module"                         => "Supprimer une matière",
-
-    // Teaching grade
-    "title_save_grade"                      => "Ajout d'une note",
-    "to_school_grade"                       => "Examen effectué à l'école",
-    "name_grade"                            => "Note",
-    "date_grade"                            => "Date de l'examen",
-    "new_grade"                             => "Entrer une nouvelle note",
-    "title_average_subject_grade"           => "Moyenne de la matière : ",
-    "title_average_module_grade"            => "Moyenne des modules",
-    "enable_explanation_grade"              => "Toutes les informations concernant cette note seront réactivées.",
-    "disable_explanation_grade"             => "Toutes les informations concernant cette note seront désactivées.",
-
 
     // Page titles
     'title_apprentice_list'                 => 'Liste des apprentis',

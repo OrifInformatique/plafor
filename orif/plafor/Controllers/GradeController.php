@@ -83,6 +83,7 @@ class GradeController extends \App\Controllers\BaseController{
      * @param  int $grade_id    => grade ID, default 0
      *
      * @return string|Response
+
      */
     public function saveGrade(int $grade_id = 0) : string|Response {
         
@@ -139,6 +140,7 @@ class GradeController extends \App\Controllers\BaseController{
         // Return to the current view if grade_id is OVER 0, for update
         elseif ($grade_id > 0) {
             return $this->display_view("plafor/grade/save", $this->m_grade_model->find("id", $grade_id));
+
         }
 
         // Return to the current view if there is ANY error with the model
@@ -157,12 +159,7 @@ class GradeController extends \App\Controllers\BaseController{
      *
      * @return void
      */
-    public function deleteGrade(
-        int $grade_id,
-        int $action = 0
-        )
-        : string|Response
-        {
+    public function deleteGrade(int $grade_id, int $action = 0) : string|Response {
 
         // Access permissions
         if (!isCurrentUserTrainerOfApprentice($course_plan_id)){
@@ -185,7 +182,7 @@ class GradeController extends \App\Controllers\BaseController{
             // TODO module name
         }
 
-        
+
         // TODO get Apprentice name
 
 
@@ -228,7 +225,9 @@ class GradeController extends \App\Controllers\BaseController{
                     ];
                 }
 
+
                 return $this->display_view("/* TODO */", $output);
+
 
             case 1: // Soft delete
                 $this->m_grade_model->delete($grade_id);
@@ -323,4 +322,3 @@ class GradeController extends \App\Controllers\BaseController{
         return $this->display_view("/plafor/grade/subject_grades", $data_to_view);
     }
 }
-

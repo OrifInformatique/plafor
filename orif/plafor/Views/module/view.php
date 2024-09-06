@@ -8,6 +8,21 @@
  *
  */
 
+
+/**
+ * *** Data needed for this view ***
+ *
+ * @param array $modules List of all the modules. All the fields from the database are needed.
+ *
+ */
+
+
+
+/**
+ * No data is sent by this view.
+ *
+ */
+
 helper('form');
 
 ?>
@@ -15,7 +30,7 @@ helper('form');
 <div class="container">
     <div class="row">
         <div class="col">
-            <h2 class="title-section"><?= lang('plafor_lang.title_list_module') ?></h2>
+            <h2 class="title-section"><?= lang('Grades.modules_catalog') ?></h2>
         </div>
     </div>
     <div class="row">
@@ -38,13 +53,13 @@ helper('form');
         [
             'columns' =>
             [
-                'number_module'             => lang('plafor_lang.number_module'),
-                'name_module'       => lang('plafor_lang.name_module'),
-                'version_module'     => lang('plafor_lang.version_module'),
-                'parent_domain_module'    => lang('plafor_lang.parent_domain_module'),
+                'number_module'        => lang('Grades.module_number'),
+                'name_module'          => lang('Grades.module_name'),
+                'version_module'       => lang('Grades.module_version'),
+                'parent_domain_module' => lang('Grades.module_parent_domain'),
             ],
             // TODO : Add data
-            // 'items'             => $data,
+            // 'items'             => $modules,
             'primary_key_field' => 'id',
             'url_update'        => 'plafor/grade/saveTeachingModule/',
             'url_delete'        => 'plafor/grade/deleteTeachingModule/'

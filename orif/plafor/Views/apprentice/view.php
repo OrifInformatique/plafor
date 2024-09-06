@@ -9,42 +9,56 @@
 ?>
 <div class="container">
     <?php
-    echo (view('\Plafor\templates\navigator',['title'=>lang('plafor_lang.title_view_apprentice')]));
+    echo view('\Plafor\templates\navigator', ['title' => lang('plafor_lang.title_view_apprentice')]);
 
-    $maxdate=null;
-    $userCourseMax=null;
-    foreach ($user_courses as $user_course){
-        if($maxdate==null){
-            $maxdate=$user_course['date_begin'];
-            $userCourseMax=$user_course;
+    $maxdate = null;
+    $userCourseMax = null;
+
+    foreach ($user_courses as $user_course)
+    {
+        if($maxdate == null)
+        {
+            $maxdate = $user_course['date_begin'];
+            $userCourseMax = $user_course;
         }
-        if(strtotime($user_course['date_begin'])>=strtotime($maxdate)&&$user_course['id']>$userCourseMax['id']){
-            $maxdate=$user_course['date_begin'];
-            $userCourseMax=$user_course;
+
+        if(strtotime($user_course['date_begin']) >= strtotime($maxdate)
+            && $user_course['id'] > $userCourseMax['id'])
+        {
+            $maxdate = $user_course['date_begin'];
+            $userCourseMax = $user_course;
         }
-        elseif (strtotime($user_course['date_begin'])>strtotime($maxdate)){
-            $maxdate=$user_course['date_begin'];
-            $userCourseMax=$user_course;
+        else if(strtotime($user_course['date_begin']) > strtotime($maxdate))
+        {
+            $maxdate = $user_course['date_begin'];
+            $userCourseMax = $user_course;
         }
     }
     ?>
+
     <!-- TITLE -->
     <div class="row">
         <div class="col">
             <h2 class="title-section"><?= $title; ?></h2>
         </div>
     </div>
+
     <!-- Apprentice details -->
     <div class="row">
         <div class="col-md-12">
             <p class="bg-primary text-white"><?=lang('plafor_lang.title_view_apprentice')?></p>
         </div>
+
         <div class="col-sm-6">
-            <p><span class="font-weight-bold"><?=$apprentice['username']?></span>
-            <br><?=$apprentice['email']?></p>
+            <p>
+                <span class="font-weight-bold"><?=$apprentice['username']?></span><br>
+                <?=$apprentice['email']?>
+            </p>
         </div>
+
         <div class="col-sm-6">
             <p><span class="font-weight-bold"><?=lang('plafor_lang.title_trainer_linked')?></span></p>
+
             <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer):?>
                 <!-- List with ADMIN buttons, accessible for trainers or admin only -->
                 <table class="table table-hover table-borderless">
@@ -62,7 +76,10 @@
                         endforeach;?>
                     </tbody>
                 </table>
-                <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/save_apprentice_link/'.$apprentice['id'])?>"><?= lang('plafor_lang.title_apprentice_link_new') ?></a>
+
+                <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/save_apprentice_link/'.$apprentice['id'])?>">
+                    <?= lang('plafor_lang.title_apprentice_link_new') ?>
+                </a>
             <?php else:
                 foreach ($links as $link):
                     foreach ($trainers as $trainer):
@@ -76,25 +93,38 @@
 
         <!-- Linked course plans -->
         <div class="col-12 mt-2">
-            <p><span class="font-weight-bold"><?=lang('plafor_lang.title_apprentice_followed_courses')?></span></p>
+            <p><span class="font-weight-bold"><?= lang('plafor_lang.title_apprentice_followed_courses') ?></span></p>
+
             <select class="form-control" id="usercourseSelector">
-                <?php foreach ($user_courses as $user_course) { ?>
-                    <option value="<?=$user_course['id']?>"><?=$course_plans[$user_course['fk_course_plan']]['official_name']?></option>
-                <?php } ?>
+                <?php foreach ($user_courses as $user_course): ?>
+                    <option value="<?= $user_course['id'] ?>">
+                        <?= $course_plans[$user_course['fk_course_plan']]['official_name'] ?>
+                    </option>
+                <?php endforeach ?>
             </select>
+
             <table class="table table-hover table-borderless user-course-details-table">
                 <tbody>
                     <tr>
-                        <td class="user-course-details-begin-date"><?=isset($userCourseMax)?$userCourseMax['date_begin']:null?></td>
-                        <td class="user-course-details-end-date"><?=isset($userCourseMax)?$userCourseMax['date_end']:null?></td>
-                        <td class="user-course-details-status"><?=isset($userCourseMax)?$user_course_status[$userCourseMax['fk_status']]['name']:null?></td>
+                        <td class="user-course-details-begin-date">
+                            <?= isset($userCourseMax) ? $userCourseMax['date_begin'] : null ?>
+                        </td>
+                        <td class="user-course-details-end-date">
+                            <?= isset($userCourseMax )? $userCourseMax['date_end'] : null ?>
+                        </td>
+                        <td class="user-course-details-status">
+                            <?= isset($userCourseMax) ? $user_course_status[$userCourseMax['fk_status']]['name'] : null ?>
+                        </td>
                     </tr>
                 </tbody>
             </table>
-            <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer):?>
+
+            <?php if(service('session')->get('user_access') >= config('\User\Config\UserConfig')->access_lvl_trainer): ?>
                 <!-- List with ADMIN buttons, accessible for trainers or admin only -->
-                <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/list_user_courses/'.$apprentice['id'])?>"><?= lang('plafor_lang.btn_user_course_manage') ?></a>
-            <?php endif;?>
+                <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/list_user_courses/'.$apprentice['id']) ?>">
+                    <?= lang('plafor_lang.btn_user_course_manage') ?>
+                </a>
+            <?php endif?>
         </div>
     </div>
 
@@ -102,9 +132,20 @@
     <div class="row mt-2">
         <div class="col-md-12">
             <p class="bg-primary text-white"><?=lang('plafor_lang.title_course_plan_status')?></p>
-            <p class="font-weight-bold user-course-details-course-plan-name"><?= isset($userCourseMax)?$course_plans[$userCourseMax['fk_course_plan']]['official_name']:null ?></p>
-            <div id="detailsArray" apprentice_id="<?= $apprentice['id'] ?>" course_plan_id="<?=isset($userCourseMax)?$userCourseMax['fk_course_plan']:null?>"></div>
+
+            <p class="font-weight-bold user-course-details-course-plan-name">
+                <?= isset($userCourseMax) ? $course_plans[$userCourseMax['fk_course_plan']]['official_name'] : null ?>
+            </p>
+
+            <div id="detailsArray" apprentice_id="<?= $apprentice['id'] ?>"
+                course_plan_id="<?= isset($userCourseMax) ? $userCourseMax['fk_course_plan'] : null ?>">
+            </div>
         </div>
+    </div>
+
+    <div class="row mt-2">
+        <!-- TODO : Insert data needed for the view -->
+        <?= view('\Plafor/grade/school_report') ?>
     </div>
 </div>
 
