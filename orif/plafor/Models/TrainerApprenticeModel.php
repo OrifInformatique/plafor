@@ -71,9 +71,9 @@ class TrainerApprenticeModel extends \CodeIgniter\Model
 
     /**
      * Get the apprentices unassigned to a trainer
-     * 
+     *
      * @return array
-     * 
+     *
      */
     public function getUnassignedApprentices()
     {
@@ -83,7 +83,7 @@ class TrainerApprenticeModel extends \CodeIgniter\Model
         $assigned_apprentices_list = array();
 
         $apprentices = $user_model->getApprentices();
-        
+
         $assinged_apprentices = $this->select('fk_apprentice')->distinct()->findAll();;
 
         foreach($assinged_apprentices as $assinged_apprentice)
@@ -98,16 +98,17 @@ class TrainerApprenticeModel extends \CodeIgniter\Model
         return $unassigned_apprentices;
     }
 
-    
+
     /**
      * Check if the given trainer is linked to the given apprentice
      *
      * @param  int $apprentice_id
      * @param  int $trainer_id
+     *
      * @return bool
      */
-    public function isTrainerLinkedToApprentice(int $apprentice_id, int $trainer_id ) : bool {
+    public function isTrainerLinkedToApprentice(int $trainer_id, int $apprentice_id) : bool {
         $list_apprentice[] = $this->getApprenticeIdsFromTrainer($trainer_id);
         return in_array($apprentice_id, $list_apprentice);
-    }          
+    }
 }
