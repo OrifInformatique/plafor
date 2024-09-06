@@ -662,11 +662,16 @@ class CoursePlan extends \App\Controllers\BaseController
         $date_begin = Time::createFromFormat('Y-m-d', $course_plan['date_begin']);
         $course_plan['date_begin'] = $date_begin->toLocalizedString('dd.MM.Y');
 
+        $teaching_domains = [
+            // TODO check Views/domain/view
+        ];
+
         // Data to send to the view
         $output = array(
             'title'                 => lang('plafor_lang.title_view_course_plan'),
             'course_plan'           => $course_plan,
-            'competence_domains'    => $competence_domains
+            'competence_domains'    => $competence_domains,
+            "teaching_domains"      => $teaching_domains,
         );
 
         return $this->display_view('\Plafor\course_plan\view',$output);

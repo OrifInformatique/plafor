@@ -103,19 +103,7 @@ class GradeController extends \App\Controllers\BaseController{
         $date = $this->request->getPost("date");
         $grade = $this->request->getPost("grade");
         $is_school = $this->request->getPost("is_school");
-
-        // Data to send to view
-        $data_to_view = [
-            "grade_id" => $grade_id,
-            "course_plan_id" => $course_plan_id,
-            "subject" => $subject_id,
-            "module" => $module_id,
-            "date"  => $date,
-            "grade" => $grade,
-            "is_school" => $is_school,
-            "errors"  => $this->m_grade_model->errors()
-        ];
-
+        
         // Actions upon form submission
         if (count($_POST) > 0){
             $data_to_model = [
@@ -127,7 +115,7 @@ class GradeController extends \App\Controllers\BaseController{
                 "grade"                 => $grade,
                 "is_school"             => $is_school,
             ];
-
+            
             // Insert or update grade in DB
             $this->m_grade_model->save($data_to_model);
 
@@ -142,16 +130,27 @@ class GradeController extends \App\Controllers\BaseController{
             return $this->display_view("plafor/grade/save", $this->m_grade_model->find("id", $grade_id));
 
         }
-
+        
         // Return to the current view if there is ANY error with the model
         // OR empty $_POST
+        $data_to_view = [
+            "grade_id" => $grade_id,
+            "course_plan_id" => $course_plan_id,
+            "subject" => $subject_id,
+            "module" => $module_id,
+            "date"  => $date,
+            "grade" => $grade,
+            "is_school" => $is_school,
+            "errors"  => $this->m_grade_model->errors()
+        ];
+
         return $this->display_view("\Plafor/grade/save", $data_to_view);
     }
 
 
 
     /**
-     * Delete a grade
+     * Delete or reactivate a grade
      * @param int $grade_id     => ID of the grade, Required
      * @param int $action       => 0 = display a confirmation (default)
      *                          => 1 = soft delete
@@ -239,21 +238,6 @@ class GradeController extends \App\Controllers\BaseController{
         }
 
         return redirect()->to("plafor/grade/school_report");
-    }
-
-
-    
-    /**
-     * showAllGrade
-     *
-     * @return string|Response
-     */
-    public function getAllGrade() : string|Response  {
-
-        return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
-
-        $data = ['items' => []];
-        return $this->display_view('\Plafor/grade/view', $data);
     }
 
 
