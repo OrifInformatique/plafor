@@ -242,8 +242,13 @@ class GradeController extends \App\Controllers\BaseController{
     public function showAllGrade() : string|Response  {
         // @TODO
 
-        $data = ['items' => []];
-        return $this->display_view('\Plafor/grade/view', $data);
+
+    /**
+     * showAllGrade
+     *
+     * @return string|Response
+     */
+    public function getAllGrade() : string|Response  {
 
         return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
 

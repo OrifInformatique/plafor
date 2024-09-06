@@ -58,6 +58,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
         $this->m_teaching_module_model = model("TeachingModuleModel");
         $this->m_user_course_model = model("UserCourseModel");
         $this->m_user_model = model("User_model");
+        helper("AccessPermissions_helper");
         // $this->m_trainer_apprentice_model = model("TrainerApprenticeModel");
 
     }
@@ -90,12 +91,12 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             "is_eliminatory"            => lang("plafor_lang.eliminatory_domain")
         ];
 
-        // $data_to_view["items"] = $this->m_teaching_domain_model->/*TODO get all teaching domain*/
+        $data_to_view["items"] = $this->m_teaching_domain_model->findAll();
 
         if($with_deleted){
-            $data_to_view["items"] = array_merge($data_to_view["items"], [
+            $data_to_view["items"] = array_merge($data_to_view["items"], 
+                $this->m_teaching_domain_model->onlyDeleted()->findAll());
             // @TODO get all teaching domain with archive
-            ]);
         }
 
         return $this->display_view("\Plafor/domain/view", $data_to_view);
@@ -187,12 +188,12 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             "subject_weight"        => lang("plafor_lang.weight_subject")
         ];
 
-        // $data_to_view["items"] = $this->m_teaching_subject_model->/*TODO get all teaching domain*/
+        $data_to_view["items"] = $this->m_teaching_subject_model->findAll();
 
         if($with_deleted){
-            $data_to_view["items"] = array_merge($data_to_view["items"], [
+            $data_to_view["items"] = array_merge($data_to_view["items"], 
+                $this->m_teaching_subject_model->onlyDeleted()->findAll());
             // @TODO get all teaching domain with archive
-            ]);
         }
 
         return $this->display_view("\Plafor/subject/view", $data_to_view);
@@ -268,12 +269,12 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             "version"               => lang("plafor_lang.version_module")
         ];
 
-        // $data_to_view["items"] = $this->m_teaching_module_model->/*TODO get all teaching domain*/
+        $data_to_view["items"] = $this->m_teaching_module_model->findAll();
 
         if($with_deleted){
-            $data_to_view["items"] = array_merge($data_to_view["items"], [
+            $data_to_view["items"] = array_merge($data_to_view["items"], 
+                $this->m_teaching_module_model->onlyDeleted()->findAll());
             // @TODO get all teaching domain with archive
-            ]);
         }
 
         return $this->display_view("\Plafor/module/view", $data_to_view);

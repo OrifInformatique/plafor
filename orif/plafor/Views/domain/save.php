@@ -92,7 +92,7 @@ helper('form')
         <h2 class="title-section"><?= $title ?></h2>
     </div>
 
-    <?= form_open(base_url('plafor/grade/saveTeachingDomain'), [], ['domain_id' => $domain_id]) ?>
+    <?= form_open(base_url('plafor/teachingdomain/saveTeachingDomain'), [], ['domain_id' => $domain_id]) ?>
         <div class="row">
             <div class="col form-group">
                 <?= form_label(lang('Grades.name'), 'domain_name', ['class' => 'form-label']) ?><br>

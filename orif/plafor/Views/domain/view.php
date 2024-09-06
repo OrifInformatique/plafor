@@ -103,11 +103,11 @@ $teaching_domains = [
         <div class="d-flex justify-content-between">
             <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
                 <div>
-                    <a href="<?= base_url('plafor/grade/saveTeachingDomain') ?>" class="btn btn-primary">
+                    <a href="<?= base_url('plafor/teachingdomain/saveTeachingDomain') ?>" class="btn btn-primary">
                         <?=lang ('common_lang.btn_new_m').' '.substr(strtolower(lang('Grades.domain')), 0, 7) ?>
                     </a>
 
-                    <a href="<?=base_url('plafor/grade/saveTeachingSubject')?>" class="btn btn-primary">
+                    <a href="<?=base_url('plafor/teachingdomain/saveTeachingSubject')?>" class="btn btn-primary">
                         <?= lang('common_lang.btn_new_f').' '.strtolower(lang('Grades.subject')) ?>
                     </a>
                 </div>
@@ -129,7 +129,7 @@ $teaching_domains = [
             <!-- Domain details -->
             <div class="row mt-5 m-2 pt-2 border-top border-bottom border-primary align-items-center">
                 <p class="col-6 h3 text-center">
-                    <a href="<?= base_url('plafor/grade/saveTeachingDomain/'.$teaching_domain['id']) ?>">
+                    <a href="<?= base_url('plafor/teachingdomain/saveTeachingDomain/'.$teaching_domain['id']) ?>">
                         <?= $teaching_domain['name'] ?>
                     </a>
                 </p>
@@ -164,7 +164,7 @@ $teaching_domains = [
                                 <?php foreach($teaching_domain['subjects'] as $teaching_subject): ?>
                                     <tr>
                                         <th>
-                                            <a href="<?= base_url('plafor/grade/saveTeachingSubject/'.$teaching_subject['id']) ?>">
+                                            <a href="<?= base_url('plafor/teachingdomain/saveTeachingSubject/'.$teaching_subject['id']) ?>">
                                                 <?= $teaching_subject['name'] ?>
                                             </a>
                                         </th>
