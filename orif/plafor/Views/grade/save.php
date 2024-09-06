@@ -43,16 +43,16 @@
  * ]
  *
  * @param ?string $selected_entry ID of the selected entry.
- * To remember user input.
+ * To edit an existing entry or remember user input.
  *
  * @param ?int $grade Value of the grade.
- * To remember user input.
+ * To edit an existing entry or remember user input.
  *
  * @param ?Date $exam_date Date of the exam.
- * To remember user input.
+ * To edit an existing entry or remember user input.
  *
  * @param ?bool $is_exam_made_in_school Defines whether the exam has been made in school or not (concerns modules).
- * To remember user input.
+ * To edit an existing entry or remember user input.
  *
  */
 
@@ -180,7 +180,7 @@ helper('form')
         <div class="row">
             <?php if($grade_id > 0): ?>
                 <div class="col">
-                    <a href="<?= base_url('plafor/grade/deleteGrade/'.$grade_id) ?>" class="btn btn-danger text-left">
+                    <a href="<?= base_url('plafor/grade/deleteGrade/'.$grade_id) ?>" class="btn btn-danger">
                         <?= lang('common_lang.btn_delete') ?>
                     </a>
                 </div>

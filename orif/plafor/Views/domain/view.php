@@ -3,6 +3,8 @@
 /**
  * Domains linked to a course plan view
  *
+ * Called by \Views/course_plan/view, himself called by CoursePlan/view_course_plan($course_plan_id)
+ *
  * @author      Orif (Dedy)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c), Orif (https://www.orif.ch)
@@ -18,7 +20,8 @@
  * [
  *      'id'       => int,    ID of the domain. Required.
  *      'name'     => string, Name of the domain. Required.
- *      'subjects' => array,  List of linked subjects. Can be empty. Structure of one subject below.
+ *      'subjects' => array,  List of linked subjects. Can be empty.
+ *      Structure of one subject below.
  *      [
  *          'id'        => int,    ID of the subject. Required.
  *          'name'      => string, Name of the subject. Required.
@@ -101,8 +104,8 @@ $teaching_domains = [
     <!-- Buttons + Checkbox  -->
     <div class="col-12">
         <div class="d-flex justify-content-between">
-            <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
-                <div>
+            <div>
+                <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
                     <a href="<?= base_url('plafor/teachingdomain/saveTeachingDomain') ?>" class="btn btn-primary">
                         <?=lang ('common_lang.btn_new_m').' '.substr(strtolower(lang('Grades.domain')), 0, 7) ?>
                     </a>
@@ -110,8 +113,8 @@ $teaching_domains = [
                     <a href="<?=base_url('plafor/teachingdomain/saveTeachingSubject')?>" class="btn btn-primary">
                         <?= lang('common_lang.btn_new_f').' '.strtolower(lang('Grades.subject')) ?>
                     </a>
-                </div>
-            <?php endif?>
+                <?php endif?>
+            </div>
 
             <!-- TODO : Make the checkbox display deleted teaching domains AND teaching subjects when checked -->
             <div>

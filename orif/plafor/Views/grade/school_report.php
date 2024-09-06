@@ -5,7 +5,7 @@
 /**
  * Apprentice school report view
  *
- * Called by \Views/apprentice/view
+ * Called by \Views/apprentice/view, himself called by Apprentice/view_apprentice($apprentice_id)
  *
  * @author      Orif (DeDy)
  * @link        https://github.com/OrifInformatique
