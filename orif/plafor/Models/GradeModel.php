@@ -26,10 +26,13 @@ class GradeModel extends Model
     // Validation
     protected $validationRules      = [
         'fk_user_course' => 'is_natural_no_zero',
+        // TODO create a custom rule for only fk_teaching_subject or
+        // fk_teaching_subject
         'fk_teaching_subject' => 'required_without[fk_teaching_module]',
         'fk_teaching_module' => 'required_without[fk_teaching_subject]',
         'date' => 'valid_date',
-        'grade' => 'greater_than[0]|less_than_equal_to[6]',
+        'grade' => 'greater_than_equal_to[0]|less_than_equal_to[6]',
+        // TODO create a custom rule for 0 1 true false
         'is_school' => 'required'
     ];
     protected $validationMessages   = [];
@@ -55,7 +58,7 @@ class GradeModel extends Model
             'first' => $this->afterFindFind($data['data']),
             'find' => $this->afterFindFind($data['data']),
             'findAll' => $this->afterFindFindAll($data['data']),
-            default => $data
+            default => $data['data']
         };
         return $data;
     }
@@ -84,6 +87,11 @@ class GradeModel extends Model
                 ->find($data['fk_teaching_module'])['official_name'];
         } else {
             unset($data['fk_teaching_module']);
+        }
+        if (isset($data['fk_user_course'])) { 
+            $userCouseModel = model('UserCourseModel');
+            $data['user_id'] = $userCouseModel
+                ->find($data['fk_user_course'])['fk_user'];
         }
         return $data;
     }
@@ -162,10 +170,6 @@ class GradeModel extends Model
     public function getApprenticeModuleGrade(int $id_user_course,
         int $id_module): array
     {
-        // TODO: Jointure avec la table "teaching_module" pour retourner le
-        // nom du module.
-        // TODO: Rechercher les entrées dont le champ 'fk_user_course' ===
-        // $id_user_course et le champ 'fk_module' === $id_module.
         $data = $this->select('fk_user_course, fk_teaching_module, date, '
             . 'grade, is_school, grade.archive, official_name')
             ->join('teaching_module',
@@ -186,24 +190,36 @@ class GradeModel extends Model
         return $average;
     }
 
-    public function getApprenticeSubjectAverage(int $id_user_course,
-        int $id_subject): float
+    // 4.25 -> 4.5
+    private function roundHalfPoint(float $number): float
     {
-        // TODO: Retourner la moyenne de la matière correspondant à id_subject
+        return round($number * 2) / 2;
+    }
+
+    // 4.25 -> 4.3
+    private function roundOneDecimalPoint(float $number): float
+    {
+        return round($number * 10) / 10;
+    }
+
+    public function getApprenticeSubjectAverage(int $id_user_course,
+        int $id_subject, ?callable $round_method = null): float
+    {
         $grades = $this
             ->getApprenticeSubjectGrades($id_user_course, $id_subject);
         $average = $this->getAverageFromArray($grades);
-        return $average;
+        if (is_null($round_method)) return $average;
+        return $round_method($average);
+
     }
 
     public function getApprenticeModuleAverage(int $id_user_course,
-        ?bool $is_school = null)
+        ?bool $is_school = null, ?callable $round_method = null): float
     {
-        // TODO: Retourner la moyenne des modules école ou non école en
-        // fonction du paramètre is_school
         $grades = $this->getApprenticeModulesGrades($id_user_course,
             $is_school);
         $average = $this->getAverageFromArray($grades);
-        return $average;
+        if (is_null($round_method)) return $average;
+        return $round_method($average);
     }
 }

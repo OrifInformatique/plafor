@@ -22,7 +22,7 @@ helper('form');
         <div class="col">
             <div class="col-sm-12 text-right d-flex justify-content-between">
             <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
-                <a href="<?=base_url('plafor/grade/saveTeachingSubject')?>" class="btn btn-primary"><?=lang('common_lang.btn_new_m')?></a>
+                <a href="<?=base_url('plafor/teachingdomain/saveTeachingSubject')?>" class="btn btn-primary"><?=lang('common_lang.btn_new_m')?></a>
             <?php endif?>
                 <span>
                 <?=form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted', ['class' => 'form-check-label','style'=>'padding-right:30px']);?>

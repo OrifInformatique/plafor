@@ -75,7 +75,7 @@ helper('form')
         <h2 class="title-section"><?= $title ?></h2>
     </div>
 
-    <?= form_open(base_url('plafor/grade/saveTeachingSubject'), [], ['subject_id' => $subject_id]) ?>
+    <?= form_open(base_url('plafor/teachingdomain/saveTeachingSubject'), [], ['subject_id' => $subject_id]) ?>
         <div class="row">
             <div class="col form-group">
                 <?= form_label(lang('Grades.name'), 'subject_name', ['class' => 'form-label']) ?><br>
