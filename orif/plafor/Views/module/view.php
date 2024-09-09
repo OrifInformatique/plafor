@@ -48,7 +48,6 @@ helper('form');
                         </a>
                     <?php endif?>
                 </div>
-
                 <span>
                 <?=form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted', ['class' => 'form-check-label','style'=>'padding-right:30px']);?>
                 <?=form_checkbox('toggle_deleted', '', isset($with_archived)?$with_archived:false, [
@@ -71,8 +70,8 @@ helper('form');
             // TODO : Add data
             // 'items'             => $modules,
             'primary_key_field' => 'id',
-            'url_update'        => 'plafor/grade/saveTeachingModule/',
-            'url_delete'        => 'plafor/grade/deleteTeachingModule/'
+            'url_update'        => 'plafor/teachingdomain/saveTeachingModule/',
+            'url_delete'        => 'plafor/teachingdomain/deleteTeachingModule/'
         ])?>
     </div>
 </div>

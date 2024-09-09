@@ -115,8 +115,7 @@ helper('form');
     </div>
 
     <!-- Linked teaching domains -->
-    <!-- TODO : Send linked teaching domains to the view below -->
-    <?= view('\Plafor/domain/view') ?>
+    <?= view('\Plafor/domain/view', $teaching_domains) ?>
 
 </div>
 
