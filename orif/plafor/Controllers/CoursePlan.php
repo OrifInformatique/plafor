@@ -663,7 +663,8 @@ class CoursePlan extends \App\Controllers\BaseController
         $course_plan['date_begin'] = $date_begin->toLocalizedString('dd.MM.Y');
 
         $teaching_domains = [
-            // TODO check Views/domain/view
+            // TODO check Views/domain/view, send data about domain and subjects
+            
         ];
 
         // Data to send to the view

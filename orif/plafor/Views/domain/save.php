@@ -97,7 +97,7 @@ helper('form')
             <div class="col form-group">
                 <?= form_label(lang('Grades.name'), 'domain_name', ['class' => 'form-label']) ?><br>
                 <!-- TODO : Insert domains list as form_dropdown $options -->
-                <?= form_dropdown('domain_name', 'Insert domains here', null, ['class' => 'form-control', 'id' => 'domain_name']) ?>
+                <?= form_input('domain_name', $domain_name ?? '', ['class' => 'form-control', 'id' => 'domain_name']) ?>
             </div>
 
             <div class="col form-group">
