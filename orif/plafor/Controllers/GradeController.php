@@ -1,4 +1,6 @@
 <?php
+
+// TODO : Order the functions by element and action (CRUD) in this order : Show/Read, Create/Save/Update, Delete
 /**
  * Controller who manage modules and subjects grades
  * Required level connected
@@ -83,12 +85,11 @@ class GradeController extends \App\Controllers\BaseController{
      * @param  int $grade_id    => grade ID, default 0
      *
      * @return string|Response
-
      */
     public function saveGrade(int $grade_id = 0) : string|Response {
-        
+
         $course_plan_id = $this->request->getPost("course_plan_id"); // apprentice
-        
+
         // Access permissions
         if (!isCurrentUserTrainerOfApprentice($course_plan_id)){
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
@@ -103,7 +104,7 @@ class GradeController extends \App\Controllers\BaseController{
         $date = $this->request->getPost("date");
         $grade = $this->request->getPost("grade");
         $is_school = $this->request->getPost("is_school");
-        
+
         // Actions upon form submission
         if (count($_POST) > 0){
             $data_to_model = [
@@ -128,7 +129,6 @@ class GradeController extends \App\Controllers\BaseController{
         // Return to the current view if grade_id is OVER 0, for update
         elseif ($grade_id > 0) {
             return $this->display_view("plafor/grade/save", $this->m_grade_model->find("id", $grade_id));
-
         }
         
         // Return to the current view if there is ANY error with the model
@@ -188,6 +188,7 @@ class GradeController extends \App\Controllers\BaseController{
         // Action to perform
         switch($action){
             case 0: // Display confirmation
+                // TODO : Edit the common view call to match new specifications
                 $output = [
 
                     "entry" => [
@@ -200,8 +201,7 @@ class GradeController extends \App\Controllers\BaseController{
                             ]
                         ]
                     ],
-
-                    "cancel_btn_url" => base_url("plafor/grade/view/".$grade_id)
+                    "cancel_btn_url" => base_url("plafor/grade/save/".$grade_id)
                 ];
 
                 // Enable the grade
@@ -224,9 +224,7 @@ class GradeController extends \App\Controllers\BaseController{
                     ];
                 }
 
-
-                return $this->display_view("/* TODO */", $output);
-
+                return $this->display_view("", $output);
 
             case 1: // Soft delete
                 $this->m_grade_model->delete($grade_id);
@@ -241,6 +239,7 @@ class GradeController extends \App\Controllers\BaseController{
     }
 
 
+      
 
     /**
      * Return the average grade of all modules
@@ -252,7 +251,8 @@ class GradeController extends \App\Controllers\BaseController{
      *
      * @return string|Response
      */
-    public function getModuleAverageGrade(int $course_plan_id, ?int $is_school = null) : string|Response {
+    // TODO : Delete this function ; unused
+    public function showModuleAverageGrade(int $apprentice_id, ?int $is_school = null) : string|Response {
 
         // Access permissions
         if (!isCurrentUserSelfApprentice($course_plan_id)){
@@ -282,7 +282,8 @@ class GradeController extends \App\Controllers\BaseController{
      *
      * @return string|Response
      */
-    public function getSubjectAverageGrade(int $course_plan_id, int $subject_id) : string|Response {
+    // TODO : Delete this function ; unused
+    public function showSubjectAverageGrade(int $subject_id, int $apprentice_id) : string|Response {
 
         // Access permissions
         if (!isCurrentUserSelfApprentice($course_plan_id)){

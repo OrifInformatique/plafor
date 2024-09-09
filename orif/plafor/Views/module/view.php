@@ -1,12 +1,16 @@
 <?php
+
 /**
  * Modules list view
+ *
+ * Called by TeachingDomainController/getAllTeachingModule()
  *
  * @author      Orif (DeDy)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c), Orif (https://www.orif.ch)
  *
  */
+
 
 
 /**
@@ -33,12 +37,17 @@ helper('form');
             <h2 class="title-section"><?= lang('Grades.modules_catalog') ?></h2>
         </div>
     </div>
+
     <div class="row">
         <div class="col">
             <div class="col-sm-12 text-right d-flex justify-content-between">
-            <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
-                <a href="<?=base_url('plafor/teachingdomain/saveTeachingModule')?>" class="btn btn-primary"><?=lang('common_lang.btn_new_m')?></a>
-            <?php endif?>
+                <div>
+                    <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
+                        <a href="<?=base_url('plafor/teachingdomain/saveTeachingModule')?>" class="btn btn-primary">
+                            <?=lang('common_lang.btn_new_m')?>
+                        </a>
+                    <?php endif?>
+                </div>
                 <span>
                 <?=form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted', ['class' => 'form-check-label','style'=>'padding-right:30px']);?>
                 <?=form_checkbox('toggle_deleted', '', isset($with_archived)?$with_archived:false, [
