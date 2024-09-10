@@ -133,7 +133,7 @@ class TeachingDomainModel extends Model
      *
      * @return array The list of modules associated with the teaching domain.
      */
-    public function getDomainModules(int $domainId, ?bool $withDeleted = true)
+    public function getModules(int $domainId, ?bool $withDeleted = true)
         :array
     {
         $teachingModuleModel= model('TeachingModuleModel');

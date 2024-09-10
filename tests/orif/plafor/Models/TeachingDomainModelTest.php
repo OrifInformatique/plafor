@@ -189,16 +189,15 @@ class TeachingDomainModelTest extends CIUnitTestCase
     }
 
     /**
-     * Tests that getDomainModules returns the expected modules for a given
-     * domain.
+     * Tests that getModules returns the expected modules for a given domain.
      *
-     * @covers TeachingDomainModel::getDomainModules
+     * @covers TeachingDomainModel::getModules
      */
-    public function testGetDomainModules(): void
+    public function testGetModules(): void
     {
         $domainId = 7;
         $teachingDomainModel = model('TeachingDomainModel');
-        $modules = $teachingDomainModel->getDomainModules($domainId);
+        $modules = $teachingDomainModel->getModules($domainId);
         $this->assertEquals($modules[0]['module_number'], 106);
         $this->assertEquals($modules[1]['module_number'], 107);
         $this->assertEquals($modules[2]['module_number'], 109);
