@@ -124,4 +124,28 @@ class TeachingModuleModel extends Model
         }
         return $data;
     }
+
+    /**
+     * Retrieves the modules associated with a teaching domain.
+     *
+     * @param int $domainId The ID of the teaching domain.
+     * @param bool|null $withDeleted Indicates whether deleted modules should
+     * be included in the results. Defaults to true.
+     *
+     * @return array The list of modules associated with the teaching domain.
+     */
+    public function getByTeachingDomainId(int $domainId, ?bool
+        $withDeleted = true): array
+    {
+        $modules = $this->select('teaching_module.id,
+            teaching_module.module_number, teaching_module.official_name,'
+            . ' teaching_module.version')
+             ->join('teaching_domain_module', 'teaching_module.id ='
+                 . ' teaching_domain_module.fk_teaching_module', 'left')
+             ->where('teaching_domain_module.fk_teaching_domain = ', $domainId)
+             ->withDeleted($withDeleted)
+             ->find();
+        return $modules;
+    }
+
 }

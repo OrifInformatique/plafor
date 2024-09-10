@@ -48,7 +48,6 @@ class TeachingModuleModelTest extends CIUnitTestCase
             'version' => '1',
             'archive' => null,
         ];
-        dd($data);
         foreach (array_keys($expect) as $key) {
             $this->assertEquals($expect[$key], $data[$key]);
         }
@@ -181,5 +180,20 @@ class TeachingModuleModelTest extends CIUnitTestCase
         $modules = $teachingModuleModel->findAll();
         $modules2 = $teachingModuleModel->find();
         $this->assertEquals($modules, $modules2);
+    }
+
+    /**
+     * Tests that getByTeachingDomainId returns the expected modules for a
+     * given domain.
+     * @covers TeachingModuleModel::getByTeachingDomainId
+     */
+    public function testGetByTeachingDomainId(): void
+    {
+        $domainId = 7;
+        $teachingModuleModel = model('TeachingModuleModel');
+        $modules = $teachingModuleModel->getByTeachingDomainId($domainId);
+        $this->assertEquals($modules[0]['module_number'], 106);
+        $this->assertEquals($modules[1]['module_number'], 107);
+        $this->assertEquals($modules[2]['module_number'], 109);
     }
 }

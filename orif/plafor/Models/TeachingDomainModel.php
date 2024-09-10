@@ -124,5 +124,22 @@ class TeachingDomainModel extends Model
         }
         return $data;
     }
+    /**
+     * Retrieves the modules associated with a teaching domain.
+     *
+     * @param int $domainId The ID of the teaching domain.
+     * @param bool|null $withDeleted Indicates whether deleted modules should
+     * be included in the results. Defaults to true.
+     *
+     * @return array The list of modules associated with the teaching domain.
+     */
+    public function getDomainModules(int $domainId, ?bool $withDeleted = true)
+        :array
+    {
+        $teachingModuleModel= model('TeachingModuleModel');
+        $modules = $teachingModuleModel->getByTeachingDomainId($domainId,
+            $withDeleted);
+        return $modules;
+    }
 
 }
