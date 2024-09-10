@@ -27,9 +27,21 @@
  *          'name'      => string, Name of the subject. Required.
  *          'weighting' => float,  Weighing of the subject (in the domain average). Reqiured.
  *      ]
+ *      'modules' => array, List of linked modules. Can be empty.
+ *      Structure of one module below.
+ *      [
+ *          'id'        => int,    ID of the module. Required.
+ *          'number'    => int,    Number of the module. Required
+ *          'title'     => string, Name of the module. Required.
+ *      ]
  *      'weighing'       => float, Weighting of the domain (in CFC average). Required.
  *      'is_eliminatory' => bool,  Determines whether a domain is eliminatory. Required.
  * ]
+ *
+ * === NOTES ===
+ *
+ * Even it's possible, we will prevent having a domain
+ * that have subjects and modules. (XOR logic)
  *
  */
 
@@ -102,10 +114,13 @@ helper('form');
             </div>
 
             <?php if(!empty($teaching_domain['subjects'])): ?>
-            <!-- Domain subjects -->
+
+                <!-- Domain subjects -->
                 <div class="row mb-4">
                     <!-- Subjects list -->
                     <div class="col-11 m-auto">
+                        <p class="bg-secondary"><?= lang('Grades.subjects') ?></p>
+
                         <table class="table table-striped mt-2">
                             <thead>
                                 <th><?= lang('Grades.subject') ?></th>
@@ -122,6 +137,41 @@ helper('form');
                                         </th>
 
                                         <th><?= $teaching_subject['weighting'] ?></th>
+                                    </tr>
+                                <?php endforeach ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            <?php endif ?>
+
+            <?php if(!empty($teaching_domain['modules'])): ?>
+                <!-- Domain modules -->
+                <div class="row mb-4">
+                    <div class="col-11 m-auto">
+                        <p class="bg-secondary mb-0"><?= lang('Grades.modules') ?></p>
+
+                        <!-- Domain school modules -->
+                        <table class="table table-striped mt-2">
+                            <thead>
+                                <th><?= lang('Grades.module_number') ?></th>
+                                <th><?= lang('Grades.module_name') ?></th>
+                            </thead>
+
+                            <tbody>
+                                <?php foreach($teaching_domain['modules'] as $module): ?>
+                                    <tr>
+                                        <th>
+                                            <a href="<?= base_url('plafor/teachingdomain/saveTeachingModule/'.$module['id']) ?>">
+                                                <?= $module['number'] ?>
+                                            </a>
+                                        </th>
+
+                                        <th>
+                                            <a href="<?= base_url('plafor/teachingdomain/saveTeachingModule/'.$module['id']) ?>">
+                                                <?= $module['title'] ?>
+                                            </a>
+                                        </th>
                                     </tr>
                                 <?php endforeach ?>
                             </tbody>
