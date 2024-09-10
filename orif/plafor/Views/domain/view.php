@@ -27,9 +27,21 @@
  *          'name'      => string, Name of the subject. Required.
  *          'weighting' => float,  Weighing of the subject (in the domain average). Reqiured.
  *      ]
+ *      'modules' => array, List of linked modules. Can be empty.
+ *      Structure of one module below.
+ *      [
+ *          'id'        => int,    ID of the module. Required.
+ *          'number'    => int,    Number of the module. Required
+ *          'title'     => string, Name of the module. Required.
+ *      ]
  *      'weighing'       => float, Weighting of the domain (in CFC average). Required.
  *      'is_eliminatory' => bool,  Determines whether a domain is eliminatory. Required.
  * ]
+ *
+ * === NOTES ===
+ *
+ * Even it's possible, we will prevent having a domain
+ * that have subjects and modules. (XOR logic)
  *
  */
 
@@ -76,17 +88,47 @@ $teaching_domains = [
     [
         'id' => 3,
         'name' => 'Languages',
+        'modules' => [
+                [
+                    'id' => 7,
+                    'number' => 123,
+                    'title' => 'English',
+                ],
+                [
+                    'id' => 8,
+                    'number' => 435,
+                    'title' => 'French',
+                ]
+        ],
+        'weighting' => 0.2,
+        'is_eliminatory' => false,
+    ],
+    [
+        'id' => 4,
+        'name' => 'Linux',
         'subjects' => [
             [
-                'id' => 7,
-                'name' => 'English',
-                'weighting' => 0.6,
-            ],
-            [
-                'id' => 8,
-                'name' => 'French',
-                'weighting' => 0.4,
-            ],
+                'id' => 9,
+                'name' => 'Kernel',
+                'weighting' => 1
+            ]
+        ],
+        'modules' => [
+                [
+                    'id' => 7,
+                    'number' => 123,
+                    'title' => 'Ajout des modules dans la liste des domainesAjout des modules dans la liste des domaines',
+                ],
+                [
+                    'id' => 8,
+                    'number' => 435,
+                    'title' => 'French',
+                ],
+                [
+                    'id' => 10,
+                    'number' => 21354,
+                    'title' => 'Ajout des modules dans la liste des domainesAjout des modules dans la liste des domainesAjout des modules dans la liste des domaines',
+                ],
         ],
         'weighting' => 0.2,
         'is_eliminatory' => false,
@@ -153,10 +195,13 @@ $teaching_domains = [
             </div>
 
             <?php if(!empty($teaching_domain['subjects'])): ?>
-            <!-- Domain subjects -->
+
+                <!-- Domain subjects -->
                 <div class="row mb-4">
                     <!-- Subjects list -->
                     <div class="col-11 m-auto">
+                        <p class="bg-secondary"><?= lang('Grades.subjects') ?></p>
+
                         <table class="table table-striped mt-2">
                             <thead>
                                 <th><?= lang('Grades.subject') ?></th>
@@ -173,6 +218,41 @@ $teaching_domains = [
                                         </th>
 
                                         <th><?= $teaching_subject['weighting'] ?></th>
+                                    </tr>
+                                <?php endforeach ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            <?php endif ?>
+
+            <?php if(!empty($teaching_domain['modules'])): ?>
+                <!-- Domain modules -->
+                <div class="row mb-4">
+                    <div class="col-11 m-auto">
+                        <p class="bg-secondary mb-0"><?= lang('Grades.modules') ?></p>
+
+                        <!-- Domain school modules -->
+                        <table class="table table-striped mt-2">
+                            <thead>
+                                <th><?= lang('Grades.module_number') ?></th>
+                                <th><?= lang('Grades.module_name') ?></th>
+                            </thead>
+
+                            <tbody>
+                                <?php foreach($teaching_domain['modules'] as $module): ?>
+                                    <tr>
+                                        <th>
+                                            <a href="<?= base_url('plafor/teachingdomain/saveTeachingModule/'.$module['id']) ?>">
+                                                <?= $module['number'] ?>
+                                            </a>
+                                        </th>
+
+                                        <th>
+                                            <a href="<?= base_url('plafor/teachingdomain/saveTeachingModule/'.$module['id']) ?>">
+                                                <?= $module['title'] ?>
+                                            </a>
+                                        </th>
                                     </tr>
                                 <?php endforeach ?>
                             </tbody>
