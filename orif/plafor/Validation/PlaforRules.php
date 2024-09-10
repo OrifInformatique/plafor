@@ -136,4 +136,21 @@ class PlaforRules
         return $isValide;
     }
 
+    /**
+     * Checks if the given value is a boolean or a binary representation.
+     *
+     * This function validates if the provided value is either a boolean (true
+     * or false) or a string/integer representation of 0 or 1.
+     *
+     * @param mixed $value The value to be validated.
+     *
+     * @return bool True if the value is a boolean or a binary representation,
+     * false otherwise.
+     */
+    public function is_boolean_or_binary_value(mixed $value): bool
+    {
+        $isValide = in_array($value, [0, 1, '0', '1', true, false], true);
+        return $isValide;
+    }
+
 }

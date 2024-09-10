@@ -170,4 +170,109 @@ class PlaforRulesTest extends CIUnitTestCase {
         $this->assertFalse($result);
     }
 
+
+    /**
+     * Tests that the is_boolean_or_binary_value method returns true for the
+     * value 0.
+     * @covers PlaforRules::is_boolean_or_binary_value
+     */
+    public function testIsBooleanOrBinaryValue_WithZero() :void
+    {
+        $data = 0;
+        $validation = new PlaforRules;
+        $result = $validation->is_boolean_or_binary_value($data);
+        $this->assertTrue($result);
+    }
+
+    /**
+     * Tests that the is_boolean_or_binary_value method returns true for the
+     * string '1'.
+     * @covers PlaforRules::is_boolean_or_binary_value
+     */
+    public function testIsBooleanOrBinaryValue_WithStringOne() :void
+    {
+        $data = '1';
+        $validation = new PlaforRules;
+        $result = $validation->is_boolean_or_binary_value($data);
+        $this->assertTrue($result);
+    }
+
+    /**
+     * Tests that the is_boolean_or_binary_value method returns true for the
+     * value true.
+     * @covers PlaforRules::is_boolean_or_binary_value
+     */
+    public function testIsBooleanOrBinaryValue_WithTrue() :void
+    {
+        $data = true;
+        $validation = new PlaforRules;
+        $result = $validation->is_boolean_or_binary_value($data);
+        $this->assertTrue($result);
+    }
+
+    /**
+     * Tests that the is_boolean_or_binary_value method returns true for the
+     * value false.
+     * @covers PlaforRules::is_boolean_or_binary_value
+     */
+    public function testIsBooleanOrBinaryValue_WithFalse() :void
+    {
+        $data = false;
+        $validation = new PlaforRules;
+        $result = $validation->is_boolean_or_binary_value($data);
+        $this->assertTrue($result);
+    }
+
+    /**
+     * Tests that the is_boolean_or_binary_value method returns false for an
+     * invalid integer (3).
+     * @covers PlaforRules::is_boolean_or_binary_value
+     */
+    public function testIsBooleanOrBinaryValue_WithInvalidInteger() :void
+    {
+        $data = 3;
+        $validation = new PlaforRules;
+        $result = $validation->is_boolean_or_binary_value($data);
+        $this->assertFalse($result);
+    }
+
+    /**
+     * Tests that the is_boolean_or_binary_value method returns false for an
+     * empty string.
+     * @covers PlaforRules::is_boolean_or_binary_value
+     */
+    public function testIsBooleanOrBinaryValue_WithEmptyString() :void
+    {
+        $data = '';
+        $validation = new PlaforRules;
+        $result = $validation->is_boolean_or_binary_value($data);
+        $this->assertFalse($result);
+    }
+
+    /**
+     * Tests that the is_boolean_or_binary_value method returns false for an
+     * invalid string ('a').
+     * @covers PlaforRules::is_boolean_or_binary_value
+     */
+    public function testIsBooleanOrBinaryValue_WithInvalidString() :void
+    {
+        $data = 'a';
+        $validation = new PlaforRules;
+        $result = $validation->is_boolean_or_binary_value($data);
+        $this->assertFalse($result);
+    }
+
+    /**
+     * Tests that the is_boolean_or_binary_value method returns false for an
+     * array.
+     * @covers PlaforRules::is_boolean_or_binary_value
+     */
+    public function testIsBooleanOrBinaryValue_WithInvalidArray() :void
+    {
+        $data = [];
+        $validation = new PlaforRules;
+        $result = $validation->is_boolean_or_binary_value($data);
+        $this->assertFalse($result);
+    }
+
 }

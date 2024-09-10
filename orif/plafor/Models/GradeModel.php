@@ -32,8 +32,7 @@ class GradeModel extends Model
             . 'is_module_xor_subject[]',
         'date' => 'valid_date',
         'grade' => 'greater_than_equal_to[0]|less_than_equal_to[6]',
-        // TODO create a custom rule for 0 1 true false
-        'is_school' => 'required'
+        'is_school' => 'required|is_boolean_or_binary_value'
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
