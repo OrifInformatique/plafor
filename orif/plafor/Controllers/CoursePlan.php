@@ -43,6 +43,9 @@ class CoursePlan extends \App\Controllers\BaseController
         $this->trainer_apprentice_model = model('TrainerApprenticeModel');
         $this->user_model = model('User_model');
         $this->user_type_model = model('User_type_model');
+        $this->m_teaching_domain_model = model("TeachingDomainModel");
+        $this->m_teaching_subject_model = model("TeachingSubjectModel");
+        $this->m_teaching_module_model = model("TeachingModuleModel");
     }
 
     /**
@@ -662,10 +665,41 @@ class CoursePlan extends \App\Controllers\BaseController
         $date_begin = Time::createFromFormat('Y-m-d', $course_plan['date_begin']);
         $course_plan['date_begin'] = $date_begin->toLocalizedString('dd.MM.Y');
 
-        $teaching_domains = [
-            // TODO check Views/domain/view, send data about domain and subjects
+        $teaching_domains = [];
+        
+        // Get teaching domains, subjects and modules
+        foreach ($this->m_teaching_domain_model->where("fk_course_plan", $course_plan_id)->findAll() as $domain) {
+            $teaching_subject = [];
+            $teaching_module = [];
+
+            // Get teaching subjects of the domain
+            foreach ($this->m_teaching_subject_model->where("fk_teaching_domain", $domain["id"])->findAll() as $subject){
+                $teaching_subject[] = [ 
+                    "id"            => $subject["id"],               // ID of the subject. Required.
+                    "name"          => $subject["name"],             // Name of the subject. Required.
+                    "weighting"     => $subject["subject_weight"],   // Weighing of the subject (in the domain average). Required.
+                ];
+            }
             
-        ];
+            // Get teaching modules of the domain
+            foreach ($this->m_teaching_module_model->where("fk_teaching_domain", $domain["id"])->orderBy("number", "ASC")->findAll() as $module){
+                // TODO: get teaching modules
+                $teaching_module = [] = [
+                    "id"            => $module["id"],
+                    "number"        => $module["module_number"],
+                    "title"         => $module["official_name"],
+                ];
+            }
+
+            $teaching_domains[] = [
+                "id"                => $domain["id"],               // ID of the domain. Required.
+                "name"              => $domain["title"],            // Name of the domain. Required.
+                "weighting"         => $domain["domain_weight"],    // Weighting of the domain (in CFC average). Required.
+                "is_eliminatory"    => $domain["is_eliminatory"],   // Determines whether a domain is eliminatory. Required.
+                "subjects"          => $teaching_subject,
+                "modules"           => $teaching_module,
+            ];
+        }
 
         // Data to send to the view
         $output = array(
@@ -675,7 +709,7 @@ class CoursePlan extends \App\Controllers\BaseController
             "teaching_domains"      => $teaching_domains,
         );
 
-        return $this->display_view('\Plafor\course_plan\view',$output);
+        return $this->display_view('\Plafor\course_plan\view', $output);
     }
 
     /**
