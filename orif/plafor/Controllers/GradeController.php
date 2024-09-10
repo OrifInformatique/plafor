@@ -83,12 +83,14 @@ class GradeController extends \App\Controllers\BaseController{
      * Insert/Modify the grade of an apprentice
      *
      * @param  int $grade_id    => grade ID, default 0
+     * 
      *
      * @return string|Response
      */
-    public function saveGrade(int $grade_id = 0) : string|Response {
+    public function saveGrade(int $apprentice_id, int $grade_id = 0) : string|Response {
 
-        $course_plan_id = $this->request->getPost("course_plan_id"); // apprentice
+        $course_plan_id = $this->request->getPost("user_course_id"); // apprentice
+        // $course_plan_id = $this->request->getPost("apprentice"); // apprentice
 
         // Access permissions
         if (!isCurrentUserTrainerOfApprentice($course_plan_id)){

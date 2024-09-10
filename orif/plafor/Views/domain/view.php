@@ -42,57 +42,6 @@
 
 helper('form');
 
-/* Random data set for testing, can be deleted anytime */
-$teaching_domains = [
-    [
-        'id' => 1,
-        'name' => 'Mathematics',
-        'subjects' => [
-            [
-                'id' => 1,
-                'name' => 'Algebra',
-                'weighting' => 0.4,
-            ],
-            [
-                'id' => 2,
-                'name' => 'Geometry',
-                'weighting' => 0.3,
-            ],
-            [
-                'id' => 3,
-                'name' => 'Calculus',
-                'weighting' => 0.3,
-            ],
-        ],
-        'weighting' => 0.5,
-        'is_eliminatory' => true,
-    ],
-    [
-        'id' => 2,
-        'name' => 'Science',
-        'weighting' => 0.3,
-        'is_eliminatory' => false,
-    ],
-    [
-        'id' => 3,
-        'name' => 'Languages',
-        'subjects' => [
-            [
-                'id' => 7,
-                'name' => 'English',
-                'weighting' => 0.6,
-            ],
-            [
-                'id' => 8,
-                'name' => 'French',
-                'weighting' => 0.4,
-            ],
-        ],
-        'weighting' => 0.2,
-        'is_eliminatory' => false,
-    ],
-];
-
 ?>
 
 <div class="row mt-3">
