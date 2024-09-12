@@ -106,13 +106,15 @@ class TeachingDomainModuleModel extends Model
         if (array_key_exists('fk_teaching_domain', $data)) { 
             $domainModel = model('TeachingDomainModel');
             $data['teachingDomain'] = $domainModel
+                ->withDeleted()
                 ->find($data['fk_teaching_domain']);
             unset($data['fk_teaching_domain']);
         }
         if (array_key_exists('fk_teaching_module', $data)) { 
             $moduleModel = model('teachingModuleModel');
             $data['teachingModule'] = $moduleModel
-             ->find($data['fk_teaching_module']);
+                ->withDeleted()
+                ->find($data['fk_teaching_module']);
             unset($data['fk_teaching_module']);
         }
         return $data;
