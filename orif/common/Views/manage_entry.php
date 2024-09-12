@@ -15,8 +15,8 @@
  * *** Data needed for this view ***
  *
  * @param string|null $type => Defines the type of the action. Required. Possible values below.
- * - 'delete'     => for a deletion confirmation
- * - 'disable'    => for a deactivation confirmation
+ * - 'delete'     => for a hard delete confirmation
+ * - 'disable'    => for a soft delete confirmation
  * - 'reactivate' => for a reactivation confirmation
  * - 'NULL'       => for other kind of confirmation, where the text and buttons are configurable.
  *
