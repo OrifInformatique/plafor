@@ -49,17 +49,17 @@ return[
     'above'                          => 'Ci-dessous',
 
 // Manage entry
-    'title_delete_entry'        => 'Suppression d\'entrée',
-    'subtitle_delete_entry'     => 'Êtes-vous sûr(e) de vouloir supprimer cette entrée ?',
+    'title_delete_entry'        => 'Suppression',
+    'subtitle_delete_entry'     => 'Êtes-vous sûr(e) de vouloir supprimer définitivement cette entrée ?',
 
-    'title_disable_entry'       => 'Désactivation d\'entrée',
+    'title_disable_entry'       => 'Désactivation',
     'subtitle_disable_entry'    => 'Êtes-vous sûr(e) de vouloir désactiver cette entrée ?',
 
-    'title_reactivate_entry'    => 'Réactivation d\'entrée',
+    'title_reactivate_entry'    => 'Réactivation',
     'subtitle_reactivate_entry' => 'Êtes-vous sûr(e) de vouloir réactiver cette entrée ?',
 
-    'title_manage_entry'        => 'Gestion d\'entrée',
-    'subtitle_manage_entry'     => 'Êtes-vous sûr(e) de vouloir altérer cette entrée ?',
+    'title_manage_entry'        => 'Gestion',
+    'subtitle_manage_entry'     => 'Êtes-vous sûr(e) de vouloir réaliser cette opération ?',
 
     'entries_linked'            => 'Entrées liées',
 ];
