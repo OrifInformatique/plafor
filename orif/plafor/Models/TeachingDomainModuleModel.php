@@ -111,7 +111,7 @@ class TeachingDomainModuleModel extends Model
             unset($data['fk_teaching_domain']);
         }
         if (array_key_exists('fk_teaching_module', $data)) { 
-            $moduleModel = model('teachingModuleModel');
+            $moduleModel = model('TeachingModuleModel');
             $data['teachingModule'] = $moduleModel
                 ->withDeleted()
                 ->find($data['fk_teaching_module']);
