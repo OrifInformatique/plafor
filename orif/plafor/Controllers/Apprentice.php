@@ -499,7 +499,7 @@ class Apprentice extends \App\Controllers\BaseController
                 return $this->display_view('\Common/manage_entry', $output);
 
             // Deletes apprentice link
-            case 1:
+            case 2:
                 $this->trainer_apprentice_model->delete($link_id, TRUE);
                 break;
         }

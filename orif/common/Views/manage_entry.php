@@ -75,10 +75,10 @@
 switch($type)
 {
     case 'disable':
-        $confirmation_title    = lang('common_lang.title_disable_entry');
-        $confirmation_subtitle = lang('common_lang.subtitle_disable_entry');
+        $confirmation_title    = $confirmation_title    ?? lang('common_lang.title_disable_entry');
+        $confirmation_subtitle = $confirmation_subtitle ?? lang('common_lang.subtitle_disable_entry');
 
-        $primary_action =
+        $primary_action = $primary_action ??
         [
             'name' => lang('common_lang.btn_disable'),
             'url'  => base_url(uri_string().'/1')
@@ -87,10 +87,10 @@ switch($type)
         break;
 
     case 'delete':
-        $confirmation_title    = lang('common_lang.title_delete_entry');
-        $confirmation_subtitle = lang('common_lang.subtitle_delete_entry');
+        $confirmation_title    = $confirmation_title    ?? lang('common_lang.title_delete_entry');
+        $confirmation_subtitle = $confirmation_subtitle ?? lang('common_lang.subtitle_delete_entry');
 
-        $primary_action =
+        $primary_action = $primary_action ??
         [
             'name' => lang('common_lang.btn_delete'),
             'url'  => base_url(uri_string().'/2')
@@ -98,24 +98,21 @@ switch($type)
 
         break;
 
-
     case 'reactivate':
-        $confirmation_title    = lang('common_lang.title_reactivate_entry');
-        $confirmation_subtitle = lang('common_lang.subtitle_reactivate_entry');
+        $confirmation_title    = $confirmation_title    ?? lang('common_lang.title_reactivate_entry');
+        $confirmation_subtitle = $confirmation_subtitle ?? lang('common_lang.subtitle_reactivate_entry');
 
-        $primary_action =
+        $primary_action = $primary_action ??
         [
             'name' => lang('common_lang.btn_reactivate'),
             'url'  => base_url(uri_string().'/3')
         ];
 
         break;
-}
 
-if(empty($confirmation_title) || empty($confirmation_subtitle))
-{
-    $confirmation_title    = lang('common_lang.title_manage_entry');
-    $confirmation_subtitle = lang('common_lang.subtitle_manage_entry');
+    default:
+        $confirmation_title    = $confirmation_title    ?? lang('common_lang.title_manage_entry');
+        $confirmation_subtitle = $confirmation_subtitle ?? lang('common_lang.subtitle_manage_entry');
 }
 
 ?>
@@ -126,6 +123,7 @@ if(empty($confirmation_title) || empty($confirmation_subtitle))
 
         <p><?= $confirmation_subtitle ?></p>
 
+        <!-- Entry details -->
         <div class="alert alert-primary">
             <p class="mb-0">
                 <strong>
@@ -144,6 +142,7 @@ if(empty($confirmation_title) || empty($confirmation_subtitle))
             <?php endif ?>
         </div>
 
+        <!-- Linked entries -->
         <?php if(isset($linked_entries) && !empty($linked_entries)): ?>
             <div>
                 <h2><?= lang('common_lang.entries_linked') ?></h2>
@@ -172,23 +171,28 @@ if(empty($confirmation_title) || empty($confirmation_subtitle))
             </div>
         <?php endif ?>
 
+        <!-- Additionnal message -->
         <?php if(isset($entry['message']) && !empty($entry['message'])): ?>
             <p class="alert alert-info">
                 <?= $entry['message'] ?>
             </p>
         <?php endif ?>
 
+        <!-- Actions -->
         <div class="text-right">
+            <!-- Cancel button -->
             <a class="btn btn-secondary" href="<?= $cancel_btn_url ?>">
                 <?= lang('common_lang.btn_cancel'); ?>
             </a>
 
+            <!-- Secondary action -->
             <?php if(isset($secondary_action) && !empty($secondary_action)): ?>
                 <a class="btn btn-primary" href="<?= $secondary_action['url'] ?>">
                     <?= $secondary_action['name'] ?>
                 </a>
             <?php endif ?>
 
+            <!-- Primary action -->
             <?php if(isset($primary_action) && !empty($primary_action)): ?>
                 <a class="btn btn-danger" href="<?= $primary_action['url'] ?>">
                     <?= $primary_action['name'] ?>
