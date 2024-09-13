@@ -87,7 +87,7 @@ class GradeController extends \App\Controllers\BaseController{
      *
      * @return string|Response
      */
-    public function saveGrade(int $apprentice_id, int $grade_id = 0) : string|Response {
+    public function saveGrade(int $grade_id = 0) : string|Response {
 
         $course_plan_id = $this->request->getPost("user_course_id"); // apprentice
         // $course_plan_id = $this->request->getPost("apprentice"); // apprentice

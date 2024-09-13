@@ -1,6 +1,6 @@
 <?php
 /**
- * Controller who manage modules and subjects grades
+ * Controller who manage Domain, Modules and Subjects grades
  * Required level connected
  * @author      Orif (ViDi, ThJo)
  * @link        https://github.com/OrifInformatique
@@ -66,27 +66,32 @@ class TeachingDomainController extends \App\Controllers\BaseController{
         
     /**
      * Add/Update a teaching domain
+     * // TODO: check saveTeachingSubject and do the same
      *
-     * @param int $domain_id    => ID of the teaching domain (default = 0)
+     * @param int $domain_id        => ID of the teaching domain (default = 0)
+     * @param int $course_plan_id   => ID of the course plan (default = 0)
      * 
      * @return string|Response
      */
-    public function saveTeachingDomain(int $domain_id = 0) : string|Response {
+    public function saveTeachingDomain(int $domain_id = 0, int $course_plan_id = 0) : string|Response {
 
         // Access permissions
         if (!isCurrentUserAdmin()) {
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
 
-        // Data form
-        $domain_name = $this->request->getPost("domain_name"); //TODO check if it's right
-        $course_plan_id = $this->request->getPost("course_plan"); //TODO check if it's right
-        $domain_weight = $this->request->getPost("domain_weight");
-        $is_eliminatory = $this->request->getPost("is_eliminatory");
-        $course_plan_parent = $this->request->getPost("domain_parent_course_plan");
+        // Redirect to the last URL if course plan ID doesn't exist
+        if (empty($this->m_course_plan_model->find($course_plan_id))){
+            return redirect()->to(previous_url()); // TODO: comment this line if DD (Dylan Dervey)
+        }
 
-        // Post
         if(count($_POST) > 0) {
+            $domain_name = $this->request->getPost("domain_name");
+            $course_plan_id = $this->request->getPost("course_plan");
+            $domain_weight = $this->request->getPost("domain_weight");
+            $is_eliminatory = $this->request->getPost("is_domain_eliminatory");
+            $course_plan_parent = $this->request->getPost("domain_parent_course_plan");
+
             $data_to_model = [
                 "id"                        => $domain_id,
                 "fk_teaching_domain_title"  => $domain_name,
@@ -95,33 +100,29 @@ class TeachingDomainController extends \App\Controllers\BaseController{
                 "is_eliminatory"            => $is_eliminatory
             ];
             
-            // Insert or update grade in DB
             $this->m_teaching_domain_model->save($data_to_model);
             
             // Return to previous page if there is NO error
-            if ($this->m_teaching_domain_model->errors()==null) {
+            if ($this->m_teaching_domain_model->errors() == null) {
                 return redirect()->to("plafor/domain/view");
             }
         }
 
-        // Return to the current view if domain_id is OVER 0, for update
-        elseif ($domain_id > 0) {
-            return $this->display_view("\Plafor/domain/save", $this->m_teaching_domain_model->find("id", $domain_id));
-        }
 
-        // TODO What is needed (ID, name) ??
         $course_plan_parent = $this->m_course_plan_model->findAll();
 
         $data_to_view = [
+            "title"                     => $domain_id == 0 ? lang('Grades.create_domain') : lang('Grades.update_domain'),
             "fk_teaching_domain_title"  => $domain_id,
             "fk_course_plan"            => $course_plan_id,
             "domain_weight"             => $domain_weight,
             "is_eliminatory"            => $is_eliminatory,
-            "domain_parent_course_plan" => $course_plan_parent, // todo check how to implement
+            "domain_parent_course_plan" => $course_plan_parent,
             "errors"                    => $this->m_teaching_domain_model->errors()
         ];
 
-        // Return to the current view if there is ANY error with the model
+        // Return to the current view if subject_id is OVER 0, for update
+        // OR return to the current view if there is ANY error with the model
         // OR empty $_POST
         return $this->display_view("\Plafor/domain/save", $data_to_view);
     }
@@ -148,54 +149,59 @@ class TeachingDomainController extends \App\Controllers\BaseController{
     /**
      * Add/Update a teaching subject
      *
-     * @param int $subject_id    => ID of the teaching subject (default = 0)
+     * @param int $subject_id   => ID of the teaching subject (default = 0)
+     * @param int $domain_id    => ID of the teaching domain (default = 0)
      * 
      * @return string|Response
      */
-    public function saveTeachingSubject(int $subject_id = 0) : string|Response {
-
+    public function saveTeachingSubject(int $subject_id = 0, int $domain_id = 0) : string|Response {
+        
         // Access permissions
         if (!isCurrentUserAdmin()) {
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
         
-        // Data form
-        $teaching_domain = $this->request->getPost("teaching_domain");
-        $name = $this->request->getPost("name");
-        $subject_weight = $this->request->getPost("subject_weight");
+        // Redirect to the last URL if domain ID doesn't exist
+        if (empty($this->m_teaching_domain_model->find($domain_id))){
+            return redirect()->to(previous_url()); // TODO: comment this line if DD (Dylan Dervey)
+        }
 
-        
         if(count($_POST) > 0) {
+
             $data_to_model = [
                 "id"                    => $subject_id,
-                "fk_teaching_domain"    => $teaching_domain,
-                "name"                  => $name,
-                "subject_weight"        => $subject_weight,
+                "fk_teaching_domain"    => $this->request->getPost("subject_parent_domain"),
+                "name"                  => $this->request->getPost("subject_name"),
+                "subject_weight"        => $this->request->getPost("subject_weight"),
             ];
             
-            // Insert or update grade in DB
             $this->m_teaching_subject_model->save($data_to_model);
             
             // Return to previous page if there is NO error
-            if ($this->m_teaching_subject_model->errors()==null) {
-                return redirect()->to("plafor/subject/view");
+            if ($this->m_teaching_subject_model->errors() == null) {
+
+                $course_plan_id = $this->m_teaching_domain_model->find($domain_id)['fk_course_plan'];
+                
+                return redirect()->to("plafor/courseplan/view_course_plan/" . $course_plan_id);
             }
         }
         
-        // Return to the current view if subject_id is OVER 0, for update
-        elseif ($subject_id > 0) {
-            return $this->display_view("\Plafor/subject/save", $this->m_teaching_subject_model->find("id", $subject_id));
-        }
+        // Get a list with all Subject and Domain
+        $data_from_model = $this->m_teaching_subject_model->find($subject_id);
         
-        // Return to the current view if there is ANY error with the model
-        // OR empty $_POST
         $data_to_view = [
-            "teaching_domain"   => $teaching_domain,
-            "name"              => $name,
-            "subject_weight"    => $subject_weight,
-            "errors"            => $this->m_teaching_subject_model->errors()
+            "title"                     => $subject_id == 0 ? lang('Grades.create_subject') : lang('Grades.update_subject'),
+            "subject_id"                => $subject_id,
+            "subject_parent_domain"     => $domain_id,
+            "subject_name"              => $data_from_model["name"] ?? null,
+            "subject_weight"            => $data_from_model["subject_weight"] ?? null,
+            "domain_name"               => $this->m_teaching_domain_model->find($domain_id) ["title"], 
+            "errors"                    => $this->m_teaching_subject_model->errors()
         ];
-
+        
+        // Return to the current view if subject_id is OVER 0, for update
+        // OR return to the current view if there is ANY error with the model
+        // OR empty $_POST
         return $this->display_view("\Plafor/subject/save", $data_to_view);
     }
 
@@ -204,7 +210,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
     /**
      * Delete or reactivate a Teaching Subject
      *
-     * @param int $subject_id    => ID of the subject
+     * @param int $subject_id   => ID of the subject
      * @param int $action       => 0 = display a confirmation (default)
      *                          => 1 = soft delete
      *                          => 3 = reactivate
@@ -229,14 +235,25 @@ class TeachingDomainController extends \App\Controllers\BaseController{
     public function getAllTeachingModule(bool $with_deleted = false) : string|Response {
 
         // Access permissions
-        if (!isCurrentUserApprentice()){
+        if (!isCurrentUserTrainer()){
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
 
-        $data_to_view["items"] = $this->m_teaching_module_model->findAll();
+        $teaching_module = [];
+        // Get teaching modules of the domain
+            foreach ($this->m_teaching_module_model->findAll() as $module){
+            $teaching_modules [] = [
+                "id"                    => $module["id"],
+                "number_module"         => $module["module_number"],
+                "name_module"           => $module["official_name"],
+                "version_module"        => $module["version"],
+            ];
+        }
+        
+        $data_to_view["modules"] = $teaching_modules;
 
         if($with_deleted){
-            $data_to_view["items"] = array_merge($data_to_view["items"], 
+            $data_to_view["modules"] = array_merge($data_to_view["modules"], 
                 $this->m_teaching_module_model->onlyDeleted()->findAll());
         }
 
@@ -247,6 +264,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
 
     /**
      * Add/Update a teaching module
+     * // TODO: check saveTeachingSubject and do the same
      *
      * @param int $module_id    => ID of the teaching module (default = 0)
      * 

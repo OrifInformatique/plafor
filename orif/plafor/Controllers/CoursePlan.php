@@ -682,9 +682,7 @@ class CoursePlan extends \App\Controllers\BaseController
             
             $teaching_module = [];
             // Get teaching modules of the domain
-            foreach ($this->m_teaching_module_model->findAll() as $module){
-                // foreach ($this->m_teaching_module_model->where("fk_teaching_domain", $domain["id"])->orderBy("number", "ASC")->findAll() as $module){
-                // TODO: get teaching modules ( with a model)
+                foreach ($this->m_teaching_module_model->getByTeachingDomainId($domain["id"]) as $module){
                 $teaching_module [] = [
                     "id"            => $module["id"],
                     "number"        => $module["module_number"],
@@ -692,11 +690,14 @@ class CoursePlan extends \App\Controllers\BaseController
                 ];
             }
 
+            // Sort the array by modules numbers
+            array_multisort(array_column($teaching_module, "number"), SORT_ASC, $teaching_module);
+
             $teaching_domains[] = [
                 "id"                => $domain["id"],               // ID of the domain. Required.
                 "name"              => $domain["title"],            // Name of the domain. Required.
                 "weighting"         => $domain["domain_weight"],    // Weighting of the domain (in CFC average). Required.
-                "is_eliminatory"    => $domain["is_eliminatory"],   // Determines whether a domain is eliminatory. Required.
+                "is_eliminatory"    => $domain["is_eliminatory"],   // Determines if a domain is eliminatory. Required.
                 "subjects"          => $teaching_subject,
                 "modules"           => $teaching_module,
             ];
@@ -712,6 +713,8 @@ class CoursePlan extends \App\Controllers\BaseController
 
         return $this->display_view('\Plafor\course_plan\view', $output);
     }
+    // }
+
 
     /**
      * Shows details of the selected competence domain
