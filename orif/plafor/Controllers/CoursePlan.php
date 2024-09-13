@@ -670,8 +670,7 @@ class CoursePlan extends \App\Controllers\BaseController
         // Get teaching domains, subjects and modules
         foreach ($this->m_teaching_domain_model->where("fk_course_plan", $course_plan_id)->findAll() as $domain) {
             $teaching_subject = [];
-            $teaching_module = [];
-
+            
             // Get teaching subjects of the domain
             foreach ($this->m_teaching_subject_model->where("fk_teaching_domain", $domain["id"])->findAll() as $subject){
                 $teaching_subject[] = [ 
@@ -681,10 +680,12 @@ class CoursePlan extends \App\Controllers\BaseController
                 ];
             }
             
+            $teaching_module = [];
             // Get teaching modules of the domain
-            foreach ($this->m_teaching_module_model->where("fk_teaching_domain", $domain["id"])->orderBy("number", "ASC")->findAll() as $module){
-                // TODO: get teaching modules
-                $teaching_module = [] = [
+            foreach ($this->m_teaching_module_model->findAll() as $module){
+                // foreach ($this->m_teaching_module_model->where("fk_teaching_domain", $domain["id"])->orderBy("number", "ASC")->findAll() as $module){
+                // TODO: get teaching modules ( with a model)
+                $teaching_module [] = [
                     "id"            => $module["id"],
                     "number"        => $module["module_number"],
                     "title"         => $module["official_name"],
