@@ -71,7 +71,12 @@
 /**
  * Action type management
  *
- */
+ * The URLs for disable, delete, and reactivate actions are generated based on the action type.
+ *      - disable : 1 in the URL (e.g. base_url(uri_string().'/1'))
+ *      - delete : 2 in the URL (e.g. base_url(uri_string().'/2'))
+ *      - reactivate : 3 in the URL (e.g. base_url(uri_string().'/3'))
+ *
+*/
 switch($type)
 {
     case 'disable':
