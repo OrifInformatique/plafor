@@ -12,7 +12,6 @@ namespace Plafor\Models;
 
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
-use User\Models\User_model;
 
 class UserCourseModel extends \CodeIgniter\Model
 {
@@ -52,16 +51,15 @@ class UserCourseModel extends \CodeIgniter\Model
 
     /**
      * Gets all courses from a user.
-     * 
+     *
      * @param int $fk_user ID of the user
-     * 
+     *
      * @return array
-     * 
+     *
      */
     public function getUserCourses($fk_user)
     {
-        $user_course_model = model('UserCourseModel');
-        return $user_course_model
+        return $this
             ->join('course_plan','course_plan.id = user_course.fk_course_plan')
             ->where('fk_user', $fk_user)
             ->findAll();

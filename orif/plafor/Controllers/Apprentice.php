@@ -59,7 +59,7 @@ class Apprentice extends \App\Controllers\BaseController
 
     /**
      * Default method to redirect to a homepage depending on the type of user
-     * 
+     *
      * @return void
      */
     public function index() {
@@ -83,7 +83,7 @@ class Apprentice extends \App\Controllers\BaseController
 
     /**
      * Displays the list of apprentices
-     * 
+     *
      * @param $withDeleted : Whether or not to show deleted apprentices
      * @return void
      */
@@ -118,8 +118,8 @@ class Apprentice extends \App\Controllers\BaseController
         {
             $apprentices = $this->trainer_apprentice_model->getUnassignedApprentices();
         }
-        
-        else 
+
+        else
         {
             // User is a trainer - lists their linked apprentices
             if (count($this->trainer_apprentice_model->where('fk_trainer', $trainer_id)->findAll()))
@@ -149,7 +149,7 @@ class Apprentice extends \App\Controllers\BaseController
 
     /**
      * Displays the view for a given apprentice
-     * 
+     *
      * @param int $apprentice_id : ID of the apprentice
      * @return void
      */
@@ -209,11 +209,11 @@ class Apprentice extends \App\Controllers\BaseController
      * Display the list of user courses linked to one given user
      *
      * @param int $id_apprentice ID of the concerned apprentice
-     * 
+     *
      * @return void
-     * 
+     *
      */
-    public function list_user_courses($id_apprentice = null) 
+    public function list_user_courses($id_apprentice = null)
     {
         if(is_numeric($id_apprentice))
             $user = $this->user_model->where('id', $id_apprentice)->first();
@@ -248,14 +248,14 @@ class Apprentice extends \App\Controllers\BaseController
      *
      * @param int $id_apprentice   ID of the apprentice
      * @param int $id_user_course  ID of the user's course
-     * 
+     *
      * @return void
-     * 
+     *
      */
     public function save_user_course($id_apprentice = 0, $id_user_course = 0)
     {
         // Access permissions
-        if($this->session->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer) 
+        if($this->session->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer)
         {
             $user_type_id = $this->user_type_model
                 ->where('access_level', config('\User\Config\UserConfig')->access_level_apprentice)
@@ -285,7 +285,7 @@ class Apprentice extends \App\Controllers\BaseController
                     // User's course already exists - updates it
                     $this->user_course_model->update($id_user_course, $new_user_course);
                 }
-                else 
+                else
                 {
                     $user_has_course = $this->user_course_model->where(['fk_user' => $id_apprentice, 'fk_course_plan' => $fk_course_plan])->findAll() ? true : false;
 
@@ -294,44 +294,44 @@ class Apprentice extends \App\Controllers\BaseController
                     {
                         // No user's course was found in database - inserts a new one
                         $id_user_course = $this->user_course_model->insert($new_user_course);
-                            
+
                         $course_plan = $this->user_course_model->getCoursePlan($new_user_course['fk_course_plan']);
                         $competenceDomainIds = [];
-                        
-                        foreach ($this->course_plan_model->getCompetenceDomains($course_plan['id']) as $competence_domain) 
+
+                        foreach ($this->course_plan_model->getCompetenceDomains($course_plan['id']) as $competence_domain)
                             $competenceDomainIds[] = $competence_domain['id'];
-                        
+
                         $operational_competences = [];
                         // No operational competence associated
-                        try 
+                        try
                         {
                             $operational_competences = $this->operational_comp_model->withDeleted()->whereIn('fk_competence_domain', $competenceDomainIds)->findAll();
-                        } 
-                        
+                        }
+
                         catch (\Exception $e) {};
 
                         // Adds an acquisition status of level 1 for each objective
                         $objectiveIds = array();
-                        foreach ($operational_competences as $operational_competence) 
+                        foreach ($operational_competences as $operational_competence)
                         {
-                            foreach ($this->operational_comp_model->getObjectives($operational_competence['id']) as $objective) 
+                            foreach ($this->operational_comp_model->getObjectives($operational_competence['id']) as $objective)
                                 $objectiveIds[] = $objective['id'];
                         }
 
-                        foreach ($objectiveIds as $objectiveId) 
+                        foreach ($objectiveIds as $objectiveId)
                         {
                             $acquisition_status = array(
                                 'fk_objective'          => $objectiveId,
                                 'fk_user_course'        => $id_user_course,
                                 'fk_acquisition_level'  => 1
                             );
-                            
+
                             $this->acquisition_status_model->insert($acquisition_status);
                         }
                     }
                 }
 
-                if($this->user_course_model->errors() == null) 
+                if($this->user_course_model->errors() == null)
                     return redirect()->to(base_url('plafor/apprentice/list_user_courses/' . $id_apprentice));
             }
 
@@ -363,15 +363,15 @@ class Apprentice extends \App\Controllers\BaseController
             );
 
             return $this->display_view('Plafor\user_course/save', $output);
-        } 
-        
+        }
+
         else
             return $this->display_view('\User\errors\403error');
     }
 
     /**
      * @todo the user doesn't modify the trainer but add one on update
-     * 
+     *
      * Creates a link between an apprentice and a trainer, or changes the trainer
      * linked on the selected trainer_apprentice SQL entry
      *
@@ -416,7 +416,7 @@ class Apprentice extends \App\Controllers\BaseController
                 }
             }
 
-            // Gets data of trainers for the dropdown menu BUT ignore the trainers who are 
+            // Gets data of trainers for the dropdown menu BUT ignore the trainers who are
             // already linked to the selected apprentice
             $trainersRaw = $this->user_model->getTrainers();
             $trainers = array();
@@ -447,44 +447,64 @@ class Apprentice extends \App\Controllers\BaseController
     /**
      * Deletes a trainer_apprentice link depending on $action
      *
-     * @param integer $link_id : ID of the trainer_apprentice_link to affect
-     * @param integer $action  : Action to apply on the trainer_apprentice link :
-     *  - 0 for displaying the confirmation
-     *  - 1 for deleting (hard delete)
+     * @param integer $link_id ID of the trainer_apprentice_link to affect
+     * @param integer $action  Action to apply on the trainer_apprentice link
+     *      - 0 for displaying the confirmation
+     *      - 2 for deleting (hard delete)
+     *
      * @return void
+     *
      */
-    public function delete_apprentice_link($link_id = 0, $action = 0) {
-        // Access permissions
-        if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_trainer) {
-            // Gets data related to the link
-            $link = $this->trainer_apprentice_model->find($link_id);
-
-            if (is_null($link)) {
-                return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
-            }
-
-            $apprentice = $this->trainer_apprentice_model->getApprentice($link['fk_apprentice']);
-            $trainer = $this->trainer_apprentice_model->getTrainer($link['fk_trainer']);
-
-            // Action to perform
-            switch ($action) {
-                case 0: // Displays confirmation
-                    $output = array(
-                        'link'          => $link,
-                        'apprentice'    => $apprentice,
-                        'trainer'       => $trainer,
-                    );
-                    return $this->display_view('\Plafor\apprentice/delete', $output);
-                case 1: // Deletes apprentice link
-                    $this->trainer_apprentice_model->delete($link_id, TRUE);
-                    break;
-                default: // Do nothing
-                    break;
-            }
-            return redirect()->to(base_url('plafor/apprentice/list_apprentice/' . $apprentice['id']));
-        } else {
+    public function delete_apprentice_link($link_id = 0, $action = 0)
+    {
+        if ($_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_trainer)
             return $this->display_view('\User\errors\403error');
+
+        $link = $this->trainer_apprentice_model->find($link_id);
+
+        if (is_null($link))
+            return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
+
+        $apprentice = $this->trainer_apprentice_model->getApprentice($link['fk_apprentice']);
+        $trainer = $this->trainer_apprentice_model->getTrainer($link['fk_trainer']);
+
+        // Action to perform
+        switch ($action)
+        {
+            // Displays confirmation
+            case 0:
+                $output = array
+                (
+                    'type' => 'delete',
+                    'entry' =>
+                    [
+                        'type'    => lang('plafor_lang.apprentice_link'),
+                        'name'    => '',
+                        'message' => lang('plafor_lang.apprentice_link_delete_explanation'),
+                        'data'    =>
+                        [
+                            [
+                                'name' => lang('plafor_lang.apprentice'),
+                                'value' => $apprentice['username']
+                            ],
+                            [
+                                'name' => lang('plafor_lang.trainer'),
+                                'value' => $trainer['username']
+                            ]
+                        ]
+                    ],
+                    'cancel_btn_url' => base_url('plafor/apprentice/list_apprentice/' . $apprentice['id']),
+                );
+
+                return $this->display_view('\Common/manage_entry', $output);
+
+            // Deletes apprentice link
+            case 2:
+                $this->trainer_apprentice_model->delete($link_id, TRUE);
+                break;
         }
+
+        return redirect()->to(base_url('plafor/apprentice/list_apprentice/' . $apprentice['id']));
     }
 
     /**
@@ -603,7 +623,7 @@ class Apprentice extends \App\Controllers\BaseController
 
     /**
      * Adds or modifies a comment for an acquisition status
-     * 
+     *
      * @param int $acquisition_status_id : ID of the acquisition status
      * @param int $comment_id            : ID of the comment
      * @return void
@@ -628,7 +648,7 @@ class Apprentice extends \App\Controllers\BaseController
                 'comment'               => $this->request->getPost('comment'),
                 'date_creation'         => date('Y-m-d H:i:s'),
             );
-            
+
             // Checks action to perform
             if (is_null($comment)) {
                 // Comment doesn't already exist - inserts it
@@ -659,7 +679,7 @@ class Apprentice extends \App\Controllers\BaseController
 
     /**
      * Deletes a comment from an acquisition status
-     * 
+     *
      * @param int $comment_id : ID of the comment to delete
      * @return void
      */
@@ -682,7 +702,7 @@ class Apprentice extends \App\Controllers\BaseController
 
     /**
      * Gets the course plan progress for a given user
-     * 
+     *
      * @param null $userId       : ID of the user
      * @param null $coursePlanId : ID of the course plan
      * @return Response|ResponseInterface
@@ -788,62 +808,73 @@ class Apprentice extends \App\Controllers\BaseController
     /**
      * Deletes or deactivates a user depending on $action
      *
-     * @param integer $user_id : ID of the user to affect
-     * @param integer $action  : Action to apply on the user:
+     * @param integer $user_id ID of the user to affect
+     * @param integer $action  Action to apply on the user
      *      - 0 for displaying the confirmation
      *      - 1 for deactivating (soft delete)
      *      - 2 for deleting (hard delete)
+     *
      * @return void
+     *
      */
-    public function delete_user($user_id = 0, $action = 0) {
-        // Access permissions
-        if ($_SESSION['user_access'] == config('\User\Config\UserConfig')->access_lvl_admin) {
-            // Gets data of the user if it exists
-            $user = $this->user_model->withDeleted()->find($user_id);
+    public function delete_user($user_id = 0, $action = 0)
+    {
+        if ($_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_admin)
+            return $this->display_view('\User\errors\403error');
 
-            // Redirection
-            if (is_null($user)) {
-                return redirect()->to(base_url('/user/admin/list_user'));
-            }
+        $user = $this->user_model->withDeleted()->find($user_id);
 
-            // Action to perform
-            switch ($action) {
-                case 0: // Displays confirmation
-                    $output = array(
-                        'user' => $user,
-                        'title' => lang('user_lang.title_user_delete')
-                    );
-                    return $this->display_view('\User\admin\delete_user', $output);
-                case 1: // Deactivates (soft delete) user
-                    if ($_SESSION['user_id'] != $user['id']) {
-                        $this->user_model->delete($user_id, FALSE);
-                    }
-                    break;
-                case 2: // Deletes user
-                    if ($_SESSION['user_id'] != $user['id']) {
-                        // Deletes associated information
-                        foreach($this->trainer_apprentice_model->where('fk_apprentice',$user['id'])->orWhere('fk_trainer',$user['id'])->findAll() as $trainerApprentice)
-                            $trainerApprentice==null?:$this->trainer_apprentice_model->delete($trainerApprentice['id']);
-                        if (count($this->user_course_model->getUser($user['id']))>0){
-                            foreach($this->user_course_model->where('fk_user',$user['id'])->findAll() as $userCourse){
-                                foreach($this->user_course_model->getAcquisitionStatus($userCourse['id']) as $acquisitionStatus){
+        if (is_null($user))
+            return redirect()->to(base_url('/user/admin/list_user'));
 
-                                    foreach ($this->comment_model->where('fk_acquisition_status',$acquisitionStatus['id']) as $comment){
-                                        $comment==null?:$this->comment_model->delete($comment['id'],true);
-                                    }
-                                    $this->acquisition_status_model->delete($acquisitionStatus['id'],true);
-                                }
-                                $this->user_course_model->delete($userCourse['id'],true);
+        // Action to perform
+        switch ($action)
+        {
+            // Displays confirmation
+            case 0:
+                $output = array(
+                    'user' => $user,
+                    'title' => lang('user_lang.title_user_delete')
+                );
+                return $this->display_view('\User\admin\delete_user', $output);
+
+            // Deactivates (soft delete) user
+            case 1:
+                if ($_SESSION['user_id'] != $user['id'])
+                    $this->user_model->delete($user_id, FALSE);
+
+                break;
+
+            // Deletes user
+            case 2:
+                if ($_SESSION['user_id'] != $user['id'])
+                {
+                    // Deletes associated information
+                    foreach($this->trainer_apprentice_model->where('fk_apprentice',$user['id'])->orWhere('fk_trainer',$user['id'])->findAll() as $trainerApprentice)
+                        $trainerApprentice==null?:$this->trainer_apprentice_model->delete($trainerApprentice['id']);
+
+                    if (count($this->user_course_model->getUser($user['id']))>0)
+                    {
+                        foreach($this->user_course_model->where('fk_user',$user['id'])->findAll() as $userCourse)
+                        {
+                            foreach($this->user_course_model->getAcquisitionStatus($userCourse['id']) as $acquisitionStatus)
+                            {
+                                foreach ($this->comment_model->where('fk_acquisition_status',$acquisitionStatus['id']) as $comment)
+                                    $comment==null?:$this->comment_model->delete($comment['id'],true);
+
+                                $this->acquisition_status_model->delete($acquisitionStatus['id'],true);
                             }
+
+                            $this->user_course_model->delete($userCourse['id'],true);
                         }
-                        $this->user_model->delete($user_id, TRUE);
                     }
-                    break;
-                default: // Do nothing
-                    break;
-            }
-            return redirect()->to('/user/admin/list_user');
+
+                    $this->user_model->delete($user_id, TRUE);
+                }
+
+                break;
         }
-        return $this->display_view('\User\errors\403error');
+
+        return redirect()->to('/user/admin/list_user');
     }
 }
