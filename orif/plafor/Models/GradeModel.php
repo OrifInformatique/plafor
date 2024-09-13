@@ -138,14 +138,14 @@ class GradeModel extends Model
      * Gets all grades from a specific subject, from a specific user_course
      * (apprentice).
      *
-     * @param int $id_user_course ID of the user_course
-     * @param int $id_subject ID of the subject
+     * @param int $idUserCourse ID of the user_course
+     * @param int $idSubject ID of the subject
      * 
      * @return array
      *
      */
-    public function getApprenticeSubjectGrades(int $id_user_course,
-        int $id_subject): array
+    public function getApprenticeSubjectGrades(int $idUserCourse,
+        int $idSubject): array
     {
         $data = $this
             ->select('grade.fk_user_course, grade.fk_teaching_subject, '
@@ -154,8 +154,8 @@ class GradeModel extends Model
             ->join('teaching_subject',
             'teaching_subject.id = fk_teaching_subject', 'left')
             ->join('user_course', 'user_course.id = fk_user_course ', 'left')
-            ->where('fk_user_course = ', $id_user_course)
-            ->where('fk_teaching_subject = ', $id_subject)
+            ->where('fk_user_course = ', $idUserCourse)
+            ->where('fk_teaching_subject = ', $idSubject)
             ->allowCallbacks(false)
             ->find();
         return $data;
@@ -165,16 +165,16 @@ class GradeModel extends Model
      * Gets all grades from all modules, from a specific user_course
      * (apprentice).
      *
-     * @param int $id_user_course ID of the user_course
-     * @param bool $is_school "true" to get only school modules grades
+     * @param int $idUserCourse ID of the user_course
+     * @param bool $isSchool "true" to get only school modules grades
      *                        "false" to get only non school modules grades
      *                        NULL to get all modules grades
      * 
      * @return array
      *
      */
-    public function getApprenticeModulesGrades(int $id_user_course,
-        ?bool $is_school = null): array
+    public function getApprenticeModulesGrades(int $idUserCourse,
+        ?bool $isSchool = null): array
     {
         $this->select('grade.fk_user_course, grade.fk_teaching_module, '
             . 'grade.date, grade.grade,' . 'grade.is_school, '
@@ -182,13 +182,13 @@ class GradeModel extends Model
             ->join('teaching_module',
             'teaching_module.id = fk_teaching_module', 'left')
             ->join('user_course', 'user_course.id = fk_user_course ', 'left')
-            ->where('fk_user_course = ', $id_user_course)
+            ->where('fk_user_course = ', $idUserCourse)
             ->where('fk_teaching_module is not null')
             ->where('fk_teaching_subject is null')
             ->allowCallbacks(false);
-        if (isset($is_school)) $this->where('is_school = ', $is_school);
+        if (isset($isSchool)) $this->where('is_school = ', $isSchool);
         $data = $this->find();
-        if (isset($is_school)) {
+        if (isset($isSchool)) {
             $data = array_map(function($row) {
                 unset($row['is_school']);
                 return $row;
@@ -201,13 +201,13 @@ class GradeModel extends Model
      * Gets a grade from a specific module, from a specific user_course
      * (apprentice).
      *
-     * @param int $id_user_course ID of the user_course
+     * @param int $idUserCourse ID of the user_course
      * @param int $id_module ID of the module
      * 
      * @return array
      *
      */
-    public function getApprenticeModuleGrade(int $id_user_course,
+    public function getApprenticeModuleGrade(int $idUserCourse,
         int $id_module): array
     {
         $data = $this->select('grade.fk_user_course, '
@@ -216,7 +216,7 @@ class GradeModel extends Model
             ->join('teaching_module',
             'teaching_module.id = fk_teaching_module', 'left')
             ->join('user_course', 'user_course.id = fk_user_course ', 'left')
-            ->where('fk_user_course = ', $id_user_course)
+            ->where('fk_user_course = ', $idUserCourse)
             ->where('fk_teaching_module = ', $id_module)
             ->allowCallbacks(false)
             ->first();
@@ -265,48 +265,48 @@ class GradeModel extends Model
     /**
      * Calculates the average grade of an apprentice for a specific subject.
      * 
-     * @param int $id_user_course The ID of the user course.
-     * @param int $id_subject The ID of the subject.
-     * @param callable|null $round_method A callback function to round the
+     * @param int $idUserCourse The ID of the user course.
+     * @param int $idSubject The ID of the subject.
+     * @param callable|null $roundMethod A callback function to round the
      * average grade. Defaults to rounding to one decimal point.
      * @return float The average grade of the apprentice for the subject.
      * 
      * Example usage:
-     * $data = $gradeModel->getApprenticeSubjectAverage($id_user_course,
-     *     $id_subject, [$gradeModel, 'roundHalfPoint']);
+     * $data = $gradeModel->getApprenticeSubjectAverage($idUserCourse,
+     *     $idSubject, [$gradeModel, 'roundHalfPoint']);
      */
-    public function getApprenticeSubjectAverage(int $id_user_course,
-        int $id_subject, ?callable $round_method = null): float
+    public function getApprenticeSubjectAverage(int $idUserCourse,
+        int $idSubject, ?callable $roundMethod = null): float
     {
         $grades = $this
-            ->getApprenticeSubjectGrades($id_user_course, $id_subject);
+            ->getApprenticeSubjectGrades($idUserCourse, $idSubject);
         $average = $this->getAverageFromArray($grades);
-        $round_method = $round_method ?? [$this, 'roundOneDecimalPoint'];
-        return $round_method($average);
+        $roundMethod = $roundMethod ?? [$this, 'roundOneDecimalPoint'];
+        return $roundMethod($average);
 
     }
 
     /**
      * Calculates the average grade of an apprentice for a module.
      * 
-     * @param int $id_user_course The ID of the user course.
-     * @param bool|null $is_school Whether to consider school grades or not.
+     * @param int $idUserCourse The ID of the user course.
+     * @param bool|null $isSchool Whether to consider school grades or not.
      * Defaults to null.
-     * @param callable|null $round_method A callback function to round the
+     * @param callable|null $roundMethod A callback function to round the
      * average grade. Defaults to rounding to one decimal point.
      * @return float The average grade of the apprentice for the module.
      * 
      * Example usage:
-     * $data = $gradeModel->getApprenticeModuleAverage($id_user_course,
-     *     $is_school, [$gradeModel, 'roundHalfPoint']);
+     * $data = $gradeModel->getApprenticeModuleAverage($idUserCourse,
+     *     $isSchool, [$gradeModel, 'roundHalfPoint']);
      */
-    public function getApprenticeModuleAverage(int $id_user_course,
-        ?bool $is_school = null, ?callable $round_method = null): float
+    public function getApprenticeModuleAverage(int $idUserCourse,
+        ?bool $isSchool = null, ?callable $roundMethod = null): float
     {
-        $grades = $this->getApprenticeModulesGrades($id_user_course,
-            $is_school);
+        $grades = $this->getApprenticeModulesGrades($idUserCourse,
+            $isSchool);
         $average = $this->getAverageFromArray($grades);
-        $round_method = $round_method ?? [$this, 'roundOneDecimalPoint'];
-        return $round_method($average);
+        $roundMethod = $roundMethod ?? [$this, 'roundOneDecimalPoint'];
+        return $roundMethod($average);
     }
 }
