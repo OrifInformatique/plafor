@@ -28,9 +28,7 @@ class TeachingDomainModel extends Model
         'fk_teaching_domain_title'     => 'is_natural_no_zero',
         'fk_course_plan'        => 'is_natural_no_zero',
         'domain_weight'     => 'decimal',
-
-         // TODO custom rule to accept 0 1 false true
-        'is_eliminatory' => 'required',
+        'is_eliminatory' => 'required|is_boolean_or_binary_value',
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;

@@ -124,9 +124,48 @@ class GradeModelTest extends CIUnitTestCase
     }
 
     /**
-     * Tests the insertion of a new record using the insert method.
+     * Tests the insertion of a new subject grade using the insert method.
      */
-    public function testInsert(): void
+    public function testInsertSubject(): void
+    {
+        $gradeModel = model('GradeModel');
+        $grade = [
+            'fk_user_course' => '1',
+            'fk_teaching_subject' => '1',
+            'date' => '2024-08-23',
+            'grade' => '4.0',
+            'is_school' => '1',
+            'archive' => null,
+            'teaching_subject_name' => 'Mathématiques',
+        ];
+        $isSuccess = $gradeModel->insert($grade, false);
+        $this->assertTrue($isSuccess);
+    }
+
+    /**
+     * Tests the insertion of a new module grade using the insert method.
+     */
+    public function testInsertModule(): void
+    {
+        $gradeModel = model('GradeModel');
+        $grade = [
+            'fk_user_course' => '1',
+            'fk_teaching_module' => '1',
+            'date' => '2024-08-23',
+            'grade' => '4.0',
+            'is_school' => '1',
+            'archive' => null,
+            'teaching_module_name' => 'Interroger'
+        ];
+        $isSuccess = $gradeModel->insert($grade, false);
+        $this->assertTrue($isSuccess);
+    }
+
+    /**
+     * Tests the insertion of a new invalide subject and module grade using the
+     * insert method.
+     */
+    public function testInsertSubjectAndModule(): void
     {
         $gradeModel = model('GradeModel');
         $grade = [
@@ -141,7 +180,26 @@ class GradeModelTest extends CIUnitTestCase
             'teaching_module_name' => 'Interroger'
         ];
         $isSuccess = $gradeModel->insert($grade, false);
-        $this->assertTrue($isSuccess);
+        $this->assertFalse($isSuccess);
+    }
+
+
+    /**
+     * Tests the insertion of a new grade with no subject and no module
+     * using the insert method.
+     */
+    public function testInsertWithoutSubjectAndModule(): void
+    {
+        $gradeModel = model('GradeModel');
+        $grade = [
+            'fk_user_course' => '1',
+            'date' => '2024-08-23',
+            'grade' => '4.0',
+            'is_school' => '1',
+            'archive' => null,
+        ];
+        $isSuccess = $gradeModel->insert($grade, false);
+        $this->assertFalse($isSuccess);
     }
 
     /**

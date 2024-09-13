@@ -4,30 +4,30 @@ namespace Plafor\Models;
 
 use CodeIgniter\Model;
 
-class TeachingModuleModel extends Model
+class TeachingDomainModuleModel extends Model
 {
     // protected $DBGroup          = 'default';
-    protected $table            = 'teaching_module';
+    protected $table            = 'teaching_domain_module';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
-    protected $useSoftDeletes   = true;
+    protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['module_number', 'official_name',
-        'version'];
+    protected $allowedFields    = ['fk_teaching_domain', 'fk_teaching_module'];
 
     // Dates
     protected $useTimestamps = false;
     protected $dateFormat    = 'datetime';
     // protected $createdField  = 'created_at';
     // protected $updatedField  = 'updated_at';
-    protected $deletedField  = 'archive';
+    protected $deletedField  = 'deleted_at';
 
     // Validation
     protected $validationRules      = [
-        'module_number' => 'is_natural_no_zero',
-        'official_name' => 'string',
-        'version' => 'is_natural_no_zero',
+        'fk_teaching_domain' => 
+        'is_natural_no_zero|isDomainModuleLinkUnique[]',
+        'fk_teaching_module' =>
+        'is_natural_no_zero|isDomainModuleLinkUnique[]',
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
@@ -90,62 +90,52 @@ class TeachingModuleModel extends Model
     }
 
     /**
-     * Post-processing hook for find and first operations.
-     * 
-     * Enhances the result data by adding related teaching domains, including
-     * soft deleted ones.
-     * 
-     * Retrieves a list of teaching domains associated with the current
-     * teaching module, including their IDs, titles, course plans, weights,
-     * eliminatory status, and archive status.
-     * 
-     * Note: This method also retrieves soft deleted teaching domains, in
-     * addition to active ones.
-     * 
-     * @param array $data The result data from the find or first operation.
-     * @return array The enhanced result data with additional teaching domain
-     * information.
+     * Processing data after a search query for a single record.
+     *
+     * This method is called after executing a search query for a single record
+     * and allows processing the retrieved data.
+     * It retrieves the associated teaching domain and module information and
+     * adds it to the data.
+     *
+     * @param array $data Array containing the retrieved data.
+     * @return array Array containing the processed data with teaching domain
+     * and module information.
      */
     protected function afterFindFind(array $data): array
     {
-        if (array_key_exists('id', $data)) { 
-            $teachingDomainModel = model('TeachingDomainModel');
-            $data['teaching_domains'] = $teachingDomainModel
-                ->select('teaching_domain.id,'
-                    . ' teaching_domain.fk_teaching_domain_title,'
-                    . ' teaching_domain.fk_course_plan,'
-                    . ' teaching_domain.domain_weight, is_eliminatory,'
-                    . ' teaching_domain.archive')
-                ->join('teaching_domain_module',
-                    'teaching_domain.id = fk_teaching_domain', 'left')
-                ->where('fk_teaching_module = ', $data['id'])
+        if (array_key_exists('fk_teaching_domain', $data)) { 
+            $domainModel = model('TeachingDomainModel');
+            $data['teachingDomain'] = $domainModel
                 ->withDeleted()
-                ->find();
+                ->find($data['fk_teaching_domain']);
+            unset($data['fk_teaching_domain']);
+        }
+        if (array_key_exists('fk_teaching_module', $data)) { 
+            $moduleModel = model('TeachingModuleModel');
+            $data['teachingModule'] = $moduleModel
+                ->withDeleted()
+                ->find($data['fk_teaching_module']);
+            unset($data['fk_teaching_module']);
         }
         return $data;
     }
 
     /**
-     * Retrieves the modules associated with a teaching domain.
+     * Checks if a teaching domain is already linked to a teaching module.
      *
      * @param int $domainId The ID of the teaching domain.
-     * @param bool|null $withDeleted Indicates whether deleted modules should
-     * be included in the results. Defaults to true.
+     * @param int $moduleId The ID of the teaching module.
      *
-     * @return array The list of modules associated with the teaching domain.
+     * @return bool True if the domain is already linked to the module, false
+     * otherwise.
      */
-    public function getByTeachingDomainId(int $domainId, ?bool
-        $withDeleted = true): array
+    public function existsLinkBetweenDomainAndModule(int $domainId, int
+        $moduleId): bool
     {
-        $modules = $this->select('teaching_module.id,
-            teaching_module.module_number, teaching_module.official_name,'
-            . ' teaching_module.version')
-             ->join('teaching_domain_module', 'teaching_module.id ='
-                 . ' teaching_domain_module.fk_teaching_module', 'left')
-             ->where('teaching_domain_module.fk_teaching_domain = ', $domainId)
-             ->withDeleted($withDeleted)
+        $linkRecord = $this->where('fk_teaching_domain = ', $domainId)
+             ->where('fk_teaching_module = ', $moduleId)
              ->find();
-        return $modules;
+        return !empty($linkRecord);
     }
 
 }
