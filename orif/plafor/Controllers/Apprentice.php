@@ -450,7 +450,7 @@ class Apprentice extends \App\Controllers\BaseController
      * @param integer $link_id ID of the trainer_apprentice_link to affect
      * @param integer $action  Action to apply on the trainer_apprentice link
      *      - 0 for displaying the confirmation
-     *      - 1 for deleting (hard delete)
+     *      - 2 for deleting (hard delete)
      *
      * @return void
      *
