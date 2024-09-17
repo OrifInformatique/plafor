@@ -447,44 +447,64 @@ class Apprentice extends \App\Controllers\BaseController
     /**
      * Deletes a trainer_apprentice link depending on $action
      *
-     * @param integer $link_id : ID of the trainer_apprentice_link to affect
-     * @param integer $action  : Action to apply on the trainer_apprentice link :
-     *  - 0 for displaying the confirmation
-     *  - 1 for deleting (hard delete)
+     * @param integer $link_id ID of the trainer_apprentice_link to affect
+     * @param integer $action  Action to apply on the trainer_apprentice link
+     *      - 0 for displaying the confirmation
+     *      - 2 for deleting (hard delete)
+     *
      * @return void
+     *
      */
-    public function delete_apprentice_link($link_id = 0, $action = 0) {
-        // Access permissions
-        if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_trainer) {
-            // Gets data related to the link
-            $link = $this->trainer_apprentice_model->find($link_id);
-
-            if (is_null($link)) {
-                return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
-            }
-
-            $apprentice = $this->trainer_apprentice_model->getApprentice($link['fk_apprentice']);
-            $trainer = $this->trainer_apprentice_model->getTrainer($link['fk_trainer']);
-
-            // Action to perform
-            switch ($action) {
-                case 0: // Displays confirmation
-                    $output = array(
-                        'link'          => $link,
-                        'apprentice'    => $apprentice,
-                        'trainer'       => $trainer,
-                    );
-                    return $this->display_view('\Plafor\apprentice/delete', $output);
-                case 1: // Deletes apprentice link
-                    $this->trainer_apprentice_model->delete($link_id, TRUE);
-                    break;
-                default: // Do nothing
-                    break;
-            }
-            return redirect()->to(base_url('plafor/apprentice/list_apprentice/' . $apprentice['id']));
-        } else {
+    public function delete_apprentice_link($link_id = 0, $action = 0)
+    {
+        if ($_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_trainer)
             return $this->display_view('\User\errors\403error');
+
+        $link = $this->trainer_apprentice_model->find($link_id);
+
+        if (is_null($link))
+            return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
+
+        $apprentice = $this->trainer_apprentice_model->getApprentice($link['fk_apprentice']);
+        $trainer = $this->trainer_apprentice_model->getTrainer($link['fk_trainer']);
+
+        // Action to perform
+        switch ($action)
+        {
+            // Displays confirmation
+            case 0:
+                $output = array
+                (
+                    'type' => 'delete',
+                    'entry' =>
+                    [
+                        'type'    => lang('plafor_lang.apprentice_link'),
+                        'name'    => '',
+                        'message' => lang('plafor_lang.apprentice_link_delete_explanation'),
+                        'data'    =>
+                        [
+                            [
+                                'name' => lang('plafor_lang.apprentice'),
+                                'value' => $apprentice['username']
+                            ],
+                            [
+                                'name' => lang('plafor_lang.trainer'),
+                                'value' => $trainer['username']
+                            ]
+                        ]
+                    ],
+                    'cancel_btn_url' => base_url('plafor/apprentice/list_apprentice/' . $apprentice['id']),
+                );
+
+                return $this->display_view('\Common/manage_entry', $output);
+
+            // Deletes apprentice link
+            case 2:
+                $this->trainer_apprentice_model->delete($link_id, TRUE);
+                break;
         }
+
+        return redirect()->to(base_url('plafor/apprentice/list_apprentice/' . $apprentice['id']));
     }
 
     /**
@@ -777,62 +797,73 @@ class Apprentice extends \App\Controllers\BaseController
     /**
      * Deletes or deactivates a user depending on $action
      *
-     * @param integer $user_id : ID of the user to affect
-     * @param integer $action  : Action to apply on the user:
+     * @param integer $user_id ID of the user to affect
+     * @param integer $action  Action to apply on the user
      *      - 0 for displaying the confirmation
      *      - 1 for deactivating (soft delete)
      *      - 2 for deleting (hard delete)
+     *
      * @return void
+     *
      */
-    public function delete_user($user_id = 0, $action = 0) {
-        // Access permissions
-        if ($_SESSION['user_access'] == config('\User\Config\UserConfig')->access_lvl_admin) {
-            // Gets data of the user if it exists
-            $user = $this->user_model->withDeleted()->find($user_id);
+    public function delete_user($user_id = 0, $action = 0)
+    {
+        if ($_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_admin)
+            return $this->display_view('\User\errors\403error');
 
-            // Redirection
-            if (is_null($user)) {
-                return redirect()->to(base_url('/user/admin/list_user'));
-            }
+        $user = $this->user_model->withDeleted()->find($user_id);
 
-            // Action to perform
-            switch ($action) {
-                case 0: // Displays confirmation
-                    $output = array(
-                        'user' => $user,
-                        'title' => lang('user_lang.title_user_delete')
-                    );
-                    return $this->display_view('\User\admin\delete_user', $output);
-                case 1: // Deactivates (soft delete) user
-                    if ($_SESSION['user_id'] != $user['id']) {
-                        $this->user_model->delete($user_id, FALSE);
-                    }
-                    break;
-                case 2: // Deletes user
-                    if ($_SESSION['user_id'] != $user['id']) {
-                        // Deletes associated information
-                        foreach($this->trainer_apprentice_model->where('fk_apprentice',$user['id'])->orWhere('fk_trainer',$user['id'])->findAll() as $trainerApprentice)
-                            $trainerApprentice==null?:$this->trainer_apprentice_model->delete($trainerApprentice['id']);
-                        if (count($this->user_course_model->getUser($user['id']))>0){
-                            foreach($this->user_course_model->where('fk_user',$user['id'])->findAll() as $userCourse){
-                                foreach($this->user_course_model->getAcquisitionStatus($userCourse['id']) as $acquisitionStatus){
+        if (is_null($user))
+            return redirect()->to(base_url('/user/admin/list_user'));
 
-                                    foreach ($this->comment_model->where('fk_acquisition_status',$acquisitionStatus['id']) as $comment){
-                                        $comment==null?:$this->comment_model->delete($comment['id'],true);
-                                    }
-                                    $this->acquisition_status_model->delete($acquisitionStatus['id'],true);
-                                }
-                                $this->user_course_model->delete($userCourse['id'],true);
+        // Action to perform
+        switch ($action)
+        {
+            // Displays confirmation
+            case 0:
+                $output = array(
+                    'user' => $user,
+                    'title' => lang('user_lang.title_user_delete')
+                );
+                return $this->display_view('\User\admin\delete_user', $output);
+
+            // Deactivates (soft delete) user
+            case 1:
+                if ($_SESSION['user_id'] != $user['id'])
+                    $this->user_model->delete($user_id, FALSE);
+
+                break;
+
+            // Deletes user
+            case 2:
+                if ($_SESSION['user_id'] != $user['id'])
+                {
+                    // Deletes associated information
+                    foreach($this->trainer_apprentice_model->where('fk_apprentice',$user['id'])->orWhere('fk_trainer',$user['id'])->findAll() as $trainerApprentice)
+                        $trainerApprentice==null?:$this->trainer_apprentice_model->delete($trainerApprentice['id']);
+
+                    if (count($this->user_course_model->getUser($user['id']))>0)
+                    {
+                        foreach($this->user_course_model->where('fk_user',$user['id'])->findAll() as $userCourse)
+                        {
+                            foreach($this->user_course_model->getAcquisitionStatus($userCourse['id']) as $acquisitionStatus)
+                            {
+                                foreach ($this->comment_model->where('fk_acquisition_status',$acquisitionStatus['id']) as $comment)
+                                    $comment==null?:$this->comment_model->delete($comment['id'],true);
+
+                                $this->acquisition_status_model->delete($acquisitionStatus['id'],true);
                             }
+
+                            $this->user_course_model->delete($userCourse['id'],true);
                         }
-                        $this->user_model->delete($user_id, TRUE);
                     }
-                    break;
-                default: // Do nothing
-                    break;
-            }
-            return redirect()->to('/user/admin/list_user');
+
+                    $this->user_model->delete($user_id, TRUE);
+                }
+
+                break;
         }
-        return $this->display_view('\User\errors\403error');
+
+        return redirect()->to('/user/admin/list_user');
     }
 }
