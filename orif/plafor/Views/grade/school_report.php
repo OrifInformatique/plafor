@@ -3,14 +3,13 @@
 // TODO : Separate this file into multiple ones to imporve lisibility
 
 /**
- * Apprentice school report view
+ * Shows the school report of an apprentice.
  *
- * Called by \Views/apprentice/view, himself called by Apprentice/view_apprentice($apprentice_id)
+ * Called by \Views/apprentice/view
  *
  * @author      Orif (DeDy)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c), Orif (https://www.orif.ch)
- *
  *
  */
 
@@ -25,12 +24,14 @@
  * [
  *      'school' => array, All school modules teached to the apprentice. Required.
  *      [
- *          'modules'    => array, List of school modules teached to the apprentice. Structure of one module below. Required.
+ *          'modules'    => array, List of school modules teached to the apprentice. Required.
+ *          Structure of one module below.
  *          [
  *              'number' => int,    Number of the module. Required.
  *              'name'   => string, Name of the module. Required.
  *              'grade'  => array,  Grade obtained by the apprentice to the module. Can be empty.
  *              One grade per module.
+ *              Structure below.
  *              [
  *                  'id'    => int,   ID of the grade. Required.
  *                  'value' => float, Value of the grade. Required.
@@ -406,20 +407,19 @@ else
 ?>
 
 <div class="container">
-    <p class="bg-primary text-white"><?=lang('Grades.school_report')?></p>
+    <p class="bg-primary text-white"><?= lang('Grades.school_report') ?></p>
 
     <?php if(!empty($errors)): ?>
         <p class="alert alert-warning"><?= lang('Grades.err_school_report_display') ?></p>
 
         <?php if(ENVIRONMENT != 'production'): ?>
             <div class="alert alert-danger">
-                <p class="h3"> <?= lang('Grades.error_details') ?> </p>
+                <p class="h3"><?= lang('Grades.error_details') ?></p>
                 <?php foreach($errors as $error): ?>
                     <samp><?= $error ?></samp><br>
                 <?php endforeach ?>
             </div>
         <?php endif ?>
-
     <?php else: ?>
         <!-- Averages -->
         <div class="mb-5">
@@ -473,7 +473,10 @@ else
                 </a>
             </div>
 
-            <p class="border-left border-bottom border-primary pl-1"><?= lang('Grades.school_modules') ?></p>
+            <p class="border-left border-bottom border-primary pl-1">
+                <?= lang('Grades.school_modules') ?>
+            </p>
+
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -499,13 +502,22 @@ else
 
                 <tfoot>
                     <tr>
-                        <td colspan="2" class="text-right"><?= lang('Grades.weighting')?> : <?= $modules['school']['weighting'] ?></td>
-                        <td><strong><?= $modules['school']['average'] ?? lang('Grades.unavailable_short') ?></strong></td>
+                        <td colspan="2" class="text-right">
+                            <?= lang('Grades.weighting')?> : <?= $modules['school']['weighting'] ?>
+                        </td>
+
+                        <td>
+                            <strong>
+                                <?= $modules['school']['average'] ?? lang('Grades.unavailable_short') ?>
+                            </strong>
+                        </td>
                     </tr>
                 </tfoot>
             </table>
 
-            <p class="border-left border-bottom border-primary pl-1"><?= lang('Grades.non_school_modules') ?></p>
+            <p class="border-left border-bottom border-primary pl-1">
+                <?= lang('Grades.non_school_modules') ?>
+            </p>
 
             <table class="table table-striped">
                 <thead>
@@ -532,18 +544,34 @@ else
 
                 <tfoot>
                     <tr>
-                        <td colspan="2" class="text-right"><?= lang('Grades.weighting')?> : <?= $modules['non-school']['weighting'] ?></td>
-                        <td><strong><?= $modules['non-school']['average'] ?? lang('Grades.unavailable_short') ?></strong></td>
+                        <td colspan="2" class="text-right">
+                            <?= lang('Grades.weighting')?> : <?= $modules['non-school']['weighting'] ?>
+                        </td>
+
+                        <td>
+                            <strong>
+                                <?= $modules['non-school']['average'] ?? lang('Grades.unavailable_short') ?>
+                            </strong>
+                        </td>
                     </tr>
                 </tfoot>
             </table>
 
-            <p class="border-left border-bottom border-primary pl-1"><?= lang('Grades.average') ?></p>
+            <p class="border-left border-bottom border-primary pl-1">
+                <?= lang('Grades.average') ?>
+            </p>
 
             <table class="table table-borderless">
                 <tr>
-                    <td class="text-right"><?= lang('Grades.weighting')?> : <?= $modules['weighting'] ?></td>
-                    <td><strong><?= $modules['average'] ?? lang('Grades.unavailable_short') ?></strong></td>
+                    <td class="text-right">
+                        <?= lang('Grades.weighting')?> : <?= $modules['weighting'] ?>
+                    </td>
+
+                    <td>
+                        <strong>
+                            <?= $modules['average'] ?? lang('Grades.unavailable_short') ?>
+                        </strong>
+                    </td>
                 </tr>
             </table>
         </div>
@@ -569,11 +597,14 @@ else
                 <tbody>
                     <tr>
                         <td><?= lang('Grades.TPI_long') ?></td>
-                        <td><strong>
-                            <a href="<?= base_url('plafor/grade/saveGrade/'.$tpi_grade['id']) ?>">
-                                <?= $tpi_grade['value'] ?>
-                            </a>
-                        </strong></td>
+
+                        <td>
+                            <strong>
+                                <a href="<?= base_url('plafor/grade/saveGrade/'.$tpi_grade['id']) ?>">
+                                    <?= $tpi_grade['value'] ?>
+                                </a>
+                            </strong>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -595,8 +626,10 @@ else
                         <tr>
                             <th><?= lang('Grades.subject') ?></th>
 
-                            <?php for($i=1; $i <= 8; $i++): ?>
-                                <th class="text-center"><?= substr(lang('Grades.semester'), 0, 3).'. '.$i ?></th>
+                            <?php for($i = 1; $i <= 8; $i++): ?>
+                                <th class="text-center">
+                                    <?= substr(lang('Grades.semester'), 0, 3).'. '.$i ?>
+                                </th>
                             <?php endfor ?>
 
                             <th><?= lang('Grades.average') ?></th>
@@ -623,8 +656,15 @@ else
 
                     <tfoot>
                         <tr>
-                            <td colspan="9" class="text-right"><?= lang('Grades.weighting')?> : <?= $cbe['weighting'] ?></td>
-                            <td><strong><?= $cbe['average'] ?? lang('Grades.unavailable_short') ?></strong></td>
+                            <td colspan="9" class="text-right">
+                                <?= lang('Grades.weighting')?> : <?= $cbe['weighting'] ?>
+                            </td>
+
+                            <td>
+                                <strong>
+                                    <?= $cbe['average'] ?? lang('Grades.unavailable_short') ?>
+                                </strong>
+                            </td>
                         </tr>
                     </tfoot>
                 </table>
@@ -648,7 +688,9 @@ else
                             <th><?= lang('Grades.subject') ?></th>
 
                             <?php for($i=1; $i <= 8; $i++): ?>
-                                <th class="text-center"><?= substr(lang('Grades.semester'), 0, 3).'. '.$i ?></th>
+                                <th class="text-center">
+                                    <?= substr(lang('Grades.semester'), 0, 3).'. '.$i ?>
+                                </th>
                             <?php endfor ?>
 
                             <th><?= lang('Grades.average') ?></th>
@@ -675,8 +717,15 @@ else
 
                     <tfoot>
                         <tr>
-                            <td colspan="9" class="text-right"><?= lang('Grades.weighting')?> : <?= $ecg['weighting'] ?></td>
-                            <td><strong><?= $ecg['average'] ?? lang('Grades.unavailable_short') ?></strong></td>
+                            <td colspan="9" class="text-right">
+                                <?= lang('Grades.weighting')?> : <?= $ecg['weighting'] ?>
+                            </td>
+
+                            <td>
+                                <strong>
+                                    <?= $ecg['average'] ?? lang('Grades.unavailable_short') ?>
+                                </strong>
+                            </td>
                         </tr>
                     </tfoot>
                 </table>

@@ -1,82 +1,126 @@
 <?php
-$update = !is_null($user_course);
-$validation=\CodeIgniter\Config\Services::validation();
-helper('form');
-?>
-<?php
-    // For some reasons, you can only set a type to input made with form_input if done with only a array as param, may need to be checked for later uses.
 
-    $data_date_begin = array(
-        'name' => 'date_begin',
-        'value' => $user_course_date_begin ?? $user_course['date_begin'] ?? date("Y-m-d"),
-        'class' => 'form-control',
-        'type' => 'date',
-        'id' => 'user_course_date_begin'
-    );
-    
-    $data_date_end = array(
-        'name' => 'date_end',
-        'value' => $user_course_date_end ?? $user_course['date_end'] ?? '',
-        'class' => 'form-control', 'id' => 'competence_domain_name',
-        'type' => 'date',
-        'id' => 'user_course_date_begin'
-    );
+/**
+ * Lists all course plan followed by an apprentice.
+ *
+ * Called by Apprentice/save_user_course($id_apprentice, id_user_course)
+ *
+ * @author      Orif, section informatique (UlSi, ViDi)
+ * @link        https://github.com/OrifInformatique/gestion_questionnaires
+ * @copyright   Copyright (c) Orif (http://www.orif.ch)
+ *
+ */
+
+
+
+/**
+ * *** Data needed for this view ***
+ *
+ * // TODO : Add the page title as a param
+ *
+ * @param array $course_plans List of all course plans.
+ * Array of key-values where keys are course_plans IDs and values are course_plans official names.
+ *
+ * @param array $user_course Existing user course.
+ * All fields from table.
+ * For entry update.
+ *
+ * @param array $status List of all user course statuses.
+ * Array of key-values where keys are user course statuses IDs and values are user courses statuses names.
+ *
+ * // TODO : Only give apprentice ID and username : only values needed
+ * @param array $apprentice Apprentice.
+ * All fields from table.
+ *
+ * @param ?array $errors user_course_model errors.
+ *
+ */
+
+
+
+/**
+ * *** Data sent by this view ***
+ *
+ * method POST
+ *
+ * action Apprentice/save_user_courses($id_apprentice, id_user_course)
+ *
+ * @param int $id ID of the apprentice.
+ *
+ * @param int $course_plan Course plan followed by the user, stored as course plan ID.
+ *
+ * @param Date $date_begin The date where the apprentice starts following the course plan.
+ *
+ * @param Date $date_end The date where the apprentice ends following the course plan.
+ *
+ * @param int $status Status of the formation, stored as user course status ID.
+ *
+ */
+
+helper('form');
+
 ?>
+
 <div class="container">
-    <!-- TITLE -->
     <div class="row">
         <div class="col">
-            <h2 class="title-section"><?= $apprentice['username']." - ".lang('plafor_lang.title_user_course_'.($update ? 'update' : 'new').''); ?></h2>
+            <h2>
+                <?= $apprentice['username'].' - '.
+                    lang('plafor_lang.title_user_course_'.(!empty($user_course) ? 'update' : 'new')) ?>
+            </h2>
         </div>
     </div>
-    
-    <!-- FORM OPEN -->
-    <?php
-    $attributes = array(
-        'id' => 'user_course_form',
-        'name' => 'user_course_form'
-    );
-    echo form_open('plafor/apprentice/save_user_course/'.$apprentice['id'].(isset($user_course['id'])?'/'.$user_course['id']:''), $attributes, [
-        'id' => $apprentice->id ?? 0
-    ]);
-    ?>
 
-        <!-- ERROR MESSAGES -->
-        <?php
-        foreach ($errors!=null?$errors:[] as $error){
-            ?>
-        <div class="alert alert-danger">
-        <?=$error ?>
-        </div>
-        <?php }?>
-        <!-- USER FIELDS -->
+    <?= form_open('plafor/apprentice/save_user_course/'.$apprentice['id'].'/'.(!empty($user_course) ? $user_course['id'] : ''),
+        [], ['id' => $apprentice['id'] ?? 0]) ?>
+
+        <?php foreach ($errors != null ? $errors : [] as $error): ?>
+            <div class="alert alert-danger">
+                <?= $error ?>
+            </div>
+        <?php endforeach ?>
+
         <div class="row">
-            <div class="col-sm-6 form-group">
-                <?= form_label(lang('plafor_lang.field_user_course_course_plan'), 'course_plan', ['class' => 'form-label']); ?>
-                <br />
-                <?= form_dropdown('course_plan',$course_plans,$user_course['fk_course_plan'] ?? '','id="course_plan" class="form-control" '.($update?'style="pointer-events:none;background-color:rgba(0,0,0,0.2)"':''))?>
+            <div class="col-sm-12 form-group">
+                <?= form_label(lang('plafor_lang.field_user_course_course_plan'), 'course_plan',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_dropdown('course_plan', $course_plans, $user_course['fk_course_plan'] ?? '',
+                    ['id' => 'course_plan', 'class' => 'form-control',
+                    'style' => !empty($user_course) ? 'pointer-events: none; background-color: rgba(0, 0, 0, 0.15);' : '']) ?>
             </div>
+
             <div class="col-sm-6 form-group">
-                <?= form_label(lang('plafor_lang.field_user_course_status'), 'status', ['class' => 'form-label']); ?>
-                <br />
-                <?= form_dropdown('status',$status,$user_course['fk_status'] ?? '','id="status" class="form-control"')?>
+                <?= form_label(lang('plafor_lang.field_user_course_date_begin'), 'user_course_date_begin',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_input('date_begin', $user_course['date_begin'] ?? date("Y-m-d"),
+                    ['class' => 'form-control', 'id' => 'user_course_date_begin'], 'date') ?>
             </div>
+
             <div class="col-sm-6 form-group">
-                <?= form_label(lang('plafor_lang.field_user_course_date_begin'), 'user_course_date_begin', ['class' => 'form-label']); ?>
-                <?= form_input($data_date_begin); ?>
+                <?= form_label(lang('plafor_lang.field_user_course_date_end'), 'user_course_date_end',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_input('date_end', $user_course['date_end'] ?? '',
+                    ['class' => 'form-control', 'id' => 'user_course_date_end'], 'date') ?>
             </div>
-            <div class="col-sm-6 form-group">
-                <?= form_label(lang('plafor_lang.field_user_course_date_end'), 'user_course_date_end', ['class' => 'form-label']); ?>
-                <?= form_input($data_date_end); ?>
+
+            <div class="col-sm-4 form-group">
+                <?= form_label(lang('plafor_lang.field_user_course_status'), 'status',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_dropdown('status', $status, $user_course['fk_status'] ?? '',
+                    ['class' => 'form-control', 'id' => 'status']) ?>
             </div>
         </div>
-                    
-        <!-- FORM BUTTONS -->
-        <div class="row">
-            <div class="col text-right">
-                <a class="btn btn-secondary" href="<?= base_url('plafor/apprentice/list_user_courses/'.$apprentice['id']); ?>"><?= lang('common_lang.btn_cancel'); ?></a>
-                <?= form_submit('save', lang('common_lang.btn_save'), ['class' => 'btn btn-primary']); ?>
-            </div>
+
+        <div class="col text-right">
+            <a class="btn btn-secondary" href="<?= base_url('plafor/apprentice/list_user_courses/'.$apprentice['id']) ?>">
+                <?= lang('common_lang.btn_cancel') ?>
+            </a>
+
+            <?= form_submit(null, lang('common_lang.btn_save'), ['class' => 'btn btn-primary']) ?>
         </div>
-    <?= form_close(); ?>
+    <?= form_close() ?>
 </div>

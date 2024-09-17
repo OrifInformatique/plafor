@@ -608,17 +608,6 @@ class Apprentice extends \App\Controllers\BaseController
                 $this->response->setStatusCode(200,'OK');
             }
         }
-
-        // Data to send to the view
-        $output = [
-            'title'                 => lang('plafor_lang.title_acquisition_status_save'),
-            'acquisition_levels'    => $acquisitionLevels,
-            'acquisition_level'     => $acquisitionStatus['fk_acquisition_level'],
-            'id'                    => $acquisition_status_id,
-            'errors'                => $this->acquisition_status_model->errors()
-        ];
-
-        return $this->display_view('Plafor\acquisition_status/save', $output);
     }
 
     /**

@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Domains linked to a course plan view
+ * Shows the domains linked to a course plan.
  *
- * Called by \Views/course_plan/view, himself called by CoursePlan/view_course_plan($course_plan_id)
+ * Called by \Views/course_plan/view
  *
- * @author      Orif (Dedy)
+ * @author      Orif (DeDy)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c), Orif (https://www.orif.ch)
  *
@@ -16,7 +16,8 @@
 /**
  * *** Data needed for this view ***
  *
- * @param array $teaching_domains Teaching domains linked to a course plan. Required. Structure of one domain below.
+ * @param array $teaching_domains Teaching domains linked to a course plan. Required.
+ * Structure of one domain below.
  * [
  *      'id'       => int,    ID of the domain. Required.
  *      'name'     => string, Name of the domain. Required.
@@ -34,7 +35,7 @@
  *          'number'    => int,    Number of the module. Required
  *          'title'     => string, Name of the module. Required.
  *      ]
- *      'weighing'       => float, Weighting of the domain (in CFC average). Required.
+ *      'weighting'      => float, Weighting of the domain (in CFC average). Required.
  *      'is_eliminatory' => bool,  Determines whether a domain is eliminatory. Required.
  * ]
  *
@@ -57,7 +58,6 @@ helper('form');
 ?>
 
 <div class="row mt-3">
-    <!-- Section title  -->
     <div class="col-12">
         <p class="bg-primary text-white"><?= lang('Grades.domains') ?></p>
     </div>
@@ -66,7 +66,7 @@ helper('form');
     <div class="col-12">
         <div class="d-flex justify-content-between">
             <div>
-                <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin):?>
+                <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin): ?>
                     <a href="<?= base_url('plafor/teachingdomain/saveTeachingDomain') ?>" class="btn btn-primary">
                         <?=lang ('common_lang.btn_new_m').' '.substr(strtolower(lang('Grades.domain')), 0, 7) ?>
                     </a>
@@ -74,14 +74,16 @@ helper('form');
                     <a href="<?=base_url('plafor/teachingdomain/saveTeachingSubject')?>" class="btn btn-primary">
                         <?= lang('common_lang.btn_new_f').' '.strtolower(lang('Grades.subject')) ?>
                     </a>
-                <?php endif?>
+                <?php endif ?>
             </div>
 
-            <!-- TODO : Make the checkbox display deleted teaching domains AND teaching subjects when checked -->
+            <!-- TODO : Make the checkbox display deleted teaching domains AND teaching subjects AND teaching modules when checked -->
             <div>
-                <?=form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted_teaching_domains', ['class' => 'form-check-label','style'=>'padding-right:30px']);?>
-                <?=form_checkbox('toggle_deleted', '', isset($with_archived) ? $with_archived : false, ['id' => 'toggle_deleted_teaching_domains', 'class' => 'form-check-input']);
-                ?>
+                <?= form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted_teaching_domains',
+                    ['class' => 'form-check-label', 'style'=>'padding-right: 30px;']) ?>
+
+                <?= form_checkbox('toggle_deleted', '', isset($with_archived) ? $with_archived : false,
+                    ['class' => 'form-check-input', 'id' => 'toggle_deleted_teaching_domains']) ?>
             </div>
         </div>
     </div>
@@ -89,7 +91,6 @@ helper('form');
     <!-- Domains list -->
     <div class="col-12 mt-2">
         <?php foreach($teaching_domains as $teaching_domain): ?>
-
             <!-- Domain details -->
             <div class="row mt-5 m-2 pt-2 border-top border-bottom border-primary align-items-center">
                 <p class="col-6 h3 text-center">
@@ -100,13 +101,11 @@ helper('form');
 
                 <p class="col-3 text-center">
                     <?= lang('Grades.weighting') ?><br>
-
                     <strong><?= $teaching_domain['weighting'] ?></strong>
                 </p>
 
                 <p class="col-3 text-center">
                     <?= lang('Grades.is_eliminatory') ?><br>
-
                     <strong>
                         <?= $teaching_domain['is_eliminatory'] ? lang('common_lang.yes') : lang('common_lang.no') ?>
                     </strong>
@@ -114,7 +113,6 @@ helper('form');
             </div>
 
             <?php if(!empty($teaching_domain['subjects'])): ?>
-
                 <!-- Domain subjects -->
                 <div class="row mb-4">
                     <!-- Subjects list -->
@@ -151,7 +149,6 @@ helper('form');
                     <div class="col-11 m-auto">
                         <p class="bg-secondary mb-0"><?= lang('Grades.modules') ?></p>
 
-                        <!-- Domain school modules -->
                         <table class="table table-striped mt-2">
                             <thead>
                                 <th><?= lang('Grades.module_number') ?></th>

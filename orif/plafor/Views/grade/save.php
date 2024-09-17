@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Grade save view
+ * Let the edition of a grade.
  *
- * Called by GradeController/saveGrade()
+ * Called by GradeController/saveGrade($apprentice_id, $grade_id)
  *
- * @author      Orif (Dedy)
+ * @author      Orif (DeDy)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c), Orif (https://www.orif.ch)
  *
@@ -23,8 +23,9 @@
  *
  * @param int $user_course_id ID of the apprentice user_course.
  *
- * @param array $apprentce Apprentice who made the grade.
+ * @param array $apprentice Apprentice who made the grade.
  * One entry. For view purposes.
+ * Structure below.
  * [
  *      'id'       => int,    ID of the apprentice. Required.
  *      'username' => string, Username of the apprentice. Required.
@@ -34,6 +35,7 @@
  * For view purposes.
  *
  * @param array $subject_and_domains_list List of subjects and domains contained in the course plan.
+ * Structure below.
  * [
  *      lang('Grades.subjects') => array, List of sujects contained in the course_plan. Required.
  *          Array of key-values where keys are subjects IDs with a 's' before and values are subject names.
@@ -61,9 +63,9 @@
 /**
  * *** Data sent by this view ***
  *
- * @method POST
+ * method POST
  *
- * @action GradeController/saveGrade($grade_id)
+ * action GradeController/saveGrade($apprentice_id, $grade_id)
  *
  * @param int $grade_id ID of the grade.
  *
@@ -129,51 +131,74 @@ else
     $grade_id = 0;
 }
 
-helper('form')
+helper('form');
+
+$subject_or_module_label = lang('Grades.subject').' '.lang('Grades.or').' '.strtolower(lang('Grades.module'));
 
 ?>
 
 <div class="container">
     <div class="row">
-        <h2 class="title-section"><?= $title ?></h2>
+        <div class="col">
+            <h2><?= $title ?></h2>
+        </div>
     </div>
 
-    <?= form_open(base_url('plafor/grade/saveGrade/'.$grade_id), [], ['user_course_id' => $user_course_id]) ?>
+    <?= form_open(base_url('plafor/grade/saveGrade/'.$grade_id),
+        [], ['user_course_id' => $user_course_id]) ?>
         <div class="row">
             <div class="col form-group">
-                <?= form_label(lang('plafor_lang.apprentice'), 'apprentice', ['class' => 'form-label']) ?><br>
-                <?= form_input('apprentice', $apprentice['username'], ['class' => 'form-control', 'id' => 'apprentice', 'disabled' => true]) ?>
+                <?= form_label(lang('plafor_lang.apprentice'), 'apprentice',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_input('apprentice', $apprentice['username'],
+                    ['class' => 'form-control', 'disabled' => true]) ?>
             </div>
+
             <div class="col form-group">
-                <?= form_label(lang('plafor_lang.course_plan'), 'course_plan', ['class' => 'form-label']) ?><br>
-                <?= form_input(null, $course_plan, ['class' => 'form-control', 'id' => 'course_plan', 'disabled' => true]) ?>
+                <?= form_label(lang('plafor_lang.course_plan'), 'course_plan',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_input('course_plan', $course_plan,
+                    ['class' => 'form-control', 'disabled' => true]) ?>
             </div>
         </div>
 
         <div class="row">
             <div class="col form-group">
-                <?= form_label(lang('Grades.subject').' '.lang('Grades.or').' '.strtolower(lang('Grades.module')), 'subject', ['class' => 'form-label']) ?><br>
-                <!-- TODO : Insert all subjects teached to the apprentice + empty first slot as form_dropdown $options -->
-                <!-- TODO : Disable form_dropdown if a module is selected -->
-                <?= form_dropdown('subject', $subject_and_domains_list, $selected_entry ?? null, ['class' => 'form-control', 'id' => 'subject']) ?>
+                <?= form_label($subject_or_module_label, 'subject',
+                    ['class' => 'form-label']) ?>
+
+                <!-- TODO : Insert all subjects + modules teached to the apprentice as form_dropdown $options -->
+                <?= form_dropdown('subject', $subject_and_domains_list, $selected_entry ?? null,
+                    ['class' => 'form-control', 'id' => 'subject']) ?>
             </div>
         </div>
 
         <div class="row">
             <div class="col-sm-2 form-group">
-                <?= form_label(lang('Grades.grade'), 'grade', ['class' => 'form-label']) ?><br>
-                <?= form_input(null, $grade ?? 0, ['class' => 'form-control', 'id' => 'grade', 'min' => 0, 'max' => 6, 'step' => 0.5], 'number') ?>
+                <?= form_label(lang('Grades.grade'), 'grade',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_input('grade', $grade ?? 0,
+                    ['class' => 'form-control', 'id' => 'grade', 'min' => 0, 'max' => 6, 'step' => 0.5], 'number') ?>
             </div>
 
             <div class="col-sm-4 form-group">
-                <?= form_label(lang('Grades.exam_date'), 'exam_date', ['class' => 'form-label']) ?><br>
-                <?= form_input(null, $exam_date ?? '', ['class' => 'form-control', 'id' => 'exam_date'], 'date') ?>
+                <?= form_label(lang('Grades.exam_date'), 'exam_date',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_input('exam_date', $exam_date ?? '',
+                    ['class' => 'form-control', 'id' => 'exam_date'], 'date') ?>
             </div>
 
             <div class="col-sm-4 form-group form-check form-check-inline">
-                <?= form_label(lang('Grades.is_exam_made_at_school'), 'is_exam_made_at_school', ['class' => 'form-check-label mr-2']) ?>
+                <?= form_label(lang('Grades.is_exam_made_at_school'), 'is_exam_made_at_school',
+                    ['class' => 'form-check-label mr-2']) ?>
+
                 <!-- TODO : Auto-check and put on read-only the checkbox if a subject is selected -->
-                <?= form_checkbox('is_exam_made_at_school', true, $is_exam_made_in_school ?? false, ['class' => 'form-check-input', 'id' => 'is_exam_made_at_school']) ?>
+                <?= form_checkbox('is_exam_made_at_school', true, $is_exam_made_in_school ?? false,
+                    ['class' => 'form-check-input', 'id' => 'is_exam_made_at_school']) ?>
             </div>
         </div>
 

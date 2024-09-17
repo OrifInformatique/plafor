@@ -477,7 +477,9 @@ class CoursePlan extends \App\Controllers\BaseController
             }
         }
 
-        if ($_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_admin && !$doesTrainerTrainsApprentice)
+        // Access permissions
+        if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin
+            || (isset($doesTrainerTrainsApprentice) && $doesTrainerTrainsApprentice))
         {
             return $this->display_view('\User\errors\403error');
         }
@@ -521,10 +523,20 @@ class CoursePlan extends \App\Controllers\BaseController
 
                 $this->acquisition_status_model->where('fk_user_course', $user_course_id)->delete();
 
-                $this->user_course_model->delete($user_course_id);
+                    // Deletes user's course
+                    $this->user_course_model->delete($user_course_id);
+
+                    return redirect()->to(base_url('plafor/apprentice/list_user_courses/'.$apprentice['id']));
+
+                default:
+                    // Do nothing
+            }
+
+            return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
         }
 
-        return redirect()->to(base_url('plafor/apprentice/list_user_courses/'.$apprentice['id']));
+        else
+            return $this->display_view('\User\errors\403error');
     }
 
     /**
@@ -760,14 +772,14 @@ class CoursePlan extends \App\Controllers\BaseController
         $course_plan['date_begin'] = $date_begin->toLocalizedString('dd.MM.Y');
 
         $teaching_domains = [];
-        
+
         // Get teaching domains, subjects and modules
         foreach ($this->m_teaching_domain_model->where("fk_course_plan", $course_plan_id)->findAll() as $domain) {
             $teaching_subject = [];
             
             // Get teaching subjects of the domain
             foreach ($this->m_teaching_subject_model->where("fk_teaching_domain", $domain["id"])->findAll() as $subject){
-                $teaching_subject[] = [ 
+                $teaching_subject[] = [
                     "id"            => $subject["id"],               // ID of the subject. Required.
                     "name"          => $subject["name"],             // Name of the subject. Required.
                     "weighting"     => $subject["subject_weight"],   // Weighing of the subject (in the domain average). Required.
