@@ -123,6 +123,8 @@ class TeachingDomainModuleModel extends Model
     /**
      * Checks if a teaching domain is already linked to a teaching module.
      *
+     * Note: This method does not check for soft deleted links.
+     *
      * @param int $domainId The ID of the teaching domain.
      * @param int $moduleId The ID of the teaching module.
      *
@@ -133,8 +135,9 @@ class TeachingDomainModuleModel extends Model
         $moduleId): bool
     {
         $linkRecord = $this->where('fk_teaching_domain = ', $domainId)
-             ->where('fk_teaching_module = ', $moduleId)
-             ->find();
+            ->where('fk_teaching_module = ', $moduleId)
+            ->allowCallbacks(false)
+            ->find();
         return !empty($linkRecord);
     }
 

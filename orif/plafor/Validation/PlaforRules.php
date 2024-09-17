@@ -161,6 +161,8 @@ class PlaforRules
      * teaching module is already present in the database.
      * If it is, the method returns false, otherwise it returns true.
      *
+     * Note: This method does not check for soft deleted links.
+     *
      * @param mixed $value The value to be validated (not used in this rule).
      * @param string|null $params The rule parameters (not used in this rule).
      * @param array $data The form data.

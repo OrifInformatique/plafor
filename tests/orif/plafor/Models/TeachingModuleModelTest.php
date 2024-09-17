@@ -23,7 +23,7 @@ class TeachingModuleModelTest extends CIUnitTestCase
     /**
      * Verifies the creation of a TeachingModuleModel instance.
      */
-    public function testTeachingModuleModelInstance()
+    public function testTeachingModuleModelInstance(): void
     {
         $teachingModuleModel = model('TeachingModuleModel');
         $this->assertTrue($teachingModuleModel instanceof
@@ -35,7 +35,7 @@ class TeachingModuleModelTest extends CIUnitTestCase
     /**
      * Tests the retrieval of a single record by ID using the find method.
      */
-    public function testFind()
+    public function testFind(): void
     {
         $id = 1;
         $teachingModuleModel = model('TeachingModuleModel');
@@ -56,7 +56,7 @@ class TeachingModuleModelTest extends CIUnitTestCase
     /**
      * Tests the retrieval of all records using the findAll method.
      */
-    public function testFindAll()
+    public function testFindAll(): void
     {
         $teachingModuleModel = model('TeachingModuleModel');
         $data = $teachingModuleModel->findAll();
@@ -68,7 +68,7 @@ class TeachingModuleModelTest extends CIUnitTestCase
     /**
      * Tests the retrieval of the first record using the first method.
      */
-    public function testFirst()
+    public function testFirst(): void
     {
         $teachingModuleModel = model('TeachingModuleModel');
         $data = $teachingModuleModel->first();
@@ -89,7 +89,7 @@ class TeachingModuleModelTest extends CIUnitTestCase
      * Test that the first method with a custom select returns the expected
      * data.
      */
-    public function testFirstCustom()
+    public function testFirstCustom(): void
     {
         $teachingModuleModel = model('TeachingModuleModel');
         $data = $teachingModuleModel->select('official_name')->first();
@@ -103,7 +103,7 @@ class TeachingModuleModelTest extends CIUnitTestCase
     /**
      * Tests the insertion of a new record using the insert method.
      */
-    public function testInsert()
+    public function testInsert(): void
     {
         $teachingModuleModel = model('TeachingModuleModel');
         $teachingModule = [

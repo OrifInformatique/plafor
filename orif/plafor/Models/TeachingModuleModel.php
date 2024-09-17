@@ -26,7 +26,7 @@ class TeachingModuleModel extends Model
     // Validation
     protected $validationRules      = [
         'module_number' => 'is_natural_no_zero',
-        'official_name' => 'string',
+        'official_name' => 'string|max_length[200]',
         'version' => 'is_natural_no_zero',
     ];
     protected $validationMessages   = [];
