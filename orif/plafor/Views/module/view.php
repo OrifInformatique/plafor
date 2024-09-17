@@ -68,7 +68,7 @@ helper('form');
                 'parent_domain_module' => lang('Grades.module_parent_domain'),
             ],
             // TODO : Add data
-            // 'items'             => $modules,
+            'items'             => $modules,
             'primary_key_field' => 'id',
             'url_update'        => 'plafor/teachingdomain/saveTeachingModule/',
             'url_delete'        => 'plafor/teachingdomain/deleteTeachingModule/'
