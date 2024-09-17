@@ -1,11 +1,16 @@
 <?php
+
+// TODO : Delete this view once the common delete view is implemented
+
 /**
  * Fichier de vue pour delete_competence_domain
  *
  * @author      Orif (ViDi, HeMa)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ *
  */
+
 ?>
 
 <?php
@@ -16,7 +21,7 @@ $session=\CodeIgniter\Config\Services::session();
         <!-- TITLE -->
         <div class="row">
             <div class="col">
-                <h1 class="title-section"><?= lang('plafor_lang.title_competence_domain_'.(is_null($competence_domain['archive'])?'delete':'enable')); ?></h1>
+                <h2><?= lang('plafor_lang.title_competence_domain_'.(is_null($competence_domain['archive'])?'delete':'enable')); ?></h2>
             </div>
         </div>
         <div class="row">
@@ -33,7 +38,7 @@ $session=\CodeIgniter\Config\Services::session();
                         <?= lang('common_lang.btn_cancel'); ?>
                     </a>
                     <!-- ENABLE / DISABLE -->
-                    <?php 
+                    <?php
                     echo $competence_domain['archive']!=null?"<a href=".base_url('plafor/courseplan/delete_competence_domain/'.$competence_domain['id'].'/3').">".lang('common_lang.reactivate')."</a>"
                     :
                     "<a href=".base_url(uri_string().'/1')." class={btn btn-danger} >".

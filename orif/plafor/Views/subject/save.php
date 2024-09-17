@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Subject save view
+ * Let the edition of a teaching subject.
  *
- * Called by TeachingDomainController/saveTeachingSubject()
+ * Called by TeachingDomainController/saveTeachingSubject($subject_id)
  *
- * @author      Orif (Dedy)
+ * @author      Orif (DeDy)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c), Orif (https://www.orif.ch)
  *
@@ -40,9 +40,9 @@
 /**
  * *** Data sent by this view ***
  *
- * @method POST
+ * method POST
  *
- * @action TeachingDomainController/saveTeachingSubject($subject_id)
+ * action TeachingDomainController/saveTeachingSubject($subject_id)
  *
  * @param int $subject_id ID of the subject.
  *
@@ -95,26 +95,37 @@ helper('form')
 
 <div class="container">
     <div class="row">
-        <h2 class="title-section"><?= $title ?></h2>
+        <div class="col">
+            <h2><?= $title ?></h2>
+        </div>
     </div>
 
     <?= form_open(base_url('plafor/teachingdomain/saveTeachingSubject/'.$subject_id)) ?>
         <div class="row">
             <div class="col form-group">
-                <?= form_label(lang('Grades.name'), 'subject_name', ['class' => 'form-label']) ?><br>
-                <?= form_input(null, $subject_name ?? '', ['class' => 'form-control', 'id' => 'subject_name']) ?>
+                <?= form_label(lang('Grades.name'), 'subject_name',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_input('subject_name', $subject_name ?? '',
+                    ['class' => 'form-control', 'id' => 'subject_name']) ?>
             </div>
         </div>
 
         <div class="row">
             <div class="col form-group">
-                <?= form_label(lang('Grades.weighting'), 'subject_weight', ['class' => 'form-label']) ?><br>
-                <?= form_input(null, $subject_weight ?? '', ['class' => 'form-control', 'id' => 'subject_weight', 'min' => 0, 'max' => 1, 'step' => 0.1], 'number') ?>
+                <?= form_label(lang('Grades.weighting'), 'subject_weight',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_input('subject_weight', $subject_weight ?? '',
+                    ['class' => 'form-control', 'id' => 'subject_weight', 'min' => 0, 'max' => 1, 'step' => 0.1], 'number') ?>
             </div>
 
             <div class="col form-group">
-                <?= form_label(lang('Grades.subject_parent_domain'), 'subject_parent_domain', ['class' => 'form-label']) ?><br>
-                <?= form_dropdown('subject_parent_domain', $domains, $subject_parent_domain ?? null, ['class' => 'form-control', 'id' => 'subject_parent_domain']) ?>
+                <?= form_label(lang('Grades.subject_parent_domain'), 'subject_parent_domain',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_dropdown('subject_parent_domain', $domains, $subject_parent_domain ?? null,
+                    ['class' => 'form-control', 'id' => 'subject_parent_domain']) ?>
             </div>
         </div>
 

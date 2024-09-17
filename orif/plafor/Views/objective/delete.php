@@ -1,20 +1,24 @@
 <?php
+
+// TODO : Delete this view once the common delete view is implemented
+
 /**
  * Fichier de vue pour delete_objective
  *
  * @author      Orif (ViDi, HeMa)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ *
  */
+
 ?>
-<?php
-?>
+
 <div id="page-content-wrapper">
     <div class="container">
         <!-- TITLE -->
         <div class="row">
             <div class="col">
-                <h1 class="title-section"><?= lang('plafor_lang.title_objective_'.(is_null($objective['archive'])?'delete':'enable')); ?></h1>
+                <h2><?= lang('plafor_lang.title_objective_'.(is_null($objective['archive'])?'delete':'enable')); ?></h2>
             </div>
         </div>
         <div class="row">
@@ -28,7 +32,7 @@
                     <a href="<?= base_url('plafor/courseplan/view_operational_competence/'.$objective['fk_operational_competence']); ?>" class="btn btn-secondary">
                         <?= lang('common_lang.btn_cancel'); ?>
                     </a>
-                    <?php 
+                    <?php
                     echo $objective['archive']!=null?"<a href=".base_url('plafor/courseplan/delete_objective/'.$objective['id'].'/3').">".lang('common_lang.reactivate')."</a>"
                     :
                     "<a href=".base_url(uri_string().'/1')." class={btn btn-danger} >".

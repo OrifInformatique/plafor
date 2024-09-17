@@ -17,23 +17,23 @@ $validation=\Config\Services::validation();
         );
         echo form_open('user/admin/password_change_user/'.$user['id'], $attributes);
     ?>
-    
+
     <!-- TITLE -->
     <div class="row">
         <div class="col-12">
-            <h1 class="title-section"><?= lang('user_lang.title_user_password_reset'); ?></h1>
+            <h1><?= lang('user_lang.title_user_password_reset'); ?></h1>
             <h4><?= lang('user_lang.user')." : ".esc($user['username']) ?></h4>
         </div>
     </div>
-    
+
     <!-- ERROR MESSAGES -->
     <?php foreach ($errors as $error) { ?>
         <div class="alert alert-danger" role="alert">
             <?= $error ?>
         </div>
     <?php } ?>
-    
-    <!-- PASSWORD -->    
+
+    <!-- PASSWORD -->
     <div class="row">
         <div class="col-sm-6">
             <div class="form-group">

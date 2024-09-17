@@ -13,17 +13,17 @@ $validation=\Config\Services::validation();
     <!-- TITLE -->
     <div class="row">
         <div class="col">
-            <h1 class="title-section"><?= lang('user_lang.title_user_'.($update ? 'update' : 'new')); ?></h1>
+            <h1><?= lang('user_lang.title_user_'.($update ? 'update' : 'new')); ?></h1>
         </div>
     </div>
-    
+
     <!-- INFORMATION MESSAGE IF USER IS DISABLED -->
     <?php if ($update && $user['archive']) { ?>
         <div class="col-12 alert alert-info">
             <?= lang("user_lang.user_disabled_info"); ?>
         </div>
     <?php } ?>
-    
+
     <!-- FORM OPEN -->
     <?php
     $attributes = array(
@@ -81,7 +81,7 @@ $validation=\Config\Services::validation();
                 <?= form_dropdown('user_usertype', $user_types, $user_usertype ?? $user['fk_user_type'] ?? NULL, $dropdown_options); ?>
             </div>
         </div>
-        
+
         <?php if (!$update) { ?>
             <!-- PASSWORD FIELDS ONLY FOR NEW USERS -->
             <div class="row">
@@ -100,7 +100,7 @@ $validation=\Config\Services::validation();
                 </div>
             </div>
         <?php } ?>
-        
+
         <?php if ($update) { ?>
             <div class="row">
                 <!-- RESET PASSWORD FOR EXISTING USER -->
@@ -109,7 +109,7 @@ $validation=\Config\Services::validation();
                         <?= lang("user_lang.title_user_password_reset"); ?>
                     </a>
                 </div>
-                
+
                 <!-- ACTIVATE / DISABLE EXISTING USER -->
                 <?php if ($user['archive']) { ?>
                     <div class="col-12">
@@ -131,7 +131,7 @@ $validation=\Config\Services::validation();
                 <?php } ?>
             </div>
         <?php } ?>
-                    
+
         <!-- FORM BUTTONS -->
         <div class="row">
             <div class="col text-right">

@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Domain save view
+ * Let the edition of a teaching domain.
  *
- * Called by TeachingDomainController/saveTeachingDomain()
+ * Called by TeachingDomainController/saveTeachingDomain($domain_id)
  *
- * @author      Orif (Dedy)
+ * @author      Orif (DeDy)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c), Orif (https://www.orif.ch)
  *
@@ -24,7 +24,7 @@
  * @param ?int $domain_name Name of the domain.
  * To edit an existing entry or remember user input.
  *
- * @param array $course_plans List of all course_plans. Structure of one course plan below.
+ * @param array $course_plans List of all course_plans.
  * Array of key-values where keys are course_plans IDs and values are course_plans official names.
  *
  * @param ?int $domain_parent_course_plan Course plan selected when posting data.
@@ -43,9 +43,9 @@
 /**
  * *** Data sent by this view ***
  *
- * @method POST
+ * method POST
  *
- * @action TeachingDomainController/saveTeachingDomain($domain_id)
+ * action TeachingDomainController/saveTeachingDomain($domain_id)
  *
  * @param int $domain_id ID of the domain.
  *
@@ -102,33 +102,47 @@ helper('form')
 
 <div class="container">
     <div class="row">
-        <h2 class="title-section"><?= $title ?></h2>
+        <div class="col">
+            <h2><?= $title ?></h2>
+        </div>
     </div>
 
     <?= form_open(base_url('plafor/teachingdomain/saveTeachingDomain/'.$domain_id)) ?>
         <div class="row">
             <div class="col form-group">
-                <?= form_label(lang('Grades.name'), 'domain_name', ['class' => 'form-label']) ?><br>
-                <?= form_input('domain_name', $domain_name ?? '', ['class' => 'form-control', 'id' => 'domain_name']) ?>
+                <?= form_label(lang('Grades.name'), 'domain_name',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_input('domain_name', $domain_name ?? '',
+                    ['class' => 'form-control', 'id' => 'domain_name']) ?>
             </div>
 
             <div class="col form-group">
-                <?= form_label(lang('Grades.domain_parent_course_plan'), 'domain_parent_course_plan', ['class' => 'form-label']) ?><br>
+                <?= form_label(lang('Grades.domain_parent_course_plan'), 'domain_parent_course_plan',
+                    ['class' => 'form-label']) ?>
+
                 <!-- TODO : Insert course_plans list as form_dropdown $options -->
                 <!-- TODO : When creating a domain (no ID or ID == 0), preselect the course_plan we came from -->
-                <?= form_dropdown('domain_parent_course_plan', $course_plans, $selected_course_plan ?? null, ['class' => 'form-control', 'id' => 'domain_parent_course_plan']) ?>
+                <?= form_dropdown('domain_parent_course_plan', $course_plans, $selected_course_plan ?? null,
+                    ['class' => 'form-control']) ?>
             </div>
         </div>
 
         <div class="row">
             <div class="col-sm-3 form-group">
-                <?= form_label(lang('Grades.weighting'), 'domain_weight', ['class' => 'form-label']) ?><br>
-                <?= form_input(null, $domain_weight ?? '', ['class' => 'form-control', 'id' => 'domain_weight', 'min' => 0, 'max' => 1, 'step' => 0.1], 'number') ?>
+                <?= form_label(lang('Grades.weighting'), 'domain_weight',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_input(null, $domain_weight ?? '',
+                    ['class' => 'form-control', 'min' => 0, 'max' => 1, 'step' => 0.1], 'number') ?>
             </div>
 
             <div class="col-sm-3 form-group form-check form-check-inline">
-                <?= form_label(lang('Grades.is_eliminatory'), 'is_domain_eliminatory', ['class' => 'form-check-label mr-2']) ?><br>
-                <?= form_checkbox('is_domain_eliminatory', '', $is_domain_eliminatory ?? false, ['class' => 'form-check-input', 'id' => 'is_domain_eliminatory']) ?>
+                <?= form_label(lang('Grades.is_eliminatory'), 'is_domain_eliminatory',
+                    ['class' => 'form-check-label mr-2']) ?>
+
+                <?= form_checkbox('is_domain_eliminatory', '', $is_domain_eliminatory ?? false,
+                    ['class' => 'form-check-input']) ?>
             </div>
         </div>
 
@@ -148,7 +162,7 @@ helper('form')
                     <?= lang('common_lang.btn_cancel') ?>
                 </a>
 
-                <?= form_submit('', lang('common_lang.btn_save'), ['class' => 'btn btn-primary']) ?>
+                <?= form_submit(null, lang('common_lang.btn_save'), ['class' => 'btn btn-primary']) ?>
             </div>
         </div>
     <?= form_close() ?>

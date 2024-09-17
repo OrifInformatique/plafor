@@ -1,9 +1,24 @@
+<?php
+
+// TODO : Delete this view once the common delete view is implemented
+
+/**
+ * Fichier de vue pour delete_user_course
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ *
+ */
+
+?>
+
 <div id="page-content-wrapper">
     <div class="container">
         <!-- TITLE -->
         <div class="row">
             <div class="col">
-                <h2 class="title-section"><?= $title; ?></h2>
+                <h2><?= $title; ?></h2>
             </div>
         </div>
         <div class="row">

@@ -59,7 +59,7 @@ class Apprentice extends \App\Controllers\BaseController
 
     /**
      * Default method to redirect to a homepage depending on the type of user
-     * 
+     *
      * @return void
      */
     public function index() {
@@ -83,7 +83,7 @@ class Apprentice extends \App\Controllers\BaseController
 
     /**
      * Displays the list of apprentices
-     * 
+     *
      * @param $withDeleted : Whether or not to show deleted apprentices
      * @return void
      */
@@ -118,8 +118,8 @@ class Apprentice extends \App\Controllers\BaseController
         {
             $apprentices = $this->trainer_apprentice_model->getUnassignedApprentices();
         }
-        
-        else 
+
+        else
         {
             // User is a trainer - lists their linked apprentices
             if (count($this->trainer_apprentice_model->where('fk_trainer', $trainer_id)->findAll()))
@@ -149,7 +149,7 @@ class Apprentice extends \App\Controllers\BaseController
 
     /**
      * Displays the view for a given apprentice
-     * 
+     *
      * @param int $apprentice_id : ID of the apprentice
      * @return void
      */
@@ -209,11 +209,11 @@ class Apprentice extends \App\Controllers\BaseController
      * Display the list of user courses linked to one given user
      *
      * @param int $id_apprentice ID of the concerned apprentice
-     * 
+     *
      * @return void
-     * 
+     *
      */
-    public function list_user_courses($id_apprentice = null) 
+    public function list_user_courses($id_apprentice = null)
     {
         if(is_numeric($id_apprentice))
             $user = $this->user_model->where('id', $id_apprentice)->first();
@@ -248,14 +248,14 @@ class Apprentice extends \App\Controllers\BaseController
      *
      * @param int $id_apprentice   ID of the apprentice
      * @param int $id_user_course  ID of the user's course
-     * 
+     *
      * @return void
-     * 
+     *
      */
     public function save_user_course($id_apprentice = 0, $id_user_course = 0)
     {
         // Access permissions
-        if($this->session->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer) 
+        if($this->session->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer)
         {
             $user_type_id = $this->user_type_model
                 ->where('access_level', config('\User\Config\UserConfig')->access_level_apprentice)
@@ -285,7 +285,7 @@ class Apprentice extends \App\Controllers\BaseController
                     // User's course already exists - updates it
                     $this->user_course_model->update($id_user_course, $new_user_course);
                 }
-                else 
+                else
                 {
                     $user_has_course = $this->user_course_model->where(['fk_user' => $id_apprentice, 'fk_course_plan' => $fk_course_plan])->findAll() ? true : false;
 
@@ -294,44 +294,44 @@ class Apprentice extends \App\Controllers\BaseController
                     {
                         // No user's course was found in database - inserts a new one
                         $id_user_course = $this->user_course_model->insert($new_user_course);
-                            
+
                         $course_plan = $this->user_course_model->getCoursePlan($new_user_course['fk_course_plan']);
                         $competenceDomainIds = [];
-                        
-                        foreach ($this->course_plan_model->getCompetenceDomains($course_plan['id']) as $competence_domain) 
+
+                        foreach ($this->course_plan_model->getCompetenceDomains($course_plan['id']) as $competence_domain)
                             $competenceDomainIds[] = $competence_domain['id'];
-                        
+
                         $operational_competences = [];
                         // No operational competence associated
-                        try 
+                        try
                         {
                             $operational_competences = $this->operational_comp_model->withDeleted()->whereIn('fk_competence_domain', $competenceDomainIds)->findAll();
-                        } 
-                        
+                        }
+
                         catch (\Exception $e) {};
 
                         // Adds an acquisition status of level 1 for each objective
                         $objectiveIds = array();
-                        foreach ($operational_competences as $operational_competence) 
+                        foreach ($operational_competences as $operational_competence)
                         {
-                            foreach ($this->operational_comp_model->getObjectives($operational_competence['id']) as $objective) 
+                            foreach ($this->operational_comp_model->getObjectives($operational_competence['id']) as $objective)
                                 $objectiveIds[] = $objective['id'];
                         }
 
-                        foreach ($objectiveIds as $objectiveId) 
+                        foreach ($objectiveIds as $objectiveId)
                         {
                             $acquisition_status = array(
                                 'fk_objective'          => $objectiveId,
                                 'fk_user_course'        => $id_user_course,
                                 'fk_acquisition_level'  => 1
                             );
-                            
+
                             $this->acquisition_status_model->insert($acquisition_status);
                         }
                     }
                 }
 
-                if($this->user_course_model->errors() == null) 
+                if($this->user_course_model->errors() == null)
                     return redirect()->to(base_url('plafor/apprentice/list_user_courses/' . $id_apprentice));
             }
 
@@ -363,15 +363,15 @@ class Apprentice extends \App\Controllers\BaseController
             );
 
             return $this->display_view('Plafor\user_course/save', $output);
-        } 
-        
+        }
+
         else
             return $this->display_view('\User\errors\403error');
     }
 
     /**
      * @todo the user doesn't modify the trainer but add one on update
-     * 
+     *
      * Creates a link between an apprentice and a trainer, or changes the trainer
      * linked on the selected trainer_apprentice SQL entry
      *
@@ -416,7 +416,7 @@ class Apprentice extends \App\Controllers\BaseController
                 }
             }
 
-            // Gets data of trainers for the dropdown menu BUT ignore the trainers who are 
+            // Gets data of trainers for the dropdown menu BUT ignore the trainers who are
             // already linked to the selected apprentice
             $trainersRaw = $this->user_model->getTrainers();
             $trainers = array();
@@ -588,22 +588,11 @@ class Apprentice extends \App\Controllers\BaseController
                 $this->response->setStatusCode(200,'OK');
             }
         }
-
-        // Data to send to the view
-        $output = [
-            'title'                 => lang('plafor_lang.title_acquisition_status_save'),
-            'acquisition_levels'    => $acquisitionLevels,
-            'acquisition_level'     => $acquisitionStatus['fk_acquisition_level'],
-            'id'                    => $acquisition_status_id,
-            'errors'                => $this->acquisition_status_model->errors()
-        ];
-
-        return $this->display_view('Plafor\acquisition_status/save', $output);
     }
 
     /**
      * Adds or modifies a comment for an acquisition status
-     * 
+     *
      * @param int $acquisition_status_id : ID of the acquisition status
      * @param int $comment_id            : ID of the comment
      * @return void
@@ -628,7 +617,7 @@ class Apprentice extends \App\Controllers\BaseController
                 'comment'               => $this->request->getPost('comment'),
                 'date_creation'         => date('Y-m-d H:i:s'),
             );
-            
+
             // Checks action to perform
             if (is_null($comment)) {
                 // Comment doesn't already exist - inserts it
@@ -659,7 +648,7 @@ class Apprentice extends \App\Controllers\BaseController
 
     /**
      * Deletes a comment from an acquisition status
-     * 
+     *
      * @param int $comment_id : ID of the comment to delete
      * @return void
      */
@@ -682,7 +671,7 @@ class Apprentice extends \App\Controllers\BaseController
 
     /**
      * Gets the course plan progress for a given user
-     * 
+     *
      * @param null $userId       : ID of the user
      * @param null $coursePlanId : ID of the course plan
      * @return Response|ResponseInterface

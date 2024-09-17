@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Module save view
+ * Let the edition of a teaching module.
  *
- * Called by TeachingDomainController/saveTeachingModule()
+ * Called by TeachingDomainController/saveTeachingModule($module_id)
  *
- * @author      Orif (Dedy)
+ * @author      Orif (DeDy)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c), Orif (https://www.orif.ch)
  *
@@ -35,7 +35,6 @@
  *
  * @param ?int $module_version Version of the module.
  * To edit an existing entry or remember user input.
- *
  *
  */
 
@@ -86,30 +85,45 @@ helper('form')
 
 <div class="container">
     <div class="row">
-        <h2 class="title-section"><?= $title ?></h2>
+        <div class="col">
+            <h2><?= $title ?></h2>
+        </div>
     </div>
-
 
     <?= form_open(base_url('plafor/grade/saveTeachingModule/'.$module_id)) ?>
         <div class="row">
             <div class="col-sm-2 form-group">
-                <?= form_label(lang('Grades.module_number'), 'module_number', ['class' => 'form-label']) ?><br>
-                <?= form_input('module_number', $module_number ?? '', ['class' => 'form-control', 'id' => 'module_number', 'min' => 1], 'number') ?>
+                <?= form_label(lang('Grades.module_number'), 'module_number',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_input('module_number', $module_number ?? '',
+                    ['class' => 'form-control', 'id' => 'module_number', 'min' => 1], 'number') ?>
             </div>
+
             <div class="col form-group">
-                <?= form_label(lang('Grades.module_name'), 'module_name', ['class' => 'form-label']) ?><br>
-                <?= form_input('module_name', $module_name ?? '', ['class' => 'form-control', 'id' => 'module_name']) ?>
+                <?= form_label(lang('Grades.module_name'), 'module_name',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_input('module_name', $module_name ?? '',
+                    ['class' => 'form-control', 'id' => 'module_name']) ?>
             </div>
         </div>
 
         <div class="row">
             <div class="col form-group">
-                <?= form_label(lang('Grades.module_parent_domain'), 'module_parent_domain', ['class' => 'form-label']) ?><br>
-                <?= form_dropdown('module_parent_domain', $domains, $module_parent_domain ?? null, ['class' => 'form-control', 'id' => 'module_parent_domain']) ?>
+                <?= form_label(lang('Grades.module_parent_domain'), 'module_parent_domain',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_dropdown('module_parent_domain', $domains, $module_parent_domain ?? null,
+                    ['class' => 'form-control', 'id' => 'module_parent_domain']) ?>
             </div>
+
             <div class="col-sm-2 form-group">
-                <?= form_label(lang('Grades.module_version'), 'version', ['class' => 'form-label']) ?><br>
-                <?= form_input('version', $module_version ?? '', ['class' => 'form-control', 'id' => 'version', 'min' => 1], 'number') ?>
+                <?= form_label(lang('Grades.module_version'), 'version',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_input('version', $module_version ?? '',
+                    ['class' => 'form-control', 'id' => 'version', 'min' => 1], 'number') ?>
             </div>
         </div>
 
@@ -126,7 +140,8 @@ helper('form')
                 <a class="btn btn-secondary" href="<?= base_url('plafor/teachingdomain/getAllTeachingModule') ?>">
                     <?= lang('common_lang.btn_cancel') ?>
                 </a>
-                <?= form_submit('', lang('common_lang.btn_save'), ['class' => 'btn btn-primary']) ?>
+
+                <?= form_submit(null, lang('common_lang.btn_save'), ['class' => 'btn btn-primary']) ?>
             </div>
         </div>
     <?= form_close() ?>

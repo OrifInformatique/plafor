@@ -1,20 +1,24 @@
 <?php
+
+// TODO : Delete this view once the common delete view is implemented
+
 /**
  * Fichier de vue pour delete_apprentice
  *
  * @author      Orif (ViDi, HeMa)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ *
  */
+
 ?>
-<?php
-?>
+
 <div id="page-content-wrapper">
     <div class="container">
         <div class="row">
             <div class="col-12">
                 <div>
-                    <h1><?= lang('plafor_lang.apprentice_link') ?></h1>
+                    <h2><?= lang('plafor_lang.apprentice_link') ?></h2>
                     <h2><?= lang('plafor_lang.apprentice').' "'.$apprentice['username'].'"' ?></h2>
                     <h2><?= lang('plafor_lang.trainer').' "'.$trainer['username'].'"' ?></h2>
                     <h4><?= lang('user_lang.what_to_do')?></h4>

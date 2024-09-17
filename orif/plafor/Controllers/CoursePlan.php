@@ -375,11 +375,11 @@ class CoursePlan extends \App\Controllers\BaseController
      * @param integer $action         Action to apply on the course plan :
      *      - 0 for displaying the confirmation
      *      - 1 for deleting (hard delete)
-     * 
+     *
      * @return void
-     * 
+     *
      */
-    public function delete_user_course($user_course_id = 0, $action = 0) 
+    public function delete_user_course($user_course_id = 0, $action = 0)
     {
         $user_course = $this->user_course_model->find($user_course_id);
 
@@ -412,7 +412,7 @@ class CoursePlan extends \App\Controllers\BaseController
         }
 
         // Access permissions
-        if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin 
+        if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin
             || (isset($doesTrainerTrainsApprentice) && $doesTrainerTrainsApprentice))
         {
             // Gets data for the confirmation view
@@ -449,13 +449,13 @@ class CoursePlan extends \App\Controllers\BaseController
 
                     return redirect()->to(base_url('plafor/apprentice/list_user_courses/'.$apprentice['id']));
 
-                default: 
+                default:
                     // Do nothing
             }
 
             return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
-        } 
-        
+        }
+
         else
             return $this->display_view('\User\errors\403error');
     }
@@ -666,7 +666,7 @@ class CoursePlan extends \App\Controllers\BaseController
         $course_plan['date_begin'] = $date_begin->toLocalizedString('dd.MM.Y');
 
         $teaching_domains = [];
-        
+
         // Get teaching domains, subjects and modules
         foreach ($this->m_teaching_domain_model->where("fk_course_plan", $course_plan_id)->findAll() as $domain) {
             $teaching_subject = [];
@@ -674,17 +674,17 @@ class CoursePlan extends \App\Controllers\BaseController
 
             // Get teaching subjects of the domain
             foreach ($this->m_teaching_subject_model->where("fk_teaching_domain", $domain["id"])->findAll() as $subject){
-                $teaching_subject[] = [ 
+                $teaching_subject[] = [
                     "id"            => $subject["id"],               // ID of the subject. Required.
                     "name"          => $subject["name"],             // Name of the subject. Required.
                     "weighting"     => $subject["subject_weight"],   // Weighing of the subject (in the domain average). Required.
                 ];
             }
-            
+
             // Get teaching modules of the domain
             foreach ($this->m_teaching_module_model->where("fk_teaching_domain", $domain["id"])->orderBy("number", "ASC")->findAll() as $module){
                 // TODO: get teaching modules
-                $teaching_module = [] = [
+                $teaching_module[] = [
                     "id"            => $module["id"],
                     "number"        => $module["module_number"],
                     "title"         => $module["official_name"],
