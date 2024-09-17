@@ -56,6 +56,8 @@ class TeachingDomainController extends \App\Controllers\BaseController{
         $this->m_teaching_domain_model = model("TeachingDomainModel");
         $this->m_teaching_subject_model = model("TeachingSubjectModel");
         $this->m_teaching_module_model = model("TeachingModuleModel");
+        $this->m_teaching_domain_module_model = model("TeachingDomainModuleModel");
+        $this->m_teaching_domain_title_model = model("TeachingDomainTitleModel");
         $this->m_user_course_model = model("UserCourseModel");
         $this->m_user_model = model("User_model");
         $this->m_course_plan_model = model("CoursePlanModel");
@@ -82,22 +84,17 @@ class TeachingDomainController extends \App\Controllers\BaseController{
 
         // Redirect to the last URL if course plan ID doesn't exist
         if (empty($this->m_course_plan_model->find($course_plan_id))){
-            return redirect()->to(previous_url()); // TODO: comment this line if DD (Dylan Dervey)
+            // return redirect()->to(previous_url()); // TODO: comment this line if DD (Dylan Dervey)
         }
 
         if(count($_POST) > 0) {
-            $domain_name = $this->request->getPost("domain_name");
-            $course_plan_id = $this->request->getPost("course_plan");
-            $domain_weight = $this->request->getPost("domain_weight");
-            $is_eliminatory = $this->request->getPost("is_domain_eliminatory");
-            $course_plan_parent = $this->request->getPost("domain_parent_course_plan");
 
             $data_to_model = [
                 "id"                        => $domain_id,
-                "fk_teaching_domain_title"  => $domain_name,
                 "fk_course_plan"            => $course_plan_id,
-                "domain_weight"             => $domain_weight,
-                "is_eliminatory"            => $is_eliminatory
+                "fk_teaching_domain_title"  => $this->request->getPost("domain_name"),
+                "domain_weight"             => $this->request->getPost("domain_weight"),
+                "is_eliminatory"            => $this->request->getPost("is_domain_eliminatory")
             ];
             
             $this->m_teaching_domain_model->save($data_to_model);
@@ -108,17 +105,17 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             }
         }
 
-
-        $course_plan_parent = $this->m_course_plan_model->findAll();
-
+        $data_from_model = $this->m_teaching_domain_model->find($domain_id);
+        
         $data_to_view = [
-            "title"                     => $domain_id == 0 ? lang('Grades.create_domain') : lang('Grades.update_domain'),
-            "fk_teaching_domain_title"  => $domain_id,
-            "fk_course_plan"            => $course_plan_id,
-            "domain_weight"             => $domain_weight,
-            "is_eliminatory"            => $is_eliminatory,
-            "domain_parent_course_plan" => $course_plan_parent,
-            "errors"                    => $this->m_teaching_domain_model->errors()
+            "title"                         => $domain_id == 0 ? lang('Grades.create_domain') : lang('Grades.update_domain'),
+            "domain_id"                     => $domain_id,
+            // BUG: course_plan required ???
+            "domain_parent_course_plan"     => $course_plan_id,
+            "domain_name"                   => $this->m_teaching_domain_model->find($domain_id) ["title"],
+            "domain_weight"                 => $data_from_model["domain_weight"] ?? null,
+            "is_domain_eliminatory"         => $data_from_model["is_eliminatory"] ?? null,
+            "errors"                        => $this->m_teaching_domain_model->errors()
         ];
 
         // Return to the current view if subject_id is OVER 0, for update
@@ -264,7 +261,6 @@ class TeachingDomainController extends \App\Controllers\BaseController{
 
     /**
      * Add/Update a teaching module
-     * // TODO: check saveTeachingSubject and do the same
      *
      * @param int $module_id    => ID of the teaching module (default = 0)
      * @param int $domain_id    => ID of the teaching domain (default = 0)
@@ -293,14 +289,27 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             
             $this->m_teaching_module_model->save($data_to_model);
             
-            // todo find PK for teaching_domain_module with the 2 FK
+            // Get the link ID if the module ID is over 0
+            $link_id = 0;
+            
+            if ($module_id > 0) {
+                $link_id = $this->m_teaching_domain_module_model
+                ->where("fk_teaching_domain", $domain_id 
+                && "fk_teaching_module", $module_id)
+                ->find();
+            }
+            // Else find the last ID insert
+            else {
+                $module_id = $this->m_teaching_module_model->insertID();
+            }
+
             $data_link =[
                 "id"                    => $link_id,
-                "fk_teaching_domain"    => $this->request->getPost("module_parent_domain"),
+                "fk_teaching_domain"    => $domain_id,
                 "fk_teaching_module"    => $module_id
             ];
             
-            $this->m_teaching_module_model->save($data_link);
+            $this->m_teaching_domain_module_model->save($data_link);
 
             // Return to previous page if there is NO error
             if ($this->m_teaching_module_model->errors() == null) {

@@ -61,24 +61,24 @@
 
 
 
-/* Random data set for testing, can be deleted anytime */
-$title = lang('Grades.create_domain'); // Titre de la page
+// /* Random data set for testing, can be deleted anytime */
+// $title = lang('Grades.create_domain'); // Titre de la page
 
-$domain_id = 7890; // ID du domaine
+// $domain_id = 7890; // ID du domaine
 
-$domain_name = 'Software Development'; // Nom du domaine (peut être laissé vide)
+// $domain_name = 'Software Development'; // Nom du domaine (peut être laissé vide)
 
-$course_plans = [
-        101 => 'Computer Science Engineering',
-        102 => 'Information Systems',
-        103 => 'Quantum Algorythms',
-];
+// $course_plans = [
+//         101 => 'Computer Science Engineering',
+//         102 => 'Information Systems',
+//         103 => 'Quantum Algorythms',
+// ];
 
-$selected_course_plan = 102; // ID du course_plan sélectionné (peut être laissé vide)
+// $selected_course_plan = 102; // ID du course_plan sélectionné (peut être laissé vide)
 
-$domain_weight = 0.7; // Ponderation du domaine (peut être laissé vide)
+// $domain_weight = 0.7; // Ponderation du domaine (peut être laissé vide)
 
-$is_domain_eliminatory = false; // Le domaine est-il éliminatoire (peut être laissé vide)
+// $is_domain_eliminatory = false; // Le domaine est-il éliminatoire (peut être laissé vide)
 
 /**
  * Data management
