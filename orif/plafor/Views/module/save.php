@@ -90,7 +90,7 @@ helper('form')
         </div>
     </div>
 
-    <?= form_open(base_url('plafor/grade/saveTeachingModule/'.$module_id)) ?>
+    <?= form_open(base_url('plafor/teachingdomain/saveTeachingModule/'.$module_id)) ?>
         <div class="row">
             <div class="col-sm-2 form-group">
                 <?= form_label(lang('Grades.module_number'), 'module_number',

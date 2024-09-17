@@ -55,6 +55,7 @@ class Apprentice extends \App\Controllers\BaseController
         $this->trainer_apprentice_model = model('TrainerApprenticeModel');
         $this->user_type_model = model('User_type_model');
         $this->user_model = model('User_model');
+        helper("AccessPermissions_helper");
     }
 
     /**
@@ -150,19 +151,19 @@ class Apprentice extends \App\Controllers\BaseController
     /**
      * Displays the view for a given apprentice
      *
-     * @param int $apprentice_id : ID of the apprentice
-     * @return void
+     * @param int $apprentice_id : ID of the apprentice (default = 0)
+     * 
+     * @return  string|Response
      */
-    public function view_apprentice($apprentice_id = 0) {
-        // Gets data of the user if it exists and is an apprentice
-        $user_type_id = $this->user_type_model->
-            where('access_level', config('\User\Config\UserConfig')->access_level_apprentice)->first()['id'];
-        $apprentice = $this->user_model->where('fk_user_type', $user_type_id)->withDeleted()->find($apprentice_id);
-
-        // Redirection
-        if(is_null($apprentice)) {
-            return redirect()->to(base_url("/plafor/apprentice/list_apprentice"));
+    public function view_apprentice($apprentice_id = 0) : string|Response {
+        
+        // Access permissions
+        if (!isCurrentUserTrainerOfApprentice($apprentice_id)){
+            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
+        elseif (!isCurrentUserSelfApprentice($apprentice_id)){
+            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
+        }  
 
         // Preparing data for the view
         // User's courses
@@ -174,25 +175,57 @@ class Apprentice extends \App\Controllers\BaseController
             $usercourse['date_end']!=='0000-00-00'? $usercourse['date_end'] = $date_end->toLocalizedString('dd.MM.Y'):null;
             $user_courses[$usercourse['id']] = $usercourse;
         }
+
         // Status of the user's courses
         $user_course_status = [];
         foreach ($this->user_course_status_model->withDeleted(true)->findAll() as $usercoursetatus)
         $user_course_status[$usercoursetatus['id']] = $usercoursetatus;
+
         // Course plans
         $course_plans = [];
         foreach ($this->course_plan_model->withDeleted(true)->findAll() as $courseplan)
         $course_plans[$courseplan['id']] = $courseplan;
+
         // Trainers
         $trainers = [];
         foreach ($this->user_model->where('fk_user_type',$this->user_type_model->where('name',lang('plafor_lang.title_trainer'))->first()['id'])->withDeleted(true)->findAll() as $trainer)
             $trainers[$trainer['id']]= $trainer;
+
         // Apprentice-trainer links
         $links = [];
         foreach ($this->trainer_apprentice_model->where('fk_apprentice',$apprentice_id)->findAll() as $link)
             $links[$link['id']]=$link;
 
-        // Data to send to the view
-        $output = array(
+        // TODO: add school_report here
+        $user_course_id = $this->request->getPost("user_course_id");
+        dd($user_course_id);
+
+        $grades = [];
+        foreach ($this->m_grade_model->where("fk_user_course", $user_course_id)->withDeleted($with_deleted)->findAll() as $grade){
+            dd($this->m_grade_model->where("fk_user_course", $user_course_id)->withDeleted($with_deleted)->findAll());
+            $grades [] = [
+                "id"                        => $grade["id"],
+                "user_course_id"            => $grade["module_number"],
+                "apprentice"                => [
+                    "id"                        => int,    
+                    "username"                  => string, 
+                ],
+                "course_plan"               => $grade["official_name"],
+                "subject_and_domains_list"  => [
+                    lang("Grades.subjects")     => [], // List of sujects contained in the course_plan. Required.
+                        //Array of key-values where keys are subjects IDs with a "s" before and values are subject names.
+            
+                    lang("Grades.modules")      => [],// List of modules contained in the course_plan. Required.
+                        //Array of key-values where keys are modules IDs with a "m" before and values are modules names.
+                ],
+                "selected_entry"            => $grade["version"],
+                "grade"                     => $grade["grade"],
+                "exam_date"                 => $grade["date"],
+                "is_exam_made_in_school"    => $grade["is_school"],
+            ];
+        }
+    
+        $data_to_view = [
             'title'                 => lang('plafor_lang.title_view_apprentice'),
             'apprentice'            => $apprentice,
             'trainers'              => $trainers,
@@ -200,8 +233,8 @@ class Apprentice extends \App\Controllers\BaseController
             'user_courses'          => $user_courses,
             'user_course_status'    => $user_course_status,
             'course_plans'          => $course_plans
-        );
-        return $this->display_view('Plafor\apprentice/view',$output);
+        ];
+        return $this->display_view('Plafor\apprentice/view', $data_to_view);
     }
 
 

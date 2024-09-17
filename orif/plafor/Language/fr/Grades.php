@@ -19,6 +19,7 @@ return [
     "create_domain"             => "Créer un domaine",
     "update_domain"             => "Modifer un domaine",
     "delete_domain"             => "Supprimer un domaine",
+    "link_domain_module"        => "Lier le domain à des modules",
 
     // Teaching subject
     "subject"               => "Matière",

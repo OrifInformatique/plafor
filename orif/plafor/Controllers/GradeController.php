@@ -82,70 +82,89 @@ class GradeController extends \App\Controllers\BaseController{
     /**
      * Insert/Modify the grade of an apprentice
      *
-     * @param  int $grade_id    => grade ID, default 0
+     * @param int $apprentice_id    => ID of the apprentice (default 0)
+     * @param int $grade_id         => ID of the grade (default 0)
      * 
-     *
      * @return string|Response
      */
-    public function saveGrade(int $grade_id = 0) : string|Response {
+    public function saveGrade(int $apprentice_id = 0, int $grade_id = 0) : string|Response {
 
-        $course_plan_id = $this->request->getPost("user_course_id"); // apprentice
-        // $course_plan_id = $this->request->getPost("apprentice"); // apprentice
+        $user_course_id = $this->request->getPost("user_course_id");
 
         // Access permissions
-        if (!isCurrentUserTrainerOfApprentice($course_plan_id)){
+        if (!isCurrentUserTrainerOfApprentice($apprentice_id)){
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
-        elseif (!isCurrentUserSelfApprentice($course_plan_id)){
+        elseif (!isCurrentUserSelfApprentice($apprentice_id)){
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
-        }
-
-        // Get data form
-        $subject_id = $this->request->getPost("subject");
-        $module_id = $this->request->getPost("module");
-        $date = $this->request->getPost("date");
-        $grade = $this->request->getPost("grade");
-        $is_school = $this->request->getPost("is_school");
-
-        // Actions upon form submission
+        }        
+        
         if (count($_POST) > 0){
+            dd($_POST);
+            // TODO: check if it's a subject or a module s or m (parse the first char of the string) 
+            $selected_entry = $this->request->getPost("selected_entry");
+            
+            // $grades = []; // TODO: check what is needed ??
+            // foreach ($this->m_grade_model->where("fk_user_course", $user_course_id)->withDeleted($with_deleted)->findAll() as $grade){
+            //     dd($this->m_grade_model->where("fk_user_course", $user_course_id)->withDeleted($with_deleted)->findAll());
+            //     $grades [] = [
+            //         "id"                        => $grade["id"],
+            //         "user_course_id"            => $grade["module_number"],
+            //         "apprentice"                => [
+            //             "id"                        => int,    
+            //             "username"                  => string, 
+            //         ],
+            //         "course_plan"               => $grade["official_name"],
+            //         "subject_and_domains_list"  => [
+            //             lang("Grades.subjects")     => [], // List of sujects contained in the course_plan. Required.
+            //                 //Array of key-values where keys are subjects IDs with a "s" before and values are subject names.
+                
+            //             lang("Grades.modules")      => [],// List of modules contained in the course_plan. Required.
+            //                 //Array of key-values where keys are modules IDs with a "m" before and values are modules names.
+            //         ],
+            //         "selected_entry"            => $grade["version"],
+            //         "grade"                     => $grade["grade"],
+            //         "exam_date"                 => $grade["date"],
+            //         "is_exam_made_in_school"    => $grade["is_school"],
+            //     ];
+            // }
+            
             $data_to_model = [
                 "id"                    => $grade_id,
-                "fk_user_course"        => $course_plan_id,
+                "fk_user_course"        => $user_course_id,
                 "fk_teaching_subject"   => $subject_id,
                 "fk_teaching_module"    => $module_id,
-                "date"                  => $date,
-                "grade"                 => $grade,
-                "is_school"             => $is_school,
+                "date"                  => $this->request->getPost("exam_date"),
+                "grade"                 => $this->request->getPost("grade"),
+                "is_school"             => $this->request->getPost("is_exam_made_in_school"),
             ];
             
             // Insert or update grade in DB
             $this->m_grade_model->save($data_to_model);
-
-            // Return to previous page if there is NO error
-            if ($this->m_grade_model->errors()==null) {
+            
+            if ($this->m_grade_model->errors() == null) {
                 return redirect()->to("plafor/grade/showAllGrade");
             }
         }
-
-        // Return to the current view if grade_id is OVER 0, for update
-        elseif ($grade_id > 0) {
-            return $this->display_view("plafor/grade/save", $this->m_grade_model->find("id", $grade_id));
-        }
         
-        // Return to the current view if there is ANY error with the model
-        // OR empty $_POST
-        $data_to_view = [
-            "grade_id" => $grade_id,
-            "course_plan_id" => $course_plan_id,
-            "subject" => $subject_id,
-            "module" => $module_id,
-            "date"  => $date,
-            "grade" => $grade,
-            "is_school" => $is_school,
-            "errors"  => $this->m_grade_model->errors()
-        ];
+        $data_from_model = $this->m_grade_model->withDeleted()->find($grade_id);
+        // dd($data_from_model);
 
+        $data_to_view = [
+            "title"                 => $grade_id == 0 ? lang('Grades.add_grade') : lang('Grades.update_grade'),
+            // "grade_id"              => $grade_id,
+            // "user_course_id"        => $data_from_model["user_course_id"],
+            // "subject" => $subject_id,
+            // "module" => $module_id,
+            // "date"  => $date,
+            // "grade" => $grade,
+            // "is_school" => $is_school,
+            // "errors"  => $this->m_grade_model->errors()
+        ];
+        
+        // Return to previous page if there is NO error
+        // OR Return to the current view if there is ANY error with the model
+        // OR empty $_POST
         return $this->display_view("\Plafor/grade/save", $data_to_view);
     }
 
