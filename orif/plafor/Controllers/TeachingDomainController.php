@@ -186,7 +186,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             }
         }
         
-        // Get a list with all Subject and Domain
+        // Get a list with all Subjects and Domains
         $data_from_model = $this->m_teaching_subject_model->find($subject_id);
         
         $data_to_view = [
@@ -267,63 +267,66 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * // TODO: check saveTeachingSubject and do the same
      *
      * @param int $module_id    => ID of the teaching module (default = 0)
+     * @param int $domain_id    => ID of the teaching domain (default = 0)
      * 
      * @return string|Response
      */
-    public function saveTeachingModule(int $module_id = 0) : string|Response {
+    public function saveTeachingModule(int $module_id = 0, int $domain_id = 0) : string|Response {
 
         // Access permissions
         if (!isCurrentUserAdmin()) {
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
 
-        // Get data form
-        $teaching_domain = $this->request->getPost("teaching_domain");
-        $module_number = $this->request->getPost("module_number");
-        $official_name = $this->request->getPost("official_name");
-        $version = $this->request->getPost("version");
+        // Redirect to the last URL if domain ID doesn't exist
+        if (empty($this->m_teaching_domain_model->find($domain_id))){
+            return redirect()->to(previous_url()); // TODO: comment this line if DD (Dylan Dervey)
+        }
 
         if(count($_POST) > 0) {
             $data_to_model = [
                 "id"                    => $module_id,
-                "module_number"         => $module_number,
-                "official_name"         => $official_name,
-                "version"               => $version,
+                "module_number"         => $this->request->getPost("module_number"),
+                "official_name"         => $this->request->getPost("module_name"),
+                "version"               => $this->request->getPost("module_version"),
             ];
             
+            $this->m_teaching_module_model->save($data_to_model);
             
             // todo find PK for teaching_domain_module with the 2 FK
             $data_link =[
                 "id"                    => $link_id,
-                "fk_teaching_domain"    => $teaching_domain,
+                "fk_teaching_domain"    => $this->request->getPost("module_parent_domain"),
                 "fk_teaching_module"    => $module_id
             ];
             
-
-            // Insert or update grade in DB
-            $this->m_teaching_module_model->save($data_to_model);
+            $this->m_teaching_module_model->save($data_link);
 
             // Return to previous page if there is NO error
-            if ($this->m_teaching_module_model->errors()==null) {
-                return redirect()->to("plafor/module/view");
+            if ($this->m_teaching_module_model->errors() == null) {
+
+                $course_plan_id = $this->m_teaching_domain_model->find($domain_id)['fk_course_plan'];
+                
+                return redirect()->to("plafor/courseplan/view_course_plan/" . $course_plan_id);
             }
         }
 
-        // Return to the current view if module_id is OVER 0, for update
-        elseif ($module_id > 0) {
-            return $this->display_view("\Plafor/module/save", $this->m_teaching_module_model->find("id", $module_id));
-        }
-
-        // Return to the current view if there is ANY error with the model
-        // OR empty $_POST
+        // Get a list with all Modules and Domains
+        $data_from_model = $this->m_teaching_module_model->find($module_id);
+        
         $data_to_view = [
-            "teaching_domain"   => $teaching_domain,
-            "module_number"     => $module_number,
-            "official_name"     => $official_name,
-            "version"           => $version,
-            "errors"            => $this->m_teaching_module_model->errors()
+            "title"                 => $module_id == 0 ? lang('Grades.create_module') : lang('Grades.update_module'),
+            "module_id"             => $module_id,
+            "module_parent_domain"  => $domain_id,
+            "module_number"         => $data_from_model["module_number"],
+            "module_name"           => $data_from_model["official_name"],
+            "module_version"        => $data_from_model["version"],
+            "errors"                => $this->m_teaching_module_model->errors()
         ];
-
+            
+        // Return to the current view if module_id is OVER 0, for update
+        // OR Return to the current view if there is ANY error with the model
+        // OR empty $_POST
         return $this->display_view("\Plafor/module/save", $data_to_view);
     }
 
