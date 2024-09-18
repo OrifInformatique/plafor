@@ -111,7 +111,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
         // Return to the current view if subject_id is OVER 0, for update
         // OR return to the current view if there is ANY error with the model
         // OR empty $_POST
-        return $this->display_view("\Plafor/domain_title/save", $data_to_view);
+        return $this->display_view("\Plafor/domain/title/save", $data_to_view);
     }
 
 
@@ -124,7 +124,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * 
      * @return string|Response
      */
-    public function saveTeachingDomain(int $domain_id = 0, int $course_plan_id = 0) : string|Response {
+    public function saveTeachingDomain(int $course_plan_id = 0, int $domain_id = 0) : string|Response {
 
         // Access permissions
         if (!isCurrentUserAdmin()) {
@@ -248,7 +248,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * 
      * @return string|Response
      */
-    public function saveTeachingSubject(int $subject_id = 0, int $domain_id = 0) : string|Response {
+    public function saveTeachingSubject( int $domain_id = 0, int $subject_id = 0) : string|Response {
         
         // Access permissions
         if (!isCurrentUserAdmin()) {
@@ -479,7 +479,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
                 $output = [
                     "entry" => [
                         "type"    => lang("Grades.module"),
-                        "name"    => $teaching_module["official_name"]
+                        "name"    => $teaching_module["module_number"] . " - " . $teaching_module["official_name"]
                     ],
                     "cancel_btn_url" => base_url("plafor/teachingdomain/getAllTeachingModule")
                 ];
