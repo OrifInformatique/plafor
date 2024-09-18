@@ -24,7 +24,8 @@ class AddTeachingDomainTitle extends Migration{
             "title" => [
                 "type" => "VARCHAR",
                 "constraint" => "50"
-            ]
+            ],
+            "archive TIMESTAMP NULL",
         ]);
 
         $this->forge->addKey("id", true, true);

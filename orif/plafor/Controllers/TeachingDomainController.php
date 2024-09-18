@@ -65,6 +65,36 @@ class TeachingDomainController extends \App\Controllers\BaseController{
     }
 
 
+        
+    /**
+     * Return a view with all Domains titles
+     *
+     * @param  bool $with_deleted   => false, witout the archived domain (Default)
+     *                              => true, show the archived domain
+     * 
+     * @return string|Response 
+     */
+    public function getAllDomainsTitle(bool $with_deleted = false) : string|Response {
+        // Access permissions
+        if (!isCurrentUserAdmin()) {
+            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
+        }
+
+        $domain_title = [];
+        // Get all Domain titles
+        foreach ($this->m_teaching_domain_title_model->withDeleted($with_deleted)->findAll() as $title){
+            $domain_title [] = [
+                "id"                    => $title["id"],
+                "domain_title"          => $title["title"],
+            ];
+        }
+
+        $data_to_view["domains_title"] = $domain_title;
+
+        return $this->display_view("\Plafor/teachingdomain/getAllDomainsTitle", $data_to_view);
+    }
+
+
 
     /**
      * Add/Update a teaching domain title
@@ -560,12 +590,12 @@ class TeachingDomainController extends \App\Controllers\BaseController{
                     // Prendre tous les modules
                     // Boucler sur chaque module
                         // Prendre les data de la checkbox corresondant au module
-                        // If checked
+                        // If data exist
                         // If liaison non exisante
                         // Ajouer au tableau de création les données à créer
                         // (Rien à faire si case coché et liaison déjà existante)
 
-                        // Else (if not checked)
+                        // Else (if data don't exist)
                         // If liaison existante
                         // Ajouter l'id de la liaison au tableau de suppression
                         // (Rien à faire si case décochée et liaison non existante)

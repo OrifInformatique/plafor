@@ -67,7 +67,7 @@ helper('form');
                 'domain_title'        => lang('Grades.domain_title'),
             ],
             // TODO : Add data
-            //'items'             => $domains_title,
+            'items'             => $domains_title,
             'primary_key_field' => 'id',
             'url_update'        => 'plafor/teachingdomain/saveTeachingDomainTitle/',
             'url_delete'        => 'plafor/teachingdomain/deleteTeachingDomainTitle/'
