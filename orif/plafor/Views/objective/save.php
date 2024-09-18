@@ -65,20 +65,14 @@ $name_max_length    = config('\Plafor\Config\PlaforConfig')->OBJECTIVE_NAME_MAX_
 ?>
 
 <div class="container">
-    <div class="row">
-        <div class="col">
-            <h2><?= $title ?></h2>
-        </div>
-    </div>
+    <!-- Page title -->
+    <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
 
     <?= form_open(base_url('plafor/courseplan/save_objective/'.($objective['id'] ?? 0).'/'.($operational_competence_id ?? '')),
         [], ['id' => $objective['id'] ?? 0, 'type' => 'objective']) ?>
 
-        <?php foreach ($errors != null ? $errors : [] as $error): ?>
-            <div class="alert alert-danger">
-                <?= $error ?>
-            </div>
-        <?php endforeach ?>
+        <!-- Form errors -->
+        <?= view('\Plafor/common/form_errors', ['errors' => $errors]) ?>
 
 
         <div class="row">

@@ -70,30 +70,27 @@ helper('form');
 <div class='container'>
     <?= view('\Plafor\templates\navigator', ['reset' => true]) ?>
 
-    <!-- Title, trainers filter, delete entries checkbox -->
+    <!-- Page title -->
+    <?= view('\Plafor/common/page_title', ['title' => lang('plafor_lang.title_apprentice_list')]) ?>
+
+    <!-- Trainers filter, delete entries checkbox -->
     <div class="row">
-        <div class="col">
-            <h2><?= lang('plafor_lang.title_apprentice_list') ?></h2>
+        <div class="col-sm-8">
+            <?= form_open(base_url('plafor/apprentice/list_apprentice/'), ['method' => 'GET']) ?>
+                <?= form_dropdown('trainer_id', $trainers, $trainer_id,
+                    ['class' => 'form-control', 'style' => 'width: unset !important; display: unset !important;']) ?>
 
-            <div class="row">
-                <div class="col-sm-8">
-                    <?= form_open(base_url('plafor/apprentice/list_apprentice/'), ['method' => 'GET']) ?>
-                        <?= form_dropdown('trainer_id', $trainers, $trainer_id,
-                            ['class' => 'form-control', 'style' => 'width: unset !important; display: unset !important;']) ?>
+                <?= form_submit(null, lang('common_lang.btn_search'),
+                    ['class' => 'btn btn-primary', 'style' => 'vertical-align: unset !important;']) ?>
+            <?= form_close() ?>
+        </div>
 
-                        <?= form_submit(null, lang('common_lang.btn_search'),
-                            ['class' => 'btn btn-primary', 'style' => 'vertical-align: unset !important;']) ?>
-                    <?= form_close() ?>
-                </div>
+        <div class="col-sm-4 text-right">
+            <?= form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted',
+                ['class' => 'form-check-label', 'style' => 'padding-right: 30px;']) ?>
 
-                <div class="col-sm-4 text-right">
-                    <?= form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted',
-                        ['class' => 'form-check-label', 'style' => 'padding-right: 30px;']) ?>
-
-                    <?= form_checkbox('toggle_deleted', '', $with_archived,
-                        ['class' => 'form-check-input', 'id' => 'toggle_deleted']) ?>
-                </div>
-            </div>
+            <?= form_checkbox('toggle_deleted', '', $with_archived,
+                ['class' => 'form-check-input', 'id' => 'toggle_deleted']) ?>
         </div>
     </div>
 

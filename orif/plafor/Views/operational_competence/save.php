@@ -67,21 +67,16 @@ $textarea_max_length = config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGT
 ?>
 
 <div class="container">
-    <div class="row">
-        <div class="col">
-            <h2><?= lang('plafor_lang.title_operational_competence_'.(!empty($operational_competence) ? 'update' : 'new')) ?></h2>
-        </div>
-    </div>
+    <!-- Page title -->
+    <?= view('\Plafor/common/page_title',
+        ['title' => lang('plafor_lang.title_operational_competence_'.(!empty($operational_competence) ? 'update' : 'new'))]) ?>
 
     <?= form_open(base_url('plafor/courseplan/save_operational_competence/'.$competence_domain['id'].
         '/'.($operational_competence['id'] ?? 0)),
         [], ['id' => $operational_competence['id'] ?? 0, 'type' => 'operational_competence']) ?>
 
-        <?php foreach ($errors != null ? $errors : [] as $error): ?>
-            <div class="alert alert-danger">
-                <?= $error ?>
-            </div>
-        <?php endforeach ?>
+        <!-- Form errors -->
+        <?= view('\Plafor/common/form_errors', ['errors' => $errors]) ?>
 
         <div class="row">
             <div class="col-sm-12 form-group">

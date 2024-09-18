@@ -16,7 +16,7 @@
 /**
  * *** Data needed for this view ***
  *
- * @param array $teaching_domains Teaching domains linked to a course plan. Required.
+ * @param array $teaching_domains Teaching domains linked to a course plan.
  * Structure of one domain below.
  * [
  *      'id'       => int,    ID of the domain. Required.
@@ -39,6 +39,8 @@
  *      'is_eliminatory' => bool,  Determines whether a domain is eliminatory. Required.
  * ]
  *
+ * @param int $parent_course_plan_id Domain's parent course plan ID.
+ *
  * === NOTES ===
  *
  * Even it's possible, we will prevent having a domain
@@ -53,6 +55,50 @@
  *
  */
 
+/* Random data set for testing, can be deleted anytime */
+ $teaching_domains = [
+    [
+        'id' => 1,
+        'name' => 'Software Development',
+        'subjects' => [
+            [
+                'id' => 101,
+                'name' => 'Object-Oriented Programming',
+                'weighting' => 0.5,
+            ],
+            [
+                'id' => 102,
+                'name' => 'Databases',
+                'weighting' => 0.5,
+            ],
+        ],
+        'modules' => [], // Pas de modules pour ce domaine
+        'weighting' => 0.6,
+        'is_eliminatory' => true,
+    ],
+    [
+        'id' => 2,
+        'name' => 'Network Administration',
+        'subjects' => [], // Pas de matières pour ce domaine
+        'modules' => [
+            [
+                'id' => 201,
+                'number' => 1,
+                'title' => 'Introduction to Networks',
+            ],
+            [
+                'id' => 202,
+                'number' => 2,
+                'title' => 'Advanced Networking',
+            ],
+        ],
+        'weighting' => 0.4,
+        'is_eliminatory' => false,
+    ],
+];
+
+$parent_course_plan_id = 1;
+
 helper('form');
 
 ?>
@@ -66,13 +112,9 @@ helper('form');
     <div class="col-12">
         <div class="d-flex justify-content-between">
             <div>
-                <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin): ?>
-                    <a href="<?= base_url('plafor/teachingdomain/saveTeachingDomain') ?>" class="btn btn-primary">
+                <?php if(service('session')->get('user_access') >= config('\User\Config\UserConfig')->access_lvl_admin): ?>
+                    <a href="<?= base_url('plafor/teachingdomain/saveTeachingDomain/'.$parent_course_plan_id) ?>" class="btn btn-primary">
                         <?=lang ('common_lang.btn_new_m').' '.substr(strtolower(lang('Grades.domain')), 0, 7) ?>
-                    </a>
-
-                    <a href="<?=base_url('plafor/teachingdomain/saveTeachingSubject')?>" class="btn btn-primary">
-                        <?= lang('common_lang.btn_new_f').' '.strtolower(lang('Grades.subject')) ?>
                     </a>
                 <?php endif ?>
             </div>
@@ -92,16 +134,16 @@ helper('form');
     <div class="col-12 mt-2">
         <?php foreach($teaching_domains as $teaching_domain): ?>
             <!-- Domain details -->
-            <div class="row mt-5 m-2 pt-2 border-top border-bottom border-primary align-items-center">
+            <div class="row mt-3 m-2 pt-2 border-top border-bottom border-primary align-items-center">
                 <p class="col-6 h3 text-center">
-                    <a href="<?= base_url('plafor/teachingdomain/saveTeachingDomain/'.$teaching_domain['id']) ?>">
+                    <a href="<?= base_url('plafor/teachingdomain/saveTeachingDomain/'.$parent_course_plan_id.'/'.$teaching_domain['id']) ?>">
                         <?= $teaching_domain['name'] ?>
                     </a>
                 </p>
 
                 <p class="col-3 text-center">
                     <?= lang('Grades.weighting') ?><br>
-                    <strong><?= $teaching_domain['weighting'] ?></strong>
+                    <strong><?= $teaching_domain['weighting'] * 100 ?> %</strong>
                 </p>
 
                 <p class="col-3 text-center">
@@ -111,6 +153,19 @@ helper('form');
                     </strong>
                 </p>
             </div>
+
+            <?php if(service('session')->get('user_access') >= config('\User\Config\UserConfig')->access_lvl_admin): ?>
+                <div class="m-2">
+                    <a href="<?= base_url('plafor/teachingdomain/saveTeachingSubject/'.$teaching_domain['id']) ?>" class="btn btn-primary">
+                        <?= lang('common_lang.btn_new_f').' '.strtolower(lang('Grades.subject')) ?>
+                    </a>
+
+                    <!-- TODO : Create method to link modules to domain -->
+                    <a href="<?= base_url('plafor/teachingdomain/saveTeachingModuleLink/'.$teaching_domain['id']) ?>" class="btn btn-primary">
+                        <?= lang('Grades.link_modules') ?>
+                    </a>
+                </div>
+            <?php endif ?>
 
             <?php if(!empty($teaching_domain['subjects'])): ?>
                 <!-- Domain subjects -->
@@ -129,12 +184,13 @@ helper('form');
                                 <?php foreach($teaching_domain['subjects'] as $teaching_subject): ?>
                                     <tr>
                                         <th>
-                                            <a href="<?= base_url('plafor/teachingdomain/saveTeachingSubject/'.$teaching_subject['id']) ?>">
+                                            <a href="<?= base_url('plafor/teachingdomain/saveTeachingSubject/'.
+                                                $teaching_domain['id'].'/'.$teaching_subject['id']) ?>">
                                                 <?= $teaching_subject['name'] ?>
                                             </a>
                                         </th>
 
-                                        <th><?= $teaching_subject['weighting'] ?></th>
+                                        <th><?= $teaching_subject['weighting'] * 100 ?> %</th>
                                     </tr>
                                 <?php endforeach ?>
                             </tbody>
@@ -158,11 +214,7 @@ helper('form');
                             <tbody>
                                 <?php foreach($teaching_domain['modules'] as $module): ?>
                                     <tr>
-                                        <th>
-                                            <a href="<?= base_url('plafor/teachingdomain/saveTeachingModule/'.$module['id']) ?>">
-                                                <?= $module['number'] ?>
-                                            </a>
-                                        </th>
+                                        <th><?= $module['number'] ?></th>
 
                                         <th>
                                             <a href="<?= base_url('plafor/teachingdomain/saveTeachingModule/'.$module['id']) ?>">

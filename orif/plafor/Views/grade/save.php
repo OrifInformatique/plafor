@@ -138,14 +138,15 @@ $subject_or_module_label = lang('Grades.subject').' '.lang('Grades.or').' '.strt
 ?>
 
 <div class="container">
-    <div class="row">
-        <div class="col">
-            <h2><?= $title ?></h2>
-        </div>
-    </div>
+    <!-- Page title -->
+    <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
 
     <?= form_open(base_url('plafor/grade/saveGrade/'.$grade_id),
         [], ['user_course_id' => $user_course_id]) ?>
+
+        <!-- Form errors -->
+        <?= view('\Plafor/common/form_errors', ['errors' => $errors]) ?>
+
         <div class="row">
             <div class="col form-group">
                 <?= form_label(lang('plafor_lang.apprentice'), 'apprentice',

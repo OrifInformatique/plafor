@@ -45,11 +45,8 @@ use CodeIgniter\I18n\Time;
 <div class="container">
     <?= view('\Plafor\templates\navigator', ['reset' => true]) ?>
 
-    <div class="row">
-        <div class="col">
-            <h2><?= $title ?></h2>
-        </div>
-    </div>
+    <!-- Page title -->
+    <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
 
     <div class="row" style="justify-content:space-between">
         <div class="col-sm-3">

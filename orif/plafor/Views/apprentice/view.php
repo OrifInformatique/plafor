@@ -88,16 +88,13 @@
     }
     ?>
 
-    <div class="row">
-        <div class="col">
-            <h2><?= $title ?></h2>
-        </div>
-    </div>
+    <!-- Page title -->
+    <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
 
     <!-- Apprentice details -->
     <div class="row">
         <div class="col-md-12">
-            <p class="bg-primary text-white"><?=lang('plafor_lang.title_view_apprentice')?></p>
+            <p class="bg-primary text-white"><?= lang('plafor_lang.title_view_apprentice') ?></p>
         </div>
 
         <div class="col-sm-6">
@@ -110,7 +107,7 @@
         <div class="col-sm-6">
             <p><strong><?= lang('plafor_lang.title_trainer_linked') ?></strong></p>
 
-            <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer): ?>
+            <?php if(service('session')->get('user_access') >= config('\User\Config\UserConfig')->access_lvl_trainer): ?>
                 <!-- List with ADMIN buttons, accessible for trainers or admin only -->
                 <table class="table table-hover table-borderless">
                     <tbody>

@@ -45,11 +45,8 @@ use CodeIgniter\I18n\Time;
 <div class="container">
     <?= view('\Plafor\templates\navigator', ['reset' => true]) ?>
 
-    <div class="row">
-        <div class="col">
-            <h2><?= lang('plafor_lang.title_course_plan_list') ?></h2>
-        </div>
-    </div>
+    <!-- Page title -->
+    <?= view('\Plafor/common/page_title', ['title' => lang('plafor_lang.title_course_plan_list')]) ?>
 
     <div class="row">
         <div class="col-sm-3">
