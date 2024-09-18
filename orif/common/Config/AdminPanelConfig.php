@@ -40,5 +40,10 @@ class AdminPanelConfig extends \CodeIgniter\Config\BaseConfig
             'title'    => 'Grades.modules_catalog',
             'pageLink' => 'plafor/teachingdomain/getAllTeachingModule'
         ],
+        [
+            'label'    => 'Grades.domains_title',
+            'title'    => 'Grades.domains_title_list',
+            'pageLink' => 'plafor/teachingdomain/getAllDomainsTitle'
+        ],
     ];
 }

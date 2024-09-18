@@ -19,7 +19,13 @@ return [
     "create_domain"             => "Créer un domaine",
     "update_domain"             => "Modifer un domaine",
     "delete_domain"             => "Supprimer un domaine",
-    "link_domain_module"        => "Lier le domain à des modules",
+    "link_domain_module"        => "Lier le domaine à des modules",
+
+    "domains_title"             => "Nom des domaines d'enseignement",
+    "domain_title"              => "Nom du domaine d'enseignement",
+    "domains_title_list"        => "Liste des noms des domaines d'enseignement",
+    "create_domain_title"       => "Créer un nom de domaine d'enseignement",
+    "update_domain_title"       => "Modifier un nom de domaine d'enseignement",
 
     // Teaching subject
     "subject"               => "Matière",
@@ -38,17 +44,20 @@ return [
     "CBE_long"    => "Compétences de Base Élargies",
 
     // Teaching module
-    "module"               => "Module",
-    "modules"              => "Modules",
-    "modules_list"         => "Liste des modules",
-    "modules_catalog"      => "Catalogue des modules",
-    "module_number"        => "Numéro",
-    "module_name"          => "Titre",
-    "module_version"       => "Version",
-    "module_parent_domain" => "Domaine parent",
-    "create_module"        => "Créer un module",
-    "update_module"        => "Modifier un module",
-    "delete_module"        => "Supprimer un module",
+    "module"                 => "Module",
+    "modules"                => "Modules",
+    "modules_list"           => "Liste des modules",
+    "modules_catalog"        => "Catalogue des modules",
+    "module_number"          => "Numéro",
+    "module_name"            => "Titre",
+    "module_version"         => "Version",
+    "module_parent_domain"   => "Domaine parent",
+    "create_module"          => "Créer un module",
+    "update_module"          => "Modifier un module",
+    "delete_module"          => "Supprimer un module",
+
+    "link_modules"           => "Lier des modules",
+    "link_modules_to_domain" => "Lier des modules à un domaine",
 
     "school_modules"     => "Modules professionnels",
     "non_school_modules" => "Modules inter-entreprises",
@@ -70,11 +79,13 @@ return [
     "is_eliminatory" => "Éliminatoire ?",
     "global_average" => "Moyenne générale",
     "name"           => "Nom",
-    "of the"         => "des",
+    "of_a"           => "du",
     "or"             => "ou",
     "semester"       => "Semestre",
     "semesters"      => "Semestres",
     "weighting"      => "Pondération",
+    "select_all"     => "Tout sélectionner",
+    "deselect_all"   => "Tout déselectionner",
 
     // Other text
     "school_report"     => "Bulletin de notes",

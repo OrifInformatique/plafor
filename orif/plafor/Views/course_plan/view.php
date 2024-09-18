@@ -51,12 +51,8 @@ helper('form');
 <div class="container">
     <?= view('\Plafor\templates\navigator', ['title' => lang('plafor_lang.title_view_course_plan')]) ?>
 
-    <!-- Title -->
-    <div class="row">
-        <div class="col">
-            <h2><?= $title ?></h2>
-        </div>
-    </div>
+    <!-- Page title -->
+    <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
 
     <!-- Course plan details -->
     <?= view('\Plafor/course_plan/details', $course_plan) ?>
@@ -117,7 +113,7 @@ helper('form');
     </div>
 
     <!-- Linked teaching domains -->
-    <?= view('\Plafor/domain/view', $teaching_domains) ?>
+    <?= view('\Plafor/domain/view', [$teaching_domains, $course_plan['id']]) ?>
 
 </div>
 

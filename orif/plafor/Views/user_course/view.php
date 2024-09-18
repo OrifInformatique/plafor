@@ -69,12 +69,8 @@
 <div class="container">
     <?= view('\Plafor\templates\navigator', ['title' => lang('plafor_lang.title_view_user_course')]) ?>
 
-    <!-- Title -->
-    <div class="row">
-        <div class="col">
-            <h2><?= $title ?></h2>
-        </div>
-    </div>
+    <!-- Page title -->
+    <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
 
     <!-- User course details -->
     <div class="row">

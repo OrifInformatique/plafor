@@ -49,18 +49,12 @@ $offical_name_max_length = config('\Plafor\Config\PlaforConfig')->OFFICIAL_NAME_
 ?>
 
 <div class="container">
-    <div class="row">
-        <div class="col">
-            <h2><?= $title ?></h2>
-        </div>
-    </div>
+    <!-- Page title -->
+    <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
 
     <?= form_open(base_url('plafor/courseplan/save_course_plan/'.($course_plan['id'] ?? 0))) ?>
-        <?php foreach ($errors != null ? $errors : [] as $error): ?>
-            <div class="alert alert-danger">
-                <?= $error ?>
-            </div>
-        <?php endforeach ?>
+        <!-- Form errors -->
+        <?= view('\Plafor/common/form_errors', ['errors' => $errors]) ?>
 
         <div class="row">
             <div class="col-sm-12 form-group">

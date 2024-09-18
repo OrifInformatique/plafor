@@ -27,12 +27,6 @@
  * @param ?string $module_name Name of the module.
  * To edit an existing entry or remember user input.
  *
- * @param array $domains List of all domains.
- * Array of key-values where keys are domains IDs and values are domains names.
- *
- * @param ?int $module_parent_domain Module's parent domain. Stored as domain ID.
- * To edit an existing entry or remember user input.
- *
  * @param ?int $module_version Version of the module.
  * To edit an existing entry or remember user input.
  *
@@ -52,8 +46,6 @@
  * @param int $module_number Number of the module.
  *
  * @param string $module_name Name of the module.
- *
- * @param int $module_parent_domain Parent domain of the module, stored as domain ID.
  *
  * @param int $module_version Version of the module.
  *
@@ -79,51 +71,48 @@ else
 
 $domains = [];
 
-helper('form')
+helper('form');
+
+$module_name_max_length = config('\Plafor\Config\PlaforConfig')->MODULE_OFFICIAL_NAME_MAX_LENGTH;
+$module_number_min      = '1'.str_repeat(0, config('\Plafor\Config\PlaforConfig')->MODULE_NUMBER_MIN_LENGTH - 1);
+$module_number_max      = str_repeat(9, config('\Plafor\Config\PlaforConfig')->MODULE_NUMBER_MAX_LENGTH);
 
 ?>
 
 <div class="container">
-    <div class="row">
-        <div class="col">
-            <h2><?= $title ?></h2>
-        </div>
-    </div>
+    <!-- Page title -->
+    <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
+
+    <!-- Form errors -->
+    <?= view('\Plafor/common/form_errors', ['errors' => $errors]) ?>
 
     <?= form_open(base_url('plafor/teachingdomain/saveTeachingModule/'.$module_id)) ?>
+        <div class="row">
+            <div class="col form-group">
+                <?= form_label(lang('Grades.module_name'), 'module_name',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_input('module_name', $module_name ?? '',
+                    ['class' => 'form-control', 'id' => 'module_name', 'maxlength' => $module_name_max_length]) ?>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-sm-2 form-group">
                 <?= form_label(lang('Grades.module_number'), 'module_number',
                     ['class' => 'form-label']) ?>
 
                 <?= form_input('module_number', $module_number ?? '',
-                    ['class' => 'form-control', 'id' => 'module_number', 'min' => 1], 'number') ?>
-            </div>
-
-            <div class="col form-group">
-                <?= form_label(lang('Grades.module_name'), 'module_name',
-                    ['class' => 'form-label']) ?>
-
-                <?= form_input('module_name', $module_name ?? '',
-                    ['class' => 'form-control', 'id' => 'module_name']) ?>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col form-group">
-                <?= form_label(lang('Grades.module_parent_domain'), 'module_parent_domain',
-                    ['class' => 'form-label']) ?>
-
-                <?= form_dropdown('module_parent_domain', $domains, $module_parent_domain ?? null,
-                    ['class' => 'form-control', 'id' => 'module_parent_domain']) ?>
+                    ['class' => 'form-control', 'id' => 'module_number',
+                    'min' => $module_number_min, 'max' => $module_number_max], 'number') ?>
             </div>
 
             <div class="col-sm-2 form-group">
-                <?= form_label(lang('Grades.module_version'), 'version',
+                <?= form_label(lang('Grades.module_version'), 'module_version',
                     ['class' => 'form-label']) ?>
 
-                <?= form_input('version', $module_version ?? '',
-                    ['class' => 'form-control', 'id' => 'version', 'min' => 1], 'number') ?>
+                <?= form_input('module_version', $module_version ?? '',
+                    ['class' => 'form-control', 'id' => 'module_version', 'min' => 1], 'number') ?>
             </div>
         </div>
 

@@ -64,20 +64,14 @@ $name_max_length   = config('\Plafor\Config\PlaforConfig')->COMPETENCE_DOMAIN_NA
 ?>
 
 <div class="container">
-    <div class="row">
-        <div class="col">
-            <h2><?= $title ?></h2>
-        </div>
-    </div>
+    <!-- Page title -->
+    <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
 
     <?= form_open(base_url('plafor/courseplan/save_competence_domain/'.$fk_course_plan_id.'/'.$competence_domain_id), null,
         ['id' => $competence_domain['id'] ?? 0, 'type' => 'competence_domain']) ?>
 
-        <?php foreach ($errors != null ? $errors : [] as $error): ?>
-            <div class="alert alert-danger">
-                <?= $error ?>
-            </div>
-        <?php endforeach ?>
+        <!-- Form errors -->
+        <?= view('\Plafor/common/form_errors', ['errors' => $errors]) ?>
 
         <div class="row">
             <div class="col-sm-12 form-group">

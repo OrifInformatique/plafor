@@ -3,7 +3,7 @@
 /**
  * Lists all teaching modules.
  *
- * Called by TeachingDomainController/getAllTeachingModule($with_deleted)
+ * Called by TeachingDomainController/getAllDomainsTitle($with_archived)
  *
  * @author      Orif (DeDy)
  * @link        https://github.com/OrifInformatique
@@ -16,7 +16,7 @@
 /**
  * *** Data needed for this view ***
  *
- * @param array $modules List of all the modules.
+ * @param array $domains_title List of all domains title.
  * All fields from table.
  *
  */
@@ -34,7 +34,7 @@ helper('form');
 
 <div class="container">
     <!-- Page title -->
-    <?= view('\Plafor/common/page_title', ['title' => lang('Grades.modules_catalog')]) ?>
+    <?= view('\Plafor/common/page_title', ['title' => lang('Grades.domains_title_list')]) ?>
 
     <div class="row">
         <div class="col">
@@ -64,15 +64,13 @@ helper('form');
         [
             'columns' =>
             [
-                'number_module'        => lang('Grades.module_number'),
-                'name_module'          => lang('Grades.module_name'),
-                'version_module'       => lang('Grades.module_version'),
+                'domain_title'        => lang('Grades.domain_title'),
             ],
             // TODO : Add data
-            'items'             => $modules,
+            //'items'             => $domains_title,
             'primary_key_field' => 'id',
-            'url_update'        => 'plafor/teachingdomain/saveTeachingModule/',
-            'url_delete'        => 'plafor/teachingdomain/deleteTeachingModule/'
+            'url_update'        => 'plafor/teachingdomain/saveTeachingDomainTitle/',
+            'url_delete'        => 'plafor/teachingdomain/deleteTeachingDomainTitle/'
         ])
         ?>
     </div>
