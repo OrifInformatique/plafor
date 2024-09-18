@@ -11,16 +11,16 @@ class TeachingDomainTitleModel extends Model
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
-    protected $useSoftDeletes   = false;
+    protected $useSoftDeletes   = true;
     protected $protectFields    = true;
-    protected $allowedFields    = ['title'];
+    protected $allowedFields    = ['title', 'archive'];
 
     // Dates
     protected $useTimestamps = false;
     protected $dateFormat    = 'datetime';
     // protected $createdField  = 'created_at';
     // protected $updatedField  = 'updated_at';
-    protected $deletedField  = 'deleted_at';
+    protected $deletedField  = 'archive';
 
     // Validation
     protected $validationRules      = [

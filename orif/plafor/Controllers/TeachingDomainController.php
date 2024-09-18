@@ -69,20 +69,22 @@ class TeachingDomainController extends \App\Controllers\BaseController{
     /**
      * Return a view with all Domains titles
      *
-     * @param  bool $with_deleted   => false, witout the archived domain (Default)
+     * @param  bool $with_archived   => false, witout the archived domain (Default)
      *                              => true, show the archived domain
      * 
      * @return string|Response 
      */
-    public function getAllDomainsTitle(bool $with_deleted = false) : string|Response {
+    public function getAllDomainsTitle(bool $with_archived = false) : string|Response {
         // Access permissions
         if (!isCurrentUserAdmin()) {
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
 
+        $with_archived = $this->request->getGet("wa") ?? false;
+
         $domain_title = [];
         // Get all Domain titles
-        foreach ($this->m_teaching_domain_title_model->withDeleted($with_deleted)->findAll() as $title){
+        foreach ($this->m_teaching_domain_title_model->withDeleted($with_archived)->findAll() as $title){
             $domain_title [] = [
                 "id"                    => $title["id"],
                 "domain_title"          => $title["title"],
@@ -91,7 +93,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
 
         $data_to_view["domains_title"] = $domain_title;
 
-        return $this->display_view("\Plafor/teachingdomain/getAllDomainsTitle", $data_to_view);
+        return $this->display_view("\Plafor/domain/title/view", $data_to_view);
     }
 
 
@@ -104,13 +106,14 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * @return string|Response
      */
     public function saveTeachingDomainTitle(int $domain_title_id = 0) : string|Response {
+
         // Access permissions
         if (!isCurrentUserAdmin()) {
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
 
-        // Redirect to the last URL if domain title ID doesn't exist
-        if (empty($this->m_teaching_domain_title_model->find($domain_title_id))){
+        // Redirect to the last URL if domain title ID doesn"t exist
+        if (empty($this->m_teaching_domain_title_model->withDeleted()->find($domain_title_id))){
             return redirect()->to(previous_url());
         }
 
@@ -118,23 +121,24 @@ class TeachingDomainController extends \App\Controllers\BaseController{
 
             $data_to_model = [
                 "id"                        => $domain_title_id,
-                "title"                     => $this->request->getPost("domain_name"),
+                "title"                     => $this->request->getPost("domain_title"),
             ];
 
+            // dd($data_to_model);
             $this->m_teaching_domain_title_model->save($data_to_model);
 
             // Return to previous page if there is NO error
             if ($this->m_teaching_domain_model->errors() == null) {
-                return redirect()->to("plafor/domain/view");
+                return redirect()->to("plafor/teachingdomain/getAllDomainsTitle");
             }
         }
 
         $data_from_model = $this->m_teaching_domain_model->find($domain_title_id);
 
         $data_to_view = [
-            "title"                 => $domain_id == 0 ? lang('Grades.create_domain_title') : lang('Grades.update_domain_title'),
-            "domain_title_id"       => $domain_id,
-            "domain_title_name"     => $data_from_model["title"] ?? null,
+            "title"                 => $domain_title_id == 0 ? lang("Grades.create_domain_title") : lang("Grades.update_domain_title"),
+            "domain_title_id"       => $domain_title_id,
+            "domain_title"          => $data_from_model["title"] ?? null,
             "errors"                => $this->m_teaching_domain_model->errors()
         ];
 
@@ -142,6 +146,70 @@ class TeachingDomainController extends \App\Controllers\BaseController{
         // OR return to the current view if there is ANY error with the model
         // OR empty $_POST
         return $this->display_view("\Plafor/domain/title/save", $data_to_view);
+    }
+
+
+    
+    /**
+     * Delete or reactivate a Teaching Domain title
+     *
+     * @param int $domain_title_id  => ID of the domain
+     * @param int $action           => 0 = display a confirmation (default)
+     *                              => 1 = soft delete
+     *                              => 3 = reactivate
+     *
+     * @return string
+     */
+    public function deleteTeachingDomainTitle(int $domain_title_id = 0, int $action = 0) : string|Response {
+
+        // Access permissions
+        if (!isCurrentUserAdmin()) {
+            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
+        }
+
+        $domain_title = $this->m_teaching_domain_title_model->withDeleted()->find($domain_title_id);
+
+        // Redirect to the last URL if subject ID doesn"t exist
+        if (is_null($domain_title)){
+            return redirect()->to(previous_url());
+        }
+
+        switch ($action){
+            // Displays confirmation
+            case 0:
+                $output = [
+                    "entry" => [
+                        "type"    => lang("Grades.domain_title"),
+                        "name"    => $domain_title["title"]
+                    ],
+                    "cancel_btn_url" => base_url("plafor/teachingdomain/getAllDomainsTitle")
+                ];
+
+                if($domain_title["archive"]) {
+
+                    $output["type"] = "reactivate";
+                    $output["entry"]["message"] = lang("plafor_lang.competence_domain_enable_explanation"); // TODO: URL
+                }
+                else {
+
+                    $output["type"] = "disable";
+                    $output["entry"]["message"] = lang("plafor_lang.competence_domain_disable_explanation"); // TODO: URL
+                }
+
+                return $this->display_view("\Common/manage_entry", $output);
+
+            // Deactivates (soft delete) competence domain
+            case 1:
+                $this->m_teaching_domain_title_model->delete($domain_title_id);
+                break;
+
+            // Reactivates competence domain
+            case 3:
+                $this->m_teaching_domain_title_model->withDeleted()->update($domain_title_id, ["archive" => null]);
+                break;
+        }
+
+        return redirect()->to(base_url("plafor/teachingdomain/getAllDomainsTitle"));
     }
 
 
@@ -161,8 +229,8 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
 
-        // Redirect to the last URL if course plan ID doesn't exist
-        if (empty($this->m_course_plan_model->find($course_plan_id))){
+        // Redirect to the last URL if course plan ID doesn"t exist
+        if (empty($this->m_course_plan_model->withDeleted()->find($course_plan_id))){
             return redirect()->to(previous_url());
         }
 
@@ -187,7 +255,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
         $data_from_model = $this->m_teaching_domain_model->find($domain_id);
 
         $data_to_view = [
-            "title"                         => $domain_id == 0 ? lang('Grades.create_domain') : lang('Grades.update_domain'),
+            "title"                         => $domain_id == 0 ? lang("Grades.create_domain") : lang("Grades.update_domain"),
             "domain_id"                     => $domain_id,
             // BUG: course_plan required ???
             "domain_parent_course_plan"     => $course_plan_id,
@@ -223,9 +291,9 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
 
-        $teaching_domain = $this->m_teaching_domain_model->find($domain_id);
+        $teaching_domain = $this->m_teaching_domain_model->withDeleted()->find($domain_id);
 
-        // Redirect to the last URL if domain ID doesn't exist
+        // Redirect to the last URL if domain ID doesn"t exist
         if (is_null($teaching_domain)){
             return redirect()->to(previous_url());
         }
@@ -235,10 +303,10 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             case 0:
                 $output = [
                     "entry" => [
-                        "type"    => lang("Grades.domain"), // TODO: URL
+                        "type"    => lang("Grades.domain"),
                         "name"    => $teaching_domain["name"]
                     ],
-                    "cancel_btn_url" => base_url("plafor/courseplan/view_course_plan/".$domain_id) // TODO: URL
+                    "cancel_btn_url" => base_url("plafor/courseplan/view_course_plan/" . $domain_id) // TODO: URL
                 ];
 
                 if($teaching_domain["archive"]) {
@@ -261,11 +329,11 @@ class TeachingDomainController extends \App\Controllers\BaseController{
 
             // Reactivates competence domain
             case 3:
-                $this->m_teaching_domain_model->withDeleted()->update($domain_id, ['archive' => null]);
+                $this->m_teaching_domain_model->withDeleted()->update($domain_id, ["archive" => null]);
                 break;
         }
 
-        return redirect()->to(base_url('plafor/courseplan/view_course_plan/' . $teaching_domain['fk_course_plan'])); // TODO: URL
+        return redirect()->to(base_url("plafor/courseplan/view_course_plan/" . $teaching_domain["fk_course_plan"])); // TODO: URL
     }
 
 
@@ -285,8 +353,8 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
 
-        // Redirect to the last URL if domain ID doesn't exist
-        if (empty($this->m_teaching_domain_model->find($domain_id))){
+        // Redirect to the last URL if domain ID doesn"t exist
+        if (empty($this->m_teaching_domain_model->withDeleted()->find($domain_id))){
             return redirect()->to(previous_url());
         }
 
@@ -304,7 +372,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             // Return to previous page if there is NO error
             if ($this->m_teaching_subject_model->errors() == null) {
 
-                $course_plan_id = $this->m_teaching_domain_model->find($domain_id)['fk_course_plan'];
+                $course_plan_id = $this->m_teaching_domain_model->find($domain_id)["fk_course_plan"];
 
                 return redirect()->to("plafor/courseplan/view_course_plan/" . $course_plan_id);
             }
@@ -314,7 +382,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
         $data_from_model = $this->m_teaching_subject_model->find($subject_id);
 
         $data_to_view = [
-            "title"                     => $subject_id == 0 ? lang('Grades.create_subject') : lang('Grades.update_subject'),
+            "title"                     => $subject_id == 0 ? lang("Grades.create_subject") : lang("Grades.update_subject"),
             "subject_id"                => $subject_id,
             "subject_parent_domain"     => $domain_id,
             "subject_name"              => $data_from_model["name"] ?? null,
@@ -349,9 +417,9 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
 
-        $teaching_subject = $this->m_teaching_subject_model->find($subject_id);
+        $teaching_subject = $this->m_teaching_subject_model->withDeleted()->find($subject_id);
 
-        // Redirect to the last URL if subject ID doesn't exist
+        // Redirect to the last URL if subject ID doesn"t exist
         if (is_null($teaching_subject)){
             return redirect()->to(previous_url());
         }
@@ -364,7 +432,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
                         "type"    => lang("Grades.subject"),
                         "name"    => $teaching_subject["name"]
                     ],
-                    "cancel_btn_url" => base_url("plafor/courseplan/view_course_plan/" . $teaching_subject['fk_course_plan'] . $subject_id) // TODO: URL
+                    "cancel_btn_url" => base_url("plafor/courseplan/view_course_plan/" . $teaching_subject["fk_course_plan"] . $subject_id) // TODO: URL
                 ];
 
                 if($teaching_subject["archive"]) {
@@ -387,11 +455,11 @@ class TeachingDomainController extends \App\Controllers\BaseController{
 
             // Reactivates competence domain
             case 3:
-                $this->m_teaching_subject_model->withDeleted()->update($subject_id, ['archive' => null]);
+                $this->m_teaching_subject_model->withDeleted()->update($subject_id, ["archive" => null]);
                 break;
         }
 
-        return redirect()->to(base_url('plafor/courseplan/view_course_plan/' . $teaching_subject['fk_course_plan'])); // TODO: URL
+        return redirect()->to(base_url("plafor/courseplan/view_course_plan/" . $teaching_subject["fk_course_plan"])); // TODO: URL
     }
 
 
@@ -399,21 +467,24 @@ class TeachingDomainController extends \App\Controllers\BaseController{
     /**
      * Return all teaching module data to a view
      *
-     * @param  bool $with_deleted   => false, witout the archived domain (Default)
+     * @param  bool $with_archived   => false, witout the archived domain (Default)
      *                              => true, show the archived domain
      *
      * @return string|Response
      */
-    public function getAllTeachingModule(bool $with_deleted = false) : string|Response {
+    public function getAllTeachingModule(bool $with_archived = false) : string|Response {
 
         // Access permissions
         if (!isCurrentUserTrainer()){
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
 
+        // Check box with_archived using a JS script (in view)
+        $with_archived = $this->request->getGet("wa") ?? false;
+
         $teaching_module = [];
         // Get all teaching modules of the domain
-        foreach ($this->m_teaching_module_model->withDeleted($with_deleted)->findAll() as $module){
+        foreach ($this->m_teaching_module_model->withDeleted($with_archived)->orderBy("module_number", "ASC")->findAll() as $module){
             $teaching_modules [] = [
                 "id"                    => $module["id"],
                 "number_module"         => $module["module_number"],
@@ -463,11 +534,11 @@ class TeachingDomainController extends \App\Controllers\BaseController{
         $data_from_model = $this->m_teaching_module_model->withDeleted()->find($module_id);
 
         $data_to_view = [
-            "title"                 => $module_id == 0 ? lang('Grades.create_module') : lang('Grades.update_module'),
+            "title"                 => $module_id == 0 ? lang("Grades.create_module") : lang("Grades.update_module"),
             "module_id"             => $module_id,
-            "module_number"         => $data_from_model["module_number"],
-            "module_name"           => $data_from_model["official_name"],
-            "module_version"        => $data_from_model["version"],
+            "module_number"         => $data_from_model["module_number"] ?? null,
+            "module_name"           => $data_from_model["official_name"] ?? null,
+            "module_version"        => $data_from_model["version"] ?? null,
             "errors"                => $this->m_teaching_module_model->errors()
         ];
 
@@ -498,7 +569,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
 
         $teaching_module = $this->m_teaching_module_model->withDeleted()->find($module_id);
 
-        // Redirect to the last URL if subject ID doesn't exist
+        // Redirect to the last URL if subject ID doesn"t exist
         if (is_null($teaching_module)){
             return redirect()->to(previous_url());
         }
@@ -534,7 +605,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
 
             // Reactivates competence domain
             case 3:
-                $this->m_teaching_module_model->withDeleted()->update($module_id, ['archive' => null]);
+                $this->m_teaching_module_model->withDeleted()->update($module_id, ["archive" => null]);
                 break;
             }
 
@@ -558,8 +629,8 @@ class TeachingDomainController extends \App\Controllers\BaseController{
                 return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
             }
 
-            // Redirect to the last URL if domain ID doesn't exist
-            if (empty($this->m_teaching_domain_model->find($domain_id))){
+            // Redirect to the last URL if domain ID doesn"t exist
+            if (empty($this->m_teaching_domain_model->withDeleted()->find($domain_id))){
                 return redirect()->to(previous_url());
             }
 
@@ -595,9 +666,9 @@ class TeachingDomainController extends \App\Controllers\BaseController{
                         // Ajouer au tableau de création les données à créer
                         // (Rien à faire si case coché et liaison déjà existante)
 
-                        // Else (if data don't exist)
+                        // Else (if data don"t exist)
                         // If liaison existante
-                        // Ajouter l'id de la liaison au tableau de suppression
+                        // Ajouter l"id de la liaison au tableau de suppression
                         // (Rien à faire si case décochée et liaison non existante)
 
                         // Créer toutes les entrées, en utlisant le tableau de création
@@ -619,7 +690,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
 
             $data_to_view = [
             //    // TODO: return array : module_number, module_name, module_id, is_module_linked
-            //    "title"                 => lang('Grades.link_domain_module'),
+            //    "title"                 => lang("Grades.link_domain_module"),
             //    "module_number"         => $data_from_model["module_number"],
             //    "module_name"           => $data_from_model["official_name"],
                 "errors"                => $this->m_teaching_module_model->errors()

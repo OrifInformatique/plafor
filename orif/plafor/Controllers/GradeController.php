@@ -100,13 +100,13 @@ class GradeController extends \App\Controllers\BaseController{
         }        
         
         if (count($_POST) > 0){
-            dd($_POST);
+            d($_POST);
             // TODO: check if it's a subject or a module s or m (parse the first char of the string) 
             $selected_entry = $this->request->getPost("selected_entry");
             
             // $grades = []; // TODO: check what is needed ??
-            // foreach ($this->m_grade_model->where("fk_user_course", $user_course_id)->withDeleted($with_deleted)->findAll() as $grade){
-            //     dd($this->m_grade_model->where("fk_user_course", $user_course_id)->withDeleted($with_deleted)->findAll());
+            // foreach ($this->m_grade_model->where("fk_user_course", $user_course_id)->withDeleted($with_archived)->findAll() as $grade){
+            //     dd($this->m_grade_model->where("fk_user_course", $user_course_id)->withDeleted($with_archived)->findAll());
             //     $grades [] = [
             //         "id"                        => $grade["id"],
             //         "user_course_id"            => $grade["module_number"],
