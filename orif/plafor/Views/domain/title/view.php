@@ -66,8 +66,7 @@ helper('form');
             [
                 'domain_title'        => lang('Grades.domain_title'),
             ],
-            // TODO : Add data
-            //'items'             => $domains_title,
+            'items'             => $domains_title,
             'primary_key_field' => 'id',
             'url_update'        => 'plafor/teachingdomain/saveTeachingDomainTitle/',
             'url_delete'        => 'plafor/teachingdomain/deleteTeachingDomainTitle/'
@@ -75,3 +74,23 @@ helper('form');
         ?>
     </div>
 </div>
+
+<script defer>
+    $(document).ready(function(){
+        $('#toggle_deleted').change(e => {
+            let checked = e.currentTarget.checked;
+
+            history.replaceState(null, null, '<?= base_url('/plafor/teachingdomain/getAllDomainsTitle/') ?>?wa=' + (checked ? 1 : 0))
+
+            $.get('<?= base_url('/plafor/teachingdomain/getAllDomainsTitle/') ?>?wa=' + (checked ? 1 : 0), (datas) => {
+                let parser=new DOMParser();
+
+                parser.parseFromString(datas, 'text/html').querySelectorAll('table').forEach((domTag) => {
+                    document.querySelectorAll('table').forEach((thisDomTag) => {
+                        thisDomTag.innerHTML=domTag.innerHTML;
+                    })
+                })
+            })
+        })
+    });
+</script>

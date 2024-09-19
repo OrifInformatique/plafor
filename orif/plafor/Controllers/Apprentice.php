@@ -55,6 +55,7 @@ class Apprentice extends \App\Controllers\BaseController
         $this->trainer_apprentice_model = model('TrainerApprenticeModel');
         $this->user_type_model = model('User_type_model');
         $this->user_model = model('User_model');
+        $this->m_grade_model = model("GradeModel");
         helper("AccessPermissions_helper");
     }
 
@@ -148,6 +149,8 @@ class Apprentice extends \App\Controllers\BaseController
         return $this->display_view('\Plafor\apprentice\list', $output);
     }
 
+
+
     /**
      * Displays the view for a given apprentice
      *
@@ -165,15 +168,20 @@ class Apprentice extends \App\Controllers\BaseController
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }  
 
-        // Preparing data for the view
+        // Apprentice
+        $apprentice = $this->user_model->find($apprentice_id);
+
         // User's courses
         $user_courses = [];
-        foreach ($this->user_course_model->where('fk_user',$apprentice_id)->findAll() as $usercourse) {
-            $date_begin = Time::createFromFormat('Y-m-d', $usercourse['date_begin']);
-            $date_end = Time::createFromFormat('Y-m-d', $usercourse['date_end']);
-            $usercourse['date_begin'] = $date_begin->toLocalizedString('dd.MM.Y');
-            $usercourse['date_end']!=='0000-00-00'? $usercourse['date_end'] = $date_end->toLocalizedString('dd.MM.Y'):null;
-            $user_courses[$usercourse['id']] = $usercourse;
+        foreach ($this->user_course_model->where('fk_user', $apprentice_id)->findAll() as $user_course) {
+
+            $date_begin = Time::createFromFormat('Y-m-d', $user_course['date_begin']);
+            $date_end   = Time::createFromFormat('Y-m-d', $user_course['date_end']);
+
+            $user_course['date_begin'] = $date_begin->toLocalizedString('dd.MM.Y');
+            $user_course['date_end'] !== '0000-00-00' ? $user_course['date_end'] = $date_end->toLocalizedString('dd.MM.Y') : null;
+            
+            $user_courses[$user_course['id']] = $user_course;
         }
 
         // Status of the user's courses
@@ -193,37 +201,38 @@ class Apprentice extends \App\Controllers\BaseController
 
         // Apprentice-trainer links
         $links = [];
-        foreach ($this->trainer_apprentice_model->where('fk_apprentice',$apprentice_id)->findAll() as $link)
+        foreach ($this->trainer_apprentice_model->where('fk_apprentice', $apprentice_id)->findAll() as $link)
             $links[$link['id']]=$link;
 
         // TODO: add school_report here
-        $user_course_id = $this->request->getPost("user_course_id");
-        dd($user_course_id);
+        d($user_course['id']);
 
-        $grades = [];
-        foreach ($this->m_grade_model->where("fk_user_course", $user_course_id)->withDeleted($with_deleted)->findAll() as $grade){
-            dd($this->m_grade_model->where("fk_user_course", $user_course_id)->withDeleted($with_deleted)->findAll());
-            $grades [] = [
-                "id"                        => $grade["id"],
-                "user_course_id"            => $grade["module_number"],
-                "apprentice"                => [
-                    "id"                        => int,    
-                    "username"                  => string, 
-                ],
-                "course_plan"               => $grade["official_name"],
-                "subject_and_domains_list"  => [
-                    lang("Grades.subjects")     => [], // List of sujects contained in the course_plan. Required.
-                        //Array of key-values where keys are subjects IDs with a "s" before and values are subject names.
-            
-                    lang("Grades.modules")      => [],// List of modules contained in the course_plan. Required.
-                        //Array of key-values where keys are modules IDs with a "m" before and values are modules names.
-                ],
-                "selected_entry"            => $grade["version"],
-                "grade"                     => $grade["grade"],
-                "exam_date"                 => $grade["date"],
-                "is_exam_made_in_school"    => $grade["is_school"],
-            ];
-        }
+        $cfc_average; // Average of all domains of the apprentice, rounded by '0.1'. // TODO: 
+
+        $modules = []; // All modules teached to the apprentice.
+        foreach ($this->->findAll() as $module) // TODO: Foreach
+        [
+             'school' => [ // All school modules teached to the apprentice. Required.
+                 'modules' => [ // List of school modules teached to the apprentice. Required.
+                     'number' => int,    //Number of the module. Required.
+                     'name'   => string, //Name of the module. Required.
+                     'grade'  =>  [ //Grade obtained by the apprentice to the module. Can be empty.
+                         'id'    => int,   //ID of the grade. Required.
+                         'value' => float, //Value of the grade. Required.
+                     ]
+                 ]
+                 'weighting' => int, //Weighting of school modules. Required.
+                 'average'   => int, //Average of school modules. Can be empty.
+             ]
+             'non-school' => //All non-school modules teached to the apprentice. Required.
+             [
+                 'modules'    => //List of non-school module teached to an apprentice.
+                 'weighting' => int, //Weighting of non-school modules. Required.
+                 'average'   => //Average of non-school modules. Can be empty.
+             ]
+             'weighting' => //Weighting of modules (in CFC average). Required.
+             'average' => //Average of school (80%) and non-school (20%) averages. Can be empty.
+        ]
     
         $data_to_view = [
             'title'                 => lang('plafor_lang.title_view_apprentice'),
@@ -232,8 +241,14 @@ class Apprentice extends \App\Controllers\BaseController
             'links'                 => $links,
             'user_courses'          => $user_courses,
             'user_course_status'    => $user_course_status,
-            'course_plans'          => $course_plans
+            'course_plans'          => $course_plans,
+            "cfc_average"           => $cfc_average,// TODO
+            "modules"               => $modules,    // TODO
+            "tpi_grade"             => $tpi_grade,  // TODO
+            "cbe"                   => $cbe,        // TODO
+            "ecg"                   => $ecg,        // TODO
         ];
+
         return $this->display_view('Plafor\apprentice/view', $data_to_view);
     }
 

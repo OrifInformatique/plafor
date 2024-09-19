@@ -14,7 +14,7 @@ class TeachingModuleModel extends Model
     protected $useSoftDeletes   = true;
     protected $protectFields    = true;
     protected $allowedFields    = ['module_number', 'official_name',
-        'version'];
+        'version', 'archive' ];
 
     // Dates
     protected $useTimestamps = false;

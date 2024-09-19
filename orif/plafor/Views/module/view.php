@@ -3,7 +3,7 @@
 /**
  * Lists all teaching modules.
  *
- * Called by TeachingDomainController/getAllTeachingModule($with_deleted)
+ * Called by TeachingDomainController/getAllTeachingModule($with_archived)
  *
  * @author      Orif (DeDy)
  * @link        https://github.com/OrifInformatique
@@ -77,3 +77,23 @@ helper('form');
         ?>
     </div>
 </div>
+
+<script defer>
+    $(document).ready(function(){
+        $('#toggle_deleted').change(e => {
+            let checked = e.currentTarget.checked;
+
+            history.replaceState(null, null, '<?= base_url('/plafor/teachingdomain/getAllTeachingModule/') ?>?wa=' + (checked ? 1 : 0))
+
+            $.get('<?= base_url('/plafor/teachingdomain/getAllTeachingModule/') ?>?wa=' + (checked ? 1 : 0), (datas) => {
+                let parser=new DOMParser();
+
+                parser.parseFromString(datas, 'text/html').querySelectorAll('table').forEach((domTag) => {
+                    document.querySelectorAll('table').forEach((thisDomTag) => {
+                        thisDomTag.innerHTML=domTag.innerHTML;
+                    })
+                })
+            })
+        })
+    });
+</script>
