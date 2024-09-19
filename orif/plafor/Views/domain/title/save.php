@@ -36,7 +36,7 @@
  *
  * method POST
  *
- * action TeachingDomainController/saveTeachingDomain($course_plan_id, $domain_id)
+ * action TeachingDomainController/saveTeachingDomainTitle(domain_title_id)
  *
  * @param string $domain_title Name of the domain.
  *
@@ -45,7 +45,7 @@
 helper('form');
 
 $domain_title_label = lang('Grades.name').' '.lang('Grades.of_a').' '.
-    strtolower(lang('common_lang.btn_new_m').' '.lang('Grades.domain'));
+    strtolower(lang('Grades.domain'));
 
 ?>
 
@@ -56,7 +56,7 @@ $domain_title_label = lang('Grades.name').' '.lang('Grades.of_a').' '.
     <!-- Form errors -->
     <?= view('\Plafor/common/form_errors', ['errors' => $errors]) ?>
 
-    <?= form_open(base_url('plafor/teachingdomain/saveTeachingDomainTitle/'.$parent_course_plan['id'].'/'.($domain_title_id ?? 0))) ?>
+    <?= form_open(base_url('plafor/teachingdomain/saveTeachingDomainTitle/'.($domain_title_id ?? 0))) ?>
         <div class="row">
             <div class="col form-group">
                 <?= form_label($domain_title_label, 'domain_title',
@@ -68,7 +68,7 @@ $domain_title_label = lang('Grades.name').' '.lang('Grades.of_a').' '.
         </div>
 
         <div class="row">
-            <?php if($domain_id > 0): ?>
+            <?php if($domain_title_id > 0): ?>
                 <div class="col">
                     <a href="<?= base_url('plafor/teachingdomain/deleteTeachingDomainTitle/'.$domain_title_id) ?>" class="btn btn-danger">
                         <?= lang('common_lang.btn_delete') ?>

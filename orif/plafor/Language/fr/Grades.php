@@ -84,6 +84,7 @@ return [
     "semester"       => "Semestre",
     "semesters"      => "Semestres",
     "weighting"      => "Pondération",
+    "weighting_in_%" => "Pondération (en %)",
     "select_all"     => "Tout sélectionner",
     "deselect_all"   => "Tout déselectionner",
 
