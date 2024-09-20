@@ -809,6 +809,7 @@ class CoursePlan extends \App\Controllers\BaseController
             'course_plan'           => $course_plan,
             'competence_domains'    => $competence_domains,
             "teaching_domains"      => $teaching_domains,
+            "parent_course_plan_id" => $course_plan_id,
         );
 
         return $this->display_view('\Plafor\course_plan\view', $output);

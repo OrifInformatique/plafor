@@ -41,7 +41,7 @@ helper('form');
             <div class="col-sm-12 text-right d-flex justify-content-between">
                 <div>
                     <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin): ?>
-                        <a href="<?= base_url('plafor/teachingdomain/saveTeachingModule') ?>" class="btn btn-primary">
+                        <a href="<?= base_url('plafor/teachingdomain/saveTeachingDomainTitle') ?>" class="btn btn-primary">
                             <?= lang('common_lang.btn_new_m') ?>
                         </a>
                     <?php endif ?>

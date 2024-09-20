@@ -29,15 +29,15 @@ function isCurrentUserApprentice() : bool {
  * Check if the user is a Trainer or has higher access OR
  * Check if the user is an Apprentice AND if it's is personnal page
  *
- * @param  int $course_plan_id => apprentice ID
+ * @param  int $apprentice_id => apprentice ID
  *
  * @return bool
  */ 
-function isCurrentUserSelfApprentice(int $course_plan_id) : bool {
+function isCurrentUserSelfApprentice(int $apprentice_id) : bool {
 
     return isCurrentUserTrainer()
         || ($_SESSION["user_access"] == config("\User\Config\UserConfig")->access_level_apprentice
-        && $course_plan_id == $_SESSION["user_id"]);
+        && $apprentice_id == $_SESSION["user_id"]);
 }        
 
 
@@ -48,9 +48,7 @@ function isCurrentUserSelfApprentice(int $course_plan_id) : bool {
  * @return bool
  */
 function isCurrentUserTrainer() : bool {
-    // return $_SESSION["user_access"] < config("\User\Config\UserConfig")->access_lvl_trainer;
-    // return $_SESSION["user_access"] < config(UserConfig::class)->access_lvl_trainer; // Test if this work
-    return $_SESSION["user_access"] >= config(ConfigUserConfig::class)->access_lvl_trainer; // Test if this work        }
+    return $_SESSION["user_access"] < config("\User\Config\UserConfig")->access_lvl_trainer;
 }
 
 
@@ -59,14 +57,14 @@ function isCurrentUserTrainer() : bool {
  * Check if the user is a trainer or has higher access AND
  * Check if the user is a trainer linked to the given apprentice
  *
- * @param int $course_plan_id => apprentice ID
+ * @param int $apprentice_id => apprentice ID
  *
  * @return bool
  */
-function isCurrentUserTrainerOfApprentice(int $course_plan_id) : bool{
+function isCurrentUserTrainerOfApprentice(int $apprentice_id) : bool{
 
     return isCurrentUserTrainer()
-        && model("TrainerApprenticeModel")->isTrainerLinkedToApprentice($_SESSION["user_id"], $course_plan_id)
+        && model("TrainerApprenticeModel")->isTrainerLinkedToApprentice($_SESSION["user_id"], $apprentice_id)
         || isCurrentUserAdmin();
 }
 

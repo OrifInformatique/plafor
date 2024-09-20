@@ -156,18 +156,17 @@ class Apprentice extends \App\Controllers\BaseController
 
     /**
      * Displays the view for a given apprentice
+     * 
+     * @param int $apprentice_id    => ID of the apprentice (default = 0)
+     * // TODO: Get the user_course inside the URL
+     * // TODO: Change the user_course ID whith the drop down menu (JS)
      *
-     * @param int $apprentice_id : ID of the apprentice (default = 0)
-     *
-     * @return  string|Response
+     * @return string|Response
      */
     public function view_apprentice($apprentice_id = 0) : string|Response {
 
         // Access permissions
-        if (!isCurrentUserTrainerOfApprentice($apprentice_id)){
-            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
-        }
-        elseif (!isCurrentUserSelfApprentice($apprentice_id)){
+        if (!isCurrentUserTrainerOfApprentice($apprentice_id) && !isCurrentUserSelfApprentice($apprentice_id)){
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
 
@@ -186,8 +185,6 @@ class Apprentice extends \App\Controllers\BaseController
             
             $list_user_courses[$user_course['id']] = $user_course;
         }
-
-
 
         // Status of the user's courses
         $list_user_course_status = [];
@@ -212,10 +209,10 @@ class Apprentice extends \App\Controllers\BaseController
         // TODO: add school_report here
         $school_report_data = [];
         
-        $cfc_average;                       // Average of all domains of the apprentice, rounded by '0.1'. // TODO: 
+        $cfc_average;                       // Average of all domains of the apprentice, rounded by '0.1'.
         $modules = [];                      // All modules teached to the apprentice.
         // d($this->m_grade_model->getApprenticeModulesGrades($list_user_courses[$user_course['id']], null));
-        // foreach ($this->m_grade_model->where("fk_user_course", $list_user_courses[$user_course['id']])->findAll() as $grade_module) // TODO: Foreach
+        // foreach ($this->m_grade_model->where("fk_user_course", $list_user_courses[$user_course['id']])->findAll() as $grade_module)
         // $modules = [
         //     "school" => [                   // All school modules teached to the apprentice. Required.
         //         "modules" => [              // List of school modules teached to the apprentice. Required.

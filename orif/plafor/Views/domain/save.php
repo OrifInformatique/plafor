@@ -57,7 +57,7 @@
  * @param ?int $domain_name Name of the domain, stored as domain title ID.
  * Required if $new_domain_name == null.
  *
- * @param ?string $new_domain_name Name of the domain, stored as domain title ID.
+ * @param ?string $new_domain_name Name of the domain.
  * Required if $domain_name == null.
  *
  * @param float $domain_weight Weighting of the domain (in CFC average).
@@ -77,26 +77,26 @@
 // /* Random data set for testing, can be deleted anytime */
 // $title = lang('Grades.create_domain'); // Titre de la page
 
-$domain_id = null; // ID du domaine (à éditer, peut être vide)
+// $domain_id = null; // ID du domaine (à éditer, peut être vide)
 
-$parent_course_plan = [
-    'id' => 345,
-    'official_name' => 'Computer Science Engineering', // Nom officiel du plan de cours
-];
+// $parent_course_plan = [
+//     'id' => 345,
+//     'official_name' => 'Computer Science Engineering', // Nom officiel du plan de cours
+// ];
 
-$domain_names = [
-    1 => 'Software Development',
-    2 => 'Network Administration',
-    3 => 'Cybersecurity',
-];
+// $domain_names = [
+//     1 => 'Software Development',
+//     2 => 'Network Administration',
+//     3 => 'Cybersecurity',
+// ];
 
-$domain_name = 1; // ID du titre du domaine sélectionné (peut être vide)
+// $domain_name = 1; // ID du titre du domaine sélectionné (peut être vide)
 
-$domain_weight = 40; // Ponderation du domaine (peut être vide)
+// $domain_weight = 40; // Ponderation du domaine (peut être vide)
 
-$is_domain_eliminatory = false; // Le domaine est-il éliminatoire (peut être vide)
+// $is_domain_eliminatory = false; // Le domaine est-il éliminatoire (peut être vide)
 
-$errors = []; // Erreurs du modèle teaching_domain_model (peut être vide)
+// $errors = []; // Erreurs du modèle teaching_domain_model (peut être vide)
 
 /**
  * Data management
@@ -172,7 +172,7 @@ $new_domain_name = lang('Grades.name').' '.lang('Grades.of_a').' '.
                 <?= form_label(lang('Grades.weighting_in_%'), 'domain_weight',
                     ['class' => 'form-label']) ?>
 
-                <?= form_input(null, $domain_weight ?? '',
+                <?= form_input('domain_weight', $domain_weight ?? '',
                     ['class' => 'form-control', 'id' => 'domain_weight', 'min' => 0, 'max' => 100, 'step' => 5], 'number') ?>
             </div>
 
@@ -180,7 +180,7 @@ $new_domain_name = lang('Grades.name').' '.lang('Grades.of_a').' '.
                 <?= form_label(lang('Grades.is_eliminatory'), 'is_domain_eliminatory',
                     ['class' => 'form-check-label mr-2']) ?>
 
-                <?= form_checkbox('is_domain_eliminatory', '', $is_domain_eliminatory ?? false,
+                <?= form_checkbox('is_domain_eliminatory', true, $is_domain_eliminatory ?? false,
                     ['class' => 'form-check-input', 'id' => 'is_domain_eliminatory']) ?>
             </div>
         </div>

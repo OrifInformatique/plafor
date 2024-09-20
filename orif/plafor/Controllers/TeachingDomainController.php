@@ -65,14 +65,14 @@ class TeachingDomainController extends \App\Controllers\BaseController{
     }
 
 
-        
+
     /**
      * Return a view with all Domains titles
      *
      * @param  bool $with_archived   => false, witout the archived domain (Default)
      *                              => true, show the archived domain
-     * 
-     * @return string|Response 
+     *
+     * @return string|Response
      */
     public function getAllDomainsTitle(bool $with_archived = false) : string|Response {
         // Access permissions
@@ -112,8 +112,8 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
 
-        // Redirect to the last URL if domain title ID doesn"t exist
-        if (empty($this->m_teaching_domain_title_model->withDeleted()->find($domain_title_id))){
+        // Redirect to the last URL if Domain title ID doesn't exist
+        if (is_null($domain_title_id)){
             return redirect()->to(previous_url());
         }
 
@@ -149,7 +149,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
     }
 
 
-    
+
     /**
      * Delete or reactivate a Teaching Domain title
      *
@@ -229,27 +229,43 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
 
+        $course_plan = $this->m_course_plan_model->withDeleted()->find($course_plan_id);
+
         // Redirect to the last URL if course plan ID doesn"t exist
-        if (empty($this->m_course_plan_model->withDeleted()->find($course_plan_id))){
+        if (empty($course_plan)){
             return redirect()->to(previous_url());
         }
 
         if(count($_POST) > 0) {
 
+            // TODO : Vérifier que soit $domain_name (dropdown option) ou soit $new_domain_name (input text) soit renseingé. Renvoyer une erreur à la vue si non.
+            $domain_name = $this->request->getPost("new_domain_name") ?? $this->request->getPost("domain_name");
+            d($domain_name);
+
             $data_to_model = [
                 "id"                        => $domain_id,
                 "fk_course_plan"            => $course_plan_id,
-                "fk_teaching_domain_title"  => $this->request->getPost("domain_name"),
-                "domain_weight"             => $this->request->getPost("domain_weight"),
-                "is_eliminatory"            => $this->request->getPost("is_domain_eliminatory")
+                "fk_teaching_domain_title"  => $domain_name,
+                "domain_weight"             => $this->request->getPost("domain_weight") / 100,
+                "is_eliminatory"            => $this->request->getPost("is_domain_eliminatory") ?? false
             ];
 
             $this->m_teaching_domain_model->save($data_to_model);
 
             // Return to previous page if there is NO error
             if ($this->m_teaching_domain_model->errors() == null) {
-                return redirect()->to("plafor/domain/view");
+                return redirect()->to("plafor/courseplan/view_course_plan/" . $course_plan_id);
             }
+        }
+
+        $parent_course_plan = [
+            "id" => $course_plan_id,
+            "official_name" => $course_plan["official_name"],
+        ];
+
+        $titles = [];
+        foreach ($this->m_teaching_domain_title_model->findAll() as $domain_title) {
+            $titles[$domain_title["id"]] = $domain_title["title"];
         }
 
         $data_from_model = $this->m_teaching_domain_model->find($domain_id);
@@ -257,9 +273,9 @@ class TeachingDomainController extends \App\Controllers\BaseController{
         $data_to_view = [
             "title"                         => $domain_id == 0 ? lang("Grades.create_domain") : lang("Grades.update_domain"),
             "domain_id"                     => $domain_id,
-            // BUG: course_plan required ???
-            "domain_parent_course_plan"     => $course_plan_id,
+            "parent_course_plan"            => $parent_course_plan,
             "domain_name"                   => $this->m_teaching_domain_model->find($domain_id)["title"] ?? null,
+            "domain_names"                  => $titles,
             "domain_weight"                 => $data_from_model["domain_weight"] ?? null,
             "is_domain_eliminatory"         => $data_from_model["is_eliminatory"] ?? null,
             "errors"                        => $this->m_teaching_domain_model->errors()
@@ -347,7 +363,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * @return string|Response
      */
     public function saveTeachingSubject(int $domain_id = 0, int $subject_id = 0) : string|Response {
-        
+
         // Access permissions
         if (!isCurrentUserAdmin()) {
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);

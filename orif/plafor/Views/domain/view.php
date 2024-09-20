@@ -56,48 +56,48 @@
  */
 
 /* Random data set for testing, can be deleted anytime */
- $teaching_domains = [
-    [
-        'id' => 1,
-        'name' => 'Software Development',
-        'subjects' => [
-            [
-                'id' => 101,
-                'name' => 'Object-Oriented Programming',
-                'weighting' => 0.5,
-            ],
-            [
-                'id' => 102,
-                'name' => 'Databases',
-                'weighting' => 0.5,
-            ],
-        ],
-        'modules' => [], // Pas de modules pour ce domaine
-        'weighting' => 0.6,
-        'is_eliminatory' => true,
-    ],
-    [
-        'id' => 2,
-        'name' => 'Network Administration',
-        'subjects' => [], // Pas de matières pour ce domaine
-        'modules' => [
-            [
-                'id' => 201,
-                'number' => 1,
-                'title' => 'Introduction to Networks',
-            ],
-            [
-                'id' => 202,
-                'number' => 2,
-                'title' => 'Advanced Networking',
-            ],
-        ],
-        'weighting' => 0.4,
-        'is_eliminatory' => false,
-    ],
-];
+//  $teaching_domains = [
+//     [
+//         'id' => 1,
+//         'name' => 'Software Development',
+//         'subjects' => [
+//             [
+//                 'id' => 101,
+//                 'name' => 'Object-Oriented Programming',
+//                 'weighting' => 0.5,
+//             ],
+//             [
+//                 'id' => 102,
+//                 'name' => 'Databases',
+//                 'weighting' => 0.5,
+//             ],
+//         ],
+//         'modules' => [], // Pas de modules pour ce domaine
+//         'weighting' => 0.6,
+//         'is_eliminatory' => true,
+//     ],
+//     [
+//         'id' => 2,
+//         'name' => 'Network Administration',
+//         'subjects' => [], // Pas de matières pour ce domaine
+//         'modules' => [
+//             [
+//                 'id' => 201,
+//                 'number' => 1,
+//                 'title' => 'Introduction to Networks',
+//             ],
+//             [
+//                 'id' => 202,
+//                 'number' => 2,
+//                 'title' => 'Advanced Networking',
+//             ],
+//         ],
+//         'weighting' => 0.4,
+//         'is_eliminatory' => false,
+//     ],
+// ];
 
-$parent_course_plan_id = 1;
+// $parent_course_plan_id = 1;
 
 helper('form');
 
