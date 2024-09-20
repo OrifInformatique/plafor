@@ -9,33 +9,12 @@
 
 namespace Plafor\Controllers;
 
-use CodeIgniter\Debug\Toolbar\Collectors\Views;
 use CodeIgniter\HTTP\RequestInterface;
-use CodeIgniter\HTTP\Response;
 use CodeIgniter\HTTP\ResponseInterface;
-use Plafor\Models\TeachingDomainModel;
-use Plafor\Models\TeachingSubjectModel;
-use Plafor\Models\TeachingModuleModel;
-use Plafor\Models\GradeModel;
-use User\Models\User_model;
-use Plafor\Models\UserCourseModel;
-use Plafor\Models\CoursePlanModel;
+use Psr\Log\LoggerInterface;
 
 use User\Config\UserConfig; // Test
 use Config\UserConfig as ConfigUserConfig; // Test
-
-
-// @TODO : Check what is used
-use Plafor\Models\AcquisitionStatusModel;
-use Plafor\Models\CommentModel;
-use Plafor\Models\CompetenceDomainModel;
-use Plafor\Models\ObjectiveModel;
-use Plafor\Models\OperationalCompetenceModel;
-use Plafor\Models\TrainerApprenticeModel;
-use Plafor\Models\UserCourseStatusModel;
-use Psr\Log\LoggerInterface;
-use User\Models\User_type_model;
-
 
 class TeachingDomainController extends \App\Controllers\BaseController{
 
@@ -53,14 +32,15 @@ class TeachingDomainController extends \App\Controllers\BaseController{
         parent::initController($request, $response, $logger);
 
         // Loads required models
-        $this->m_teaching_domain_model = model("TeachingDomainModel");
-        $this->m_teaching_subject_model = model("TeachingSubjectModel");
-        $this->m_teaching_module_model = model("TeachingModuleModel");
+        $this->m_teaching_domain_model        = model("TeachingDomainModel");
+        $this->m_teaching_subject_model       = model("TeachingSubjectModel");
+        $this->m_teaching_module_model        = model("TeachingModuleModel");
         $this->m_teaching_domain_module_model = model("TeachingDomainModuleModel");
-        $this->m_teaching_domain_title_model = model("TeachingDomainTitleModel");
-        $this->m_user_course_model = model("UserCourseModel");
-        $this->m_user_model = model("User_model");
-        $this->m_course_plan_model = model("CoursePlanModel");
+        $this->m_teaching_domain_title_model  = model("TeachingDomainTitleModel");
+        $this->m_user_course_model            = model("UserCourseModel");
+        $this->m_user_model                   = model("User_model");
+        $this->m_course_plan_model            = model("CoursePlanModel");
+
         helper("AccessPermissions_helper");
     }
 
@@ -188,12 +168,12 @@ class TeachingDomainController extends \App\Controllers\BaseController{
                 if($domain_title["archive"]) {
 
                     $output["type"] = "reactivate";
-                    $output["entry"]["message"] = lang("plafor_lang.competence_domain_enable_explanation"); // TODO: URL
+                    $output["entry"]["message"] = lang("Grades.domain_title_enable_explanation");
                 }
                 else {
 
                     $output["type"] = "disable";
-                    $output["entry"]["message"] = lang("plafor_lang.competence_domain_disable_explanation"); // TODO: URL
+                    $output["entry"]["message"] = lang("Grades.domain_title_disable_explanation");
                 }
 
                 return $this->display_view("\Common/manage_entry", $output);
@@ -291,7 +271,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
 
     /**
      * Delete or reactivate a Teaching Domain
-     // TODO: Delete Teaching Domain
+     // BUG: Multiple Common list in the same page (checkbox: see disable)
      *
      * @param int $domain_id    => ID of the domain
      * @param int $action       => 0 = display a confirmation (default)
@@ -320,20 +300,20 @@ class TeachingDomainController extends \App\Controllers\BaseController{
                 $output = [
                     "entry" => [
                         "type"    => lang("Grades.domain"),
-                        "name"    => $teaching_domain["name"]
+                        "name"    => $teaching_domain["title"]
                     ],
-                    "cancel_btn_url" => base_url("plafor/courseplan/view_course_plan/" . $domain_id) // TODO: URL
+                    "cancel_btn_url" => base_url("plafor/courseplan/view_course_plan/" . $domain_id)
                 ];
 
                 if($teaching_domain["archive"]) {
 
                     $output["type"] = "reactivate";
-                    $output["entry"]["message"] = lang("plafor_lang.competence_domain_enable_explanation"); // TODO: URL
+                    $output["entry"]["message"] = lang("Grades.domain_enable_explanation");
                 }
                 else {
 
                     $output["type"] = "disable";
-                    $output["entry"]["message"] = lang("plafor_lang.competence_domain_disable_explanation"); // TODO: URL
+                    $output["entry"]["message"] = lang("Grades.domain_disable_explanation");
                 }
 
                 return $this->display_view("\Common/manage_entry", $output);
@@ -349,7 +329,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
                 break;
         }
 
-        return redirect()->to(base_url("plafor/courseplan/view_course_plan/" . $teaching_domain["fk_course_plan"])); // TODO: URL
+        return redirect()->to(base_url("plafor/courseplan/view_course_plan/" . $teaching_domain["fk_course_plan"]));
     }
 
 
@@ -417,7 +397,6 @@ class TeachingDomainController extends \App\Controllers\BaseController{
 
     /**
      * Delete or reactivate a Teaching Subject
-     // TODO: Delete Teaching Subject
      *
      * @param int $subject_id   => ID of the subject
      * @param int $action       => 0 = display a confirmation (default)
@@ -454,12 +433,12 @@ class TeachingDomainController extends \App\Controllers\BaseController{
                 if($teaching_subject["archive"]) {
 
                     $output["type"] = "reactivate";
-                    $output["entry"]["message"] = lang("plafor_lang.competence_domain_enable_explanation"); // TODO: URL
+                    $output["entry"]["message"] = lang("Grades.subject_enable_explanation");
                 }
                 else {
 
                     $output["type"] = "disable";
-                    $output["entry"]["message"] = lang("plafor_lang.competence_domain_disable_explanation"); // TODO: URL
+                    $output["entry"]["message"] = lang("Grades.subject_disable_explanation");
                 }
 
                 return $this->display_view("\Common/manage_entry", $output);
@@ -475,7 +454,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
                 break;
         }
 
-        return redirect()->to(base_url("plafor/courseplan/view_course_plan/" . $teaching_subject["fk_course_plan"])); // TODO: URL
+        return redirect()->to(base_url("plafor/courseplan/view_course_plan/" . $teaching_subject["fk_course_plan"]));
     }
 
 
@@ -483,7 +462,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
     /**
      * Return all teaching module data to a view
      *
-     * @param  bool $with_archived   => false, witout the archived domain (Default)
+     * @param  bool $with_archived  => false, witout the archived domain (Default)
      *                              => true, show the archived domain
      *
      * @return string|Response
@@ -604,12 +583,12 @@ class TeachingDomainController extends \App\Controllers\BaseController{
                 if($teaching_module["archive"]) {
 
                     $output["type"] = "reactivate";
-                    $output["entry"]["message"] = lang("plafor_lang.competence_domain_enable_explanation"); // TODO: URL
+                    $output["entry"]["message"] = lang("Grades.module_enable_explanation");
                 }
                 else {
 
                     $output["type"] = "disable";
-                    $output["entry"]["message"] = lang("plafor_lang.competence_domain_disable_explanation"); // TODO: URL
+                    $output["entry"]["message"] = lang("Grades.module_disable_explanation");
                 }
 
                 return $this->display_view("\Common/manage_entry", $output);
@@ -692,8 +671,13 @@ class TeachingDomainController extends \App\Controllers\BaseController{
                 }
 
                 // Return to previous page if there is NO error
+
+                $course_plan_id = $this->m_course_plan_model->select("fk_course_plan")->find($domain_id);
+
                 if ($this->m_teaching_domain_module_model->errors() == null) {
-                    return redirect()->to("plafor/teachingdomain/getAllTeachingModule"); // TODO: URL
+                    return redirect()->to("plafor/teachingdomain/view_course_plan/" . $course_plan_id); // TODO: URL
+                    // return redirect()->to(previous_url()); /* ?????? c'est assassin ? */
+
                 }
             }
 

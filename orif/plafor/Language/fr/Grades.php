@@ -21,11 +21,17 @@ return [
     "delete_domain"             => "Supprimer un domaine",
     "link_domain_module"        => "Lier le domaine à des modules",
 
-    "domains_title"             => "Nom des domaines d'enseignement",
-    "domain_title"              => "Nom du domaine d'enseignement",
-    "domains_title_list"        => "Liste des noms des domaines d'enseignement",
-    "create_domain_title"       => "Créer un nom de domaine d'enseignement",
-    "update_domain_title"       => "Modifier un nom de domaine d'enseignement",
+    "domains_title"                    => "Nom des domaines d'enseignement",
+    "domain_title"                     => "Nom du domaine d'enseignement",
+    "domains_title_list"               => "Liste des noms des domaines d'enseignement",
+    "create_domain_title"              => "Créer un nom de domaine d'enseignement",
+    "update_domain_title"              => "Modifier un nom de domaine d'enseignement",
+
+    "domain_enable_explanation"  => "Toutes les informations concernant ce domaine (plan de formation, pondération) seront réactivées.",
+    "domain_disable_explanation" => "Toutes les informations concernant ce domaine (plan de formation, pondération) seront désactivées.",
+
+    "domain_title_enable_explanation"  => "Toutes les informations concernant ce domaine (titre) seront réactivées.",
+    "domain_title_disable_explanation" => "Toutes les informations concernant ce domaine (titre) seront désactivées.",
 
     // Teaching subject
     "subject"               => "Matière",
@@ -35,6 +41,10 @@ return [
     "create_subject"        => "Créer une matière",
     "update_subject"        => "Modifier une matière",
     "delete_subject"        => "Supprimer une matière",
+
+    "subject_enable_explanation"  => "Toutes les informations concernant ce sujet (nom, pondération) seront réactivées.",
+    "subject_disable_explanation" => "Toutes les informations concernant ce sujet (nom, pondération) seront désactivées.",
+
 
     "ECG_acronym" => "ECG",
     "ECG_long"    => "Culture Générale",
@@ -62,6 +72,9 @@ return [
     "school_modules"     => "Modules professionnels",
     "non_school_modules" => "Modules inter-entreprises",
 
+    "module_enable_explanation"  => "Toutes les informations concernant ce module (nombre, titre, version) seront réactivées.",
+    "module_disable_explanation" => "Toutes les informations concernant ce module (nombre, titre, version) seront désactivées.",
+
     // Teaching grade
     "grade"                     => "Note",
     "grades"                    => "Notes",
@@ -70,8 +83,9 @@ return [
     "add_grade"                 => "Ajouter une note",
     "update_grade"              => "Modifier une note",
     "delete_grade"              => "Supprimer une note",
-    "grade_enable_explanation"  => "Toutes les informations concernant cette note seront réactivées.",
-    "grade_disable_explanation" => "Toutes les informations concernant cette note seront désactivées.",
+
+    "grade_enable_explanation"  => "Toutes les informations concernant cette note (note, date) seront réactivées.",
+    "grade_disable_explanation" => "Toutes les informations concernant cette note (note, date) seront désactivées.",
 
     // Common text
     "average"        => "Moyenne",

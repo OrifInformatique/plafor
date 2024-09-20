@@ -9,8 +9,7 @@
  */
 
 use CodeIgniter\CodeIgniter;
-use User\Config\UserConfig; // Test
-use Config\UserConfig as ConfigUserConfig; // Test
+
 
 
 /**
@@ -48,7 +47,8 @@ function isCurrentUserSelfApprentice(int $apprentice_id) : bool {
  * @return bool
  */
 function isCurrentUserTrainer() : bool {
-    return $_SESSION["user_access"] < config("\User\Config\UserConfig")->access_lvl_trainer;
+
+    return $_SESSION["user_access"] >= config("\User\Config\UserConfig")->access_lvl_trainer;
 }
 
 
