@@ -115,11 +115,11 @@ helper('form')
             </div>
 
             <div class="col-3 form-group">
-                <?= form_label(lang('Grades.weighting'), 'subject_weight',
+                <?= form_label(lang('Grades.weighting_in_%'), 'subject_weight',
                     ['class' => 'form-label']) ?>
 
                 <?= form_input('subject_weight', $subject_weight ?? '',
-                    ['class' => 'form-control', 'id' => 'subject_weight', 'min' => 0, 'max' => 1, 'step' => 0.1], 'number') ?>
+                    ['class' => 'form-control', 'id' => 'subject_weight', 'min' => 0, 'max' => 100, 'step' => 5], 'number') ?>
             </div>
         </div>
 

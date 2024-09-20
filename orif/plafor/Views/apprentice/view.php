@@ -167,18 +167,26 @@
 
             <div class="row mt-2">
                 <div class="col-4 text-center">
-                   <strong><?= lang('plafor_lang.field_user_course_date_begin_short') ?></strong>
-                    <p><?= isset($userCourseMax) ? $userCourseMax['date_begin'] : null ?></p>
+                    <strong><?= lang('plafor_lang.field_user_course_date_begin_short') ?></strong>
+
+                    <p class="user-course-details-begin-date">
+                        <?= isset($userCourseMax) ? $userCourseMax['date_begin'] : null ?>
+                    </p>
                 </div>
 
                 <div class="col-4 text-center">
                     <strong><?= lang('plafor_lang.field_user_course_date_end_short') ?></strong>
-                    <p><?= isset($userCourseMax) ? $userCourseMax['date_end'] : null ?></p>
+
+                    <p class="user-course-details-end-date">
+                        <?= isset($userCourseMax) ? $userCourseMax['date_end'] : null ?>
+                    </p>
                 </div>
 
                 <div class="col-4 text-center">
                     <strong><?= lang('plafor_lang.field_user_course_status') ?></strong>
-                    <p><?= isset($userCourseMax) ? $user_course_status[$userCourseMax['fk_status']]['name'] : null ?></p>
+                    <p class="user-course-details-status">
+                        <?= isset($userCourseMax) ? $user_course_status[$userCourseMax['fk_status']]['name'] : null ?>
+                    </p>
                 </div>
             </div>
 
@@ -194,12 +202,6 @@
     <div class="row mt-2">
         <div class="col-md-12">
             <p class="bg-primary text-white"><?=lang('plafor_lang.title_course_plan_status')?></p>
-
-            <p>
-                <strong>
-                    <?= isset($userCourseMax) ? $course_plans[$userCourseMax['fk_course_plan']]['official_name'] : null ?>
-                </strong>
-            </p>
 
             <div id="detailsArray" apprentice_id="<?= $apprentice['id'] ?>"
                 course_plan_id="<?= isset($userCourseMax) ? $userCourseMax['fk_course_plan'] : null ?>">
@@ -225,16 +227,6 @@
             new Promise(resolve => setTimeout(resolve, 300))
                 .then(invokeDisplayDetails);
         }
-    };
-
-    const invokeHydrationName = (event, userCourses, coursePlans) => {
-        document.querySelectorAll('.user-course-details-course-plan-name')
-            .forEach((node) =>
-        {
-            let coursePlanId = userCourses[event.target.value].fk_course_plan;
-            let officialName = coursePlans[coursePlanId].official_name;
-            node.innerHTML = new String(official_name);
-        });
     };
 
     const invokeHydrationBeginDate = (event, userCourses) => {
@@ -268,12 +260,11 @@
     $(document).ready(() => {
         $('#usercourseSelector').val(<?= isset($userCourseMax)
             ? $userCourseMax['id'] : null ?>);
+
         $('#usercourseSelector').change((event) => {
             let userCourses = <?= json_encode($user_courses) ?>;
             let coursePlans = <?= json_encode($course_plans) ?>;
             let userCoursesStatus = <?= json_encode($user_course_status) ?>;
-
-            invokeHydrationName(event, userCourses, coursePlans);
 
             invokeHydrationBeginDate(event, userCourses);
 

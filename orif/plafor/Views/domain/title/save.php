@@ -36,7 +36,7 @@
  *
  * method POST
  *
- * action TeachingDomainController/saveTeachingDomain($course_plan_id, $domain_id)
+ * action TeachingDomainController/saveTeachingDomainTitle(domain_title_id)
  *
  * @param string $domain_title Name of the domain.
  *
@@ -45,7 +45,7 @@
 helper('form');
 
 $domain_title_label = lang('Grades.name').' '.lang('Grades.of_a').' '.
-    strtolower(lang('common_lang.btn_new_m').' '.lang('Grades.domain'));
+    strtolower(lang('Grades.domain'));
 
 ?>
 

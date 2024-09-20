@@ -45,6 +45,14 @@ use CodeIgniter\I18n\Time;
 <div class="container">
     <?= view('\Plafor\templates\navigator', ['reset' => true]) ?>
 
+    <div class="row mb-2">
+        <div class="col">
+            <a href="<?= base_url('plafor/apprentice/view_apprentice/'.$id_apprentice) ?>" class="btn btn-primary">
+                <?= lang('common_lang.btn_back') ?>
+            </a>
+        </div>
+    </div>
+
     <!-- Page title -->
     <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
 

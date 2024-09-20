@@ -158,18 +158,18 @@ class Apprentice extends \App\Controllers\BaseController
      * Displays the view for a given apprentice
      *
      * @param int $apprentice_id : ID of the apprentice (default = 0)
-     * 
+     *
      * @return  string|Response
      */
     public function view_apprentice($apprentice_id = 0) : string|Response {
-        
+
         // Access permissions
         if (!isCurrentUserTrainerOfApprentice($apprentice_id)){
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
         elseif (!isCurrentUserSelfApprentice($apprentice_id)){
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
-        }  
+        }
 
         // Apprentice
         $apprentice = $this->user_model->find($apprentice_id);
@@ -314,7 +314,7 @@ class Apprentice extends \App\Controllers\BaseController
      *
      */
     public function save_user_course($id_apprentice = 0, $id_user_course = 0)
-    {
+    {d($_POST);
         // Access permissions
         if($this->session->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer)
         {
@@ -392,6 +392,8 @@ class Apprentice extends \App\Controllers\BaseController
                         }
                     }
                 }
+
+                d($_POST);
 
                 if($this->user_course_model->errors() == null)
                     return redirect()->to(base_url('plafor/apprentice/list_user_courses/' . $id_apprentice));

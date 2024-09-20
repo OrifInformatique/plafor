@@ -169,11 +169,11 @@ $new_domain_name = lang('Grades.name').' '.lang('Grades.of_a').' '.
 
         <div class="row">
             <div class="col-sm-3 form-group">
-                <?= form_label(lang('Grades.weighting'), 'domain_weight',
+                <?= form_label(lang('Grades.weighting_in_%'), 'domain_weight',
                     ['class' => 'form-label']) ?>
 
                 <?= form_input(null, $domain_weight ?? '',
-                    ['class' => 'form-control', 'id' => 'domain_weight', 'min' => 0, 'max' => 1, 'step' => 0.1], 'number') ?>
+                    ['class' => 'form-control', 'id' => 'domain_weight', 'min' => 0, 'max' => 100, 'step' => 5], 'number') ?>
             </div>
 
             <div class="col-sm-3 form-group form-check form-check-inline">
