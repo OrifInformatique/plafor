@@ -277,18 +277,21 @@
             window.location.replace(url);
         });
 
-        // let userCourses = <?= json_encode($user_courses) ?>;
-        // let coursePlans = <?= json_encode($course_plans) ?>;
-        // let userCoursesStatus = <?= json_encode($user_course_status) ?>;
+        let event = {
+            target: usercourseSelector
+        };
+        let userCourses = <?= json_encode($user_courses) ?>;
+        let coursePlans = <?= json_encode($course_plans) ?>;
+        let userCoursesStatus = <?= json_encode($user_course_status) ?>;
 
-        // invokeHydrationBeginDate(event, userCourses);
+        invokeHydrationBeginDate(event, userCourses);
 
-        // invokeHydrationEndDate(event, userCourses);
+        invokeHydrationEndDate(event, userCourses);
 
-        // invokeHydrationStatus(event, userCourses, userCoursesStatus);
+        invokeHydrationStatus(event, userCourses, userCoursesStatus);
 
-        // document.querySelector('#detailsArray').setAttribute('course_plan_id',
-        //     userCourses[event.target.value].fk_course_plan);
+        document.querySelector('#detailsArray').setAttribute('course_plan_id',
+            userCourses[event.target.value].fk_course_plan);
 
         // displayDetails(null, userCourses[event.target.value], 'integrated',
         //     "<?= base_url("plafor/apprentice/getcourseplanprogress/")?>",
