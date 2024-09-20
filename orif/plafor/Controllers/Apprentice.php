@@ -163,10 +163,13 @@ class Apprentice extends \App\Controllers\BaseController
      *
      * @return string|Response
      */
-    public function view_apprentice($apprentice_id = 0) : string|Response {
-
+    public function view_apprentice(int $apprentice_id = 0,
+        ?int $user_course_id=null) : string|Response
+    {
         // Access permissions
-        if (!isCurrentUserTrainerOfApprentice($apprentice_id) && !isCurrentUserSelfApprentice($apprentice_id)){
+        if (!isCurrentUserTrainerOfApprentice($apprentice_id) &&
+            !isCurrentUserSelfApprentice($apprentice_id))
+        {
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
 
@@ -251,6 +254,7 @@ class Apprentice extends \App\Controllers\BaseController
             "user_course_status"    => $list_user_course_status,
             "course_plans"          => $list_course_plans,
             "school_report_data"    => $school_report_data, // TODO: Add the arrays below inside this one
+            "user_course_id" => $user_course_id,
 
             // "cfc_average"           => $cfc_average,// TODO
             // "modules"               => $modules,    // TODO
