@@ -119,7 +119,7 @@ helper('form')
                     ['class' => 'form-label']) ?>
 
                 <?= form_input('subject_weight', $subject_weight ?? '',
-                    ['class' => 'form-control', 'id' => 'subject_weight', 'min' => 0, 'max' => 100, 'step' => 5], 'number') ?>
+                    ['class' => 'form-control', 'id' => 'subject_weight', 'min' => 0, 'max' => 100], 'number') ?>
             </div>
         </div>
 

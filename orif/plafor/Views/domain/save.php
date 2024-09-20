@@ -57,7 +57,7 @@
  * @param ?int $domain_name Name of the domain, stored as domain title ID.
  * Required if $new_domain_name == null.
  *
- * @param ?string $new_domain_name Name of the domain, stored as domain title ID.
+ * @param ?string $new_domain_name Name of the domain.
  * Required if $domain_name == null.
  *
  * @param float $domain_weight Weighting of the domain (in CFC average).
@@ -172,15 +172,15 @@ $new_domain_name = lang('Grades.name').' '.lang('Grades.of_a').' '.
                 <?= form_label(lang('Grades.weighting_in_%'), 'domain_weight',
                     ['class' => 'form-label']) ?>
 
-                <?= form_input(null, $domain_weight ?? '',
-                    ['class' => 'form-control', 'id' => 'domain_weight', 'min' => 0, 'max' => 100, 'step' => 5], 'number') ?>
+                <?= form_input('domain_weight', $domain_weight ?? '',
+                    ['class' => 'form-control', 'id' => 'domain_weight', 'min' => 0, 'max' => 100], 'number') ?>
             </div>
 
             <div class="col-sm-3 form-group form-check form-check-inline">
                 <?= form_label(lang('Grades.is_eliminatory'), 'is_domain_eliminatory',
                     ['class' => 'form-check-label mr-2']) ?>
 
-                <?= form_checkbox('is_domain_eliminatory', '', $is_domain_eliminatory ?? false,
+                <?= form_checkbox('is_domain_eliminatory', true, $is_domain_eliminatory ?? false,
                     ['class' => 'form-check-input', 'id' => 'is_domain_eliminatory']) ?>
             </div>
         </div>
