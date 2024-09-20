@@ -67,8 +67,7 @@ helper('form');
         ['title' => $apprentice['username'].' - '.
         lang('plafor_lang.title_user_course_'.(!empty($user_course) ? 'update' : 'new'))]) ?>
 
-    <?= form_open('plafor/apprentice/save_user_course/'.$apprentice['id'].'/'.(!empty($user_course) ? $user_course['id'] : ''),
-        [], ['id' => $apprentice['id'] ?? 0]) ?>
+    <?= form_open('plafor/apprentice/save_user_course/'.$apprentice['id'].(!empty($user_course) ? '/'.$user_course['id'] : '')) ?>
 
         <!-- Form errors -->
         <?= view('\Plafor/common/form_errors', ['errors' => $errors]) ?>

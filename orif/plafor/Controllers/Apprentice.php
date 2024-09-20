@@ -155,18 +155,18 @@ class Apprentice extends \App\Controllers\BaseController
      * Displays the view for a given apprentice
      *
      * @param int $apprentice_id : ID of the apprentice (default = 0)
-     * 
+     *
      * @return  string|Response
      */
     public function view_apprentice($apprentice_id = 0) : string|Response {
-        
+
         // Access permissions
         if (!isCurrentUserTrainerOfApprentice($apprentice_id)){
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
         elseif (!isCurrentUserSelfApprentice($apprentice_id)){
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
-        }  
+        }
 
         // Apprentice
         $apprentice = $this->user_model->find($apprentice_id);
@@ -180,7 +180,7 @@ class Apprentice extends \App\Controllers\BaseController
 
             $user_course['date_begin'] = $date_begin->toLocalizedString('dd.MM.Y');
             $user_course['date_end'] !== '0000-00-00' ? $user_course['date_end'] = $date_end->toLocalizedString('dd.MM.Y') : null;
-            
+
             $user_courses[$user_course['id']] = $user_course;
         }
 
@@ -207,33 +207,33 @@ class Apprentice extends \App\Controllers\BaseController
         // TODO: add school_report here
         d($user_course['id']);
 
-        $cfc_average; // Average of all domains of the apprentice, rounded by '0.1'. // TODO: 
+        $cfc_average; // Average of all domains of the apprentice, rounded by '0.1'. // TODO:
 
         $modules = []; // All modules teached to the apprentice.
-        foreach ($this->->findAll() as $module) // TODO: Foreach
-        [
-             'school' => [ // All school modules teached to the apprentice. Required.
-                 'modules' => [ // List of school modules teached to the apprentice. Required.
-                     'number' => int,    //Number of the module. Required.
-                     'name'   => string, //Name of the module. Required.
-                     'grade'  =>  [ //Grade obtained by the apprentice to the module. Can be empty.
-                         'id'    => int,   //ID of the grade. Required.
-                         'value' => float, //Value of the grade. Required.
-                     ]
-                 ]
-                 'weighting' => int, //Weighting of school modules. Required.
-                 'average'   => int, //Average of school modules. Can be empty.
-             ]
-             'non-school' => //All non-school modules teached to the apprentice. Required.
-             [
-                 'modules'    => //List of non-school module teached to an apprentice.
-                 'weighting' => int, //Weighting of non-school modules. Required.
-                 'average'   => //Average of non-school modules. Can be empty.
-             ]
-             'weighting' => //Weighting of modules (in CFC average). Required.
-             'average' => //Average of school (80%) and non-school (20%) averages. Can be empty.
-        ]
-    
+        //foreach ($this->findAll() as $module) // TODO: Foreach
+        //[
+        //     'school' => [ // All school modules teached to the apprentice. Required.
+        //         'modules' => [ // List of school modules teached to the apprentice. Required.
+        //             'number' => int,    //Number of the module. Required.
+        //             'name'   => string, //Name of the module. Required.
+        //             'grade'  =>  [ //Grade obtained by the apprentice to the module. Can be empty.
+        //                 'id'    => int,   //ID of the grade. Required.
+        //                 'value' => float, //Value of the grade. Required.
+        //             ]
+        //             ],
+        //         'weighting' => int, //Weighting of school modules. Required.
+        //         'average'   => int, //Average of school modules. Can be empty.
+        //            ],
+        //     'non-school' => //All non-school modules teached to the apprentice. Required.
+        //     [
+        //         'modules'    => //List of non-school module teached to an apprentice.
+        //         'weighting' => int, //Weighting of non-school modules. Required.
+        //         'average'   => //Average of non-school modules. Can be empty.
+        //     ],
+        //     'weighting' => //Weighting of modules (in CFC average). Required.
+        //     'average' => //Average of school (80%) and non-school (20%) averages. Can be empty.
+        //]
+
         $data_to_view = [
             'title'                 => lang('plafor_lang.title_view_apprentice'),
             'apprentice'            => $apprentice,
@@ -242,11 +242,11 @@ class Apprentice extends \App\Controllers\BaseController
             'user_courses'          => $user_courses,
             'user_course_status'    => $user_course_status,
             'course_plans'          => $course_plans,
-            "cfc_average"           => $cfc_average,// TODO
-            "modules"               => $modules,    // TODO
-            "tpi_grade"             => $tpi_grade,  // TODO
-            "cbe"                   => $cbe,        // TODO
-            "ecg"                   => $ecg,        // TODO
+            //"cfc_average"           => $cfc_average,// TODO
+            //"modules"               => $modules,    // TODO
+            //"tpi_grade"             => $tpi_grade,  // TODO
+            //"cbe"                   => $cbe,        // TODO
+            //"ecg"                   => $ecg,        // TODO
         ];
 
         return $this->display_view('Plafor\apprentice/view', $data_to_view);
@@ -301,7 +301,7 @@ class Apprentice extends \App\Controllers\BaseController
      *
      */
     public function save_user_course($id_apprentice = 0, $id_user_course = 0)
-    {
+    {d($_POST);
         // Access permissions
         if($this->session->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer)
         {
@@ -378,6 +378,8 @@ class Apprentice extends \App\Controllers\BaseController
                         }
                     }
                 }
+
+                d($_POST);
 
                 if($this->user_course_model->errors() == null)
                     return redirect()->to(base_url('plafor/apprentice/list_user_courses/' . $id_apprentice));

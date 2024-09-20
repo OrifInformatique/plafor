@@ -56,7 +56,7 @@ helper('form');
     <?= view('\Plafor/common/page_title',
         ['title' => lang('plafor_lang.title_apprentice_link_'.(isset($link) ? 'update' : 'new'))]) ?>
 
-    <?= form_open('plafor/apprentice/save_apprentice_link/'.$apprentice['id'].'/'.($link['id'] ?? ''),
+    <?= form_open('plafor/apprentice/save_apprentice_link/'.$apprentice['id'].(!empty($link['id']) ? '/'.$link['id'] : ''),
         [], ['apprentice' => $apprentice['id']]) ?>
 
         <!-- Form errors -->
