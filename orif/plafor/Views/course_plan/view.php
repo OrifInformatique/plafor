@@ -97,5 +97,5 @@ helper('form');
     </div>
 
     <!-- Linked teaching domains -->
-    <?= view('\Plafor/domain/view', [$teaching_domains, $course_plan['id']]) ?>
+    <?= view('\Plafor/domain/view', ['teaching_domains' => $teaching_domains, 'parent_course_plan_id' => $course_plan['id']]) ?>
 </div>
