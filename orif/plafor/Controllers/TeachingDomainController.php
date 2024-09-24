@@ -65,14 +65,14 @@ class TeachingDomainController extends \App\Controllers\BaseController{
     }
 
 
-        
+
     /**
      * Return a view with all Domains titles
      *
      * @param  bool $with_archived   => false, witout the archived domain (Default)
      *                              => true, show the archived domain
-     * 
-     * @return string|Response 
+     *
+     * @return string|Response
      */
     public function getAllDomainsTitle(bool $with_archived = false) : string|Response {
         // Access permissions
@@ -88,6 +88,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             $domain_title [] = [
                 "id"                    => $title["id"],
                 "domain_title"          => $title["title"],
+                "archive"               => $title["archive"],
             ];
         }
 
@@ -149,7 +150,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
     }
 
 
-    
+
     /**
      * Delete or reactivate a Teaching Domain title
      *
@@ -347,7 +348,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * @return string|Response
      */
     public function saveTeachingSubject(int $domain_id = 0, int $subject_id = 0) : string|Response {
-        
+
         // Access permissions
         if (!isCurrentUserAdmin()) {
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
@@ -486,10 +487,11 @@ class TeachingDomainController extends \App\Controllers\BaseController{
         // Get all teaching modules of the domain
         foreach ($this->m_teaching_module_model->withDeleted($with_archived)->orderBy("module_number", "ASC")->findAll() as $module){
             $teaching_modules [] = [
-                "id"                    => $module["id"],
-                "number_module"         => $module["module_number"],
-                "name_module"           => $module["official_name"],
-                "version_module"        => $module["version"],
+                "id"             => $module["id"],
+                "number_module"  => $module["module_number"],
+                "name_module"    => $module["official_name"],
+                "version_module" => $module["version"],
+                "archive"        => $module["archive"]
             ];
         }
 

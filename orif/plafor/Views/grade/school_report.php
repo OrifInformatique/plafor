@@ -1,6 +1,7 @@
 <?php
 
 // TODO : Separate this file into multiple ones to imporve lisibility
+// TODO : Refactor and optimise this file to imporve lisibility
 
 /**
  * Shows the school report of an apprentice.

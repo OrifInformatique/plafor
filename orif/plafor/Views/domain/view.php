@@ -160,7 +160,6 @@ helper('form');
                         <?= lang('common_lang.btn_new_f').' '.strtolower(lang('Grades.subject')) ?>
                     </a>
 
-                    <!-- TODO : Create method to link modules to domain -->
                     <a href="<?= base_url('plafor/teachingdomain/saveTeachingModuleLink/'.$teaching_domain['id']) ?>" class="btn btn-primary">
                         <?= lang('Grades.link_modules') ?>
                     </a>
