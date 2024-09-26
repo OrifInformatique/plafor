@@ -128,8 +128,8 @@
                                         </td>
 
                                         <td>
-                                            <a href="<?= base_url('plafor/apprentice/delete_apprentice_link/'.$link['id']) ?>">
-                                                <i class="bi-trash" style="font-size: 20px;"></i>
+                                            <a href="<?= base_url('plafor/apprentice/delete_apprentice_link/2/'.$link['id']) ?>">
+                                                <i class="bi-trash text-danger" style="font-size: 20px;"></i>
                                             </a>
                                         </td>
                                     </tr>

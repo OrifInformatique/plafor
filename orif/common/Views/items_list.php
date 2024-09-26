@@ -35,10 +35,10 @@
  * @param ?string $deleted_field Name of the field that is used as a "soft delete key".
  * If $with_deleted === true and $deleted_field is not set, $deleted_field default value is 'archive'.
  *
- * @param ?bool $allow_hard_delete Defines whether we can hard delete entries.
+ * @param ?bool $allow_hard_delete Defines whether entries hard deletion are possible.
  *
  * @param ?string $primary_key_field Name of the primary key of the items.
- * To construct the links to details/update/delete controllers.
+ * To construct the details/update/delete/hard_delete/reactivate links.
  * If not set, "id" is used by default.
  *
  * @param ?string $url_detail Link to the controller method that displays item's details.
@@ -50,18 +50,18 @@
  * @param ?string $url_update Link to the controller method that displays a form to update the item.
  * If not set, no "update" link will be displayed.
  *
- * @param ?string $url_delete Link to the controller method that deletes the item.
- * If not set, no "delete" link will be displayed.
- *
- * @param ?string $url_getView Link used to dynamically update the view's content with javascript.
- * It should call a method that returns the view's content.
- * If not set, the "Display disabled items" checkbox won't be displayed.
- *
  * @param ?string $url_restore Link to the controller method that restores a soft deleted item.
  * If not set, no "restore" button will be displayed.
  *
- * @param ?string $url_duplicate Link to the controller method that gives the possibility to duplicate an item.
- * If not set, no "copy" button will be displayed.
+ * @param ?string $url_delete Link to the controller method that disables (soft delete) the item.
+ * If not set, no "delete" link will be displayed.
+ *
+ * @param ?string $url_hard_delete Link to the controller method that deletes (hard delete) the item.
+ * If not set, no "hard_delete" link will be displayed.
+ *
+ * @param ?string $url_getView Link used to dynamically update the view's content with javascript.
+ * It should call a method that returns the view's content.
+ * If not set, $with_deleted value becomes false.
  *
  */
 
@@ -81,56 +81,13 @@
 
 
 /**
- * *** Example call method ***
- *
- * public function display_items($with_deleted = false) {
- *   $data['list_title'] = "Test items_list view";
- *
- *   $data['columns'] = ['name' => 'Name',
- *                       'inventory_nb' => 'Inventory nb',
- *                       'buying_date' => 'Buying date',
- *                       'warranty_duration' => 'Warranty duration'];
- *
- *   // Assume these are active items
- *   $data['items'] = [
- *       ['id' => '1', 'name' => 'Item 1', 'inventory_nb' => 'ITM0001', 'buying_date' => '01/01/2020', 'warranty_duration' => '12 months', 'deleted' => ''],
- *       ['id' => '2', 'name' => 'Item 2', 'inventory_nb' => 'ITM0002', 'buying_date' => '01/02/2020', 'warranty_duration' => '12 months', 'deleted' => ''],
- *       ['id' => '3', 'name' => 'Item 3', 'inventory_nb' => 'ITM0003', 'buying_date' => '01/03/2020', 'warranty_duration' => '12 months', 'deleted' => '']
- *   ];
- *
- *   if ($with_deleted) {
- *       // Assume these are soft_deleted items
- *       $data['items'] = array_merge($data['items'], [
- *           ['id' => '10', 'name' => 'Item 10', 'inventory_nb' => 'ITM0010', 'buying_date' => '01/01/2020', 'warranty_duration' => '12 months', 'deleted' => '2000-01-01'],
- *           ['id' => '11', 'name' => 'Item 11', 'inventory_nb' => 'ITM0011', 'buying_date' => '01/02/2020', 'warranty_duration' => '12 months', 'deleted' => '2000-01-01'],
- *           ['id' => '12', 'name' => 'Item 12', 'inventory_nb' => 'ITM0012', 'buying_date' => '01/03/2020', 'warranty_duration' => '12 months', 'deleted' => '2000-01-01']
- *       ]);
- *   }
- *
- *   $data['primary_key_field']  = 'id';
- *   $data['btn_create_label']   = 'Add an item';
- *   $data['with_deleted']       = $with_deleted;
- *   $data['deleted_field']      = 'deleted';
- *   $data['url_detail'] = "items_list/detail/";
- *   $data['url_update'] = "items_list/update/";
- *   $data['url_delete'] = "items_list/delete/";
- *   $data['url_create'] = "items_list/create/";
- *   $data['url_getView'] = "items_list/display_item/";
- *   $data['url_restore'] = "items_list/restore_item/";
- *   $data['url_duplicate'] = "items_list/duplicate_item/";
- *
- *	 return $this->display_view('Common\Views\items_list', $data);
- * }
- */
-
-/**
  * Parameters default values
  *
  */
 if(!isset($btn_create_label))
     $btn_create_label = lang('common_lang.btn_add');
 
-if(isset($with_deleted) && $with_deleted)
+if(isset($with_deleted) && $with_deleted && isset($url_getView))
 {
     if(!isset($display_deleted_label))
         $display_deleted_label = lang('common_lang.btn_show_disabled');
@@ -238,17 +195,17 @@ helper('form');
                                 </a>
                             <?php endif ?>
 
-                            <!-- Bootstrap copy icon ("files") , redirect to url_duplicate, adding /primary_key as parameter -->
-                            <?php if(isset($url_duplicate)): ?>
-                                <a href="<?= base_url(esc($url_duplicate.$item[$primary_key_field])) ?>"
-                                    class="text-decoration-none" title="<?=lang('common_lang.btn_copy') ?>" >
-                                    <i class="bi bi-files" style="font-size: 20px;"></i>
+                            <!-- Bootstrap restore icon ("arrow-counterclockwise"), redirect to url_restore, adding/primary_key as parameter -->
+                            <?php if(isset($url_restore) && !empty($item[$deleted_field])) : ?>
+                                <a href="<?= base_url(esc($url_restore . $item[$primary_key_field])) ?>"
+                                    class="text-decoration-none" title="<?=lang('common_lang.btn_restore') ?>" >
+                                    <i class="bi bi-arrow-counterclockwise" style="font-size: 20px;"></i>
                                 </a>
                             <?php endif ?>
 
                             <!-- Bootstrap delete icon ("Trash"), redirect to url_delete, adding /primary_key as parameter -->
-                            <?php if(isset($url_delete) && $allow_hard_delete): ?>
-                                <a href="<?= base_url(esc($url_delete.$item[$primary_key_field])) ?>"
+                            <?php if(isset($url_hard_delete) && !empty($item[$deleted_field]) && $allow_hard_delete): ?>
+                                <a href="<?= base_url(esc($url_hard_delete.$item[$primary_key_field])) ?>"
                                     class="text-decoration-none" title="<?=lang('common_lang.btn_hard_delete') ?>" >
                                     <i class="bi bi-trash text-danger" style="font-size: 20px;"></i>
                                 </a>
@@ -258,16 +215,13 @@ helper('form');
                                     class="text-decoration-none" title="<?=lang('common_lang.btn_delete') ?>" >
                                     <i class="bi bi-trash" style="font-size: 20px;"></i>
                                 </a>
-                            <?php endif ?>
 
-                            <!-- Bootstrap restore icon ("arrow-counterclockwise"), redirect to url_restore, adding/primary_key as parameter -->
-                            <?php if(isset($url_restore) && !empty($item[$deleted_field])) : ?>
-                                <a href="<?= base_url(esc($url_restore . $item[$primary_key_field])) ?>"
-                                    class="text-decoration-none" title="<?=lang('common_lang.btn_restore') ?>" >
-                                    <i class="bi bi-arrow-counterclockwise" style="font-size: 20px;"></i>
+                            <?php elseif(isset($url_hard_delete) && $allow_hard_delete): ?>
+                                <a href="<?= base_url(esc($url_hard_delete.$item[$primary_key_field])) ?>"
+                                    class="text-decoration-none" title="<?=lang('common_lang.btn_delete') ?>" >
+                                    <i class="bi bi-trash text-danger" style="font-size: 20px;"></i>
                                 </a>
                             <?php endif ?>
-
                         </td>
                     </tr>
                 <?php endforeach ?>

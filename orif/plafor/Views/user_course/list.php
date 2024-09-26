@@ -76,7 +76,7 @@ use CodeIgniter\I18n\Time;
 
             echo view('Common\Views\items_list',
             [
-                'items'             => $datas,
+                'items'   => $datas,
                 'columns' =>
                 [
                     'course_plan_number'    => lang('plafor_lang.field_course_plan_formation_number'),
@@ -88,7 +88,7 @@ use CodeIgniter\I18n\Time;
                 'allow_hard_delete' => true,
                 'url_create'        => 'plafor/apprentice/save_user_course/'.$id_apprentice,
                 'url_update'        => 'plafor/apprentice/save_user_course/'.$id_apprentice.'/',
-                'url_delete'        => 'plafor/courseplan/delete_user_course/'
+                'url_hard_delete'   => 'plafor/courseplan/delete_user_course/2/'
             ]);
         }
         ?>

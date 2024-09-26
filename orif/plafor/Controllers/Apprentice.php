@@ -16,19 +16,6 @@ use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\I18n\Time;
 use CodeIgniter\Validation\Validation;
 use Exception;
-use Plafor\Models\AcquisitionLevelModel;
-use Plafor\Models\AcquisitionStatusModel;
-use Plafor\Models\CommentModel;
-use Plafor\Models\CompetenceDomainModel;
-use Plafor\Models\CoursePlanModel;
-use Plafor\Models\ObjectiveModel;
-use Plafor\Models\OperationalCompetenceModel;
-use Plafor\Models\UserCourseModel;
-use Plafor\Models\UserCourseStatusModel;
-use Plafor\Models\TrainerApprenticeModel;
-
-use User\Models\User_type_model;
-use User\Models\User_model;
 
 class Apprentice extends \App\Controllers\BaseController
 {
@@ -62,6 +49,8 @@ class Apprentice extends \App\Controllers\BaseController
         helper("AccessPermissions_helper");
     }
 
+
+
     /**
      * Default method to redirect to a homepage depending on the type of user
      *
@@ -85,6 +74,8 @@ class Apprentice extends \App\Controllers\BaseController
             return redirect()->to(base_url('user/auth/login'));
         }
     }
+
+
 
     /**
      * Displays the list of apprentices
@@ -156,7 +147,7 @@ class Apprentice extends \App\Controllers\BaseController
 
     /**
      * Displays the view for a given apprentice
-     * 
+     *
      * @param int $apprentice_id    => ID of the apprentice (default = 0)
      * // TODO: Get the user_course inside the URL
      * // TODO: Change the user_course ID whith the drop down menu (JS)
@@ -182,7 +173,7 @@ class Apprentice extends \App\Controllers\BaseController
 
             $user_course['date_begin'] = $date_begin->toLocalizedString('dd.MM.Y');
             $user_course['date_end'] !== '0000-00-00' ? $user_course['date_end'] = $date_end->toLocalizedString('dd.MM.Y') : null;
-            
+
             $list_user_courses[$user_course['id']] = $user_course;
         }
 
@@ -208,7 +199,7 @@ class Apprentice extends \App\Controllers\BaseController
 
         // TODO: add school_report here
         $school_report_data = [];
-        
+
         $cfc_average;                       // Average of all domains of the apprentice, rounded by '0.1'.
         $modules = [];                      // All modules teached to the apprentice.
         // d($this->m_grade_model->getApprenticeModulesGrades($list_user_courses[$user_course['id']], null));
@@ -241,7 +232,7 @@ class Apprentice extends \App\Controllers\BaseController
         //     //  "weighting" => float,          // Weighting of modules (in CFC average). Required.
         //     //  "average" => float,            // Average of school (80%) and non-school (20%) averages. Can be empty.
         // ];
-    
+
         $data_to_view = [
             "title"                 => lang("plafor_lang.title_view_apprentice"),
             "apprentice"            => $apprentice,
@@ -261,6 +252,7 @@ class Apprentice extends \App\Controllers\BaseController
 
         return $this->display_view("Plafor\apprentice/view", $data_to_view);
     }
+
 
 
     /**
@@ -301,6 +293,7 @@ class Apprentice extends \App\Controllers\BaseController
     }
 
 
+
     /**
      * Displays a form to create a link between an apprentice and a course plan
      *
@@ -311,7 +304,7 @@ class Apprentice extends \App\Controllers\BaseController
      *
      */
     public function save_user_course($id_apprentice = 0, $id_user_course = 0)
-    {d($_POST);
+    {
         // Access permissions
         if($this->session->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_trainer)
         {
@@ -429,6 +422,8 @@ class Apprentice extends \App\Controllers\BaseController
             return $this->display_view('\User\errors\403error');
     }
 
+
+
     /**
      * @todo the user doesn't modify the trainer but add one on update
      *
@@ -504,68 +499,75 @@ class Apprentice extends \App\Controllers\BaseController
         }
     }
 
+
+
     /**
-     * Deletes a trainer_apprentice link depending on $action
+     * Alterate a trainer_apprentice link depending on $action.
+     * For every action, a action confirmation is displayed.
      *
-     * @param integer $link_id ID of the trainer_apprentice_link to affect
-     * @param integer $action  Action to apply on the trainer_apprentice link
-     *      - 0 for displaying the confirmation
+     * @param integer $link_id ID of the trainer_apprentice_link to affect.
+     *
+     * @param integer $action Action to apply on the trainer_apprentice link.
      *      - 2 for deleting (hard delete)
      *
-     * @return void
+     * @return string|RedirectResponse
      *
      */
-    public function delete_apprentice_link($link_id = 0, $action = 0)
+    public function delete_apprentice_link(int $action = null, int $link_id = 0, bool $confirm = false)
     {
-        if ($_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_trainer)
+        if(!isCurrentUserTrainer())
             return $this->display_view('\User\errors\403error');
 
         $link = $this->trainer_apprentice_model->find($link_id);
 
-        if (is_null($link))
+        if (is_null($link) || !isset($action))
             return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
 
         $apprentice = $this->trainer_apprentice_model->getApprentice($link['fk_apprentice']);
         $trainer = $this->trainer_apprentice_model->getTrainer($link['fk_trainer']);
 
-        // Action to perform
-        switch ($action)
+        if(!$confirm)
         {
-            // Displays confirmation
-            case 0:
-                $output = array
-                (
-                    'type' => 'delete',
-                    'entry' =>
+            $output = array
+            (
+                'entry' =>
+                [
+                    'type'    => lang('plafor_lang.apprentice_link'),
+                    'name'    => '',
+                    'message' => lang('plafor_lang.apprentice_link_delete_explanation'),
+                    'data'    =>
                     [
-                        'type'    => lang('plafor_lang.apprentice_link'),
-                        'name'    => '',
-                        'message' => lang('plafor_lang.apprentice_link_delete_explanation'),
-                        'data'    =>
                         [
-                            [
-                                'name' => lang('plafor_lang.apprentice'),
-                                'value' => $apprentice['username']
-                            ],
-                            [
-                                'name' => lang('plafor_lang.trainer'),
-                                'value' => $trainer['username']
-                            ]
+                            'name' => lang('plafor_lang.apprentice'),
+                            'value' => $apprentice['username']
+                        ],
+                        [
+                            'name' => lang('plafor_lang.trainer'),
+                            'value' => $trainer['username']
                         ]
-                    ],
-                    'cancel_btn_url' => base_url('plafor/apprentice/list_apprentice/' . $apprentice['id']),
-                );
+                    ]
+                ],
+                'cancel_btn_url' => base_url('plafor/apprentice/view_apprentice/' . $apprentice['id']),
+            );
+        }
 
-                return $this->display_view('\Common/manage_entry', $output);
-
-            // Deletes apprentice link
+        switch($action)
+        {
             case 2:
+                if(!$confirm)
+                {
+                    $output['type'] = 'delete';
+                    return $this->display_view('\Common/manage_entry', $output);
+                }
+
                 $this->trainer_apprentice_model->delete($link_id, TRUE);
                 break;
         }
 
-        return redirect()->to(base_url('plafor/apprentice/list_apprentice/' . $apprentice['id']));
+        return redirect()->to(base_url('plafor/apprentice/view_apprentice/' . $apprentice['id']));
     }
+
+
 
     /**
      * Shows details of the selected acquisition status
@@ -609,6 +611,8 @@ class Apprentice extends \App\Controllers\BaseController
 
         return $this->display_view('Plafor\acquisition_status/view',$output);
     }
+
+
 
     /**
      * Changes an acquisition status for an apprentice
@@ -670,6 +674,8 @@ class Apprentice extends \App\Controllers\BaseController
         }
     }
 
+
+
     /**
      * Adds or modifies a comment for an acquisition status
      *
@@ -726,6 +732,8 @@ class Apprentice extends \App\Controllers\BaseController
         return $this->display_view('\Plafor\comment/save',$output);
     }
 
+
+
     /**
      * Deletes a comment from an acquisition status
      *
@@ -748,6 +756,8 @@ class Apprentice extends \App\Controllers\BaseController
         }
         return $this->display_view('\User\errors\403error');
     }
+
+
 
     /**
      * Gets the course plan progress for a given user
@@ -775,6 +785,8 @@ class Apprentice extends \App\Controllers\BaseController
             return $response;
         }
     }
+
+
 
     /**
      * Shows the details of a user's course
@@ -853,6 +865,8 @@ class Apprentice extends \App\Controllers\BaseController
 
         return $this->display_view('\Plafor\user_course/view',$output);
     }
+
+
 
     /**
      * Deletes or deactivates a user depending on $action

@@ -9,6 +9,7 @@
 
 namespace Plafor\Controllers;
 
+use CodeIgniter\HTTP\RedirectResponse;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Psr\Log\LoggerInterface;
@@ -132,60 +133,82 @@ class TeachingDomainController extends \App\Controllers\BaseController{
 
 
     /**
-     * Delete or reactivate a Teaching Domain title
+     * Alterate a trainer_apprentice link depending on $action.
+     * For every action, a action confirmation is displayed.
      *
-     * @param int $domain_title_id  => ID of the domain
-     * @param int $action           => 0 = display a confirmation (default)
-     *                              => 1 = soft delete
-     *                              => 3 = reactivate
+     * @param int $domain_title_id ID of the domain.
      *
-     * @return string
+     * @param int $action Action to ally on the domain title.
+     *      - 1 for deactivating (soft delete)
+     *      - 2 for deleting (hard delete)
+     *      - 3 for reactivating
+     *
+     * @return string|RedirectResponse
+     *
      */
-    public function deleteTeachingDomainTitle(int $domain_title_id = 0, int $action = 0) : string|Response {
-
-        // Access permissions
-        if (!isCurrentUserAdmin()) {
+    public function deleteTeachingDomainTitle(int $action = null, int $domain_title_id = 0, bool $confirm = false): string|RedirectResponse
+    {
+        if(!isCurrentUserAdmin())
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
-        }
 
         $domain_title = $this->m_teaching_domain_title_model->withDeleted()->find($domain_title_id);
 
-        // Redirect to the last URL if subject ID doesn"t exist
-        if (is_null($domain_title)){
+        if(is_null($domain_title) || !isset($action))
             return redirect()->to(previous_url());
+
+        if(!$confirm)
+        {
+            $output =
+            [
+                "entry" =>
+                [
+                    "type"    => lang("Grades.domain_title"),
+                    "name"    => $domain_title["title"]
+                ],
+                "cancel_btn_url" => base_url("plafor/teachingdomain/getAllDomainsTitle")
+            ];
         }
 
-        switch ($action){
-            // Displays confirmation
-            case 0:
-                $output = [
-                    "entry" => [
-                        "type"    => lang("Grades.domain_title"),
-                        "name"    => $domain_title["title"]
-                    ],
-                    "cancel_btn_url" => base_url("plafor/teachingdomain/getAllDomainsTitle")
-                ];
-
-                if($domain_title["archive"]) {
-
-                    $output["type"] = "reactivate";
-                    $output["entry"]["message"] = lang("Grades.domain_title_enable_explanation");
-                }
-                else {
-
+        switch($action)
+        {
+            // Deactivates the domain title
+            case 1:
+                if(!$confirm)
+                {
                     $output["type"] = "disable";
                     $output["entry"]["message"] = lang("Grades.domain_title_disable_explanation");
+
+                    return $this->display_view('\Common/manage_entry', $output);
                 }
 
-                return $this->display_view("\Common/manage_entry", $output);
-
-            // Deactivates (soft delete) competence domain
-            case 1:
                 $this->m_teaching_domain_title_model->delete($domain_title_id);
                 break;
 
-            // Reactivates competence domain
+            // Deletes the domain title
+            case 2:
+                // TODO : Check if the domain title has domais linked. If true, prevent the hard deletion of the domain title.
+
+                if(!$confirm)
+                {
+                    $output['type'] = 'delete';
+                    $output['entry']['message'] = lang("Grades.domain_title_delete_explanation");
+
+                    return $this->display_view('\Common/manage_entry', $output);
+                }
+
+                $this->m_teaching_domain_title_model->delete($domain_title_id, true);
+                break;
+
+            // Reactivates the domain title
             case 3:
+                if(!$confirm)
+                {
+                    $output["type"] = "reactivate";
+                    $output["entry"]["message"] = lang("Grades.domain_title_enable_explanation");
+
+                    return $this->display_view('\Common/manage_entry', $output);
+                }
+
                 $this->m_teaching_domain_title_model->withDeleted()->update($domain_title_id, ["archive" => null]);
                 break;
         }
@@ -259,6 +282,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             "domain_names"                  => $titles,
             "domain_weight"                 => $data_from_model["domain_weight"] ?? null,
             "is_domain_eliminatory"         => $data_from_model["is_eliminatory"] ?? null,
+            "is_domain_archived"            => is_null($data_from_model["archive"]) ? false : true,
             "errors"                        => $this->m_teaching_domain_model->errors()
         ];
 
@@ -271,66 +295,93 @@ class TeachingDomainController extends \App\Controllers\BaseController{
 
 
     /**
-     * Delete or reactivate a Teaching Domain
-     // BUG: Multiple Common list in the same page (checkbox: see disable)
+     * Alterate a teaching domain depending on $action.
+     * For every action, a action confirmation is displayed.
      *
-     * @param int $domain_id    => ID of the domain
-     * @param int $action       => 0 = display a confirmation (default)
-     *                          => 1 = soft delete
-     *                          => 3 = reactivate
+     * @param int $domain_id ID of the domain.
      *
-     * @return string|Response
+     * @param int $action Action to apply on the teaching domain.
+     *      - 1 for deactivating (soft delete)
+     *      - 2 for deleting (hard delete)
+     *      - 3 for reactivating
+     *
+     * @return string|RedirectResponse
+     *
      */
-    public function deleteTeachingDomain(int $domain_id, int $action = 0) : string|Response {
-
-        // Access permissions
-        if (!isCurrentUserAdmin()) {
+    public function deleteTeachingDomain(int $action = null, int $domain_id = 0, bool $confirm = false): string|RedirectResponse
+    {
+        if(!isCurrentUserAdmin())
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
-        }
 
         $teaching_domain = $this->m_teaching_domain_model->withDeleted()->find($domain_id);
 
-        // Redirect to the last URL if domain ID doesn"t exist
-        if (is_null($teaching_domain)){
+        if(is_null($teaching_domain) || !isset($action))
             return redirect()->to(previous_url());
+
+        if(!$confirm)
+        {
+            $output =
+            [
+                "entry" =>
+                [
+                    "type"    => lang("Grades.domain"),
+                    "name"    => $teaching_domain["title"]
+                ],
+                "cancel_btn_url" => base_url("plafor/teachingdomain/saveTeachingDomain/".
+                    $teaching_domain["fk_course_plan"].'/'.$teaching_domain['id'])
+            ];
         }
 
-        switch ($action){
-            // Displays confirmation
-            case 0:
-                $output = [
-                    "entry" => [
-                        "type"    => lang("Grades.domain"),
-                        "name"    => $teaching_domain["title"]
-                    ],
-                    "cancel_btn_url" => base_url("plafor/courseplan/view_course_plan/" . $domain_id)
-                ];
-
-                if($teaching_domain["archive"]) {
-
-                    $output["type"] = "reactivate";
-                    $output["entry"]["message"] = lang("Grades.domain_enable_explanation");
-                }
-                else {
-
+        switch($action)
+        {
+            // Deactivates the teaching domain
+            case 1:
+                if(!$confirm)
+                {
                     $output["type"] = "disable";
                     $output["entry"]["message"] = lang("Grades.domain_disable_explanation");
+
+                    return $this->display_view('\Common/manage_entry', $output);
                 }
 
-                return $this->display_view("\Common/manage_entry", $output);
+                // TODO : Disable all subjects and modules linked (teaching_domain_module) to the domain.
 
-            // Deactivates (soft delete) competence domain
-            case 1:
                 $this->m_teaching_domain_model->delete($domain_id);
                 break;
 
-            // Reactivates competence domain
+            // Deletes the teaching domain
+            case 2:
+                // TODO : Check if the domain has subject or modules linked. If true, prevent the hard deletion of the domain.
+
+                if(!$confirm)
+                {
+                    $output["type"] = "delete";
+                    $output["entry"]["message"] = lang("Grades.domain_delete_explanation");
+
+                    return $this->display_view('\Common/manage_entry', $output);
+                }
+
+                $this->m_teaching_domain_model->delete($domain_id, true);
+                break;
+
+            // Reactivates the teaching domain
             case 3:
+                if(!$confirm)
+                {
+                    $output["type"] = "reactivate";
+                    $output["entry"]["message"] = lang("Grades.domain_enable_explanation");
+
+                    return $this->display_view('\Common/manage_entry', $output);
+                }
+
+                // TODO : Reactivate all subjects and modules linked (teaching_domain_module) to the domain.
+
                 $this->m_teaching_domain_model->withDeleted()->update($domain_id, ["archive" => null]);
                 break;
         }
 
-        return redirect()->to(base_url("plafor/courseplan/view_course_plan/" . $teaching_domain["fk_course_plan"]));
+        return redirect()->to(base_url("plafor/teachingdomain/saveTeachingDomain/".
+            $teaching_domain["fk_course_plan"].'/'.$teaching_domain['id']));
     }
 
 
@@ -350,10 +401,14 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
 
+        $teaching_domain = $this->m_teaching_domain_model->withDeleted()->find($domain_id);
+
         // Redirect to the last URL if domain ID doesn"t exist
-        if (empty($this->m_teaching_domain_model->withDeleted()->find($domain_id))){
+        if (empty($teaching_domain)){
             return redirect()->to(previous_url());
         }
+
+        $course_plan_id = $this->m_teaching_domain_model->find($domain_id)["fk_course_plan"];
 
         if(count($_POST) > 0) {
 
@@ -369,8 +424,6 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             // Return to previous page if there is NO error
             if ($this->m_teaching_subject_model->errors() == null) {
 
-                $course_plan_id = $this->m_teaching_domain_model->find($domain_id)["fk_course_plan"];
-
                 return redirect()->to("plafor/courseplan/view_course_plan/" . $course_plan_id);
             }
         }
@@ -380,11 +433,12 @@ class TeachingDomainController extends \App\Controllers\BaseController{
 
         $data_to_view = [
             "title"                     => $subject_id == 0 ? lang("Grades.create_subject") : lang("Grades.update_subject"),
+            "parent_domain"             => ["id" => $domain_id, "name" => $teaching_domain["title"]],
             "subject_id"                => $subject_id,
-            "subject_parent_domain"     => $domain_id,
             "subject_name"              => $data_from_model["name"] ?? null,
             "subject_weight"            => $data_from_model["subject_weight"] ?? null,
-            "domain_name"               => $this->m_teaching_domain_model->find($domain_id) ["title"],
+            "is_subject_archived"       => is_null($data_from_model['archive']) ? false : true,
+            "parent_course_plan_id"     => $course_plan_id,
             "errors"                    => $this->m_teaching_subject_model->errors()
         ];
 
@@ -397,65 +451,89 @@ class TeachingDomainController extends \App\Controllers\BaseController{
 
 
     /**
-     * Delete or reactivate a Teaching Subject
+     * Alterate a teaching subject depending on $action.
+     * For every action, a action confirmation is displayed.
      *
-     * @param int $subject_id   => ID of the subject
-     * @param int $action       => 0 = display a confirmation (default)
-     *                          => 1 = soft delete
-     *                          => 3 = reactivate
+     * @param int $subject_id ID of the subject.
      *
-     * @return string|Response
+     * @param int $action Action to apply on the teaching subject.
+     *      - 1 for deactivating (soft delete)
+     *      - 2 for deleting (hard delete)
+     *      - 3 for reactivating
+     *
+     * @return string|RedirectResponse
+     *
      */
-    public function deleteTeachingSubject(int $subject_id, int $action = 0) : string|Response {
-
-        // Access permissions
-        if (!isCurrentUserAdmin()) {
+    public function deleteTeachingSubject(int $action = null, int $subject_id = 0, bool $confirm = false): string|RedirectResponse
+    {
+        if (!isCurrentUserAdmin())
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
-        }
 
         $teaching_subject = $this->m_teaching_subject_model->withDeleted()->find($subject_id);
 
-        // Redirect to the last URL if subject ID doesn"t exist
-        if (is_null($teaching_subject)){
+        if (is_null($teaching_subject) || !isset($action))
             return redirect()->to(previous_url());
+
+        if(!$confirm)
+        {
+            $output =
+            [
+                "entry" =>
+                [
+                    "type"    => lang("Grades.subject"),
+                    "name"    => $teaching_subject["name"]
+                ],
+                "cancel_btn_url" => base_url("plafor/courseplan/view_course_plan/".
+                    $teaching_subject["teaching_domain"]["fk_course_plan"])
+            ];
         }
 
-        switch ($action){
-            // Displays confirmation
-            case 0:
-                $output = [
-                    "entry" => [
-                        "type"    => lang("Grades.subject"),
-                        "name"    => $teaching_subject["name"]
-                    ],
-                    "cancel_btn_url" => base_url("plafor/courseplan/view_course_plan/" . $teaching_subject["fk_course_plan"] . $subject_id) // TODO: URL
-                ];
-
-                if($teaching_subject["archive"]) {
-
-                    $output["type"] = "reactivate";
-                    $output["entry"]["message"] = lang("Grades.subject_enable_explanation");
-                }
-                else {
-
+        switch ($action)
+        {
+            // Deactivates the subject
+            case 1:
+                if(!$confirm)
+                {
                     $output["type"] = "disable";
                     $output["entry"]["message"] = lang("Grades.subject_disable_explanation");
+
+                    return $this->display_view('\Common/manage_entry', $output);
                 }
 
-                return $this->display_view("\Common/manage_entry", $output);
-
-            // Deactivates (soft delete) competence domain
-            case 1:
                 $this->m_teaching_subject_model->delete($subject_id);
                 break;
 
-            // Reactivates competence domain
+            // Deletes the subject
+            case 2:
+                // TODO : Check if the subject has grades linked. If true, prevent the hard deletion of the subject.
+
+                if(!$confirm)
+                {
+                    $output["type"] = "delete";
+                    $output["entry"]["message"] = lang("Grades.subject_delete_explanation");
+
+                    return $this->display_view('\Common/manage_entry', $output);
+                }
+
+                $this->m_teaching_subject_model->delete($subject_id, true);
+                break;
+
+            // Reactivates the subject
             case 3:
+                if(!$confirm)
+                {
+                    $output["type"] = "reactivate";
+                    $output["entry"]["message"] = lang("Grades.subject_enable_explanation");
+
+                    return $this->display_view('\Common/manage_entry', $output);
+                }
+
                 $this->m_teaching_subject_model->withDeleted()->update($subject_id, ["archive" => null]);
                 break;
         }
 
-        return redirect()->to(base_url("plafor/courseplan/view_course_plan/" . $teaching_subject["fk_course_plan"]));
+        return redirect()->to(base_url("plafor/courseplan/view_course_plan/".
+            $teaching_subject["teaching_domain"]["fk_course_plan"]));
     }
 
 
@@ -548,60 +626,79 @@ class TeachingDomainController extends \App\Controllers\BaseController{
 
 
     /**
-     * Delete or reactivate a Teaching Module
+     * Alterate a teaching module depending on $action.
+     * For every action, a action confirmation is displayed.
      *
-     * @param int $module_id    => ID of the module
-     * @param int $action       => 0 = display a confirmation (default)
-     *                          => 1 = soft delete
-     *                          => 3 = reactivate
+     * @param int $module_id ID of the module.
      *
-     * @return string|Response
+     * @param int $action Action to apply on the teaching module.
+     *      - 1 for deactivating (soft delete)
+     *      - 2 for deleting (hard delete)
+     *      - 3 for reactivating
+     *
+     * @return string|RedirectResponse
+     *
      */
-    public function deleteTeachingModule(int $module_id, int $action = 0) : string|Response {
-
-        // Access permissions
-        if (!isCurrentUserAdmin()) {
+    public function deleteTeachingModule(int $action = null, int $module_id = 0, bool $confirm = false): string|RedirectResponse
+    {
+        if (!isCurrentUserAdmin())
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
-        }
 
         $teaching_module = $this->m_teaching_module_model->withDeleted()->find($module_id);
 
-        // Redirect to the last URL if subject ID doesn"t exist
-        if (is_null($teaching_module)){
+        if (is_null($teaching_module) || !isset($action))
             return redirect()->to(previous_url());
+
+        if(!$confirm)
+        {
+            $output =
+            [
+                "entry" =>
+                [
+                    "type"    => lang("Grades.module"),
+                    "name"    => $teaching_module["module_number"] . " - " . $teaching_module["official_name"]
+                ],
+                "cancel_btn_url" => base_url("plafor/teachingdomain/getAllTeachingModule")
+            ];
         }
 
-        switch ($action){
-            // Displays confirmation
-            case 0:
-                $output = [
-                    "entry" => [
-                        "type"    => lang("Grades.module"),
-                        "name"    => $teaching_module["module_number"] . " - " . $teaching_module["official_name"]
-                    ],
-                    "cancel_btn_url" => base_url("plafor/teachingdomain/getAllTeachingModule")
-                ];
-
-                if($teaching_module["archive"]) {
-
-                    $output["type"] = "reactivate";
-                    $output["entry"]["message"] = lang("Grades.module_enable_explanation");
-                }
-                else {
-
+        switch ($action)
+        {
+            // Deactivates the module
+            case 1:
+                if(!$confirm)
+                {
                     $output["type"] = "disable";
                     $output["entry"]["message"] = lang("Grades.module_disable_explanation");
+
+                    return $this->display_view('\Common/manage_entry', $output);
                 }
 
-                return $this->display_view("\Common/manage_entry", $output);
-
-            // Deactivates (soft delete) competence domain
-            case 1:
                 $this->m_teaching_module_model->delete($module_id);
                 break;
 
-            // Reactivates competence domain
+            // Deletes the module
+            case 2:
+                // TODO : Check if the module has grades or domains linked. If true, prevent the hard deletion of the module.
+
+                if(!$confirm)
+                {
+                    $output["type"] = "delete";
+                    $output["entry"]["message"] = lang("Grades.module_delete_explanation");
+
+                    return $this->display_view('\Common/manage_entry', $output);
+                }
+
+            // Reactivates the module
             case 3:
+                if(!$confirm)
+                {
+                    $output["type"] = "reactivate";
+                    $output["entry"]["message"] = lang("Grades.module_enable_explanation");
+
+                    return $this->display_view('\Common/manage_entry', $output);
+                }
+
                 $this->m_teaching_module_model->withDeleted()->update($module_id, ["archive" => null]);
                 break;
             }

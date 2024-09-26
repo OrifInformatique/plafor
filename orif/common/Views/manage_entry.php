@@ -77,6 +77,9 @@
  *      - reactivate : 3 in the URL (e.g. base_url(uri_string().'/3'))
  *
 */
+if(!isset($type))
+    $type = null;
+
 switch($type)
 {
     case 'disable':
@@ -86,7 +89,7 @@ switch($type)
         $primary_action = $primary_action ??
         [
             'name' => lang('common_lang.btn_disable'),
-            'url'  => base_url(uri_string().'/1')
+            'url'  => base_url(uri_string().'/true')
         ];
 
         break;
@@ -97,8 +100,8 @@ switch($type)
 
         $primary_action = $primary_action ??
         [
-            'name' => lang('common_lang.btn_delete'),
-            'url'  => base_url(uri_string().'/2')
+            'name' => lang('common_lang.btn_hard_delete'),
+            'url'  => base_url(uri_string().'/true')
         ];
 
         break;
@@ -110,7 +113,7 @@ switch($type)
         $primary_action = $primary_action ??
         [
             'name' => lang('common_lang.btn_reactivate'),
-            'url'  => base_url(uri_string().'/3')
+            'url'  => base_url(uri_string().'/true')
         ];
 
         break;

@@ -77,9 +77,9 @@ use CodeIgniter\I18n\Time;
             'url_detail'    => 'plafor/courseplan/view_course_plan/',
             'url_create'    => 'plafor/courseplan/save_course_plan',
             'url_update'    => 'plafor/courseplan/save_course_plan/',
-            'url_delete'    => 'plafor/courseplan/delete_course_plan/',
+            'url_delete'    => 'plafor/courseplan/delete_course_plan/1/',
             'url_getView'   => 'plafor/courseplan/list_course_plan',
-            'url_restore'   => 'plafor/courseplan/delete_course_plan/',
+            'url_restore'   => 'plafor/courseplan/delete_course_plan/3/',
         ]);
         ?>
     </div>

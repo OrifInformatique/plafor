@@ -34,6 +34,9 @@
  * @param ?float $subject_weight Weighting of the subject (in the domain average).
  * To edit an existing entry or remember user input.
  *
+ * @param bool $is_subject_archived Defines whether the subject is archived.
+ * To disable/delete/reactivate the entry.
+ *
  * @param int $parent_course_plan_id ID of the parent course plan.
  * To redirect the user to the correct place.
  *
@@ -56,25 +59,6 @@
  *
  */
 
-
-
-/* Random data set for testing, can be deleted anytime */
-$title = lang('Grades.create_subject'); // Titre de la page
-
-$parent_domain = [
-    'id' => 1,
-    'name' => 'Software Development', // Nom du domaine parent
-];
-
-$subject_id = 32; // ID de la matière (peut être vide)
-
-$subject_name = 'Object-Oriented Programming'; // Nom de la matière (peut être vide)
-
-$subject_weight = 30.0; // Ponderation de la matière dans la moyenne du domaine (peut être vide)
-
-$parent_course_plan_id = 345; // ID du plan de cours parent
-
-$errors = []; // Erreurs du modèle teaching_subject_model (peut être vide)
 
 
 /**
@@ -136,9 +120,21 @@ helper('form')
         <div class="row">
             <?php if($subject_id > 0): ?>
                 <div class="col">
-                    <a href="<?= base_url('plafor/teachingdomain/deleteTeachingSubject/'.$subject_id) ?>" class="btn btn-danger">
-                        <?= lang('common_lang.btn_delete') ?>
-                    </a>
+                    <?php if($is_subject_archived): ?>
+                        <a href="<?= base_url('plafor/teachingdomain/deleteTeachingSubject/3/'.$subject_id) ?>" class="btn btn-warning">
+                            <?= lang('common_lang.btn_reactivate') ?>
+                        </a>
+
+                        <a href="<?= base_url('plafor/teachingdomain/deleteTeachingSubject/2/'.$subject_id) ?>" class="btn btn-danger">
+                            <?= lang('common_lang.btn_hard_delete') ?>
+                        </a>
+
+                    <?php else: ?>
+                        <a href="<?= base_url('plafor/teachingdomain/deleteTeachingSubject/1/'.$subject_id) ?>" class="btn btn-warning">
+                            <?= lang('common_lang.btn_disable') ?>
+                        </a>
+
+                    <?php endif ?>
                 </div>
             <?php endif ?>
 

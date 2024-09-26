@@ -92,11 +92,11 @@ helper('form')
             ],
             'with_deleted'  => true,
             'url_detail'    => 'plafor/courseplan/view_operational_competence/',
-            'url_create'    => 'plafor/courseplan/save_operational_competence/'.$competence_domain['id'].'/0',
+            'url_create'    => 'plafor/courseplan/save_operational_competence/'.$competence_domain['id'],
             'url_update'    => 'plafor/courseplan/save_operational_competence/'.$competence_domain['id'].'/',
-            'url_delete'    => 'plafor/courseplan/delete_operational_competence/',
+            'url_delete'    => 'plafor/courseplan/delete_operational_competence/1/',
             'url_getView'   => 'plafor/courseplan/view_competence_domain/'.$competence_domain['id'],
-            'url_restore'   => 'plafor/courseplan/delete_operational_competence/',
+            'url_restore'   => 'plafor/courseplan/delete_operational_competence/3/',
         ]);
         ?>
     </div>

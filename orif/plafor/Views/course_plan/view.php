@@ -87,11 +87,11 @@ helper('form');
             ],
             'with_deleted'  => true,
             'url_detail'    => 'plafor/courseplan/view_competence_domain/',
-            'url_create'    => 'plafor/courseplan/save_competence_domain/'.$course_plan['id'].'/0',
+            'url_create'    => 'plafor/courseplan/save_competence_domain/'.$course_plan['id'],
             'url_update'    => 'plafor/courseplan/save_competence_domain/'.$course_plan['id'].'/',
-            'url_delete'    => 'plafor/courseplan/delete_competence_domain/',
+            'url_delete'    => 'plafor/courseplan/delete_competence_domain/1/',
             'url_getView'   => 'plafor/courseplan/view_course_plan/'.$course_plan['id'],
-            'url_restore'   => 'plafor/courseplan/delete_competence_domain/',
+            'url_restore'   => 'plafor/courseplan/delete_competence_domain/3/',
         ]);
         ?>
     </div>

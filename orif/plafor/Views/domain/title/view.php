@@ -44,12 +44,14 @@ helper('form');
             [
                 'domain_title'        => lang('Grades.domain_title'),
             ],
-            'with_deleted'  => true,
-            'url_create'    => 'plafor/teachingdomain/saveTeachingDomainTitle',
-            'url_update'    => 'plafor/teachingdomain/saveTeachingDomainTitle/',
-            'url_delete'    => 'plafor/teachingdomain/deleteTeachingDomainTitle/',
-            'url_getView'   => 'plafor/teachingdomain/getAllDomainsTitle',
-            'url_restore'   => 'plafor/teachingdomain/deleteTeachingDomainTitle/'
+            'with_deleted'      => true,
+            'allow_hard_delete' => true,
+            'url_create'        => 'plafor/teachingdomain/saveTeachingDomainTitle',
+            'url_update'        => 'plafor/teachingdomain/saveTeachingDomainTitle/',
+            'url_delete'        => 'plafor/teachingdomain/deleteTeachingDomainTitle/1/',
+            'url_hard_delete'   => 'plafor/teachingdomain/deleteTeachingDomainTitle/2/',
+            'url_restore'       => 'plafor/teachingdomain/deleteTeachingDomainTitle/3/',
+            'url_getView'       => 'plafor/teachingdomain/getAllDomainsTitle'
         ])
         ?>
     </div>

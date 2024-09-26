@@ -46,12 +46,14 @@ helper('form');
                 'name_module'    => lang('Grades.module_name'),
                 'version_module' => lang('Grades.module_version'),
             ],
-            'with_deleted' => true,
-            'url_create'   => 'plafor/teachingdomain/saveTeachingModule',
-            'url_update'   => 'plafor/teachingdomain/saveTeachingModule/',
-            'url_delete'   => 'plafor/teachingdomain/deleteTeachingModule/',
-            'url_getView'  => 'plafor/teachingdomain/getAllTeachingModule',
-            'url_restore'  => 'plafor/teachingdomain/deleteTeachingModule/'
+            'with_deleted'      => true,
+            'allow_hard_delete' => true,
+            'url_create'        => 'plafor/teachingdomain/saveTeachingModule',
+            'url_update'        => 'plafor/teachingdomain/saveTeachingModule/',
+            'url_restore'       => 'plafor/teachingdomain/deleteTeachingModule/3/',
+            'url_delete'        => 'plafor/teachingdomain/deleteTeachingModule/1/',
+            'url_hard_delete'   => 'plafor/teachingdomain/deleteTeachingModule/2/',
+            'url_getView'       => 'plafor/teachingdomain/getAllTeachingModule',
         ])
         ?>
     </div>

@@ -82,11 +82,11 @@ helper('form');
             ],
             'with_deleted' => true,
             'url_detail'   => 'plafor/courseplan/view_objective/',
-            'url_create'   => 'plafor/courseplan/save_objective/' . $operational_competence['id'] . '/0',
-            'url_update'   => 'plafor/courseplan/save_objective/' . $operational_competence['id'] . '/',
-            'url_delete'   => 'plafor/courseplan/delete_objective/',
-            'url_getView'  => 'plafor/courseplan/view_operational_competence/' . $operational_competence['id'],
-            'url_restore'  => 'plafor/courseplan/delete_objective/',
+            'url_create'   => 'plafor/courseplan/save_objective/'.$operational_competence['id'],
+            'url_update'   => 'plafor/courseplan/save_objective/'.$operational_competence['id'].'/',
+            'url_delete'   => 'plafor/courseplan/delete_objective/1/',
+            'url_getView'  => 'plafor/courseplan/view_operational_competence/'.$operational_competence['id'],
+            'url_restore'  => 'plafor/courseplan/delete_objective/3/',
         ])
         ?>
     </div>

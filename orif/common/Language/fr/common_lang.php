@@ -49,7 +49,7 @@ return[
     'above'                          => 'Ci-dessous',
 
 // Manage entry
-    'title_delete_entry'        => 'Suppression',
+    'title_delete_entry'        => 'Suppression définitive',
     'subtitle_delete_entry'     => 'Êtes-vous sûr(e) de vouloir supprimer définitivement cette entrée ?',
 
     'title_disable_entry'       => 'Désactivation',

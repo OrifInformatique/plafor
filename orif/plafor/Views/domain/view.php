@@ -58,51 +58,6 @@
  *
  */
 
-/* Random data set for testing, can be deleted anytime */
- $teaching_domains = [
-    [
-        'id' => 1,
-        'name' => 'Software Development',
-        'subjects' => [
-            [
-                'id' => 101,
-                'name' => 'Object-Oriented Programming',
-                'weighting' => 0.5,
-                'archive' => true,
-            ],
-            [
-                'id' => 102,
-                'name' => 'Databases',
-                'weighting' => 0.5,
-            ],
-        ],
-        'modules' => [], // Pas de modules pour ce domaine
-        'weighting' => 0.6,
-        'is_eliminatory' => true,
-    ],
-    [
-        'id' => 2,
-        'name' => 'Network Administration',
-        'subjects' => [], // Pas de matières pour ce domaine
-        'modules' => [
-            [
-                'id' => 201,
-                'number' => 1,
-                'title' => 'Introduction to Networks',
-                'archive' => true,
-            ],
-            [
-                'id' => 202,
-                'number' => 2,
-                'title' => 'Advanced Networking',
-            ],
-        ],
-        'weighting' => 0.4,
-        'is_eliminatory' => false,
-        'archive' => true
-    ],
-];
-
 helper('form');
 
 ?>
@@ -196,16 +151,16 @@ helper('form');
                             <tbody>
                                 <?php foreach($teaching_domain['subjects'] as $teaching_subject): ?>
                                     <tr>
-                                        <th>
+                                        <td>
                                             <a href="<?= base_url('plafor/teachingdomain/saveTeachingSubject/'.
                                                 $teaching_domain['id'].'/'.$teaching_subject['id']) ?>">
                                                 <?= isset($teaching_subject['archive']) ? '<del>' : '' ?>
                                                     <?= $teaching_subject['name'] ?>
                                                 <?= isset($teaching_subject['archive']) ? '</del>' : '' ?>
                                             </a>
-                                        </th>
+                                        </td>
 
-                                        <th><?= $teaching_subject['weighting'] * 100 ?> %</th>
+                                        <td><?= $teaching_subject['weighting'] * 100 ?> %</td>
                                     </tr>
                                 <?php endforeach ?>
                             </tbody>
@@ -230,19 +185,17 @@ helper('form');
                                 <?php foreach($teaching_domain['modules'] as $module): ?>
 
                                     <tr>
-                                        <th>
+                                        <td>
                                             <?= isset($module['archive']) ? '<del>' : '' ?>
                                                 <?= $module['number'] ?>
                                             <?= isset($module['archive']) ? '</del>' : '' ?>
-                                        </th>
+                                        </td>
 
-                                        <th>
-                                            <a href="<?= base_url('plafor/teachingdomain/saveTeachingModule/'.$module['id']) ?>">
-                                                <?= isset($module['archive']) ? '<del>' : '' ?>
-                                                    <?= $module['title'] ?>
-                                                <?= isset($module['archive']) ? '</del>' : '' ?>
-                                            </a>
-                                        </th>
+                                        <td>
+                                            <?= isset($module['archive']) ? '<del>' : '' ?>
+                                                <?= $module['title'] ?>
+                                            <?= isset($module['archive']) ? '</del>' : '' ?>
+                                        </td>
                                     </tr>
                                 <?php endforeach ?>
                             </tbody>
