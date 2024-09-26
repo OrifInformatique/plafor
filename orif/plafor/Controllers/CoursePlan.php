@@ -540,7 +540,7 @@ class CoursePlan extends \App\Controllers\BaseController
      * @param integer $operational_competence_id : ID of the operational competence
      * @return void
      */
-    public function save_objective($objective_id = 0, $operational_comp_id = 0) {
+    public function save_objective(int $operational_comp_id, int $objective_id = 0)  {
         // Access permissions
         if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) {
             // Get datas of given objective and operational competence
@@ -866,15 +866,15 @@ class CoursePlan extends \App\Controllers\BaseController
         }
 
         $with_archived = $this->request->getGet('wa') ?? false;
-        $comp_domain = null;
-        $course_plan = null;
+        $comp_domain = $this->comp_domain_model->withDeleted()->find($operational_comp['fk_competence_domain']);
+        $course_plan = $this->course_plan_model->withDeleted()->find($comp_domain['fk_course_plan']);
 
-        try {
-            $comp_domain = $this->operational_comp_model->getCompetenceDomain($operational_comp['fk_competence_domain']);
-            $course_plan = $this->comp_domain_model->getCoursePlan($comp_domain['fk_course_plan']);
-        } catch (Exception $exception) {
-            // ?
-        }
+        //try {
+        //    $comp_domain = $this->operational_comp_model->getCompetenceDomain($operational_comp['fk_competence_domain']);
+        //    $course_plan = $this->comp_domain_model->getCoursePlan($comp_domain['fk_course_plan']);
+        //} catch (Exception $exception) {
+        //    // ?
+        //}
 
         $objectives = $this->operational_comp_model->getObjectives($operational_comp['id'], $with_archived);
 

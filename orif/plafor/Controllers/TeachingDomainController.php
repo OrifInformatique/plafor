@@ -68,6 +68,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             $domain_title [] = [
                 "id"                    => $title["id"],
                 "domain_title"          => $title["title"],
+                "archive"               => $title["archive"],
             ];
         }
 
@@ -481,10 +482,11 @@ class TeachingDomainController extends \App\Controllers\BaseController{
         // Get all teaching modules of the domain
         foreach ($this->m_teaching_module_model->withDeleted($with_archived)->orderBy("module_number", "ASC")->findAll() as $module){
             $teaching_modules [] = [
-                "id"                    => $module["id"],
-                "number_module"         => $module["module_number"],
-                "name_module"           => $module["official_name"],
-                "version_module"        => $module["version"],
+                "id"             => $module["id"],
+                "number_module"  => $module["module_number"],
+                "name_module"    => $module["official_name"],
+                "version_module" => $module["version"],
+                "archive"        => $module["archive"]
             ];
         }
 

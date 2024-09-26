@@ -177,7 +177,7 @@ return [
     'field_operational_competence_personal'     => 'Compétence personnelle',
     'field_objective_operational_competence'    => 'Compétence opérationnelle liée à l\'objectif',
     'field_objective_symbol'                    => 'Symbole de l\'objectif',
-    'field_objectives_symbols'                  => 'Symbole des objectif',
+    'field_objectives_symbols'                  => 'Symbole des objectifs',
     'field_objective_taxonomy'                  => 'Taxonomie de l\'objectif',
     'field_objectives_taxonomies'               => 'Taxonomie des objectifs',
     'field_objective_name'                      => 'Nom de l\'objectif',
