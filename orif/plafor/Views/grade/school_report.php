@@ -1,6 +1,7 @@
 <?php
 
 // TODO : Separate this file into multiple ones to imporve lisibility
+// TODO : Refactor and optimise this file to imporve lisibility
 
 /**
  * Shows the school report of an apprentice.
@@ -95,141 +96,6 @@
  * No data is sent by this view.
  *
  */
-
-
-
-// /* Random data set for testing, can be deleted anytime */
-// $cfc_average = 4.5; // Exemple de moyenne des domaines
-
-// $modules = [
-//     'school' => [
-//         'modules' => [
-//             [
-//                 'number' => 101,
-//                 'name' => 'Mathematics',
-//                 'grade' => [
-//                     'id' => 1,
-//                     'value' => 5.0,
-//                 ],
-//             ],
-//             [
-//                 'number' => 102,
-//                 'name' => 'Physics',
-//                 'grade' => [
-//                     'id' => 2,
-//                     'value' => 4.5,
-//                 ],
-//             ],
-//         ],
-//         'weighting' => 80,
-//         // Moyenne des modules scolaires laissée vide
-//     ],
-//     'non-school' => [
-//         'modules' => [
-//             [
-//                 'number' => 201,
-//                 'name' => 'Work Experience',
-//                 'grade' => [
-//                     'id' => 3,
-//                     'value' => 4.0,
-//                 ],
-//             ],
-//             [
-//                 'number' => 202,
-//                 'name' => 'Team Project',
-//                 'grade' => [
-//                     'id' => 4,
-//                     'value' => 4.8,
-//                 ],
-//             ],
-//         ],
-//         'weighting' => 20,
-//         // Moyenne des modules non-scolaires laissée vide
-//     ],
-//     'weighting' => 100,
-//     // Moyenne des modules globale laissée vide
-// ];
-
-// // Grade du TPI (peut être laissé vide)
-// $tpi_grade = [
-//     'id' => 43,
-//     'value' => 5.2
-// ];
-
-// $cbe = [
-//     'subjects' => [
-//         [
-//             'name' => 'Computer Science',
-//             'grades' => [
-//                 ['id' => 1, 'value' => 5.0],
-//                 ['id' => 2, 'value' => 4.8],
-//                 ['id' => 3, 'value' => 4.5],
-//                 ['id' => 4, 'value' => 5.0],
-//                 ['id' => 5, 'value' => null], // Notes facultatives laissées vides
-//                 ['id' => 6, 'value' => null],
-//                 ['id' => 7, 'value' => null],
-//                 ['id' => 8, 'value' => null],
-//             ],
-//             'weighting' => 40,
-//             // Moyenne laissée vide
-//         ],
-//         [
-//             'name' => 'Programming',
-//             'grades' => [
-//                 ['id' => 9, 'value' => 4.8],
-//                 ['id' => 10, 'value' => 5.0],
-//                 ['id' => 11, 'value' => 4.7],
-//                 ['id' => 12, 'value' => 4.9],
-//                 ['id' => 13, 'value' => null], // Notes facultatives laissées vides
-//                 ['id' => 14, 'value' => null],
-//                 ['id' => 15, 'value' => null],
-//                 ['id' => 16, 'value' => null],
-//             ],
-//             'weighting' => 60,
-//             // Moyenne laissée vide
-//         ],
-//     ],
-//     'weighting' => 100,
-//     // Moyenne des matières CBE laissée vide
-// ];
-
-// $ecg = [
-//     'subjects' => [
-//         [
-//             'name' => 'History',
-//             'grades' => [
-//                 ['id' => 17, 'value' => 3.8],
-//                 ['id' => 18, 'value' => 4.2],
-//                 ['id' => 19, 'value' => 4.0],
-//                 ['id' => 20, 'value' => 4.3],
-//                 ['id' => 21, 'value' => null], // Notes facultatives laissées vides
-//                 ['id' => 22, 'value' => null],
-//                 ['id' => 23, 'value' => null],
-//                 ['id' => 24, 'value' => null],
-//             ],
-//             'weighting' => 50,
-//             // Moyenne laissée vide
-//         ],
-//         [
-//             'name' => 'Geography',
-//             'grades' => [
-//                 ['id' => 25, 'value' => 4.5],
-//                 ['id' => 26, 'value' => 4.7],
-//                 ['id' => 27, 'value' => 4.8],
-//                 ['id' => 28, 'value' => 4.6],
-//                 ['id' => 29, 'value' => null], // Notes facultatives laissées vides
-//                 ['id' => 30, 'value' => null],
-//                 ['id' => 31, 'value' => null],
-//                 ['id' => 32, 'value' => null],
-//             ],
-//             'weighting' => 50,
-//             // Moyenne laissée vide
-//         ],
-//     ],
-//     'weighting' => 100,
-//     // Moyenne des matières ECG laissée vide
-// ];
-
 
 
 

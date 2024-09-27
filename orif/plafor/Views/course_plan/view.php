@@ -63,77 +63,39 @@ helper('form');
             <p class="bg-primary text-white"><?= lang('plafor_lang.title_view_competence_domains_linked') ?></p>
         </div>
 
-        <div class="col-12">
-            <div class="col-sm-12 text-right d-flex justify-content-between">
-                <?php if(service('session')->get('user_access') >= config('\User\Config\UserConfig')->access_lvl_admin): ?>
-                    <a href="<?= base_url('plafor/courseplan/save_competence_domain/'.$course_plan['id'].'/0/') ?>" class="btn btn-primary">
-                        <?= lang('common_lang.btn_new_m') ?>
-                    </a>
-                <?php endif ?>
+        <?php
+        $datas = [];
 
-                <!-- TODO : Make the checkbox display deleted competence domains when checked -->
-                <div>
-                    <?= form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted',
-                        ['class' => 'form-check-label', 'style'=>'padding-right: 30px;']) ?>
-
-                    <?= form_checkbox('toggle_deleted', '', $with_archived ?? false,
-                        ['class' => 'form-check-input', 'id' => 'toggle_deleted']) ?>
-                </div>
-            </div>
-
-            <?php
-
-            $datas = [];
-
-            foreach ($competence_domains as $competence_domain)
-            {
-                $datas[] =
-                [
-                    'id'      => $competence_domain['id'],
-                    'symbol'  => $competence_domain['symbol'],
-                    'compDom' => $competence_domain['name']
-                ];
-            }
-
-            echo view('Common\Views\items_list',
+        foreach ($competence_domains as $competence_domain)
+        {
+            $datas[] =
             [
-                'columns' =>
-                [
-                    'symbol'  => lang('plafor_lang.symbol'),
-                    'compDom' => lang('plafor_lang.competence_domain')
-                ],
-                'items'             => $datas,
-                'primary_key_field' => 'id',
-                'url_update'        => 'plafor/courseplan/save_competence_domain/'.$course_plan['id'].'/',
-                'url_delete'        => 'plafor/courseplan/delete_competence_domain/',
-                'url_detail'        => 'plafor/courseplan/view_competence_domain/'
-            ]);
-            ?>
-        </div>
+                'id'      => $competence_domain['id'],
+                'symbol'  => $competence_domain['symbol'],
+                'compDom' => $competence_domain['name'],
+                'archive' => $competence_domain['archive']
+            ];
+        }
+
+        echo view('Common\Views\items_list',
+        [
+            'items'   => $datas,
+            'columns' =>
+            [
+                'symbol'  => lang('plafor_lang.symbol'),
+                'compDom' => lang('plafor_lang.competence_domain')
+            ],
+            'with_deleted'  => true,
+            'url_detail'    => 'plafor/courseplan/view_competence_domain/',
+            'url_create'    => 'plafor/courseplan/save_competence_domain/'.$course_plan['id'],
+            'url_update'    => 'plafor/courseplan/save_competence_domain/'.$course_plan['id'].'/',
+            'url_delete'    => 'plafor/courseplan/delete_competence_domain/1/',
+            'url_getView'   => 'plafor/courseplan/view_course_plan/'.$course_plan['id'],
+            'url_restore'   => 'plafor/courseplan/delete_competence_domain/3/',
+        ]);
+        ?>
     </div>
 
     <!-- Linked teaching domains -->
-    <?= view('\Plafor/domain/view', [$teaching_domains, $course_plan['id']]) ?>
-
+    <?= view('\Plafor/domain/view', ['teaching_domains' => $teaching_domains, 'parent_course_plan_id' => $course_plan['id']]) ?>
 </div>
-
-<!-- TODO : Make the checkbox display deleted competence domains when checked -->
-<script defer>
-    $(document).ready(function(){
-        $('#toggle_deleted').change(e => {
-            let checked = e.currentTarget.checked;
-
-            history.replaceState(null, null, '<?= base_url('/plafor/courseplan/view_course_plan/'.$course_plan['id']) ?>?wa=' + (checked ? 1 : 0))
-
-            $.get('<?= base_url('/plafor/courseplan/view_course_plan/'.$course_plan['id']) ?>?wa=' + (checked ? 1 : 0), (datas) => {
-                let parser=new DOMParser();
-
-                parser.parseFromString(datas, 'text/html').querySelectorAll('table').forEach((domTag) => {
-                    document.querySelectorAll('table').forEach((thisDomTag) => {
-                        thisDomTag.innerHTML=domTag.innerHTML;
-                    })
-                })
-            })
-        })
-    });
-</script>

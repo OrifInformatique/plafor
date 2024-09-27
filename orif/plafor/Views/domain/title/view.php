@@ -37,60 +37,22 @@ helper('form');
     <?= view('\Plafor/common/page_title', ['title' => lang('Grades.domains_title_list')]) ?>
 
     <div class="row">
-        <div class="col">
-            <div class="col-sm-12 text-right d-flex justify-content-between">
-                <div>
-                    <?php if(service('session')->get('user_access')>=config('\User\Config\UserConfig')->access_lvl_admin): ?>
-                        <a href="<?= base_url('plafor/teachingdomain/saveTeachingDomainTitle') ?>" class="btn btn-primary">
-                            <?= lang('common_lang.btn_new_m') ?>
-                        </a>
-                    <?php endif ?>
-                </div>
-
-                <div>
-                    <!-- TODO : Display deleted modules when checked -->
-                    <?= form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted',
-                        ['class' => 'form-check-label', 'style' => 'padding-right: 30px;']) ?>
-
-                    <?=form_checkbox('toggle_deleted', '', $with_archived ?? false,
-                        ['class' => 'form-check-input', 'id' => 'toggle_deleted']) ?>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
         <?= view('Common\Views\items_list',
         [
+            'items'   => $domains_title,
             'columns' =>
             [
                 'domain_title'        => lang('Grades.domain_title'),
             ],
-            'items'             => $domains_title,
-            'primary_key_field' => 'id',
+            'with_deleted'      => true,
+            'allow_hard_delete' => true,
+            'url_create'        => 'plafor/teachingdomain/saveTeachingDomainTitle',
             'url_update'        => 'plafor/teachingdomain/saveTeachingDomainTitle/',
-            'url_delete'        => 'plafor/teachingdomain/deleteTeachingDomainTitle/'
+            'url_delete'        => 'plafor/teachingdomain/deleteTeachingDomainTitle/1/',
+            'url_hard_delete'   => 'plafor/teachingdomain/deleteTeachingDomainTitle/2/',
+            'url_restore'       => 'plafor/teachingdomain/deleteTeachingDomainTitle/3/',
+            'url_getView'       => 'plafor/teachingdomain/getAllDomainsTitle'
         ])
         ?>
     </div>
 </div>
-
-<script defer>
-    $(document).ready(function(){
-        $('#toggle_deleted').change(e => {
-            let checked = e.currentTarget.checked;
-
-            history.replaceState(null, null, '<?= base_url('/plafor/teachingdomain/getAllDomainsTitle/') ?>?wa=' + (checked ? 1 : 0))
-
-            $.get('<?= base_url('/plafor/teachingdomain/getAllDomainsTitle/') ?>?wa=' + (checked ? 1 : 0), (datas) => {
-                let parser=new DOMParser();
-
-                parser.parseFromString(datas, 'text/html').querySelectorAll('table').forEach((domTag) => {
-                    document.querySelectorAll('table').forEach((thisDomTag) => {
-                        thisDomTag.innerHTML=domTag.innerHTML;
-                    })
-                })
-            })
-        })
-    });
-</script>

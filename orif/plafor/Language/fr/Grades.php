@@ -21,17 +21,20 @@ return [
     "delete_domain"             => "Supprimer un domaine",
     "link_domain_module"        => "Lier le domaine à des modules",
 
-    "domains_title"                    => "Nom des domaines d'enseignement",
-    "domain_title"                     => "Nom du domaine d'enseignement",
-    "domains_title_list"               => "Liste des noms des domaines d'enseignement",
-    "create_domain_title"              => "Créer un nom de domaine d'enseignement",
-    "update_domain_title"              => "Modifier un nom de domaine d'enseignement",
-
-    "domain_enable_explanation"  => "Toutes les informations concernant ce domaine (plan de formation, pondération) seront réactivées.",
     "domain_disable_explanation" => "Toutes les informations concernant ce domaine (plan de formation, pondération) seront désactivées.",
+    "domain_delete_explanation"  => "Toutes les informations concernant ce domaine (plan de formation, pondération) seront supprimées.",
+    "domain_enable_explanation"  => "Toutes les informations concernant ce domaine (plan de formation, pondération) seront réactivées.",
 
-    "domain_title_enable_explanation"  => "Toutes les informations concernant ce domaine (titre) seront réactivées.",
+    // Teaching domain title
+    "domains_title"       => "Nom des domaines d'enseignement",
+    "domain_title"        => "Nom du domaine d'enseignement",
+    "domains_title_list"  => "Liste des noms des domaines d'enseignement",
+    "create_domain_title" => "Créer un nom de domaine d'enseignement",
+    "update_domain_title" => "Modifier un nom de domaine d'enseignement",
+
     "domain_title_disable_explanation" => "Toutes les informations concernant ce domaine (titre) seront désactivées.",
+    "domain_title_delete_explanation" => "Toutes les informations concernant ce domaine (titre) seront supprimées.",
+    "domain_title_enable_explanation"  => "Toutes les informations concernant ce domaine (titre) seront réactivées.",
 
     // Teaching subject
     "subject"               => "Matière",
@@ -42,9 +45,9 @@ return [
     "update_subject"        => "Modifier une matière",
     "delete_subject"        => "Supprimer une matière",
 
-    "subject_enable_explanation"  => "Toutes les informations concernant ce sujet (nom, pondération) seront réactivées.",
-    "subject_disable_explanation" => "Toutes les informations concernant ce sujet (nom, pondération) seront désactivées.",
-
+    "subject_disable_explanation" => "Toutes les informations concernant cette matière (nom, pondération) seront désactivées.",
+    "subject_delete_explanation"  => "Toutes les informations concernant cette matière (nom, pondération) seront supprimées.",
+    "subject_enable_explanation"  => "Toutes les informations concernant cette matière (nom, pondération) seront réactivées.",
 
     "ECG_acronym" => "ECG",
     "ECG_long"    => "Culture Générale",
@@ -54,26 +57,27 @@ return [
     "CBE_long"    => "Compétences de Base Élargies",
 
     // Teaching module
-    "module"                 => "Module",
-    "modules"                => "Modules",
-    "modules_list"           => "Liste des modules",
-    "modules_catalog"        => "Catalogue des modules",
-    "module_number"          => "Numéro",
-    "module_name"            => "Titre",
-    "module_version"         => "Version",
-    "module_parent_domain"   => "Domaine parent",
-    "create_module"          => "Créer un module",
-    "update_module"          => "Modifier un module",
-    "delete_module"          => "Supprimer un module",
+    "module"               => "Module",
+    "modules"              => "Modules",
+    "modules_list"         => "Liste des modules",
+    "modules_catalog"      => "Catalogue des modules",
+    "module_number"        => "Numéro",
+    "module_name"          => "Titre",
+    "module_version"       => "Version",
+    "module_parent_domain" => "Domaine parent",
+    "create_module"        => "Créer un module",
+    "update_module"        => "Modifier un module",
+    "delete_module"        => "Supprimer un module",
+
+    "module_disable_explanation" => "Toutes les informations concernant ce module (nombre, titre, version) seront désactivées.",
+    "module_delete_explanation"  => "Toutes les informations concernant ce module (nombre, titre, version) seront supprimées.",
+    "module_enable_explanation"  => "Toutes les informations concernant ce module (nombre, titre, version) seront réactivées.",
 
     "link_modules"           => "Lier des modules",
     "link_modules_to_domain" => "Lier des modules à un domaine",
 
     "school_modules"     => "Modules professionnels",
     "non_school_modules" => "Modules inter-entreprises",
-
-    "module_enable_explanation"  => "Toutes les informations concernant ce module (nombre, titre, version) seront réactivées.",
-    "module_disable_explanation" => "Toutes les informations concernant ce module (nombre, titre, version) seront désactivées.",
 
     // Teaching grade
     "grade"                     => "Note",
@@ -84,8 +88,9 @@ return [
     "update_grade"              => "Modifier une note",
     "delete_grade"              => "Supprimer une note",
 
-    "grade_enable_explanation"  => "Toutes les informations concernant cette note (note, date) seront réactivées.",
     "grade_disable_explanation" => "Toutes les informations concernant cette note (note, date) seront désactivées.",
+    "grade_delete_explanation"  => "Toutes les informations concernant cette note (note, date) seront supprimées.",
+    "grade_enable_explanation"  => "Toutes les informations concernant cette note (note, date) seront réactivées.",
 
     // Common text
     "average"        => "Moyenne",
@@ -94,6 +99,7 @@ return [
     "global_average" => "Moyenne générale",
     "name"           => "Nom",
     "of_a"           => "du",
+    "of"             => "de",
     "or"             => "ou",
     "semester"       => "Semestre",
     "semesters"      => "Semestres",
@@ -102,12 +108,11 @@ return [
     "select_all"     => "Tout sélectionner",
     "deselect_all"   => "Tout déselectionner",
 
-    // Other text
+    // School report related text
     "school_report"     => "Bulletin de notes",
     "unavailable"       => "Indisponible",
     "unavailable_short" => "N/A",
 
-    // Errors
     "err_school_report_display" => "Une erreur est survenue lors de l'affichage du bulletin de notes.",
     "error_details"             => "Détails de l'erreur",
 

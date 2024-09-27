@@ -115,12 +115,6 @@ $name_max_length    = config('\Plafor\Config\PlaforConfig')->OBJECTIVE_NAME_MAX_
                     <?= lang('common_lang.btn_cancel') ?>
                 </a>
 
-				<?php if(!empty($objective['archive'])): ?>
-                    <a href="<?=base_url('plafor/courseplan/delete_objective/'.$objective['id'].'/3')?>" class="btn btn-primary">
-                        <?=lang('common_lang.btn_reactivate') ?>
-                    </a>
-				<?php endif ?>
-
                 <?= form_submit(null, lang('common_lang.btn_save'), ['class' => 'btn btn-primary']) ?>
             </div>
         </div>

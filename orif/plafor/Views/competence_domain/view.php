@@ -66,72 +66,38 @@ helper('form')
             </p>
         </div>
 
-        <div class="col-12">
-            <div class="col-sm-12 text-right d-flex justify-content-between">
-                <?php if(service('session')->get('user_access') >= config('\User\Config\UserConfig')->access_lvl_admin): ?>
-                    <a href="<?= base_url('plafor/courseplan/save_operational_competence/'.$competence_domain['id'].'/0') ?>" class="btn btn-primary">
-                        <?= lang('common_lang.btn_new_f') ?>
-                    </a>
-                <?php endif ?>
+        <?php
+        $datas = [];
+        // TODO : Call the model and arrange data in the controller, send the data to the view
+        $competenceDomainModel = model('\Plafor\Models\CompetenceDomainModel');
 
-                <div>
-                    <?= form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted',
-                        ['class' => 'form-check-label', 'style'=>'padding-right: 30px;']) ?>
-
-                    <?= form_checkbox('toggle_deleted', '', $with_archived,
-                        ['id' => 'toggle_deleted', 'class' => 'form-check-input']) ?>
-                </div>
-            </div>
-
-            <?php
-            $datas = [];
-            // TODO : Call the model and arrange data in the controller, send the data to the view
-            $competenceDomainModel = model('\Plafor\Models\CompetenceDomainModel');
-
-            foreach ($competenceDomainModel->getOperationalCompetences($competence_domain['id'],$with_archived) as $operational_competence)
-            {
-                $datas[] =
-                [
-                    'id'     => $operational_competence['id'],
-                    'symbol' => $operational_competence['symbol'],
-                    'opComp' => $operational_competence['name']
-                ];
-            }
-
-            echo view('Common\Views\items_list',
+        foreach ($competenceDomainModel->getOperationalCompetences($competence_domain['id'], $with_archived) as $operational_competence)
+        {
+            $datas[] =
             [
-                'columns' =>
-                [
-                    'symbol' => lang('plafor_lang.symbol'),
-                    'opComp' => lang('plafor_lang.operational_competence')
-                ],
-                'items'             => $datas,
-                'primary_key_field' => 'id',
-                'url_update'        => 'plafor/courseplan/save_operational_competence/'.$competence_domain['id'].'/',
-                'url_delete'        => 'plafor/courseplan/delete_operational_competence/',
-                'url_detail'        => 'plafor/courseplan/view_operational_competence/',
-            ]);
-            ?>
-        </div>
+                'id'      => $operational_competence['id'],
+                'symbol'  => $operational_competence['symbol'],
+                'opComp'  => $operational_competence['name'],
+                'archive' => $operational_competence['archive']
+            ];
+        }
+
+        echo view('Common\Views\items_list',
+        [
+            'items'   => $datas,
+            'columns' =>
+            [
+                'symbol' => lang('plafor_lang.symbol'),
+                'opComp' => lang('plafor_lang.operational_competence')
+            ],
+            'with_deleted'  => true,
+            'url_detail'    => 'plafor/courseplan/view_operational_competence/',
+            'url_create'    => 'plafor/courseplan/save_operational_competence/'.$competence_domain['id'],
+            'url_update'    => 'plafor/courseplan/save_operational_competence/'.$competence_domain['id'].'/',
+            'url_delete'    => 'plafor/courseplan/delete_operational_competence/1/',
+            'url_getView'   => 'plafor/courseplan/view_competence_domain/'.$competence_domain['id'],
+            'url_restore'   => 'plafor/courseplan/delete_operational_competence/3/',
+        ]);
+        ?>
     </div>
 </div>
-
-<script defer>
-    $(document).ready(function(){
-        $('#toggle_deleted').change(e => {
-            let checked = e.currentTarget.checked;
-
-            history.replaceState(null, null, '<?= base_url('/plafor/courseplan/view_competence_domain/'.$competence_domain['id']) ?>?wa='+(checked ? 1 : 0))
-
-            $.get('<?= base_url('/plafor/courseplan/view_competence_domain/').$competence_domain['id'] ?>?wa='+(checked ? 1 : 0), (datas) => {
-                let parser = new DOMParser();
-
-                parser.parseFromString(datas,'text/html').querySelectorAll('table').forEach((domTag) => {
-                    document.querySelectorAll('table').forEach((thisDomTag) => {
-                        thisDomTag.innerHTML = domTag.innerHTML;
-                    })
-                })
-            })
-        })
-    });
-</script>

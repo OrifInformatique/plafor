@@ -9,30 +9,10 @@
 
 namespace Plafor\Controllers;
 
-use CodeIgniter\Debug\Toolbar\Collectors\Views;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\Response;
 use CodeIgniter\HTTP\ResponseInterface;
-use Plafor\Models\TeachingDomainModel;
-use Plafor\Models\TeachingSubjectModel;
-use Plafor\Models\TeachingModuleModel;
-use Plafor\Models\GradeModel;
-use User\Models\User_model;
-use Plafor\Models\UserCourseModel;
-
-
-
-// @TODO : Check what is used
-use Plafor\Models\AcquisitionStatusModel;
-use Plafor\Models\CommentModel;
-use Plafor\Models\CompetenceDomainModel;
-use Plafor\Models\CoursePlanModel;
-use Plafor\Models\ObjectiveModel;
-use Plafor\Models\OperationalCompetenceModel;
-use Plafor\Models\TrainerApprenticeModel;
-use Plafor\Models\UserCourseStatusModel;
 use Psr\Log\LoggerInterface;
-use User\Models\User_type_model;
 
 
 class GradeController extends \App\Controllers\BaseController{
@@ -165,91 +145,111 @@ class GradeController extends \App\Controllers\BaseController{
 
 
     /**
-     * Delete or reactivate a grade
-     * @param int $grade_id     => ID of the grade, Required
-     * @param int $action       => 0 = display a confirmation (default)
-     *                          => 1 = soft delete
-     *                          => 3 = reactivate
+     * Alterate a grade depending on $action.
+     * For every action, a action confirmation is displayed.
      *
-     * @return void
+     * @param int $grade_id ID of the grade.
+     *
+     * @param int $action Action to apply on the grade.
+     *      - 1 for deactivating (soft delete)
+     *      - 2 for deleting (hard delete)
+     *      - 3 for reactivating
+     *
+     * @return string|RedirectResponse
+     *
      */
-    public function deleteGrade(int $grade_id, int $action = 0) : string|Response {
-
-        // Access permissions
-        if (!isCurrentUserTrainerOfApprentice($course_plan_id)){
+    public function deleteGrade(int $action = null, int $grade_id = 0, bool $confirm = false): string|RedirectResponse
+    {
+        if (!isCurrentUserTrainerOfApprentice($course_plan_id))
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
-        }
 
         $grade = $this->m_grade_model->withDeleted()->find($grade_id);
 
-        // Error if grade don't exist
-        if(is_null($grade)){
+        if(is_null($grade) || !isset($action))
             return redirect()->to("plafor/grade/save");
-        }
 
         // Get the subject
         if($grade["fk_teaching_subject"] > 0){
-            // TODO subject name
+            // TODO : Get the subject
         }
         // OR the module
         else {
-            // TODO module name
+            // TODO : Get the module
         }
 
 
-        // TODO get Apprentice name
+        // TODO : Get the apprentice
 
+        if(!$confirm)
+        {
+            $output =
+            [
+                "entry" =>
+                [
+                    "type"  => lang("plafor_lang.name_grade"),
+                    "name"  => "",
+                    "data"  =>
+                    [
+                        [
+                            "name"  => lang('Grades.grade'),
+                            "value" => $grade["grade"]
+                        ],
+                        [
+                            "name"  => lang('plafor_lang.apprentice'),
+                            "value" => "" // TODO : Insert apprentice name
+                        ],
+                        [
+                            "name"  => lang('Grades.grade').' '.lang('Grades.of'),
+                            "value" => "" // TODO : Inset subject or module name
+                        ]
+                    ]
+                ],
+                "cancel_btn_url" => base_url("plafor/grade/save/".$grade_id)
+            ];
+        }
 
         // Action to perform
-        switch($action){
-            case 0: // Display confirmation
-                // TODO : Edit the common view call to match new specifications
-                $output = [
-
-                    "entry" => [
-                        "type"  => lang("plafor_lang.name_grade"),
-                        "name"  => "",
-                        "data"  => [
-                            [
-                                "name" => "", // TODO get Apprentice name
-                                "value" => $grade["grade"]
-                            ]
-                        ]
-                    ],
-                    "cancel_btn_url" => base_url("plafor/grade/save/".$grade_id)
-                ];
-
-                // Enable the grade
-                if($grade["archive"]){
-                    $output["entry"]["message"] = lang("Grades.grade_enable_explanation");
-                    $output["primary_action"] =
-                    [
-                        "name" => lang("common_lang.btn_reactivate"),
-                        "url"  => base_url(uri_string()."/3")
-                    ];
-                }
-
-                // Disable the grade
-                else{
+        switch($action)
+        {
+            // Deactivates the grade
+            case 1:
+                if(!$confirm)
+                {
+                    $output['type'] = 'disable';
                     $output["entry"]["message"] = lang("Grades.grade_disable_explanation");
-                    $output["primary_action"] =
-                    [
-                        "name" => lang("common_lang.btn_disable"),
-                        "url"  => base_url(uri_string()."/1")
-                    ];
+
+                    return $this->display_view('\Common/manage_entry', $output);
                 }
-
-                return $this->display_view("", $output);
-
-            case 1: // Soft delete
                 $this->m_grade_model->delete($grade_id);
                 break;
 
-            case 3: // Reactivate grade and is links
+            // Deletes the grade
+            case 2:
+                if(!$confirm)
+                {
+                    $output['type'] = 'delete';
+                    $output["entry"]["message"] = lang("Grades.grade_delete_explanation");
+
+                    return $this->display_view('\Common/manage_entry', $output);
+                }
+
+                $this->m_grade_model->delete($grade_id, true);
+                break;
+
+            // Reactivates the grade
+            case 3:
+                if(!$confirm)
+                {
+                    $output['type'] = 'reactivate';
+                    $output["entry"]["message"] = lang("Grades.grade_enable_explanation");
+                    return $this->display_view('\Common/manage_entry', $output);
+                }
+
                 $this->m_grade_model->withDeleted()->update($grade_id, ["archive" => null]);
                 break;
         }
 
+        // TODO : Redirect to the apprentice details (apprentice ID needed)
         return redirect()->to("plafor/grade/school_report");
     }
 }

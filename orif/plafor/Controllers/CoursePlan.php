@@ -35,7 +35,10 @@ class CoursePlan extends \App\Controllers\BaseController
         $this->m_teaching_domain_model = model("TeachingDomainModel");
         $this->m_teaching_subject_model = model("TeachingSubjectModel");
         $this->m_teaching_module_model = model("TeachingModuleModel");
+        helper("AccessPermissions_helper");
     }
+
+
 
     /**
      * Adds or modifies a course plan
@@ -94,87 +97,94 @@ class CoursePlan extends \App\Controllers\BaseController
         }
     }
 
+
+
     /**
-     * Deletes a course plan depending on $action
+     * Alterate a course_plan depending on $action.
+     * For every action, a action confirmation is displayed.
      *
-     * @param integer $course_plan_id ID of the course_plan to affect
-     * @param integer $action         Action to apply on the course plan
-     *      - 0 for displaying the confirmation
+     * @param integer $course_plan_id ID of the course_plan to affect.
+     *
+     * @param integer $action Action to apply on the course plan.
      *      - 1 for deactivating (soft delete)
      *      - 3 for reactivating
      *
-     * @return void
+     * @return string|RedirectResponse
      *
      */
-    public function delete_course_plan($course_plan_id = 0, $action = 0)
+    public function delete_course_plan(int $action = null, int $course_plan_id = 0, bool $confirm = false)
     {
-        if ($_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_admin)
+        if (!isCurrentUserAdmin())
             return $this->display_view('\User\errors\403error');
 
         $course_plan = $this->course_plan_model->withDeleted()->find($course_plan_id);
 
-        if (is_null($course_plan))
+        if (is_null($course_plan) || !isset($action))
             return redirect()->to('/plafor/courseplan/list_course_plan');
 
-        // Action to perform
+        if(!$confirm)
+        {
+            $apprentices = [];
+
+            $courses = $this->course_plan_model->getUserCourses($course_plan['id']);
+
+            foreach ($courses as $course)
+                $apprentices[] = $this->user_course_model->getUser($course['fk_user']);
+
+            $output = array
+            (
+                'entry' =>
+                [
+                    'type'    => lang('plafor_lang.course_plan'),
+                    'name'    => $course_plan['official_name'],
+                ],
+                'cancel_btn_url' => base_url('plafor/courseplan/list_course_plan')
+            );
+
+            foreach($apprentices as $apprentice)
+            {
+                $output['linked_entries'][] =
+                [
+                    'type' => lang('plafor_lang.apprentice'),
+                    'name' => $apprentice['username']
+                ];
+            }
+        }
+
         switch($action)
         {
-            // Displays confirmation
-            case 0:
-                $apprentices = [];
-
-                $courses = $this->course_plan_model->getUserCourses($course_plan['id']);
-
-                foreach ($courses as $course)
-                    $apprentices[] = $this->user_course_model->getUser($course['fk_user']);
-
-                $output = array
-                (
-                    'entry' =>
-                    [
-                        'type'    => lang('plafor_lang.course_plan'),
-                        'name'    => $course_plan['official_name'],
-                    ],
-                    'cancel_btn_url' => base_url('plafor/courseplan/list_course_plan')
-                );
-
-                if($course_plan['archive'])
-                {
-                    $output['type'] = 'reactivate';
-                    $output['entry']['message'] = lang('plafor_lang.course_plan_enable_explanation');
-                }
-
-                else
+            // Deactivates (soft delete) course plan
+            case 1:
+                if(!$confirm)
                 {
                     $output['type'] = 'disable';
                     $output['entry']['message'] = lang('plafor_lang.course_plan_disable_explanation');
+
+                    return $this->display_view('\Common/manage_entry', $output);
                 }
 
-                foreach($apprentices as $apprentice)
-                {
-                    $output['linked_entries'][] =
-                    [
-                        'type' => lang('plafor_lang.apprentice'),
-                        'name' => $apprentice['username']
-                    ];
-                }
-
-                return $this->display_view('\Common/manage_entry', $output);
-
-            // Deactivates (soft delete) course plan
-            case 1:
-                // This model uses soft deletes by default
+                // Soft deletion
                 $this->course_plan_model->delete($course_plan_id);
                 break;
 
-            // Reactivates course plan and its linked objectives
+            // Reactivates course plan
             case 3:
+                if(!$confirm)
+                {
+                    $output['type'] = 'reactivate';
+                    $output['entry']['message'] = lang('plafor_lang.course_plan_enable_explanation');
+
+                    return $this->display_view('\Common/manage_entry', $output);
+                }
+
                 $this->course_plan_model->withDeleted()->update($course_plan_id, ['archive' => null]);
                 break;
         }
 
         return redirect()->to('/plafor/courseplan/list_course_plan');
     }
+
+
 
     /**
      * Adds or modifies a competence domain
@@ -238,70 +248,77 @@ class CoursePlan extends \App\Controllers\BaseController
         }
     }
 
+
+
     /**
-     * Deletes a competence domain depending on $action
+     * Alterate a competence domain depending on $action.
+     * For every action, a action confirmation is displayed.
      *
-     * @param integer $competence_domain_id ID of the competence domain to affect
-     * @param integer $action               Action to apply on the course plan
-     *      - 0 for displaying the confirmation
+     * @param integer $competence_domain_id ID of the competence domain to affect.
+     *
+     * @param integer $action Action to apply on the course plan.
      *      - 1 for deactivating (soft delete)
      *      - 3 for reactivating
      *
-     * @return void
+     * @return string|RedirectResponse
      *
      */
-    public function delete_competence_domain($competence_domain_id = 0, $action = 0)
+    public function delete_competence_domain(int $action = null, int $competence_domain_id = 0, bool $confirm = false)
     {
-        if ($_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_admin)
+        if (!isCurrentUserAdmin())
             return $this->display_view('\User\errors\403error');
 
         $competence_domain = $this->comp_domain_model->withDeleted()->find($competence_domain_id);
 
-        if (is_null($competence_domain))
+        if (is_null($competence_domain) || !isset($action))
             return redirect()->to('plafor/courseplan/list_course_plan');
 
-        // Action to perform
+        if(!$confirm)
+        {
+            $output = array
+            (
+                'entry' =>
+                [
+                    'type'    => lang('plafor_lang.competence_domain'),
+                    'name'    => $competence_domain['name']
+                ],
+                'cancel_btn_url' => base_url('plafor/courseplan/view_course_plan/'.$competence_domain_id)
+            );
+        }
+
         switch ($action)
         {
-            // Displays confirmation
-            case 0:
-                $output = array
-                (
-                    'entry' =>
-                    [
-                        'type'    => lang('plafor_lang.competence_domain'),
-                        'name'    => $competence_domain['name']
-                    ],
-                    'cancel_btn_url' => base_url('plafor/courseplan/view_course_plan/'.$competence_domain_id)
-                );
-
-                if($competence_domain['archive'])
-                {
-                    $output['type'] = 'reactivate';
-                    $output['entry']['message'] = lang('plafor_lang.competence_domain_enable_explanation');
-                }
-
-                else
+            // Deactivates (soft delete) competence domain
+            case 1:
+                if(!$confirm)
                 {
                     $output['type'] = 'disable';
                     $output['entry']['message'] = lang('plafor_lang.competence_domain_disable_explanation');
+
+                    return $this->display_view('\Common/manage_entry', $output);
                 }
 
-                return $this->display_view('\Common/manage_entry', $output);
-
-            // Deactivates (soft delete) competence domain
-            case 1:
                 $this->comp_domain_model->delete($competence_domain_id);
                 break;
 
             // Reactivates competence domain
             case 3:
+                if(!$confirm)
+                {
+                    $output['type'] = 'reactivate';
+                    $output['entry']['message'] = lang('plafor_lang.competence_domain_enable_explanation');
+
+                    return $this->display_view('\Common/manage_entry', $output);
+                }
+
                 $this->comp_domain_model->withDeleted()->update($competence_domain_id, ['archive' => null]);
                 break;
         }
 
         return redirect()->to(base_url('plafor/courseplan/view_course_plan/' . $competence_domain['fk_course_plan']));
     }
+
+
 
     /**
      * Adds or modifies an operational competence
@@ -370,64 +387,68 @@ class CoursePlan extends \App\Controllers\BaseController
         }
     }
 
+
+
     /**
-     * Deletes an operational competence depending on $action
+     * Alterate a operational competence depending on $action.
+     * For every action, a action confirmation is displayed.
      *
-     * @param integer $operational_competence_id ID of the operational competence to affect
-     * @param integer $action                    Action to apply on the course plan:
-     *      - 0 for displaying the confirmation
+     * @param integer $operational_competence_id ID of the operational competence to affect.
+     *
+     * @param integer $action Action to apply on the course plan.
      *      - 1 for deactivating (soft delete)
      *      - 3 for reactivating
      *
-     * @return void
+     * @return string|RedirectResponse
      *
      */
-    public function delete_operational_competence($operational_comp_id = 0, $action = 0)
+    public function delete_operational_competence(int $action = null, int $operational_comp_id = 0, bool $confirm = false)
     {
-        if ($_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_admin)
+        if (!isCurrentUserAdmin())
             return $this->display_view('\User\errors\403error');
 
         $operational_comp = $this->operational_comp_model->withDeleted()->find($operational_comp_id);
 
-        if (is_null($operational_comp))
+        if (is_null($operational_comp) || !isset($action))
             return redirect()->to(base_url('plafor/courseplan/list_course_plan'));
 
-        // Action to perform
+        if(!$confirm)
+        {
+            $output = array
+            (
+                'entry' =>
+                [
+                    'type'    => lang('plafor_lang.operational_competence'),
+                    'name'    => $operational_comp['name'],
+                ],
+                'cancel_btn_url' => base_url('plafor/courseplan/view_competence_domain/'.$operational_comp['fk_competence_domain'])
+            );
+        }
+
         switch ($action)
         {
-            // Displays confirmation
-            case 0:
-                $output = array
-                (
-                    'entry' =>
-                    [
-                        'type'    => lang('plafor_lang.operational_competence'),
-                        'name'    => $operational_comp['name'],
-                    ],
-                    'cancel_btn_url' => base_url('plafor/courseplan/view_competence_domain/'.$operational_comp['fk_competence_domain'])
-                );
-
-                if($operational_comp['archive'])
-                {
-                    $output['type'] = 'reactivate';
-                    $output['entry']['message'] = lang('plafor_lang.operational_competence_enable_explanation');
-                }
-
-                else
+            // Deactivates (soft delete) operational competence
+            case 1:
+                if(!$confirm)
                 {
                     $output['type'] = 'disable';
                     $output['entry']['message'] = lang('plafor_lang.operational_competence_disable_explanation');
+
+                    return $this->display_view('\Common/manage_entry', $output);
                 }
-
-                return $this->display_view('\Common/manage_entry', $output);
-
-            // Deactivates (soft delete) operational competence
-            case 1:
                 $this->operational_comp_model->delete($operational_comp_id, FALSE);
                 break;
 
             // Reactivates operational competence
             case 3:
+                if(!$confirm)
+                {
+                    $output['type'] = 'reactivate';
+                    $output['entry']['message'] = lang('plafor_lang.operational_competence_enable_explanation');
+
+                    return $this->display_view('\Common/manage_entry', $output);
+                }
+
                 $this->operational_comp_model->withDeleted()->update($operational_comp_id, ['archive' => null]);
                 break;
         }
@@ -435,103 +456,81 @@ class CoursePlan extends \App\Controllers\BaseController
         return redirect()->to(base_url('plafor/courseplan/view_competence_domain/'.$operational_comp['fk_competence_domain']));
     }
 
+
+
     /**
-     * Deletes a user's course depending on $action
+     * Alterate an user course depending on $action.
+     * For every action, a action confirmation is displayed.
      *
-     * @param integer $user_course_id ID of the user_course to affect
-     * @param integer $action         Action to apply on the course plan :
-     *      - 0 for displaying the confirmation
+     * @param integer $user_course_id ID of the user_course to affect.
+     *
+     * @param integer $action Action to apply on the course plan.
      *      - 2 for deleting (hard delete)
      *
-     * @return void
+     * @return string|RedirectResponse
      *
      */
-    public function delete_user_course($user_course_id = 0, $action = 0)
+    public function delete_user_course(int $action = null, int $user_course_id = 0, bool $confirm = false)
     {
         $user_course = $this->user_course_model->find($user_course_id);
-        $doesTrainerTrainsApprentice = false;
+        $apprentice = $this->user_model->withDeleted()->find($user_course['fk_user']);
 
-        if (is_null($user_course))
+        if(!isCurrentUserTrainerOfApprentice($apprentice['id']))
+            return $this->display_view('\User\errors\403error');
+
+        if (is_null($user_course) || !isset($action))
             return redirect()->to(base_url());
 
-        // Checks if a currently logged trainer is the trainer of the apprentice
-        if($_SESSION['user_access'] === config('\User\Config\UserConfig')->access_lvl_trainer)
-        {
-            $trainer = $this->trainer_apprentice_model->getTrainer($_SESSION['user_id']);
-
-            if(isset($trainer))
-            {
-                $trainer_apprentices = $this->trainer_apprentice_model->getApprenticeIdsFromTrainer($trainer['id']);
-
-                if(isset($trainer_apprentices))
-                {
-                    foreach($trainer_apprentices as $id_apprentice)
-                    {
-                        if($id_apprentice === $user_course['fk_user'])
-                        {
-                            $doesTrainerTrainsApprentice = true;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        if ($_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_admin && !$doesTrainerTrainsApprentice)
-        {
-            return $this->display_view('\User\errors\403error');
-        }
-
         $course_plan = $this->course_plan_model->withDeleted()->find($user_course['fk_course_plan']);
-        $apprentice = $this->user_model->withDeleted()->find($user_course['fk_user']);
         $status = $this->user_course_status_model->find($user_course['fk_status']);
 
-        // Action to perform
+        if(!$confirm)
+        {
+            $output = array
+            (
+                'entry' =>
+                [
+                    'type' => sprintf(lang('plafor_lang.course_plan_of'), $apprentice['username']),
+                    'name' => $course_plan['official_name'],
+                    'data' =>
+                    [
+                        'user_course_status' =>
+                        [
+                            'name' => lang('plafor_lang.status'),
+                            'value' => $status['name']
+                        ]
+                    ]
+                ],
+                'cancel_btn_url' => base_url('plafor/apprentice/list_user_courses/'.$apprentice['id'])
+            );
+        }
+
         switch ($action)
         {
-            // Displays confirmation
-            case 0:
-                $output = array
-                (
-                    'type' => 'delete',
-                    'entry' =>
-                    [
-                        'type' => sprintf(lang('plafor_lang.course_plan_of'), $apprentice['username']),
-                        'name' => $course_plan['official_name'],
-                        'message' => lang('plafor_lang.user_course_delete_explanation'),
-                        'data' =>
-                        [
-                            'user_course_status' =>
-                            [
-                                'name' => lang('plafor_lang.status'),
-                                'value' => $status['name']
-                            ]
-                        ]
-                    ],
-                    'cancel_btn_url' => base_url('plafor/apprentice/list_user_courses/'.$apprentice['id'])
-                );
-
-                return $this->display_view('\Common/manage_entry', $output);
-
             // Deletes user's course and the corresponding comments and acquisition status
             case 2:
+                if(!$confirm)
+                {
+                    $output['type'] = 'delete';
+                    $output['entry']['message'] = lang('plafor_lang.user_course_delete_explanation');
+
+                    return $this->display_view('\Common/manage_entry', $output);
+                }
+
                 // Deletes comments
                 foreach($this->acquisition_status_model->where('fk_user_course', $user_course_id)->find() as $acquisition_status)
                     $this->comment_model->where('fk_acquisition_status', $acquisition_status['id'])->delete();
 
                 $this->acquisition_status_model->where('fk_user_course', $user_course_id)->delete();
 
-                    // Deletes user's course
-                    $this->user_course_model->delete($user_course_id);
-
-                    return redirect()->to(base_url('plafor/apprentice/list_user_courses/'.$apprentice['id']));
-
-                default:
-                    // Do nothing
+                // Deletes user's course
+                $this->user_course_model->delete($user_course_id);
         }
 
-        return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
+        return redirect()->to(base_url('plafor/apprentice/list_user_courses/'.$apprentice['id']));
     }
+
+
 
     /**
      * Adds or modifies an objective
@@ -540,7 +539,7 @@ class CoursePlan extends \App\Controllers\BaseController
      * @param integer $operational_competence_id : ID of the operational competence
      * @return void
      */
-    public function save_objective($objective_id = 0, $operational_comp_id = 0) {
+    public function save_objective(int $operational_comp_id, int $objective_id = 0)  {
         // Access permissions
         if ($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_admin) {
             // Get datas of given objective and operational competence
@@ -616,84 +615,77 @@ class CoursePlan extends \App\Controllers\BaseController
         }
     }
 
+
+
     /**
-     * Deletes an objective depending on $action
+     * Alterate a objective depending on $action.
+     * For every action, a action confirmation is displayed.
      *
-     * @param integer $objective_id ID of the objective to affect
-     * @param integer $action       Action to apply on the course plan:
-     *      - 0 for displaying the confirmation
+     * @param integer $objective_id ID of the objective to affect.
+     *
+     * @param integer $action Action to apply on the course plan.
      *      - 1 for deactivating (soft delete)
-     *      - 2 for deleting (hard delete)
      *      - 3 for reactivating
      *
-     * @return void
+     * @return string|RedirectResponse
      *
      */
-    public function delete_objective($objective_id = 0, $action = 0)
+    public function delete_objective(int $action = null, int $objective_id = 0, bool $confirm = false)
     {
-        // Access permissions
-        if ($_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_admin)
+        if (!isCurrentUserAdmin())
             return $this->display_view('\User\errors\403error');
 
         $objective = $this->objective_model->withDeleted()->find($objective_id);
 
-        if (is_null($objective))
+        if (is_null($objective) || !isset($action))
             return redirect()->to('plafor/courseplan/list_course_plan');
 
-        // Action to perform
+        if(!$confirm)
+        {
+            $output = array
+            (
+                'entry' =>
+                [
+                    'type'    => lang('plafor_lang.objective'),
+                    'name'    => $objective['name']
+                ],
+                'cancel_btn_url' => base_url('plafor/courseplan/view_operational_competence/'.$objective['fk_operational_competence'])
+            );
+        }
+
         switch ($action)
         {
-            // Displays confirmation
-            case 0:
-                $output = array
-                (
-                    'entry' =>
-                    [
-                        'type'    => lang('plafor_lang.objective'),
-                        'name'    => $objective['name']
-                    ],
-                    'cancel_btn_url' => base_url('plafor/courseplan/view_operational_competence/'.$objective['fk_operational_competence'])
-                );
-
-                if($objective['archive'])
-                {
-                    $output['type'] = 'reactivate';
-                    $output['entry']['message'] = lang('plafor_lang.objective_enable_explanation');
-                }
-
-                else
+            // Deactivates (soft delete) objective
+            case 1:
+                if(!$confirm)
                 {
                     $output['type'] = 'disable';
                     $output['entry']['message'] = lang('plafor_lang.objective_disable_explanation');
+
+                    return $this->display_view('\Common/manage_entry', $output);
                 }
 
-                return $this->display_view('\Common/manage_entry', $output);
-
-            // Deactivates (soft delete) objective
-            case 1:
                 $this->objective_model->delete($objective_id, FALSE);
                 break;
 
-            // Deletes (hard delete) objective
-            /**
-             * Hard delete dysfunctional - temporarily disabled
-             *
-             * // TODO : Delete the acquisition_status entry linked to the objective before
-             * // TODO : Add a delete button in the (common) manage_entry view
-             *
-             */
-            // case 2:
-            //     $this->objective_model->delete($objective_id, TRUE);
-            //     break;
-
             // Reactivates objective
             case 3:
+                if(!$confirm)
+                {
+                    $output['type'] = 'reactivate';
+                    $output['entry']['message'] = lang('plafor_lang.objective_enable_explanation');
+
+                    return $this->display_view('\Common/manage_entry', $output);
+                }
+
                 $this->objective_model->withDeleted()->update($objective_id, ['archive' => null]);
                 break;
         }
 
         return redirect()->to(base_url('plafor/courseplan/view_operational_competence/'.$objective['fk_operational_competence']));
     }
+
+
 
     /**
      * Displays the list of course plans
@@ -741,6 +733,8 @@ class CoursePlan extends \App\Controllers\BaseController
 
         return $this->display_view(['Plafor\course_plan\list'], $output);
     }
+
+
 
     /**
      * Shows details of the selected course plan
@@ -814,7 +808,7 @@ class CoursePlan extends \App\Controllers\BaseController
 
         return $this->display_view('\Plafor\course_plan\view', $output);
     }
-    // }
+
 
 
     /**
@@ -850,6 +844,8 @@ class CoursePlan extends \App\Controllers\BaseController
         return $this->display_view('\Plafor/competence_domain/view',$output);
     }
 
+
+
     /**
      * Shows details of the selected operational competence
      *
@@ -866,15 +862,15 @@ class CoursePlan extends \App\Controllers\BaseController
         }
 
         $with_archived = $this->request->getGet('wa') ?? false;
-        $comp_domain = null;
-        $course_plan = null;
+        $comp_domain = $this->comp_domain_model->withDeleted()->find($operational_comp['fk_competence_domain']);
+        $course_plan = $this->course_plan_model->withDeleted()->find($comp_domain['fk_course_plan']);
 
-        try {
-            $comp_domain = $this->operational_comp_model->getCompetenceDomain($operational_comp['fk_competence_domain']);
-            $course_plan = $this->comp_domain_model->getCoursePlan($comp_domain['fk_course_plan']);
-        } catch (Exception $exception) {
-            // ?
-        }
+        //try {
+        //    $comp_domain = $this->operational_comp_model->getCompetenceDomain($operational_comp['fk_competence_domain']);
+        //    $course_plan = $this->comp_domain_model->getCoursePlan($comp_domain['fk_course_plan']);
+        //} catch (Exception $exception) {
+        //    // ?
+        //}
 
         $objectives = $this->operational_comp_model->getObjectives($operational_comp['id'], $with_archived);
 
@@ -889,6 +885,8 @@ class CoursePlan extends \App\Controllers\BaseController
 
         return $this->display_view('\Plafor/operational_competence/view',$output);
     }
+
+
 
     /**
      * Shows details of the selected objective
