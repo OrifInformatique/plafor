@@ -35,6 +35,8 @@ class GradeController extends \App\Controllers\BaseController{
         $this->m_user_course_model = model("UserCourseModel");
         $this->m_user_model = model("User_model");
         $this->m_trainer_apprentice_model = model("TrainerApprenticeModel");
+        $this->m_teaching_subject_model = model("TeachingSubjectModel");
+        $this->m_teaching_module_model = model("TeachingModuleModel");
         helper("AccessPermissions_helper");
     }
 
@@ -63,9 +65,9 @@ class GradeController extends \App\Controllers\BaseController{
      * @param int $apprentice_id    => ID of the apprentice (default 0)
      * @param int $grade_id         => ID of the grade (default 0)
      *
-     * @return string|Response
+     * @return string|RedirectResponse
      */
-    public function saveGrade(int $apprentice_id = 0, int $grade_id = 0) : string|Response {
+    public function saveGrade(int $apprentice_id = 0, int $grade_id = 0) : string|RedirectResponse {
 
         // Access permissions
         if (!isCurrentUserTrainerOfApprentice($apprentice_id) && !isCurrentUserSelfApprentice($apprentice_id)){
@@ -160,25 +162,28 @@ class GradeController extends \App\Controllers\BaseController{
      */
     public function deleteGrade(int $action = null, int $grade_id = 0, bool $confirm = false): string|RedirectResponse
     {
-        if (!isCurrentUserTrainerOfApprentice($course_plan_id))
-            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
-
         $grade = $this->m_grade_model->withDeleted()->find($grade_id);
 
         if(is_null($grade) || !isset($action))
             return redirect()->to("plafor/grade/save");
 
+        $user_course = $this->m_user_course_model->find($grade["fk_user_course"]);
+        $apprentice_id = $this->m_user_model->find($user_course["fk_user"]);
+
+        if (!isCurrentUserTrainerOfApprentice($apprentice["id"]))
+            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
+
         // Get the subject
-        if($grade["fk_teaching_subject"] > 0){
-            // TODO : Get the subject
-        }
+        if($grade["fk_teaching_subject"] > 0)
+            $subject = $this->m_teaching_subject_model->find($grade['fk_teaching_subject']);
+
         // OR the module
-        else {
-            // TODO : Get the module
-        }
+        elseif($grade["fk_teaching_module"] > 0)
+            $module = $this->m_teaching_module_model->find($grade['fk_teaching_module']);
 
-
-        // TODO : Get the apprentice
+        // No subject or module : prevents going further.
+        else
+            return redirect()->to("plafor/grade/save");
 
         if(!$confirm)
         {
@@ -196,11 +201,11 @@ class GradeController extends \App\Controllers\BaseController{
                         ],
                         [
                             "name"  => lang('plafor_lang.apprentice'),
-                            "value" => "" // TODO : Insert apprentice name
+                            "value" => $apprentice["username"]
                         ],
                         [
                             "name"  => lang('Grades.grade').' '.lang('Grades.of'),
-                            "value" => "" // TODO : Inset subject or module name
+                            "value" => $subject["name"] ?? $module["module_number"].' - '.$module["official_name"]
                         ]
                     ]
                 ],
@@ -249,7 +254,6 @@ class GradeController extends \App\Controllers\BaseController{
                 break;
         }
 
-        // TODO : Redirect to the apprentice details (apprentice ID needed)
-        return redirect()->to("plafor/grade/school_report");
+        return redirect()->to("plafor/apprentice/view_apprentice/".$apprentice["id"]);
     }
 }
