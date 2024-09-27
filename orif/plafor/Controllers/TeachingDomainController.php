@@ -107,7 +107,6 @@ class TeachingDomainController extends \App\Controllers\BaseController{
                 "title"                     => $this->request->getPost("domain_title"),
             ];
 
-            // dd($data_to_model);
             $this->m_teaching_domain_title_model->save($data_to_model);
 
             // Return to previous page if there is NO error
@@ -224,34 +223,41 @@ class TeachingDomainController extends \App\Controllers\BaseController{
     /**
      * Add/Update a teaching domain
      *
-     * @param int $domain_id        => ID of the teaching domain (default = 0)
      * @param int $course_plan_id   => ID of the course plan (default = 0)
+     * @param int $domain_id        => ID of the teaching domain (default = 0)
      *
      * @return string|RedirectResponse
      */
-    // TODO : Create new domain title and link with this entry (when creating a domain title inside saveTeachingDomain)
     public function saveTeachingDomain(int $course_plan_id = 0, int $domain_id = 0) : string|RedirectResponse {
-
+        
         // Access permissions
         if (!isCurrentUserAdmin()) {
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
-
+        
         $course_plan = $this->m_course_plan_model->withDeleted()->find($course_plan_id);
-
+        
         // Redirect to the last URL if course plan ID doesn"t exist
         if (empty($course_plan)){
             return redirect()->to(previous_url());
         }
 
         if(count($_POST) > 0) {
-            $domain_name = !empty($this->request->getPost("new_domain_name")) ? 
-                $this->request->getPost("new_domain_name") : $this->request->getPost("domain_name");
+
+            // Insert a new domain name if not selected in drop down list
+            $domain_name_id = $this->request->getPost("domain_name");
+            if (!empty($this->request->getPost("new_domain_name"))){
+                $new_domain_name = $this->request->getPost("new_domain_name");
+
+                $this->m_teaching_domain_title_model->insert(["title" => $new_domain_name]);
+                $domain_name_id = $this->m_teaching_domain_title_model->getInsertID();
+                
+            }
 
             $data_to_model = [
                 "id"                        => $domain_id,
                 "fk_course_plan"            => $course_plan_id,
-                "fk_teaching_domain_title"  => $domain_name,
+                "fk_teaching_domain_title"  => $domain_name_id,
                 "domain_weight"             => $this->request->getPost("domain_weight") ? $this->request->getPost("domain_weight") / 100 : null,
                 "is_eliminatory"            => $this->request->getPost("is_domain_eliminatory") ?? false
             ];
@@ -763,11 +769,13 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             if(count($_POST) > 0) {
 
                 // hard delete all links between modules and this domain
-                $this->m_teaching_domain_module_model->where("fk_teaching_domain", $domain_id)->delete();
+                $this->m_teaching_domain_module_model->withDeleted()->where("fk_teaching_domain", $domain_id)->delete();
                 
+                unset($_POST["submitted"]);
+
                 // foreach module_id passed, create a link
                 foreach ($_POST as $module_id) {
-
+                    
                     $data_to_model = [
                         "fk_teaching_domain"    => $domain_id,
                         "fk_teaching_module"    => $module_id,
