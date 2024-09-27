@@ -53,9 +53,9 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * @param  bool $with_archived   => false, witout the archived domain (Default)
      *                              => true, show the archived domain
      *
-     * @return string|Response
+     * @return string|RedirectResponse
      */
-    public function getAllDomainsTitle(bool $with_archived = false) : string|Response {
+    public function getAllDomainsTitle(bool $with_archived = false) : string|RedirectResponse {
         // Access permissions
         if (!isCurrentUserAdmin()) {
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
@@ -85,9 +85,9 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      *
      * @param  int $domain_title_id     => ID of the teaching domain (default = 0)
      *
-     * @return string|Response
+     * @return string|RedirectResponse
      */
-    public function saveTeachingDomainTitle(int $domain_title_id = 0) : string|Response {
+    public function saveTeachingDomainTitle(int $domain_title_id = 0) : string|RedirectResponse {
 
         // Access permissions
         if (!isCurrentUserAdmin()) {
@@ -186,7 +186,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
 
             // Deletes the domain title
             case 2:
-                // TODO : Check if the domain title has domais linked. If true, prevent the hard deletion of the domain title.
+                // TODO : Check if the domain title has domain linked. If true, prevent the hard deletion of the domain title.
 
                 if(!$confirm)
                 {
@@ -224,9 +224,10 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * @param int $domain_id        => ID of the teaching domain (default = 0)
      * @param int $course_plan_id   => ID of the course plan (default = 0)
      *
-     * @return string|Response
+     * @return string|RedirectResponse
      */
-    public function saveTeachingDomain(int $course_plan_id = 0, int $domain_id = 0) : string|Response {
+    // TODO : Create new domain title and link with this entry (when creating a domain title inside saveTeachingDomain)
+    public function saveTeachingDomain(int $course_plan_id = 0, int $domain_id = 0) : string|RedirectResponse {
 
         // Access permissions
         if (!isCurrentUserAdmin()) {
@@ -241,10 +242,8 @@ class TeachingDomainController extends \App\Controllers\BaseController{
         }
 
         if(count($_POST) > 0) {
-
-            // TODO : Vérifier que soit $domain_name (dropdown option) ou soit $new_domain_name (input text) soit renseingé. Renvoyer une erreur à la vue si non.
-            $domain_name = $this->request->getPost("new_domain_name") ?? $this->request->getPost("domain_name");
-            d($domain_name);
+            $domain_name = !empty($this->request->getPost("new_domain_name")) ? 
+                $this->request->getPost("new_domain_name") : $this->request->getPost("domain_name");
 
             $data_to_model = [
                 "id"                        => $domain_id,
@@ -282,7 +281,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             "domain_names"                  => $titles,
             "domain_weight"                 => $data_from_model["domain_weight"] ?? null,
             "is_domain_eliminatory"         => $data_from_model["is_eliminatory"] ?? null,
-            "is_domain_archived"            => is_null($data_from_model["archive"]) ? false : true,
+            "is_domain_archived"            => !isset($data_from_model["archive"]) ? false : true,
             "errors"                        => $this->m_teaching_domain_model->errors()
         ];
 
@@ -392,9 +391,9 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * @param int $subject_id   => ID of the teaching subject (default = 0)
      * @param int $domain_id    => ID of the teaching domain (default = 0)
      *
-     * @return string|Response
+     * @return string|RedirectResponse
      */
-    public function saveTeachingSubject(int $domain_id = 0, int $subject_id = 0) : string|Response {
+    public function saveTeachingSubject(int $domain_id = 0, int $subject_id = 0) : string|RedirectResponse {
 
         // Access permissions
         if (!isCurrentUserAdmin()) {
@@ -414,9 +413,9 @@ class TeachingDomainController extends \App\Controllers\BaseController{
 
             $data_to_model = [
                 "id"                    => $subject_id,
-                "fk_teaching_domain"    => $this->request->getPost("subject_parent_domain"),
+                "fk_teaching_domain"    => $domain_id,
                 "name"                  => $this->request->getPost("subject_name"),
-                "subject_weight"        => $this->request->getPost("subject_weight"),
+                "subject_weight"        => $this->request->getPost("subject_weight") ? $this->request->getPost("subject_weight") / 100 : null,
             ];
 
             $this->m_teaching_subject_model->save($data_to_model);
@@ -437,7 +436,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             "subject_id"                => $subject_id,
             "subject_name"              => $data_from_model["name"] ?? null,
             "subject_weight"            => $data_from_model["subject_weight"] ?? null,
-            "is_subject_archived"       => is_null($data_from_model['archive']) ? false : true,
+            "is_subject_archived"       => !isset($data_from_model['archive']) ? false : true,
             "parent_course_plan_id"     => $course_plan_id,
             "errors"                    => $this->m_teaching_subject_model->errors()
         ];
@@ -544,9 +543,9 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * @param  bool $with_archived  => false, witout the archived domain (Default)
      *                              => true, show the archived domain
      *
-     * @return string|Response
+     * @return string|RedirectResponse
      */
-    public function getAllTeachingModule(bool $with_archived = false) : string|Response {
+    public function getAllTeachingModule(bool $with_archived = false) : string|RedirectResponse {
 
         // Access permissions
         if (!isCurrentUserTrainer()){
@@ -580,9 +579,9 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      *
      * @param int $module_id    => ID of the teaching module (default = 0)
      *
-     * @return string|Response
+     * @return string|RedirectResponse
      */
-    public function saveTeachingModule(int $module_id = 0) : string|Response {
+    public function saveTeachingModule(int $module_id = 0) : string|RedirectResponse {
 
         // Access permissions
         if (!isCurrentUserAdmin()) {
@@ -711,12 +710,11 @@ class TeachingDomainController extends \App\Controllers\BaseController{
         /**
          * Add/Update link between a Domain and a Module
          *
-         * // TODO: link between 1 domain and 1 or more modules (array of module ID)
          * @param  int $domain_id   => ID of the domain to link with the module (default 0)
          *
-         * @return string|Response
+         * @return string|RedirectResponse
          */
-        public function saveTeachingModuleLink(int $domain_id = 0) : string|Response {
+        public function saveTeachingModuleLink(int $domain_id = 0) : string|RedirectResponse {
 
             // Access permissions
             if (!isCurrentUserAdmin()) {
@@ -730,68 +728,54 @@ class TeachingDomainController extends \App\Controllers\BaseController{
 
             if(count($_POST) > 0) {
 
-                // Foreach module ID in the list given check if it exist, for an Update or Add a new entry
-                foreach ($this->request->getPost("list_module_id") as $module_id) {
-                    $link_id = 0;
-
-                    $link_id = $this->m_teaching_domain_module_model
-                    ->where([
-                        "fk_teaching_domain" => $domain_id,
-                        "fk_teaching_module" => $module_id
-                        ])
-                    ->find();
+                // hard delete all links between modules and this domain
+                $this->m_teaching_domain_module_model->where("fk_teaching_domain", $domain_id)->delete();
+                
+                // foreach module_id passed, create a link
+                foreach ($_POST as $module_id) {
 
                     $data_to_model = [
-                        "id"                    => $link_id,
                         "fk_teaching_domain"    => $domain_id,
                         "fk_teaching_module"    => $module_id,
                     ];
 
-                    $this->m_teaching_domain_module_model->save($data_to_model);
-
-                    // Déclarer un tableau contenant les données à ajouter
-                    // Déclarer un tableau contenant les ids des liens à supprimer
-
-                    // Prendre tous les modules
-                    // Boucler sur chaque module
-                        // Prendre les data de la checkbox corresondant au module
-                        // If data exist
-                        // If liaison non exisante
-                        // Ajouer au tableau de création les données à créer
-                        // (Rien à faire si case coché et liaison déjà existante)
-
-                        // Else (if data don"t exist)
-                        // If liaison existante
-                        // Ajouter l"id de la liaison au tableau de suppression
-                        // (Rien à faire si case décochée et liaison non existante)
-
-                        // Créer toutes les entrées, en utlisant le tableau de création
-                    // Supprimer toutes les entrées, en utilisant le tableau de suppression
+                    $this->m_teaching_domain_module_model->insert($data_to_model);
                 }
-
+                
                 // Return to previous page if there is NO error
-
-                $course_plan_id = $this->m_course_plan_model->select("fk_course_plan")->find($domain_id);
-
                 if ($this->m_teaching_domain_module_model->errors() == null) {
-                    return redirect()->to("plafor/teachingdomain/view_course_plan/" . $course_plan_id); // TODO: URL
-                    // return redirect()->to(previous_url()); /* ?????? c'est assassin ? */
-
+                    return redirect()->to("plafor/courseplan/view_course_plan/" 
+                        . $this->m_teaching_domain_model->find($domain_id)["fk_course_plan"]);
                 }
             }
 
-
-            // TODO: Get the link ID between the domain and a module (can be NULL)
-            $domain_links = $this->m_teaching_domain_module_model->where("fk_teaching_domain", $domain_id)->findAll();
-
             // Get a list with all Modules
-            //$data_from_model = $this->m_teaching_module_model->withDeleted()->find($module_id); // TODO: are link deleted ??
+            $list_all_modules = [];
+            foreach ($this->m_teaching_module_model->withDeleted()->findAll() as $module) {
+                
+                // Check if there is a link between the domain and the module in the DB 
+                $is_linked = false;
+                $link = [
+                    "fk_teaching_domain" => $domain_id,
+                    "fk_teaching_module" => $module["id"],
+                ];
+
+                if (!empty($this->m_teaching_domain_module_model->withDeleted()->where($link)->find())) { 
+                    $is_linked = true;
+                }
+
+                $list_all_modules[] = [
+                    "id"        => $module["id"],               // ID of the module. Required.
+                    "number"    => $module["module_number"],    // Nunber of the module. Required.
+                    "name"      => $module["official_name"],    // Name of the module. Required.
+                    "is_linked" => $is_linked,                  // Defines whether the module is linked to the domain. Required.
+                ];
+            }
 
             $data_to_view = [
-            //    // TODO: return array : module_number, module_name, module_id, is_module_linked
-            //    "title"                 => lang("Grades.link_domain_module"),
-            //    "module_number"         => $data_from_model["module_number"],
-            //    "module_name"           => $data_from_model["official_name"],
+                "modules"               => $list_all_modules,
+                "domain_id"             => $domain_id,
+                "parent_course_plan_id" => $this->m_teaching_domain_model->find($domain_id)["fk_course_plan"],
                 "errors"                => $this->m_teaching_module_model->errors()
             ];
 
