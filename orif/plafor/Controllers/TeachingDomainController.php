@@ -55,9 +55,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      *                              => true, show the archived domain
      *
      * @return string|RedirectResponse
-     * @return string|RedirectResponse
      */
-    public function getAllDomainsTitle(bool $with_archived = false) : string|RedirectResponse {
     public function getAllDomainsTitle(bool $with_archived = false) : string|RedirectResponse {
         // Access permissions
         if (!isCurrentUserAdmin()) {
@@ -89,9 +87,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * @param  int $domain_title_id     => ID of the teaching domain (default = 0)
      *
      * @return string|RedirectResponse
-     * @return string|RedirectResponse
      */
-    public function saveTeachingDomainTitle(int $domain_title_id = 0) : string|RedirectResponse {
     public function saveTeachingDomainTitle(int $domain_title_id = 0) : string|RedirectResponse {
 
         // Access permissions
@@ -232,9 +228,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * @param int $course_plan_id   => ID of the course plan (default = 0)
      *
      * @return string|RedirectResponse
-     * @return string|RedirectResponse
      */
-    public function saveTeachingDomain(int $course_plan_id = 0, int $domain_id = 0) : string|RedirectResponse {
     // TODO : Create new domain title and link with this entry (when creating a domain title inside saveTeachingDomain)
     public function saveTeachingDomain(int $course_plan_id = 0, int $domain_id = 0) : string|RedirectResponse {
 
@@ -421,9 +415,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * @param int $domain_id    => ID of the teaching domain (default = 0)
      *
      * @return string|RedirectResponse
-     * @return string|RedirectResponse
      */
-    public function saveTeachingSubject(int $domain_id = 0, int $subject_id = 0) : string|RedirectResponse {
     public function saveTeachingSubject(int $domain_id = 0, int $subject_id = 0) : string|RedirectResponse {
 
         // Access permissions
@@ -581,9 +573,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      *                              => true, show the archived domain
      *
      * @return string|RedirectResponse
-     * @return string|RedirectResponse
      */
-    public function getAllTeachingModule(bool $with_archived = false) : string|RedirectResponse {
     public function getAllTeachingModule(bool $with_archived = false) : string|RedirectResponse {
 
         // Access permissions
@@ -619,9 +609,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * @param int $module_id    => ID of the teaching module (default = 0)
      *
      * @return string|RedirectResponse
-     * @return string|RedirectResponse
      */
-    public function saveTeachingModule(int $module_id = 0) : string|RedirectResponse {
     public function saveTeachingModule(int $module_id = 0) : string|RedirectResponse {
 
         // Access permissions
@@ -759,9 +747,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
          * @param  int $domain_id   => ID of the domain to link with the module (default 0)
          *
          * @return string|RedirectResponse
-         * @return string|RedirectResponse
          */
-        public function saveTeachingModuleLink(int $domain_id = 0) : string|RedirectResponse {
         public function saveTeachingModuleLink(int $domain_id = 0) : string|RedirectResponse {
 
             // Access permissions
