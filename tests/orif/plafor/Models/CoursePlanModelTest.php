@@ -113,4 +113,5 @@ class CoursePlanModelTest extends CIUnitTestCase
         // Assertions
         $this->assertNull($coursePlanProgress);
     }
+
 }

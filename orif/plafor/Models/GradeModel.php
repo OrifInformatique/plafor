@@ -49,6 +49,7 @@ class GradeModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
+
     /**
      * Post-processing hook for find operations.
      * 
@@ -223,6 +224,7 @@ class GradeModel extends Model
         return $data;
     }
 
+
     /**
      * Calculates the average of an array of grades returned by the
      * getApprenticeSubjectGrades or getApprenticeModulesGrades methods.
@@ -276,10 +278,11 @@ class GradeModel extends Model
      *     $idSubject, [$gradeModel, 'roundHalfPoint']);
      */
     public function getApprenticeSubjectAverage(int $idUserCourse,
-        int $idSubject, ?callable $roundMethod = null): float
+        int $idSubject, ?callable $roundMethod = null): ?float
     {
         $grades = $this
             ->getApprenticeSubjectGrades($idUserCourse, $idSubject);
+        if (count($grades) === 0) return null;
         $average = $this->getAverageFromArray($grades);
         $roundMethod = $roundMethod ?? [$this, 'roundOneDecimalPoint'];
         return $roundMethod($average);
@@ -308,5 +311,90 @@ class GradeModel extends Model
         $average = $this->getAverageFromArray($grades);
         $roundMethod = $roundMethod ?? [$this, 'roundOneDecimalPoint'];
         return $roundMethod($average);
+    }
+
+
+    // get the compétence informatique bultin grade
+    // for compétence informatique 
+    public function getApprenticeModuleAverageReal(int $idUserCourse,
+        ?callable $roundMethod = null): float
+    {
+        // potenration between epsic module and interentreprise module
+        $schoolWeight = config('\Plafor\Config\PlaforConfig')->SCHOOL_WEIGHT;
+        $externWeight = config('\Plafor\Config\PlaforConfig')->EXTERN_WEIGHT;
+
+        $schoolGrades = $this->getApprenticeModulesGrades($idUserCourse, true);
+        $schoolAverage = $this->getAverageFromArray($schoolGrades);
+        $externGrades = $this
+            ->getApprenticeModulesGrades($idUserCourse, false);
+        $externAverage = $this->getAverageFromArray($externGrades);
+        $average = $schoolWeight * $schoolAverage + $externWeight
+            * $externAverage;
+        $roundMethod = $roundMethod ?? [$this, 'roundOneDecimalPoint'];
+        return $roundMethod($average);
+    }
+
+    
+    // for one of : connaissance de base élargie, ecg, note de tpi, 
+    public function getApprenticeDomainAverageNotModule(int $userCourseId,
+        int $domainId, ?callable $roundMethod = null): ?float
+    {
+        $subjectModel = model('TeachingSubjectModel');
+        $subjectIds = $subjectModel
+            ->getTeachingSubjectIdByDomain($domainId);
+        $subjectAverages = array_map(fn($id) =>
+            $this->getApprenticeSubjectAverage($userCourseId, $id, fn($r) =>
+            $r), $subjectIds);
+        $subjectAveragesWithoutNull = array_filter($subjectAverages,
+            fn($average) => !is_null($average));
+        if (count($subjectAveragesWithoutNull) === 0) return null;
+        $averageDomain = array_sum($subjectAveragesWithoutNull) /
+            count($subjectAveragesWithoutNull);
+        $roundMethod = $roundMethod ?? [$this, 'roundOneDecimalPoint'];
+        return $roundMethod($averageDomain);
+    }
+
+    // ????
+    public function getApprenticeSubjectsAverage(int $userCourseId): array
+    {
+        $subjectModel = model('TeachingSubjectModel');
+        $subjectIds= $subjectModel
+            ->getTeachingSubjectIdByUserCourse($userCourseId);
+        $this->getApprenticeSubjectAverage();
+    }
+
+    // cfc grade
+    // TODO check round
+    public function getApprenticeAverage(int $userCourseId): float
+    {
+        // get module grade
+        $gradeModel = model('GradeModel');
+        $moduleGrade = $gradeModel
+            ->getApprenticeModuleAverageReal($userCourseId);
+        // get other module
+        $teachingDomainModel = model('TeachingDomainModel');
+        $domainIds = $teachingDomainModel
+            ->getTeachingDomainIdByUserCourse($userCourseId);
+        // [0] => [id, weight]
+        $domainIdsAndWeights = array_map(
+            function($domainId) use ($teachingDomainModel)
+        {
+            $domainWeight = $teachingDomainModel->select('domain_weight')
+                                ->find($domainId)['domain_weight'];
+            return [$domainId, $domainWeight];
+        }, $domainIds);
+        // [0] => [grade, weight]
+        $domainGradesAndWeight = array_map(
+            function($domainIdAndWeight) use ($userCourseId)
+        {
+            $grade = $this->getApprenticeDomainAverageNotModule($userCourseId,
+                $domainIdAndWeight[0]);
+            return [$grade, $domainIdAndWeight[1]];
+        }, $domainIdsAndWeights);
+        $sum = array_reduce($domainGradesAndWeight, fn($sum, $gradeAndWeight)
+            => $sum + ($gradeAndWeight[0] ?? 0) * $gradeAndWeight[1], 0);
+        // TODO move  0.3
+        $sumWithModule = $sum + $moduleGrade * 0.3;
+        return $this->roundOneDecimalPoint($sumWithModule);
     }
 }

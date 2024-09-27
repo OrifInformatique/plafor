@@ -164,7 +164,7 @@ class Apprentice extends \App\Controllers\BaseController
      * @return string|Response
      */
     public function view_apprentice(int $apprentice_id = 0,
-        ?int $user_course_id=null) : string|Response
+        ?int $user_course_id = null) : string|Response
     {
         // Access permissions
         if (!isCurrentUserTrainerOfApprentice($apprentice_id) &&
@@ -184,8 +184,7 @@ class Apprentice extends \App\Controllers\BaseController
             $date_end   = Time::createFromFormat('Y-m-d', $user_course['date_end']);
 
             $user_course['date_begin'] = $date_begin->toLocalizedString('dd.MM.Y');
-            $user_course['date_end'] !== '0000-00-00' ? $user_course['date_end'] = $date_end->toLocalizedString('dd.MM.Y') : null;
-            
+            $user_course['date_end'] = $user_course['date_end'] !== '0000-00-00' ? $date_end->toLocalizedString('dd.MM.Y') : null;
             $list_user_courses[$user_course['id']] = $user_course;
         }
 
@@ -214,6 +213,7 @@ class Apprentice extends \App\Controllers\BaseController
         
         $cfc_average;                       // Average of all domains of the apprentice, rounded by '0.1'.
         $modules = [];                      // All modules teached to the apprentice.
+
         // d($this->m_grade_model->getApprenticeModulesGrades($list_user_courses[$user_course['id']], null));
         // foreach ($this->m_grade_model->where("fk_user_course", $list_user_courses[$user_course['id']])->findAll() as $grade_module)
         // $modules = [
@@ -244,7 +244,13 @@ class Apprentice extends \App\Controllers\BaseController
         //     //  "weighting" => float,          // Weighting of modules (in CFC average). Required.
         //     //  "average" => float,            // Average of school (80%) and non-school (20%) averages. Can be empty.
         // ];
-    
+        $school_report_data = [
+            "cfc_average"           => $cfc_average,// TODO
+            "modules"               => $modules,    // TODO
+            "tpi_grade"             => $tpi_grade,  // TODO
+            "cbe"                   => $cbe,        // TODO
+            "ecg"                   => $ecg,        // TODO
+        ];
         $data_to_view = [
             "title"                 => lang("plafor_lang.title_view_apprentice"),
             "apprentice"            => $apprentice,
@@ -253,8 +259,8 @@ class Apprentice extends \App\Controllers\BaseController
             "user_courses"          => $list_user_courses,
             "user_course_status"    => $list_user_course_status,
             "course_plans"          => $list_course_plans,
-            "school_report_data"    => $school_report_data, // TODO: Add the arrays below inside this one
             "user_course_id" => $user_course_id,
+            "school_report_data"    => $school_report_data, // TODO: Add the arrays below inside this one
 
             // "cfc_average"           => $cfc_average,// TODO
             // "modules"               => $modules,    // TODO

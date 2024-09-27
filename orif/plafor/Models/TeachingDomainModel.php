@@ -123,4 +123,18 @@ class TeachingDomainModel extends Model
         return $data;
     }
 
+    public function getTeachingDomainIdByUserCourse(int $userCourseId): array
+    {
+        $userCourseModel = model('CoursePlanModel');
+        $coursePlanId = $userCourseModel
+            ->getCoursePlanIdByUserCourse($userCourseId);
+        $domainIdsRaw = $this
+            ->select('teaching_domain.id')
+            ->where('fk_course_plan = ', $coursePlanId)
+            ->findAll();
+        $domainIds = array_map(fn($record) => $record['id'], $domainIdsRaw);
+        return $domainIds;
+    }
+
+
 }

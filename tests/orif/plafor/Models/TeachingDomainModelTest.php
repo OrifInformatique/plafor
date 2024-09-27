@@ -188,4 +188,5 @@ class TeachingDomainModelTest extends CIUnitTestCase
         $this->assertEquals($domains, $domains2);
     }
 
+
 }
