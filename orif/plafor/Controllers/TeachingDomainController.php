@@ -226,7 +226,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
                 "id"                        => $domain_id,
                 "fk_course_plan"            => $course_plan_id,
                 "fk_teaching_domain_title"  => $domain_name,
-                "domain_weight"             => $this->request->getPost("domain_weight") / 100,
+                "domain_weight"             => $this->request->getPost("domain_weight") ? $this->request->getPost("domain_weight") / 100 : null,
                 "is_eliminatory"            => $this->request->getPost("is_domain_eliminatory") ?? false
             ];
 
