@@ -41,6 +41,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
         $this->m_user_course_model            = model("UserCourseModel");
         $this->m_user_model                   = model("User_model");
         $this->m_course_plan_model            = model("CoursePlanModel");
+        $this->m_grade_model                  = model("GradeModel");
 
         helper("AccessPermissions_helper");
     }
@@ -53,9 +54,9 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * @param  bool $with_archived   => false, witout the archived domain (Default)
      *                              => true, show the archived domain
      *
-     * @return string|Response
+     * @return string|RedirectResponse
      */
-    public function getAllDomainsTitle(bool $with_archived = false) : string|Response {
+    public function getAllDomainsTitle(bool $with_archived = false) : string|RedirectResponse {
         // Access permissions
         if (!isCurrentUserAdmin()) {
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
@@ -85,9 +86,9 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      *
      * @param  int $domain_title_id     => ID of the teaching domain (default = 0)
      *
-     * @return string|Response
+     * @return string|RedirectResponse
      */
-    public function saveTeachingDomainTitle(int $domain_title_id = 0) : string|Response {
+    public function saveTeachingDomainTitle(int $domain_title_id = 0) : string|RedirectResponse {
 
         // Access permissions
         if (!isCurrentUserAdmin()) {
@@ -186,7 +187,9 @@ class TeachingDomainController extends \App\Controllers\BaseController{
 
             // Deletes the domain title
             case 2:
-                // TODO : Check if the domain title has domais linked. If true, prevent the hard deletion of the domain title.
+                // Prevents the hard deletion of the domain title if there are domains linked to it.
+                if(!empty($this->m_teaching_domain->where("fk_teaching_domain_title", $domain_title_id)->findAll()))
+                    return redirect()->to(base_url("plafor/teachingdomain/getAllDomainsTitle"));
 
                 if(!$confirm)
                 {
@@ -224,9 +227,9 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * @param int $domain_id        => ID of the teaching domain (default = 0)
      * @param int $course_plan_id   => ID of the course plan (default = 0)
      *
-     * @return string|Response
+     * @return string|RedirectResponse
      */
-    public function saveTeachingDomain(int $course_plan_id = 0, int $domain_id = 0) : string|Response {
+    public function saveTeachingDomain(int $course_plan_id = 0, int $domain_id = 0) : string|RedirectResponse {
 
         // Access permissions
         if (!isCurrentUserAdmin()) {
@@ -282,7 +285,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             "domain_names"                  => $titles,
             "domain_weight"                 => $data_from_model["domain_weight"] ?? null,
             "is_domain_eliminatory"         => $data_from_model["is_eliminatory"] ?? null,
-            "is_domain_archived"            => is_null($data_from_model["archive"]) ? false : true,
+            "is_domain_archived"            => !isset($data_from_model["archive"]) ? false : true,
             "errors"                        => $this->m_teaching_domain_model->errors()
         ];
 
@@ -328,9 +331,12 @@ class TeachingDomainController extends \App\Controllers\BaseController{
                     "name"    => $teaching_domain["title"]
                 ],
                 "cancel_btn_url" => base_url("plafor/teachingdomain/saveTeachingDomain/".
-                    $teaching_domain["fk_course_plan"].'/'.$teaching_domain['id'])
+                    $teaching_domain["fk_course_plan"].'/'.$domain_id)
             ];
         }
+
+        $linked_subjects = $this->m_teaching_subject_model->where("fk_teaching_domain", $domain_id)->withDeleted()->findAll();
+        $linked_modules  = $this->m_teaching_domain_module_model->where("fk_teaching_domain", $domain_id)->withDeleted()->findAll();
 
         switch($action)
         {
@@ -344,14 +350,25 @@ class TeachingDomainController extends \App\Controllers\BaseController{
                     return $this->display_view('\Common/manage_entry', $output);
                 }
 
-                // TODO : Disable all subjects and modules linked (teaching_domain_module) to the domain.
+                // Disable all subjects linked to the domain
+                foreach($linked_subjects as $linked_subject)
+                    $this->m_teaching_subject_model->delete($linked_subject["id"]);
+
+                // Disable links between a domain and modules
+                foreach($linked_modules as $linked_module)
+                    $this->m_teaching_domain_module_model->delete($linked_module["id"]);
 
                 $this->m_teaching_domain_model->delete($domain_id);
                 break;
 
             // Deletes the teaching domain
             case 2:
-                // TODO : Check if the domain has subject or modules linked. If true, prevent the hard deletion of the domain.
+                // Prevent the hard deletion of the domain if there are subject or modules linked to it
+                if(!empty($linked_subjects) || !empty($linked_modules))
+                {
+                    return redirect()->to(base_url("plafor/teachingdomain/saveTeachingDomain/".
+                        $teaching_domain["fk_course_plan"].'/'.$domain_id));
+                }
 
                 if(!$confirm)
                 {
@@ -374,14 +391,19 @@ class TeachingDomainController extends \App\Controllers\BaseController{
                     return $this->display_view('\Common/manage_entry', $output);
                 }
 
-                // TODO : Reactivate all subjects and modules linked (teaching_domain_module) to the domain.
+                // Reactivate all subjects linked to the domain
+                foreach($linked_subjects as $linked_subject)
+                    $this->m_teaching_subject_model->update($linked_subject["id"], ["archive" => null]);
+
+                // Reactivate links between a domain and modules
+                foreach($linked_modules as $linked_module)
+                    $this->m_teaching_domain_module_model->update($linked_module["id"], ["archive" => null]);
 
                 $this->m_teaching_domain_model->withDeleted()->update($domain_id, ["archive" => null]);
                 break;
         }
 
-        return redirect()->to(base_url("plafor/teachingdomain/saveTeachingDomain/".
-            $teaching_domain["fk_course_plan"].'/'.$teaching_domain['id']));
+        return redirect()->to(base_url("plafor/courseplan/view_course_plan/".$teaching_domain["fk_course_plan"]));
     }
 
 
@@ -392,9 +414,9 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * @param int $subject_id   => ID of the teaching subject (default = 0)
      * @param int $domain_id    => ID of the teaching domain (default = 0)
      *
-     * @return string|Response
+     * @return string|RedirectResponse
      */
-    public function saveTeachingSubject(int $domain_id = 0, int $subject_id = 0) : string|Response {
+    public function saveTeachingSubject(int $domain_id = 0, int $subject_id = 0) : string|RedirectResponse {
 
         // Access permissions
         if (!isCurrentUserAdmin()) {
@@ -437,7 +459,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
             "subject_id"                => $subject_id,
             "subject_name"              => $data_from_model["name"] ?? null,
             "subject_weight"            => $data_from_model["subject_weight"] ?? null,
-            "is_subject_archived"       => is_null($data_from_model['archive']) ? false : true,
+            "is_subject_archived"       => !isset($data_from_model['archive']) ? false : true,
             "parent_course_plan_id"     => $course_plan_id,
             "errors"                    => $this->m_teaching_subject_model->errors()
         ];
@@ -505,7 +527,12 @@ class TeachingDomainController extends \App\Controllers\BaseController{
 
             // Deletes the subject
             case 2:
-                // TODO : Check if the subject has grades linked. If true, prevent the hard deletion of the subject.
+                // Prevent the hard deletion of the subject if there are grades linked to it
+                if(!empty($this->m_grade_model->where("fk_teaching_module", $module_id)->findAll()))
+                {
+                    return redirect()->to(base_url("plafor/courseplan/view_course_plan/".
+                        $teaching_subject["teaching_domain"]["fk_course_plan"]));
+                }
 
                 if(!$confirm)
                 {
@@ -544,9 +571,9 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * @param  bool $with_archived  => false, witout the archived domain (Default)
      *                              => true, show the archived domain
      *
-     * @return string|Response
+     * @return string|RedirectResponse
      */
-    public function getAllTeachingModule(bool $with_archived = false) : string|Response {
+    public function getAllTeachingModule(bool $with_archived = false) : string|RedirectResponse {
 
         // Access permissions
         if (!isCurrentUserTrainer()){
@@ -580,9 +607,9 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      *
      * @param int $module_id    => ID of the teaching module (default = 0)
      *
-     * @return string|Response
+     * @return string|RedirectResponse
      */
-    public function saveTeachingModule(int $module_id = 0) : string|Response {
+    public function saveTeachingModule(int $module_id = 0) : string|RedirectResponse {
 
         // Access permissions
         if (!isCurrentUserAdmin()) {
@@ -679,7 +706,12 @@ class TeachingDomainController extends \App\Controllers\BaseController{
 
             // Deletes the module
             case 2:
-                // TODO : Check if the module has grades or domains linked. If true, prevent the hard deletion of the module.
+                $linked_grades  = $this->m_grade_model->where("fk_teaching_module", $module_id)->findAll();
+                $linked_domains = $this->m_teaching_domain_module_model->where("fk_teaching_module", $module_id)->findAll();
+
+                // Prevent the hard deletion of the module if there are grades or domains linked to it
+                if(!empty($linked_grades) || !empty($linked_domains))
+                    return redirect()->to(base_url("plafor/teachingdomain/getAllTeachingModule"));
 
                 if(!$confirm)
                 {
@@ -714,9 +746,9 @@ class TeachingDomainController extends \App\Controllers\BaseController{
          * // TODO: link between 1 domain and 1 or more modules (array of module ID)
          * @param  int $domain_id   => ID of the domain to link with the module (default 0)
          *
-         * @return string|Response
+         * @return string|RedirectResponse
          */
-        public function saveTeachingModuleLink(int $domain_id = 0) : string|Response {
+        public function saveTeachingModuleLink(int $domain_id = 0) : string|RedirectResponse {
 
             // Access permissions
             if (!isCurrentUserAdmin()) {
