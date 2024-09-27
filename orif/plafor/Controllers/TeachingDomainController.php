@@ -58,6 +58,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * @return string|RedirectResponse
      */
     public function getAllDomainsTitle(bool $with_archived = false) : string|RedirectResponse {
+    public function getAllDomainsTitle(bool $with_archived = false) : string|RedirectResponse {
         // Access permissions
         if (!isCurrentUserAdmin()) {
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
@@ -90,6 +91,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * @return string|RedirectResponse
      * @return string|RedirectResponse
      */
+    public function saveTeachingDomainTitle(int $domain_title_id = 0) : string|RedirectResponse {
     public function saveTeachingDomainTitle(int $domain_title_id = 0) : string|RedirectResponse {
 
         // Access permissions
@@ -232,6 +234,8 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * @return string|RedirectResponse
      * @return string|RedirectResponse
      */
+<<<<<<<<< Temporary merge branch 1
+=========
     // TODO : Create new domain title and link with this entry (when creating a domain title inside saveTeachingDomain)
     public function saveTeachingDomain(int $course_plan_id = 0, int $domain_id = 0) : string|RedirectResponse {
 
@@ -421,6 +425,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * @return string|RedirectResponse
      */
     public function saveTeachingSubject(int $domain_id = 0, int $subject_id = 0) : string|RedirectResponse {
+    public function saveTeachingSubject(int $domain_id = 0, int $subject_id = 0) : string|RedirectResponse {
 
         // Access permissions
         if (!isCurrentUserAdmin()) {
@@ -580,6 +585,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * @return string|RedirectResponse
      */
     public function getAllTeachingModule(bool $with_archived = false) : string|RedirectResponse {
+    public function getAllTeachingModule(bool $with_archived = false) : string|RedirectResponse {
 
         // Access permissions
         if (!isCurrentUserTrainer()){
@@ -616,6 +622,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
      * @return string|RedirectResponse
      * @return string|RedirectResponse
      */
+    public function saveTeachingModule(int $module_id = 0) : string|RedirectResponse {
     public function saveTeachingModule(int $module_id = 0) : string|RedirectResponse {
 
         // Access permissions
@@ -755,6 +762,7 @@ class TeachingDomainController extends \App\Controllers\BaseController{
          * @return string|RedirectResponse
          * @return string|RedirectResponse
          */
+        public function saveTeachingModuleLink(int $domain_id = 0) : string|RedirectResponse {
         public function saveTeachingModuleLink(int $domain_id = 0) : string|RedirectResponse {
 
             // Access permissions
