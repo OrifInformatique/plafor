@@ -1,6 +1,9 @@
 <?php
+
 /**
- * Fichier de vue pour save_competence_domain
+ * Let the edition of a competence domain.
+ *
+ * Called by CoursePlan/save_competence_domain($course_plan_id, $competence_domain_id)
  *
  * @author      Orif (ViDi, HeMa)
  * @link        https://github.com/OrifInformatique
@@ -25,7 +28,7 @@
  * Array of key-values where keys are course plans IDs and values are course plans official names.
  * For select options.
  *
- * @param int parent_course_plan_id ID of the parent course plan.
+ * @param int fk_course_plan_id ID of the course plan.
  *
  * @param ?array $errors comp_domain_model errors.
  *
@@ -54,32 +57,17 @@
  */
 
 helper('form');
-$validation = \CodeIgniter\Config\Services::validation();
-$session=\CodeIgniter\Config\Services::session();
-?>
-<?php
-    // For some reasons, you can only set a type to input made with form_input if done with only a array as param, may need to be checked for later uses.
 
-    $data_symbol = array(
-        'name' => 'symbol',
-        'value' => $competence_domain_symbol ?? $competence_domain['symbol'] ?? '',
-        'max' => config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH,
-        'class' => 'form-control',
-        'id' => 'competence_domain_symbol'
-    );
+$symbol_max_length = config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH;
+$name_max_length   = config('\Plafor\Config\PlaforConfig')->COMPETENCE_DOMAIN_NAME_MAX_LENGTH;
 
-    $data_name = array(
-        'name' => 'name',
-        'value' => $competence_domain_name ?? $competence_domain['name'] ?? '',
-        'max' => config('\Plafor\Config\PlaforConfig')->COMPETENCE_DOMAIN_NAME_MAX_LENGTH,
-        'class' => 'form-control', 'id' => 'competence_domain_name'
-    );
 ?>
+
 <div class="container">
     <!-- Page title -->
     <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
 
-    <?= form_open(base_url('plafor/courseplan/save_competence_domain/'.$parent_course_plan_id.'/'.$competence_domain["id"]), null,
+    <?= form_open(base_url('plafor/courseplan/save_competence_domain/'.$fk_course_plan_id.'/'.$competence_domain_id), null,
         ['id' => $competence_domain['id'] ?? 0, 'type' => 'competence_domain']) ?>
 
         <!-- Form errors -->
@@ -90,27 +78,43 @@ $session=\CodeIgniter\Config\Services::session();
                 <?= form_label(lang('plafor_lang.field_competence_domain_course_plan'), 'course_plan',
                     ['class' => 'form-label']) ?>
 
+                <?= form_dropdown('course_plan', $course_plans, $fk_course_plan_id ?? '',
+                    ['class' => 'form-control']) ?>
+            </div>
+
+            <div class="col-sm-12 form-group">
+                <?= form_label(lang('plafor_lang.field_competence_domain_symbol'), 'competence_domain_symbol',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_input('symbol', $competence_domain['symbol'] ?? '',
+                    ['class' => 'form-control', 'maxlength' => $symbol_max_length]) ?>
+                <?= form_label(lang('plafor_lang.field_competence_domain_course_plan'), 'course_plan',
+                    ['class' => 'form-label']) ?>
+
                 <?= form_dropdown('course_plan', $course_plans, $parent_course_plan_id ?? '',
                     ['class' => 'form-control']) ?>
             </div>
+
             <div class="col-sm-12 form-group">
-                <?= form_label(lang('plafor_lang.field_competence_domain_symbol'), 'competence_domain_symbol', ['class' => 'form-label']); ?>
-                <?= form_input($data_symbol); ?>
-                <?= form_label(lang('plafor_lang.field_competence_domain_name'), 'competence_domain_name', ['class' => 'form-label']); ?>
-                <?= form_input($data_name); ?>
+                <?= form_label(lang('plafor_lang.field_competence_domain_name'), 'competence_domain_name',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_input('name', $competence_domain['name'] ?? '',
+                    ['class' => 'form-control', 'maxlength' => $name_max_length]) ?>
             </div>
         </div>
 
         <!-- FORM BUTTONS -->
+
         <div class="row">
             <div class="col text-right">
                 <a class="btn btn-secondary" href="<?= base_url('plafor/courseplan/view_course_plan/'
-                    .($parent_course_plan_id != null ? $parent_course_plan_id : '')) ?>">
+                    .($fk_course_plan_id != null ? $fk_course_plan_id : '')) ?>">
                     <?= lang('common_lang.btn_cancel') ?>
                 </a>
 
                 <?= form_submit(null, lang('common_lang.btn_save'), ['class' => 'btn btn-primary']) ?>
             </div>
         </div>
-    <?= form_close(); ?>
+    <?= form_close() ?>
 </div>

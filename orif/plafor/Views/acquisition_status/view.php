@@ -1,10 +1,14 @@
 <?php
+
 /**
- * Fichier de vue pour view_acquisition_status
+ * Shows the details of an acquisition status.
+ *
+ * Called by Apprentice/view_acquisition_status($acquisition_status_id)
  *
  * @author      Orif (ViDi, HeMa)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ *
  *
  */
 
@@ -40,6 +44,7 @@
 
 ?>
 
+
 <div class="container">
     <?= view('\Plafor\templates\navigator', ['title' => lang('plafor_lang.title_view_acquisition_status')]) ?>
 
@@ -48,31 +53,27 @@
 
     <!-- Objective details -->
     <div class="row">
-        <div class="col">
-            <h2 class="title-section"><?= $title; ?></h2>
+        <div class="col-md-12">
+            <p class="bg-primary text-white"><?= lang('plafor_lang.details_acquisition_status') ?></p>
+        </div>
+
+        <div class="col-md-12">
+            <p><strong><?= lang('plafor_lang.objective').' '.$objective['symbol'] ?></strong> : <?= $objective['name'] ?></p>
+        </div>
+
+        <div class="col-md-4">
+            <p><strong><?= lang('plafor_lang.field_objective_taxonomy') ?></strong> : <?= $objective['taxonomy'] ?></p>
+        </div>
+
+        <div class="col-md-6">
+            <p><strong><?= lang('plafor_lang.field_acquisition_level') ?></strong> : <?= $acquisition_level['name'] ?></p>
         </div>
     </div>
+
+    <!-- Comments -->
     <div class="row">
         <div class="col-md-12">
-            <p class="bg-primary text-white"><?=lang('plafor_lang.details_acquisition_status')?></p>
-        </div><div class="col-md-2">
-            <p class="font-weight-bold"><?=lang('plafor_lang.field_objective_symbol')?></p>
-            <a><?=$objective['symbol']?></a>
-        </div><div class="col-md-6">
-            <p class="font-weight-bold"><?=lang('plafor_lang.field_objective_name')?></p>
-            <a ><?=$objective['name']?></a>
-        </div><div class="col-md-2">
-            <p class="font-weight-bold"><?=lang('plafor_lang.field_objective_taxonomy')?></p>
-            <a ><?=$objective['taxonomy']?></a>
-        </div>
-        <div class="col-md-2">
-            <p class="font-weight-bold"><?=lang('plafor_lang.field_acquisition_level')?></p>
-            <p><?=$acquisition_level['name']?></p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <p class="bg-primary text-white"><?=lang('plafor_lang.field_linked_comments')?></p>
+            <p class="bg-primary text-white"><?= lang('plafor_lang.field_linked_comments') ?></p>
 		</div>
 
 		<?php if($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_trainer): ?>
@@ -93,6 +94,7 @@
                         <th></th>
                     </tr>
                 </thead>
+
                 <tbody>
                     <?php
                     // TODO : Sort the trainers in the controller (don't forget to update PHPDoc needed values for view)
@@ -125,5 +127,5 @@
         </div>
     </div>
 </div>
-<script src="<?=base_url('notif.js')?>">
-</script>
+
+<script src="<?=base_url('notif.js')?>"></script>

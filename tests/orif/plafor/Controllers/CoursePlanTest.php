@@ -898,7 +898,7 @@
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
 
-        $result->assertSee(lang('common_lang.title_disable_entry'), 'h1');
+        $result->assertSee(lang('common_lang.title_disable_entry'), 'h2');
         $result->assertSee(lang('common_lang.subtitle_disable_entry'), 'p');
 
         $result->assertSee(lang('plafor_lang.operational_competence'), 'strong');
@@ -907,13 +907,13 @@
 
         $result->assertDontSee(lang('common_lang.entries_linked'),
             'h2');
-        $result->assertDontSeeElement('.alert-secondary');
+        $result->assertDontSeeElement('.alert alert-secondary');
 
         $result->assertSee(lang('plafor_lang.operational_competence_disable_explanation'),
             '.alert alert-info');
 
         $result->assertSeeLink(lang('common_lang.btn_cancel'));
-        $result->assertDontSeeElement('.btn-primary');
+        $result->assertDontSeeElement('.btn btn-primary');
         $result->assertSeeLink(lang('common_lang.btn_disable'));
     }
 

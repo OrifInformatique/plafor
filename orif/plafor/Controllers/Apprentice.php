@@ -22,19 +22,6 @@ use CodeIgniter\HTTP\RedirectResponse;
 use CodeIgniter\I18n\Time;
 
 use Exception;
-use Plafor\Models\AcquisitionLevelModel;
-use Plafor\Models\AcquisitionStatusModel;
-use Plafor\Models\CommentModel;
-use Plafor\Models\CompetenceDomainModel;
-use Plafor\Models\CoursePlanModel;
-use Plafor\Models\ObjectiveModel;
-use Plafor\Models\OperationalCompetenceModel;
-use Plafor\Models\UserCourseModel;
-use Plafor\Models\UserCourseStatusModel;
-use Plafor\Models\TrainerApprenticeModel;
-
-use User\Models\User_type_model;
-use User\Models\User_model;
 
 class Apprentice extends \App\Controllers\BaseController
 {
@@ -78,6 +65,10 @@ class Apprentice extends \App\Controllers\BaseController
 
 
 
+
+
+
+
     /**
      * Redirects to a homepage depending on the type of user
      *
@@ -107,6 +98,8 @@ class Apprentice extends \App\Controllers\BaseController
             // No session is set
             return redirect()->to(base_url('user/auth/login'));
     }
+
+
 
     /**
      * Displays the list of all apprentices.
@@ -178,6 +171,8 @@ class Apprentice extends \App\Controllers\BaseController
         return $this->display_view('\Plafor\apprentice\list', $output);
     }
 
+
+
     /**
      * Displays the details of an apprentice.
      *
@@ -231,18 +226,62 @@ class Apprentice extends \App\Controllers\BaseController
         foreach ($this->trainer_apprentice_model->where('fk_apprentice', $apprentice_id)->findAll() as $link)
             $links[$link['id']] = $link;
 
-        // Data to send to the view
-        $output = array(
-            'title'                 => lang('plafor_lang.title_view_apprentice'),
-            'apprentice'            => $apprentice,
-            'trainers'              => $trainers,
-            'links'                 => $links,
-            'user_courses'          => $user_courses,
-            'user_course_status'    => $user_course_status,
-            'course_plans'          => $course_plans
-        );
-        return $this->display_view('Plafor\apprentice/view',$output);
+        // TODO: add school_report here
+        $school_report_data = [];
+
+        $cfc_average;                       // Average of all domains of the apprentice, rounded by '0.1'.
+        $modules = [];                      // All modules teached to the apprentice.
+        // d($this->m_grade_model->getApprenticeModulesGrades($list_user_courses[$user_course['id']], null));
+        // foreach ($this->m_grade_model->where("fk_user_course", $list_user_courses[$user_course['id']])->findAll() as $grade_module)
+        // $modules = [
+        //     "school" => [                   // All school modules teached to the apprentice. Required.
+        //         "modules" => [              // List of school modules teached to the apprentice. Required.
+        //             // "number" => int,        // Number of the module. Required.
+        //             // "name"   => string,     // Name of the module. Required.
+        //             // "grade"  =>  [          // Grade obtained by the apprentice to the module. Can be empty.
+        //             //     "id"    => int,     // ID of the grade. Required.
+        //             //     "value" => float,   // Value of the grade. Required.
+        //             // ]
+        //         ],
+        //         // "weighting" => float,       // Weighting of school modules. Required.
+        //         // "average"   => float,       // Average of school modules. Can be empty.
+        //     ],
+        //     "non-school" => [               // All non-school modules teached to the apprentice. Required.
+        //         "modules" => [              // List of school modules teached to the apprentice. Required.
+        //             // "number" => int,        // Number of the module. Required.
+        //             // "name"   => string,     // Name of the module. Required.
+        //             // "grade"  =>  [          // Grade obtained by the apprentice to the module. Can be empty.
+        //             //     "id"    => int,     // ID of the grade. Required.
+        //             //     "value" => float,   // Value of the grade. Required.
+        //             // ]
+        //         ],                          // List of non-school module teached to an apprentice.
+        //         // "weighting" => float,       // Weighting of non-school modules. Required.
+        //         // "average"   => float,       // Average of non-school modules. Can be empty.
+        //     ],
+        //     //  "weighting" => float,          // Weighting of modules (in CFC average). Required.
+        //     //  "average" => float,            // Average of school (80%) and non-school (20%) averages. Can be empty.
+        // ];
+
+        $data_to_view = [
+            "title"                 => lang("plafor_lang.title_view_apprentice"),
+            "apprentice"            => $apprentice,
+            "trainers"              => $trainers,
+            "links"                 => $links,
+            "user_courses"          => $list_user_courses,
+            "user_course_status"    => $list_user_course_status,
+            "course_plans"          => $list_course_plans,
+            "school_report_data"    => $school_report_data, // TODO: Add the arrays below inside this one
+
+            // "cfc_average"           => $cfc_average,// TODO
+            // "modules"               => $modules,    // TODO
+            // "tpi_grade"             => $tpi_grade,  // TODO
+            // "cbe"                   => $cbe,        // TODO
+            // "ecg"                   => $ecg,        // TODO
+        ];
+
+        return $this->display_view("Plafor\apprentice/view", $data_to_view);
     }
+
 
 
     /**
@@ -653,15 +692,18 @@ class Apprentice extends \App\Controllers\BaseController
 
 
 
+
+
     /**
-     * Deletes a trainer_apprentice link depending on $action
+     * Alterate a trainer_apprentice link depending on $action.
+     * For every action, a action confirmation is displayed.
      *
      * @param int $link_id ID of the trainer_apprentice_link to affect.
      *
      * @param int $action Action to apply on the trainer_apprentice link.
      *      - 2 for deleting (hard delete)
      *
-     * @return void
+     * @return string|RedirectResponse
      *
      */
     public function delete_apprentice_link(int $action = null, int $link_id = 0, bool $confirm = false): string|RedirectResponse
@@ -677,8 +719,7 @@ class Apprentice extends \App\Controllers\BaseController
         $apprentice = $this->trainer_apprentice_model->getApprentice($link['fk_apprentice']);
         $trainer    = $this->trainer_apprentice_model->getTrainer($link['fk_trainer']);
 
-        // Action to perform
-        switch ($action)
+        if(!$confirm)
         {
             $output = array
             (
@@ -712,14 +753,14 @@ class Apprentice extends \App\Controllers\BaseController
                     return $this->display_view('\Common/manage_entry', $output);
                 }
 
-            // Deletes apprentice link
-            case 2:
                 $this->trainer_apprentice_model->delete($link_id, TRUE);
                 break;
         }
 
         return redirect()->to(base_url('plafor/apprentice/view_apprentice/'.$apprentice['id']));
     }
+
+
 
 
 
@@ -762,6 +803,8 @@ class Apprentice extends \App\Controllers\BaseController
 
         return $this->display_view('Plafor\acquisition_status/view',$output);
     }
+
+
 
     /**
      * Updates an objective acquisition status for an apprentice.
@@ -866,7 +909,6 @@ class Apprentice extends \App\Controllers\BaseController
 
         return $this->display_view('\Plafor\comment/save',$output);
     }
-
 
 
     // TODO : Use the common delete view and logic for comments.

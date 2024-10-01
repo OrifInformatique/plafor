@@ -92,7 +92,7 @@ class CoursePlanModelTest extends CIUnitTestCase
         $operationalCompetence = $competence_domain['operationalCompetences'][$operationalCompetenceId];
 
         $this->assertEquals($operationalCompetence['symbol'], 'A1');
-        $this->assertEquals($operationalCompetence['name'], 'Clarifier et documenter les besoins  des parties prenantes dans le cadre d’un projet ICT');
+        $this->assertEquals($operationalCompetence['name'], 'Clarifier et documenter les besoins des parties prenantes dans le cadre d’un projet ICT');
 
         $this->assertIsArray($operationalCompetence['objectives']);
 

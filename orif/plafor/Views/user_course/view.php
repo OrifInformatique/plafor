@@ -74,19 +74,39 @@ helper("AccesPermissions_helper")
     <!-- User course details -->
     <div class="row">
         <div class="col-md-12">
-            <p class="bg-primary text-white"><?=lang('plafor_lang.title_view_user_course')?></p>
+            <p class="bg-primary text-white"><?= lang('plafor_lang.title_view_user_course') ?></p>
         </div>
-        <div class="col-md-4">
-            <p class="font-weight-bold"><?=lang('plafor_lang.field_user_course_date_begin')?></p>
-            <p><?=$user_course['date_begin']?></p>
+
+        <div class="col-md-4 mb-3">
+            <p><strong><?= lang('plafor_lang.apprentice') ?></strong></p>
+
+            <a href="<?= base_url('plafor/apprentice/view_apprentice/'.$apprentice['id']) ?>">
+                <?= $apprentice['username'] ?>
+            </a>
         </div>
-        <div class="col-md-4">
-            <p class="font-weight-bold"><?=lang('plafor_lang.field_user_course_date_end')?></p>
-            <p><?=$user_course['date_end']?></p>
+
+        <div class="col-md-8 mb-3">
+            <p><strong><?= lang('plafor_lang.course_plan') ?></strong></p>
+
+            <a href="<?= base_url('plafor/courseplan/view_course_plan/'.$course_plan['id']) ?>">
+                <strong><?= $course_plan['formation_number'] ?></strong>
+                <?=$course_plan['official_name']?>
+            </a>
         </div>
+
         <div class="col-md-4">
-            <p class="font-weight-bold"><?=lang('plafor_lang.field_user_course_status')?></p>
-            <p><?=$user_course_status['name']?></p>
+            <p><strong><?= lang('plafor_lang.field_user_course_date_begin') ?></strong></p>
+            <p><?= $user_course['date_begin'] ?></p>
+        </div>
+
+        <div class="col-md-4">
+            <p><strong><?= lang('plafor_lang.field_user_course_date_end') ?></strong></p>
+            <p><?= $user_course['date_end'] ?></p>
+        </div>
+
+        <div class="col-md-4">
+            <p><strong><?= lang('plafor_lang.field_user_course_status') ?></strong></p>
+            <p><?= $user_course_status['name'] ?></p>
         </div>
         <div class="col-md-6">
             <p class="font-weight-bold"><?= lang('plafor_lang.apprentice') ?></p>
@@ -160,6 +180,7 @@ helper("AccesPermissions_helper")
         </div>
     </div>
 </div>
+
 <script defer>
     document.querySelectorAll('.acquisitionStatusSelect').forEach((element) =>
     {
