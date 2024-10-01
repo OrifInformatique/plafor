@@ -45,4 +45,18 @@ class TeachingDomainModelWithSeedTest extends CIUnitTestCase
         $this->assertEmpty($domainIds);
     }
 
+    public function testGetITDomainWeight(): void
+    {
+        // Arrange
+        $userCourseID = 101;
+        $expectedWeight = 0.3;
+        $teachingDomainModel = model('TeachingDomainModel');
+
+        // Act
+        $result = $teachingDomainModel->getITDomainWeight($userCourseID);
+
+        // Assert
+        $this->assertEquals($expectedWeight, $result);
+    }
+
 }

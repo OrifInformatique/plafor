@@ -393,8 +393,9 @@ class GradeModel extends Model
         }, $domainIdsAndWeights);
         $sum = array_reduce($domainGradesAndWeight, fn($sum, $gradeAndWeight)
             => $sum + ($gradeAndWeight[0] ?? 0) * $gradeAndWeight[1], 0);
-        // TODO move  0.3
-        $sumWithModule = $sum + $moduleGrade * 0.3;
+
+        $ITWeight = $teachingDomainModel->getITDomainWeight($userCourseId);
+        $sumWithModule = $sum + $moduleGrade * $ITWeight;
         return $this->roundOneDecimalPoint($sumWithModule);
     }
 }

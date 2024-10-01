@@ -123,17 +123,39 @@ class TeachingDomainModel extends Model
         return $data;
     }
 
-    public function getTeachingDomainIdByUserCourse(int $userCourseId): array
+    public function getTeachingDomainIdByUserCourse(int $userCourseId,
+        bool $withDeleted = true): array
     {
         $userCourseModel = model('CoursePlanModel');
         $coursePlanId = $userCourseModel
-            ->getCoursePlanIdByUserCourse($userCourseId);
+            ->getCoursePlanIdByUserCourse($userCourseId, $withDeleted);
         $domainIdsRaw = $this
             ->select('teaching_domain.id')
             ->where('fk_course_plan = ', $coursePlanId)
+            ->withDeleted($withDeleted)
             ->findAll();
         $domainIds = array_map(fn($record) => $record['id'], $domainIdsRaw);
         return $domainIds;
+    }
+
+    public function getITDomainWeight(int $userCourseID,
+        bool $withDeleted = true): ?float
+    {
+        // magic string
+        $domainNameForModuleWeight = 'Informatique';
+
+        $domainIds = $this->getTeachingDomainIdByUserCourse($userCourseID,
+            $withDeleted);
+        if (empty($domainIds)) return null;
+        $domains = array_map(fn($id) => $this->withDeleted($withDeleted)
+            ->find($id), $domainIds);
+        $ITDomainsFilted = array_filter($domains,
+            fn($domain) => $domain['title'] === $domainNameForModuleWeight
+        );
+        $ITDomain = $ITDomainsFilted[array_key_last($ITDomainsFilted)] ?? null;
+        if (is_null($ITDomain)) return null;
+        $ITWeight = $ITDomain['domain_weight'];
+        return $ITWeight;
     }
 
 

@@ -149,7 +149,7 @@ class CoursePlanModel extends Model {
     }
 
     public function getCoursePlanIdByUserCourse(int $userCourseId,
-        $withDeleted = true): ?int
+        bool $withDeleted = true): ?int
     {
         $coursePlanId = $this
             ->select('course_plan.id')
