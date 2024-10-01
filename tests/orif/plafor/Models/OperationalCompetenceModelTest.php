@@ -17,9 +17,9 @@ class OperationalCompetenceModelTest extends CIUnitTestCase
      */
     public function testgetOperationalCompetenceModelInstance()
     {
-        $operationalCompetenceModel = model('OperationalCompetenceModel');
-        $this->assertTrue($operationalCompetenceModel instanceof OperationalCompetenceModel);
-        $this->assertInstanceOf(OperationalCompetenceModel::class, $operationalCompetenceModel);
+        $operational_competenceModel = model('OperationalCompetenceModel');
+        $this->assertTrue($operational_competenceModel instanceof OperationalCompetenceModel);
+        $this->assertInstanceOf(OperationalCompetenceModel::class, $operational_competenceModel);
     }
 
     /**
@@ -28,8 +28,8 @@ class OperationalCompetenceModelTest extends CIUnitTestCase
     public function testgetCompetenceDomain()
     {
         // Gets the competence domain with the course plan id 1
-        $operationalCompetenceModel = model('OperationalCompetenceModel');
-        $competence_domain = $operationalCompetenceModel->getCompetenceDomain(1);
+        $operational_competenceModel = model('OperationalCompetenceModel');
+        $competence_domain = $operational_competenceModel->getCompetenceDomain(1);
 
         // Assertions
         $this->assertIsArray($competence_domain);
@@ -46,8 +46,8 @@ class OperationalCompetenceModelTest extends CIUnitTestCase
     public function testgetObjectives()
     {
         // Gets the objectives
-        $operationalCompetenceModel = model('OperationalCompetenceModel');
-        $objectives = $operationalCompetenceModel->getObjectives(1);
+        $operational_competenceModel = model('OperationalCompetenceModel');
+        $objectives = $operational_competenceModel->getObjectives(1);
 
         // Assertions
         $this->assertIsArray($objectives);
@@ -64,15 +64,15 @@ class OperationalCompetenceModelTest extends CIUnitTestCase
     public function testgetOperationalCompetences()
     {
         // Gets the operational competence with the competence domain id 1
-        $operationalCompetenceModel = model('OperationalCompetenceModel');
-        $operationalCompetences = $operationalCompetenceModel->getOperationalCompetences(false, 1);
+        $operational_competenceModel = model('OperationalCompetenceModel');
+        $operational_competences = $operational_competenceModel->getOperationalCompetences(false, 1);
 
         // Assertions
-        $this->assertIsArray($operationalCompetences);
+        $this->assertIsArray($operational_competences);
 
         // For each operational competence, asserts that the competence domain id is 1
-        foreach ($operationalCompetences as $operationalCompetence) {
-            $this->assertEquals($operationalCompetence['fk_competence_domain'], 1);
+        foreach ($operational_competences as $operational_competence) {
+            $this->assertEquals($operational_competence['fk_competence_domain'], 1);
         }
     }
 
@@ -82,10 +82,10 @@ class OperationalCompetenceModelTest extends CIUnitTestCase
     public function testgetOperationalCompetencesWithNoCompetenceDomainId()
     {
         // Gets the operational competence with the competence domain id 0
-        $operationalCompetenceModel = model('OperationalCompetenceModel');
-        $operationalCompetences = $operationalCompetenceModel->getOperationalCompetences(false, 0);
+        $operational_competenceModel = model('OperationalCompetenceModel');
+        $operational_competences = $operational_competenceModel->getOperationalCompetences(false, 0);
 
         // Assertions
-        $this->assertIsArray($operationalCompetences);
+        $this->assertIsArray($operational_competences);
     }
 }

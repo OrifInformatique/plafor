@@ -65,32 +65,13 @@ $textarea_max_length = config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGT
 
 ?>
 
-
-$symbol_max_length = config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH;
-$name_max_length = config('\Plafor\Config\PlaforConfig')->OPERATIONAL_COMPETENCE_NAME_MAX_LENGTH;
-$textarea_max_length = config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH;
-
-?>
-
 <div class="container">
-    <!-- TITLE -->
-    <div class="row">
-        <div class="col">
-            <h1 class="title-section"><?= lang('plafor_lang.title_operational_competence_'.($update ? 'update' : 'new')); ?></h1>
-        </div>
-    </div>
+    <!-- Page title -->
+    <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
 
-    <!-- FORM OPEN -->
-    <?php
-    $attributes = array(
-        'id' => 'operational_competence_form',
-        'name' => 'operational_competence_form'
-    );
-    echo form_open(base_url('plafor/courseplan/save_operational_competence/'.$competence_domain['id'].'/'.($operational_competence['id'] ?? '0')), $attributes, [
-        'id' => $operational_competence['id'] ?? 0,
-        'type' => 'operational_competence',
-    ]);
-    ?>
+    <?= form_open(base_url('plafor/courseplan/save_operational_competence/'.
+        $competence_domain_id.'/'.($operational_competence["id"] ?? '0')), null,
+        ['id' => $operational_competence["id"], 'type' => 'operational_competence']) ?>
 
         <!-- Form errors -->
         <?= view('\Plafor/common/form_errors', ['errors' => $errors]) ?>

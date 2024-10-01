@@ -75,24 +75,6 @@
  *
  */
 
-
-
-/**
- * Data management
- *
- */
-
-// TODO : Move data management in controller
-
-if(isset($domain_id) && $domain_id > 0)
-    $title = lang('Grades.update_domain');
-
-else
-{
-    $title = lang('Grades.create_domain');
-    $domain_id = 0;
-}
-
 helper('form');
 
 $new_domain_name = lang('Grades.name').' '.lang('Grades.of_a').' '.

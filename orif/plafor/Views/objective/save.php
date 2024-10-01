@@ -68,19 +68,18 @@ $name_max_length    = config('\Plafor\Config\PlaforConfig')->OBJECTIVE_NAME_MAX_
     <!-- Page title -->
     <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
 
-    <?= form_open(base_url('plafor/courseplan/save_objective/'.($objective['id'] ?? 0).'/'.($operational_competence_id ?? '')),
+    <?= form_open(base_url('plafor/courseplan/save_objective/'.$operational_competence_id.'/'.($objective['id'] ?? 0)),
         [], ['id' => $objective['id'] ?? 0, 'type' => 'objective']) ?>
 
         <!-- Form errors -->
         <?= view('\Plafor/common/form_errors', ['errors' => $errors]) ?>
-
 
         <div class="row">
             <div class="col-sm-12 form-group">
                 <?= form_label(lang('plafor_lang.field_objective_operational_competence'), 'operational_competence',
                     ['class' => 'form-label']) ?>
 
-                <?= form_dropdown('operational_competence', $operational_competences, $operational_competence_id ?? '',
+                <?= form_dropdown('operational_competence', $operational_competences, $operational_competence_id,
                     ['class' => 'form-control', 'id' => 'operational_competence']) ?>
             </div>
 
@@ -111,7 +110,7 @@ $name_max_length    = config('\Plafor\Config\PlaforConfig')->OBJECTIVE_NAME_MAX_
 
         <div class="row">
             <div class="col text-right">
-                <a class="btn btn-secondary" href="<?= base_url('plafor/courseplan/view_operational_competence/'.($operational_competence_id ?? '')) ?>">
+                <a class="btn btn-secondary" href="<?= base_url('plafor/courseplan/view_operational_competence/'.$operational_competence_id) ?>">
                     <?= lang('common_lang.btn_cancel') ?>
                 </a>
 

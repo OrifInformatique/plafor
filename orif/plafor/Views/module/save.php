@@ -51,26 +51,6 @@
  *
  */
 
-
-
-/**
- * Data management
- *
- */
-
-// TODO : Move data management in controller
-
-if(isset($module_id) && $module_id > 0)
-    $title = lang('Grades.update_module');
-
-else
-{
-    $title = lang('Grades.create_module');
-    $module_id = 0;
-}
-
-$domains = [];
-
 helper('form');
 
 $module_name_max_length = config('\Plafor\Config\PlaforConfig')->MODULE_OFFICIAL_NAME_MAX_LENGTH;

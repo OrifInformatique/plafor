@@ -17,9 +17,6 @@
 /**
  * *** Data needed for this view ***
  *
- * // TODO : Directly put the title in the view, then delete this param
- * @param string $title Page title.
- *
  * @param array $course_plan Course plan we want to see its details.
  * All fields from table.
  *
@@ -52,7 +49,7 @@ helper('form');
     <?= view('\Plafor\templates\navigator', ['title' => lang('plafor_lang.title_view_course_plan')]) ?>
 
     <!-- Page title -->
-    <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
+    <?= view('\Plafor/common/page_title', ['title' => lang('plafor_lang.title_view_course_plan')]) ?>
 
     <!-- Course plan details -->
     <?= view('\Plafor/course_plan/details', $course_plan) ?>

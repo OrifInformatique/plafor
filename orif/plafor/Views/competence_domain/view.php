@@ -50,7 +50,7 @@ helper('form')
     <?= view('\Plafor\templates\navigator', ['title' => lang('plafor_lang.details_competence_domain')]) ?>
 
     <!-- Page title -->
-    <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
+    <?= view('\Plafor/common/page_title', ['title' => lang('plafor_lang.details_competence_domain')]) ?>
 
     <!-- Course plan details -->
     <?= view('\Plafor/course_plan/details', $course_plan) ?>

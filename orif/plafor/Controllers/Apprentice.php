@@ -65,10 +65,6 @@ class Apprentice extends \App\Controllers\BaseController
 
 
 
-
-
-
-
     /**
      * Redirects to a homepage depending on the type of user
      *
@@ -118,26 +114,22 @@ class Apprentice extends \App\Controllers\BaseController
             $trainer_id = $this->session->get('user_id');
 
         // Gets username of all trainers for the dropdown menu
-        $trainersList = array();
+        $trainersList = [];
         $trainersList[0] = lang('common_lang.all_m');
         $trainersList[1] = lang('plafor_lang.unassigned');
 
         foreach ($this->user_model->getTrainers() as $trainer)
             $trainersList[$trainer['id']] = $trainer['username'];
 
-        $apprentices = array();
+        $apprentices = [];
 
         // Get data of apprentices, depending on the logged-in user
         if($trainer_id == null || $trainer_id == 0)
-        {
             // User is not a trainer - lists all apprentices
             $apprentices = $this->user_model->getApprentices($with_archived);
-        }
 
         else if($trainer_id == 1)
-        {
             $apprentices = $this->trainer_apprentice_model->getUnassignedApprentices();
-        }
 
         else
         {
@@ -151,7 +143,7 @@ class Apprentice extends \App\Controllers\BaseController
                     ->findAll();
         }
 
-        $coursesList = array();
+        $coursesList = [];
 
         foreach ($this->course_plan_model->withDeleted()->findAll() as $courseplan)
             $coursesList[$courseplan['id']]=$courseplan;
@@ -176,7 +168,7 @@ class Apprentice extends \App\Controllers\BaseController
     /**
      * Displays the details of an apprentice.
      *
-     * @param int $apprentice_id ID of the apprentice (default = 0)
+     * @param int $apprentice_id ID of the apprentice.
      * // TODO: Get the user_course inside the URL
      * // TODO: Change the user_course ID whith the drop down menu (JS)
      *
@@ -191,29 +183,32 @@ class Apprentice extends \App\Controllers\BaseController
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
 
-        $apprentice = $this->user_model->find($apprentice_id);
+        $apprentice = $this->user_model->withDeleted()->find($apprentice_id);
 
         $list_user_courses = [];
         foreach ($this->user_course_model->where('fk_user', $apprentice_id)->findAll() as $user_course) {
 
-            $date_begin = Time::createFromFormat('Y-m-d', $user_course['date_begin']);
-            $date_end   = Time::createFromFormat('Y-m-d', $user_course['date_end']);
+            $date_begin = Time::createFromFormat('Y-m-d', $user_course['date_begin'])->toLocalizedString('dd.MM.Y');
+            $date_end   = Time::createFromFormat('Y-m-d', $user_course['date_end'])->toLocalizedString('dd.MM.Y');
 
-            $user_course['date_begin'] = $date_begin->toLocalizedString('dd.MM.Y');
-            $user_course['date_end'] !== '0000-00-00' ? $user_course['date_end'] = $date_end->toLocalizedString('dd.MM.Y') : null;
+            $user_course['date_begin'] = $date_begin;
+            $user_course['date_end'] !== '0000-00-00' ? $user_course['date_end'] = $date_end : null;
 
             $list_user_courses[$user_course['id']] = $user_course;
         }
 
         $list_user_course_status = [];
+
         foreach ($this->user_course_status_model->withDeleted()->findAll() as $user_course_status)
             $list_user_course_status[$user_course_status['id']] = $user_course_status;
 
         $list_course_plans = [];
+
         foreach ($this->course_plan_model->withDeleted()->findAll() as $courseplan)
             $list_course_plans[$courseplan['id']] = $courseplan;
 
         $trainers = [];
+
         foreach ($this->user_model
             ->where('fk_user_type', $this->user_type_model->where('name', lang('plafor_lang.title_trainer'))->first()['id'])
             ->withDeleted()
@@ -223,6 +218,7 @@ class Apprentice extends \App\Controllers\BaseController
         }
 
         $links = [];
+
         foreach ($this->trainer_apprentice_model->where('fk_apprentice', $apprentice_id)->findAll() as $link)
             $links[$link['id']] = $link;
 
@@ -290,15 +286,14 @@ class Apprentice extends \App\Controllers\BaseController
      *
      * @param int $apprentice_id ID of the apprentice.
      *
-     * @return string
+     * @return string|RedirectResponse
      *
      */
-    public function list_user_courses(int $apprentice_id = null): string
+    public function list_user_courses(int $apprentice_id = 0): string|RedirectResponse
     {
-        if(is_numeric($apprentice_id))
-            $apprentice = $this->user_model->where('id', $apprentice_id)->first();
+        $apprentice = $this->user_model->find($apprentice_id);
 
-        if(!isset($apprentice) || empty($apprentice))
+        if(empty($apprentice))
             return redirect()->to('plafor/apprentice/list_apprentice');
 
         $user_courses = $this->user_course_model->where('fk_user', $apprentice_id)->findAll();
@@ -306,15 +301,17 @@ class Apprentice extends \App\Controllers\BaseController
         // Get the course plan informations for each user course
         foreach($user_courses as &$user_course)
         {
-            $user_course['course_plan'] = $this->course_plan_model
-                ->withDeleted()
-                ->find($user_course['fk_course_plan']);
+            $course_plan = $this->course_plan_model->withDeleted()->find($user_course['fk_course_plan']);
 
-            $user_course['status'] = $this->user_course_status_model
-                ->getUserCourseStatusName($user_course['fk_status']);
-
-            if($user_course['date_end'] === '0000-00-00')
-                $user_course['date_end'] = null;
+            $user_course =
+            [
+                'id'                 => $user_course['id'],
+                'course_plan_number' => $course_plan["formation_number"],
+                'course_plan_name'   => $course_plan["official_name"],
+                'date_begin'         => Time::createFromFormat('Y-m-d', $user_course['date_begin'])
+                    ->toLocalizedString('dd.MM.Y'),
+                'course_plan_status' => $this->user_course_status_model->getUserCourseStatusName($user_course['fk_status'])
+            ];
         }
 
         $output = array
@@ -343,7 +340,7 @@ class Apprentice extends \App\Controllers\BaseController
     {
         $user_course = $this->user_course_model->find($user_course_id);
 
-        if($user_course == null)
+        if(is_null($user_course))
             return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
 
         $apprentice = $this->user_model->find($user_course['fk_user']);
@@ -358,7 +355,7 @@ class Apprentice extends \App\Controllers\BaseController
 
         $operational_competence_id = $this->request->getGet('operationalCompetenceId');
 
-        if($operational_competence_id != null)
+        if(!is_null($operational_competence_id))
         {
             $objectives = [];
             $acquisition_statuses = [];
@@ -366,11 +363,11 @@ class Apprentice extends \App\Controllers\BaseController
             foreach ($this->course_plan_model
                 ->getCompetenceDomains($this->user_course_model->find($user_course_id)['fk_course_plan']) as $competence_domain)
             {
-                foreach ($this->comp_domain_model->getOperationalCompetences($competence_domain['id']) as $operationalCompetence)
+                foreach ($this->comp_domain_model->getOperationalCompetences($competence_domain['id']) as $operational_competence)
                 {
-                    if($operationalCompetence['id'] == $operational_competence_id)
+                    if($operational_competence['id'] == $operational_competence_id)
                     {
-                        foreach ($this->operational_comp_model->getObjectives($operationalCompetence['id']) as $objective)
+                        foreach ($this->operational_comp_model->getObjectives($operational_competence['id']) as $objective)
                             $objectives[$objective['id']] = $objective;
                     }
                 }
@@ -402,7 +399,6 @@ class Apprentice extends \App\Controllers\BaseController
         foreach ($this->acquisition_lvl_model->findAll() as $acquisition_level)
             $acquisition_levels[$acquisition_level['id']] = $acquisition_level;
 
-        // Data to send to the view
         $output = array
         (
             'user_course'           => $user_course,
@@ -433,7 +429,7 @@ class Apprentice extends \App\Controllers\BaseController
     public function save_user_course(int $apprentice_id = 0, int $user_course_id = 0): string|RedirectResponse
     {
         if(!hasCurrentUserTrainerAccess())
-            return $this->display_view('\User\errors\403error');
+            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
 
         $apprentice = $this->user_model->find($apprentice_id);
 
@@ -488,7 +484,7 @@ class Apprentice extends \App\Controllers\BaseController
                         // No operational competence associated
                     }
 
-                    $objectives_ids = array();
+                    $objectives_ids = [];
                     foreach ($operational_competences as $operational_competence)
                     {
                         foreach ($this->operational_comp_model->getObjectives($operational_competence['id']) as $objective)
@@ -553,15 +549,17 @@ class Apprentice extends \App\Controllers\BaseController
      * Alterate an user course depending on $action.
      * For every action, a action confirmation is displayed.
      *
+     * @param int|null $action Action to apply on the course plan.
+     *      - 2 for deleting (hard delete)
+     *
      * @param int $user_course_id ID of the user_course to affect.
      *
-     * @param int $action Action to apply on the course plan.
-     *      - 2 for deleting (hard delete)
+     * @param bool $confirm Defines whether the action has been confirmed.
      *
      * @return string|RedirectResponse
      *
      */
-    public function delete_user_course(int $action = null, int $user_course_id = 0, bool $confirm = false): string|RedirectResponse
+    public function delete_user_course(int|null $action = null, int $user_course_id = 0, bool $confirm = false): string|RedirectResponse
     {
         $user_course = $this->user_course_model->find($user_course_id);
         $apprentice = $this->user_model->withDeleted()->find($user_course['fk_user']);
@@ -596,7 +594,7 @@ class Apprentice extends \App\Controllers\BaseController
             );
         }
 
-        switch ($action)
+        switch($action)
         {
             // Deletes user's course and the corresponding comments and acquisition status
             case 2:
@@ -636,7 +634,7 @@ class Apprentice extends \App\Controllers\BaseController
     public function save_apprentice_link(int $apprentice_id = 0, int $link_id = 0): string|RedirectResponse
     {
         if(!hasCurrentUserTrainerAccess())
-            return $this->display_view(m_ERROR_MISSING_PERMISSIONS);
+            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
 
         $apprentice = $this->user_model->find($apprentice_id);
         $link = $this->trainer_apprentice_model->find($link_id);
@@ -659,16 +657,15 @@ class Apprentice extends \App\Controllers\BaseController
 
             $this->trainer_apprentice_model->save($new_link);
 
-
-            if($this->trainer_apprentice_model->errors() == null)
+            if(empty($this->trainer_apprentice_model->errors()))
                 return redirect()->to(base_url("plafor/apprentice/view_apprentice/".$apprentice_id));
         }
 
         // Gets data of trainers for the dropdown menu BUT ignore the trainers who are
         // already linked to the selected apprentice
         $trainers = $this->user_model->getTrainers();
-        $trainers_unlinked_to_apprentice = array();
-        $linked_apprentices = array();
+        $trainers_unlinked_to_apprentice = [];
+        $linked_apprentices = [];
 
         foreach ($trainers as $trainer)
         {
@@ -687,10 +684,8 @@ class Apprentice extends \App\Controllers\BaseController
             'errors'        => $this->trainer_apprentice_model->errors()
         );
 
-        return $this->display_view('Plafor\apprentice/link',$output);
+        return $this->display_view('Plafor\apprentice/link', $output);
     }
-
-
 
 
 
@@ -698,10 +693,12 @@ class Apprentice extends \App\Controllers\BaseController
      * Alterate a trainer_apprentice link depending on $action.
      * For every action, a action confirmation is displayed.
      *
-     * @param int $link_id ID of the trainer_apprentice_link to affect.
-     *
      * @param int $action Action to apply on the trainer_apprentice link.
      *      - 2 for deleting (hard delete)
+     *
+     * @param int $link_id ID of the trainer_apprentice_link to affect.
+     *
+     * @param bool $confirm Defines whether the action has been confirmed.
      *
      * @return string|RedirectResponse
      *
@@ -753,7 +750,7 @@ class Apprentice extends \App\Controllers\BaseController
                     return $this->display_view('\Common/manage_entry', $output);
                 }
 
-                $this->trainer_apprentice_model->delete($link_id, TRUE);
+                $this->trainer_apprentice_model->delete($link_id, true);
                 break;
         }
 
@@ -762,10 +759,8 @@ class Apprentice extends \App\Controllers\BaseController
 
 
 
-
-
     /**
-     * Shows the details of the selected acquisition status.
+     * Shows the details of an acquisition status.
      *
      * @param int $acquisition_status_id ID of the acquisition status to view.
      *
@@ -790,11 +785,13 @@ class Apprentice extends \App\Controllers\BaseController
         $objective         = $this->acquisition_status_model->getObjective($acquisition_status['fk_objective']);
         $acquisition_level = $this->acquisition_status_model->getAcquisitionLevel($acquisition_status['fk_acquisition_level']);
         $comments          = $this->comment_model->where('fk_acquisition_status',$acquisition_status_id)->findAll();
-        $trainers          = $this->user_model->getTrainers();
+
+        foreach ($this->user_model->getTrainers() as &$trainer)
+            $trainers[$trainer['id']] = $trainer;
 
         $output = array
         (
-            'acquisition_status'    => $acquisition_status,
+            'acquisition_status_id' => $acquisition_status["id"],
             'acquisition_level'     => $acquisition_level,
             'objective'             => $objective,
             'comments'              => $comments,
@@ -854,7 +851,7 @@ class Apprentice extends \App\Controllers\BaseController
 
             $this->acquisition_status_model->update($acquisition_status_id, $acquisition_status);
 
-            if(is_null($this->acquisition_status_model->errors()))
+            if(empty($this->acquisition_status_model->errors()))
                 $this->response->setStatusCode(200);
         }
     }
@@ -895,15 +892,16 @@ class Apprentice extends \App\Controllers\BaseController
 
             $this->comment_model->save($new_comment);
 
-            if(is_null($this->comment_model->errors()))
+            if(empty($this->comment_model->errors()))
                 return redirect()->to(base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status['id']));
         }
 
-        $output = array(
-            'title'                 => lang('plafor_lang.title_comment_'.($comment_id > 0 ? 'update' : 'new')),
+        $output = array
+        (
+            'title'                 => lang('plafor_lang.title_comment_'.(!is_null($comment_id) ? 'update' : 'new')),
             'acquisition_status_id' => $acquisition_status["id"],
             'comment_id'            => $comment_id,
-            'commentValue'          => $comment['comment'] ?? null,
+            'comment_text'          => $comment['comment'] ?? '',
             'errors'                => $this->comment_model->errors()
         );
 
@@ -987,7 +985,7 @@ class Apprentice extends \App\Controllers\BaseController
             return redirect()->to(base_url('/user/admin/list_user'));
 
         // Action to perform
-        switch ($action)
+        switch($action)
         {
             // Displays confirmation
             case 0:

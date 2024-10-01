@@ -19,7 +19,7 @@ class CompetenceDomainModel extends Model {
     protected $useSoftDeletes = true;
     protected $deletedField = 'archive';
     private $coursePlanModel = null;
-    private $operationalCompetenceModel = null;
+    private $operational_competenceModel = null;
     protected $validationRules;
 
 
@@ -55,8 +55,8 @@ class CompetenceDomainModel extends Model {
     public function getOperationalCompetences($competenceDomainId,
         $withArchived = false)
     {
-        $operationalCompetenceModel = model('OperationalCompetenceModel');
-        return $operationalCompetenceModel
+        $operational_competenceModel = model('OperationalCompetenceModel');
+        return $operational_competenceModel
             ->withDeleted($withArchived)
             ->where('fk_competence_domain', $competenceDomainId)->findAll();
     }

@@ -17,7 +17,7 @@
 /**
  * *** Data needed for this view ***
  *
- * @param array $acquisition_status Acquisition status.
+ * @param array $acquisition_status_id ID of the acquisition status.
  * All fields from table.
  *
  * @param array $acquisition_level Acquisiton level of the objective.
@@ -41,6 +41,8 @@
  * No data is sent by this view.
  *
  */
+
+helper("AccessPermissions_helper")
 
 ?>
 
@@ -76,9 +78,10 @@
             <p class="bg-primary text-white"><?= lang('plafor_lang.field_linked_comments') ?></p>
 		</div>
 
-		<?php if($_SESSION['user_access'] >= config('\User\Config\UserConfig')->access_lvl_trainer): ?>
+        <!-- TODO : Use items_list common view for comments, where we can only hard delete. -->
+		<?php if(hasCurrentUserTrainerAccess()): ?>
 		    <div class="col mb-2">
-		        <a href="<?= base_url('plafor/apprentice/save_comment/'.$acquisition_status['id']); ?>" class="btn btn-primary">
+		        <a href="<?= base_url('plafor/apprentice/save_comment/'.$acquisition_status_id); ?>" class="btn btn-primary">
                     <?= lang('plafor_lang.title_comment_new'); ?>
                 </a>
 		    </div>
@@ -96,22 +99,15 @@
                 </thead>
 
                 <tbody>
-                    <?php
-                    // TODO : Sort the trainers in the controller (don't forget to update PHPDoc needed values for view)
-                    $trainersSorted = [];
-                    foreach ($trainers as $trainer)
-                        $trainersSorted[$trainer['id']] = $trainer;
-
-                    foreach ($comments as $comment):
-                    ?>
+                    <?php foreach ($comments as $comment): ?>
                         <tr>
                             <td>
-                                <a href="<?= base_url('plafor/apprentice/save_comment/'.$acquisition_status['id'].'/'.$comment['id'])?>">
+                                <a href="<?= base_url('plafor/apprentice/save_comment/'.$acquisition_status_id.'/'.$comment['id'])?>">
                                     <?= $comment['comment']; ?>
                                 </a>
                             </td>
 
-                            <td><?= isset($trainersSorted[$comment['fk_trainer']]) ? $trainers[$comment['fk_trainer']]['username'] : '' ?></td>
+                            <td><?= isset($trainers[$comment['fk_trainer']]) ? $trainers[$comment['fk_trainer']]['username'] : '' ?></td>
                             <td><?= $comment['date_creation'] ?></td>
 
                             <td>

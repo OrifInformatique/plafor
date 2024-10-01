@@ -49,14 +49,14 @@ class CompetenceDomainModelTest extends CIUnitTestCase
     {
         // Gets the operational competences with the competence domain id 1
         $competenceDomainModel = model('CompetenceDomainModel');
-        $operationalCompetences = $competenceDomainModel->getOperationalCompetences(1);
+        $operational_competences = $competenceDomainModel->getOperationalCompetences(1);
 
         // Assertions
-        $this->assertIsArray($operationalCompetences);
+        $this->assertIsArray($operational_competences);
 
         // For each operational competences, asserts that the competence domain is 1
-        foreach ($operationalCompetences as $operationalCompetence) {
-            $this->assertEquals($operationalCompetence['fk_competence_domain'], 1);
+        foreach ($operational_competences as $operational_competence) {
+            $this->assertEquals($operational_competence['fk_competence_domain'], 1);
         }
     }
 

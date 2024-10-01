@@ -55,6 +55,8 @@
  *
  */
 
+helper("AccessPermissions_helper")
+
 ?>
 
 <div class="container">
@@ -107,7 +109,7 @@
         <div class="col-sm-6">
             <p><strong><?= lang('plafor_lang.title_trainer_linked') ?></strong></p>
 
-            <?php if(service('session')->get('user_access') >= config('\User\Config\UserConfig')->access_lvl_trainer): ?>
+            <?php if(hasCurrentUserTrainerAccess()): ?>
                 <!-- List with ADMIN buttons, accessible for trainers or admin only -->
                 <table class="table table-hover table-borderless">
                     <tbody>
@@ -190,7 +192,7 @@
                 </div>
             </div>
 
-            <?php if(service('session')->get('user_access') >= config('\User\Config\UserConfig')->access_lvl_trainer): ?>
+            <?php if(hasCurrentUserTrainerAccess()): ?>
                 <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/list_user_courses/'.$apprentice['id']) ?>">
                     <?= lang('plafor_lang.btn_user_course_manage') ?>
                 </a>

@@ -82,7 +82,7 @@ class CoursePlanModel extends Model {
      */
     public function getCoursePlanProgress($userId) {
         $competenceDomainsAssociated = [];
-        $operationalCompetencesassociated = [];
+        $operational_competencesassociated = [];
         $coursePlanAssociated = [];
         if (!isset($userId)) {
             return null;
@@ -113,22 +113,22 @@ class CoursePlanModel extends Model {
 
             foreach ($coursePlan['competenceDomains'] as $competence_domain) {
                 # TODO Refectory to remove nested code
-                $operationalCompetences = [];
+                $operational_competences = [];
                 $indexedOperationalCompetences = [];
-                $operationalCompetenceModel = model('OperationalCompetenceModel');
-                $operationalCompetences = $operationalCompetenceModel->getOperationalCompetences(false, $competence_domain['id']);
-                foreach ($operationalCompetences as $operationalCompetence) {
-                    $indexedOperationalCompetences[$operationalCompetence['id']] = $operationalCompetence;
+                $operational_competenceModel = model('OperationalCompetenceModel');
+                $operational_competences = $operational_competenceModel->getOperationalCompetences(false, $competence_domain['id']);
+                foreach ($operational_competences as $operational_competence) {
+                    $indexedOperationalCompetences[$operational_competence['id']] = $operational_competence;
                 }
                 $competence_domain['operationalCompetences'] = $indexedOperationalCompetences;
 
-                foreach ($competence_domain['operationalCompetences'] as $operationalCompetence) {
+                foreach ($competence_domain['operationalCompetences'] as $operational_competence) {
                     $userCourseModel->where(['fk_user' => $userId, 'fk_course_plan' => $coursePlan['id']])->first();
                     $intermediateArray = [];
                     $userCourse = $userCourseModel->where('fk_user', $userId)->where('fk_course_plan', $coursePlan['id'])->first();
 
                     $objectiveModel = model('ObjectiveModel');
-                    foreach ($objectiveModel->getObjectives(false, $operationalCompetence['id']) as $objective) {
+                    foreach ($objectiveModel->getObjectives(false, $operational_competence['id']) as $objective) {
                         $objectiveModel = model('ObjectiveModel');
                         $objectiveModel->getAcquisitionStatus($objective['id'], $userCourse['id'])['fk_acquisition_level'];
                         $objectiveModel = model('ObjectiveModel');
@@ -136,8 +136,8 @@ class CoursePlanModel extends Model {
                         $intermediateArray[] = $objective;
                     }
                     $objectives = $intermediateArray;
-                    $operationalCompetence['objectives'] = $objectives;
-                    $competence_domain['operationalCompetences'][$operationalCompetence['id']] = $operationalCompetence;
+                    $operational_competence['objectives'] = $objectives;
+                    $competence_domain['operationalCompetences'][$operational_competence['id']] = $operational_competence;
 
                 }
                 $coursePlan['competenceDomains'][$competence_domain['id']] = $competence_domain;

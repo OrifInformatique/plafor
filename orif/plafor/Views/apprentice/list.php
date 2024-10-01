@@ -160,7 +160,7 @@ helper('form');
             let checked = e.currentTarget.checked;
             let url = '<?= base_url('plafor/apprentice/list_apprentice/')?>'+(checked ? '1' : '0');
 
-            $.post(url , {}, data => {
+            $.post(url, {}, data => {
                 $('#apprenticeslist').empty();
                 $('#apprenticeslist')[0].innerHTML = $(data).find('#apprenticeslist')[0].innerHTML;
             }).then(() => {

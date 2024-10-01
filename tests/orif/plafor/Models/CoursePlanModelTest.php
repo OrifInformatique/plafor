@@ -87,18 +87,18 @@ class CoursePlanModelTest extends CIUnitTestCase
         $this->assertEquals($competence_domain['name'], 'Suivi des projets ICT');
 
         $this->assertIsArray($competence_domain['operationalCompetences']);
-        $operationalCompetenceId = 108;
-        $this->assertIsArray($competence_domain['operationalCompetences'][$operationalCompetenceId]);
-        $operationalCompetence = $competence_domain['operationalCompetences'][$operationalCompetenceId];
+        $operational_competenceId = 108;
+        $this->assertIsArray($competence_domain['operationalCompetences'][$operational_competenceId]);
+        $operational_competence = $competence_domain['operationalCompetences'][$operational_competenceId];
 
-        $this->assertEquals($operationalCompetence['symbol'], 'A1');
-        $this->assertEquals($operationalCompetence['name'], 'Clarifier et documenter les besoins des parties prenantes dans le cadre d’un projet ICT');
+        $this->assertEquals($operational_competence['symbol'], 'A1');
+        $this->assertEquals($operational_competence['name'], 'Clarifier et documenter les besoins des parties prenantes dans le cadre d’un projet ICT');
 
-        $this->assertIsArray($operationalCompetence['objectives']);
+        $this->assertIsArray($operational_competence['objectives']);
 
-        $this->assertIsArray($operationalCompetence['objectives'][1]);
-        $this->assertEquals($operationalCompetence['objectives'][1]['symbol'], 'A1.2');
-        $this->assertEquals($operationalCompetence['objectives'][1]['name'], 'Ils appliquent diverses techniques d’audition et d’observation (p. ex. questions ouvertes, questions fermées, réunion, workshop, technique du shadowing, simulation de la solution à rechercher en opérant un saut dans le temps.');
+        $this->assertIsArray($operational_competence['objectives'][1]);
+        $this->assertEquals($operational_competence['objectives'][1]['symbol'], 'A1.2');
+        $this->assertEquals($operational_competence['objectives'][1]['name'], 'Ils appliquent diverses techniques d’audition et d’observation (p. ex. questions ouvertes, questions fermées, réunion, workshop, technique du shadowing, simulation de la solution à rechercher en opérant un saut dans le temps.');
     }
 
     /**

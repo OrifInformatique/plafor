@@ -28,7 +28,7 @@
  * Array of key-values where keys are course plans IDs and values are course plans official names.
  * For select options.
  *
- * @param int fk_course_plan_id ID of the course plan.
+ * @param int $parent_course_plan_id ID of the course plan.
  *
  * @param ?array $errors comp_domain_model errors.
  *
@@ -67,7 +67,7 @@ $name_max_length   = config('\Plafor\Config\PlaforConfig')->COMPETENCE_DOMAIN_NA
     <!-- Page title -->
     <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
 
-    <?= form_open(base_url('plafor/courseplan/save_competence_domain/'.$fk_course_plan_id.'/'.$competence_domain_id), null,
+    <?= form_open(base_url('plafor/courseplan/save_competence_domain/'.$parent_course_plan_id.'/'.$competence_domain["id"]), null,
         ['id' => $competence_domain['id'] ?? 0, 'type' => 'competence_domain']) ?>
 
         <!-- Form errors -->
@@ -78,7 +78,7 @@ $name_max_length   = config('\Plafor\Config\PlaforConfig')->COMPETENCE_DOMAIN_NA
                 <?= form_label(lang('plafor_lang.field_competence_domain_course_plan'), 'course_plan',
                     ['class' => 'form-label']) ?>
 
-                <?= form_dropdown('course_plan', $course_plans, $fk_course_plan_id ?? '',
+                <?= form_dropdown('course_plan', $course_plans, $parent_course_plan_id ?? '',
                     ['class' => 'form-control']) ?>
             </div>
 
@@ -88,11 +88,6 @@ $name_max_length   = config('\Plafor\Config\PlaforConfig')->COMPETENCE_DOMAIN_NA
 
                 <?= form_input('symbol', $competence_domain['symbol'] ?? '',
                     ['class' => 'form-control', 'maxlength' => $symbol_max_length]) ?>
-                <?= form_label(lang('plafor_lang.field_competence_domain_course_plan'), 'course_plan',
-                    ['class' => 'form-label']) ?>
-
-                <?= form_dropdown('course_plan', $course_plans, $parent_course_plan_id ?? '',
-                    ['class' => 'form-control']) ?>
             </div>
 
             <div class="col-sm-12 form-group">
@@ -104,12 +99,10 @@ $name_max_length   = config('\Plafor\Config\PlaforConfig')->COMPETENCE_DOMAIN_NA
             </div>
         </div>
 
-        <!-- FORM BUTTONS -->
-
         <div class="row">
             <div class="col text-right">
                 <a class="btn btn-secondary" href="<?= base_url('plafor/courseplan/view_course_plan/'
-                    .($fk_course_plan_id != null ? $fk_course_plan_id : '')) ?>">
+                    .($parent_course_plan_id != null ? $parent_course_plan_id : '')) ?>">
                     <?= lang('common_lang.btn_cancel') ?>
                 </a>
 

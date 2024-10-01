@@ -21,35 +21,45 @@ class GradeController extends \App\Controllers\BaseController{
     const m_ERROR_MISSING_PERMISSIONS = "\User/errors/403error";
 
     /**
-     * Method to initialize controller attributes
+     * Initializes controller attributes.
+     *
+     * @param RequestInterface $request
+     *
+     * @param ResponseInterface $response
+     *
+     * @param LoggerInterface $logger
+     *
+     * @return void
+     *
      */
-    public function initController(\CodeIgniter\HTTP\RequestInterface $request,
-                                    \CodeIgniter\HTTP\ResponseInterface $response,
-                                    \Psr\Log\LoggerInterface $logger) : void {
-
+    public function initController(RequestInterface $request, ResponseInterface $response, LoggerInterface $logger): void
+    {
         $this->access_level = "@";
+
         parent::initController($request, $response, $logger);
 
-        // Loads required models
-        $this->m_grade_model = model("GradeModel");
-        $this->m_user_course_model = model("UserCourseModel");
-        $this->m_user_model = model("User_model");
+        $this->m_grade_model              = model("GradeModel");
+        $this->m_teaching_module_model    = model("TeachingModuleModel");
+        $this->m_teaching_subject_model   = model("TeachingSubjectModel");
         $this->m_trainer_apprentice_model = model("TrainerApprenticeModel");
-        $this->m_teaching_subject_model = model("TeachingSubjectModel");
-        $this->m_teaching_module_model = model("TeachingModuleModel");
+        $this->m_user_course_model        = model("UserCourseModel");
+        $this->m_user_model               = model("User_model");
+
         helper("AccessPermissions_helper");
     }
 
 
 
     /**
-     * Calculate the average of all grades
+     * Calculate the average of all grades.
      *
-     * @param  array $array => an array of module or an array of subject
+     * @param array $grades
      *
      * @return int
+     *
      */
-    private function calculateAverageGrade(array $array) : int {
+    private function calculateAverageGrade(array $grades): int
+    {
         $nbr_grade = count($array);
         $all_grade = array_column($array, "grade");
         $total_grade = array_sum($all_grade);
@@ -60,17 +70,20 @@ class GradeController extends \App\Controllers\BaseController{
 
 
     /**
-     * Insert/Modify the grade of an apprentice
+     * Inserts or modifies the grade of an apprentice.
      *
-     * @param int $apprentice_id    => ID of the apprentice (default 0)
-     * @param int $grade_id         => ID of the grade (default 0)
+     * @param int $apprentice_id ID of the apprentice.
+     *
+     * @param int $grade_id ID of the grade.
      *
      * @return string|RedirectResponse
+     *
      */
-    public function saveGrade(int $apprentice_id = 0, int $grade_id = 0) : string|RedirectResponse {
-
-        // Access permissions
-        if (!isCurrentUserTrainerOfApprentice($apprentice_id) && !isCurrentUserSelfApprentice($apprentice_id)){
+    public function saveGrade(int $apprentice_id = 0, int $grade_id = 0): string|RedirectResponse
+    {
+        if (!isCurrentUserTrainerOfApprentice($apprentice_id)
+            && !isCurrentUserSelfApprentice($apprentice_id))
+        {
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
 
@@ -106,7 +119,8 @@ class GradeController extends \App\Controllers\BaseController{
             //     ];
             // }
 
-            $data_to_model = [
+            $data_to_model =
+            [
                 "id"                    => $grade_id,
                 "fk_user_course"        => $user_course_id,
                 "fk_teaching_subject"   => $subject_id,
@@ -118,15 +132,14 @@ class GradeController extends \App\Controllers\BaseController{
 
             $this->m_grade_model->save($data_to_model);
 
-            if ($this->m_grade_model->errors() == null) {
+            if (empty($this->m_grade_model->errors()))
                 return redirect()->to("plafor/grade/showAllGrade");
-            }
         }
 
         $data_from_model = $this->m_grade_model->withDeleted()->find($grade_id);
-        // dd($data_from_model);
 
-        $data_to_view = [
+        $data_to_view =
+        [
             "title"                 => $grade_id == 0 ? lang('Grades.add_grade') : lang('Grades.update_grade'),
             // "grade_id"              => $grade_id,
             // "user_course_id"        => $data_from_model["user_course_id"],
@@ -138,9 +151,6 @@ class GradeController extends \App\Controllers\BaseController{
             // "errors"  => $this->m_grade_model->errors()
         ];
 
-        // Return to previous page if there is NO error
-        // OR Return to the current view if there is ANY error with the model
-        // OR empty $_POST
         return $this->display_view("\Plafor/grade/save", $data_to_view);
     }
 
@@ -150,17 +160,19 @@ class GradeController extends \App\Controllers\BaseController{
      * Alterate a grade depending on $action.
      * For every action, a action confirmation is displayed.
      *
-     * @param int $grade_id ID of the grade.
-     *
-     * @param int $action Action to apply on the grade.
+     * @param int|null $action Action to apply on the grade.
      *      - 1 for deactivating (soft delete)
      *      - 2 for deleting (hard delete)
      *      - 3 for reactivating
      *
+     * @param int $grade_id ID of the grade.
+     *
+     * @param bool $confirm Defines whether the action has been confirmed.
+     *
      * @return string|RedirectResponse
      *
      */
-    public function deleteGrade(int $action = null, int $grade_id = 0, bool $confirm = false): string|RedirectResponse
+    public function deleteGrade(int|null $action = null, int $grade_id = 0, bool $confirm = false): string|RedirectResponse
     {
         $grade = $this->m_grade_model->withDeleted()->find($grade_id);
 
@@ -173,11 +185,9 @@ class GradeController extends \App\Controllers\BaseController{
         if (!isCurrentUserTrainerOfApprentice($apprentice["id"]))
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
 
-        // Get the subject
         if($grade["fk_teaching_subject"] > 0)
             $subject = $this->m_teaching_subject_model->find($grade['fk_teaching_subject']);
 
-        // OR the module
         elseif($grade["fk_teaching_module"] > 0)
             $module = $this->m_teaching_module_model->find($grade['fk_teaching_module']);
 
@@ -213,7 +223,6 @@ class GradeController extends \App\Controllers\BaseController{
             ];
         }
 
-        // Action to perform
         switch($action)
         {
             // Deactivates the grade

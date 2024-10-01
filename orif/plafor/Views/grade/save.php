@@ -81,24 +81,6 @@
  *
  */
 
-
-
-/**
- * Data management
- *
- */
-
-// TODO : Move data management in controller
-
-if(isset($grade_id) && $grade_id > 0)
-    $title = lang('Grades.update_grade');
-
-else
-{
-    $title = lang('Grades.add_grade');
-    $grade_id = 0;
-}
-
 helper('form');
 
 $subject_or_module_label = lang('Grades.subject').' '.lang('Grades.or').' '.strtolower(lang('Grades.module'));

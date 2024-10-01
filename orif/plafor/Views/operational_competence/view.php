@@ -86,24 +86,5 @@ helper('form');
             'url_restore'  => 'plafor/courseplan/delete_objective/3/',
         ])
         ?>
-
-        <?= view('Common\Views\items_list',
-        [
-            'items'   => $objectives,
-            'columns' =>
-            [
-                'symbol'   => lang('plafor_lang.field_objectives_symbols'),
-                'taxonomy' => lang('plafor_lang.field_objectives_taxonomies'),
-                'name'     => lang('plafor_lang.field_objectives_names')
-            ],
-            'with_deleted' => true,
-            'url_detail'   => 'plafor/courseplan/view_objective/',
-            'url_create'   => 'plafor/courseplan/save_objective/'.$operational_competence['id'],
-            'url_update'   => 'plafor/courseplan/save_objective/'.$operational_competence['id'].'/',
-            'url_delete'   => 'plafor/courseplan/delete_objective/1/',
-            'url_getView'  => 'plafor/courseplan/view_operational_competence/'.$operational_competence['id'],
-            'url_restore'  => 'plafor/courseplan/delete_objective/3/',
-        ])
-        ?>
     </div>
 </div>

@@ -32,7 +32,7 @@
  * @param array $trainers_apprentice Contains the trainers linked to the apprentice.
  * All fields from table.
  *
- * @param array $acquisition_status Acquisition statuses of the objecives of the course plan.
+ * @param array $acquisition_status Acquisition statuses of the objectives of the course plan.
  * All fields from table.
  *
  * @param array $acquisition_levels Acquisition levels.

@@ -19,10 +19,9 @@
  * @param ?int $comment_id ID of the comment.
  * If set, means an entry is updated.
  *
- * @param ?string $commentValue Text of the comment.
+ * @param ?string $comment_text Text of the comment.
  *
- * // TODO : Only give the view acquisition status ID : only value needed
- * @param array acquisiton_status Acquisition status where a comment is added.
+ * @param array acquisiton_status_id ID of the acquisition status where a comment is added.
  *
  * @param ?array $errors comment_model errors.
  *
@@ -52,7 +51,7 @@ $max_length = config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH;
     <?= view('\Plafor/common/page_title',
         ['title' => lang('plafor_lang.title_comment_'.(!empty($comment_id) ? 'update' : 'new'))]) ?>
 
-    <?= form_open(base_url('plafor/apprentice/add_comment/'.$acquisition_status['id'].'/'.$comment_id)) ?>
+    <?= form_open(base_url('plafor/apprentice/save_comment/'.$acquisition_status_id.'/'.$comment_id)) ?>
         <!-- Form errors -->
         <?= view('\Plafor/common/form_errors', ['errors' => $errors]) ?>
 
@@ -61,14 +60,14 @@ $max_length = config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH;
                 <?= form_label(lang('plafor_lang.field_comment'), 'comment',
                     ['class' => 'form-label']) ?>
 
-                <?= form_textarea('comment', $commentValue,
+                <?= form_textarea('comment', $comment_text,
                     ['class' => 'form-control', 'id' => 'comment', 'maxlength' => $max_length]) ?>
             </div>
         </div>
 
         <div class="row">
             <div class="col text-right">
-                <a class="btn btn-secondary" href="<?= base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status['id']) ?>">
+                <a class="btn btn-secondary" href="<?= base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status_id) ?>">
                     <?= lang('common_lang.btn_cancel') ?>
                 </a>
 

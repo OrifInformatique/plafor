@@ -1,6 +1,6 @@
 <?php
 /**
- * Unit / Integration tests ObjectiveModelTest 
+ * Unit / Integration tests ObjectiveModelTest
  *
  * @author      Orif (CaLa)
  * @link        https://github.com/OrifInformatique
@@ -29,18 +29,18 @@ class ObjectiveModelTest extends CIUnitTestCase
     {
         // Gets the operational competence with the id 1
         $objectiveModel = model('ObjectiveModel');
-        $operationalCompetence = $objectiveModel->getOperationalCompetence(1);
+        $operational_competence = $objectiveModel->getOperationalCompetence(1);
 
         // Assertions
-        $this->assertIsArray($operationalCompetence);
-        $this->assertEquals($operationalCompetence['id'], 1);
-        $this->assertEquals($operationalCompetence['fk_competence_domain'], 1);
-        $this->assertEquals($operationalCompetence['name'], 'Analyser, structurer et documenter les exigences ainsi que les besoins');
-        $this->assertEquals($operationalCompetence['symbol'], 'A1');
-        $this->assertEquals($operationalCompetence['methodologic'], 'Travail structuré, documentation adéquate');
-        $this->assertEquals($operationalCompetence['social'], 'Comprendre et sentir les problèmes du client, communication avec des partenaires');
-        $this->assertEquals($operationalCompetence['personal'], 'Fiabilité, autoréflexion, interrogation constructive du problème');
-        $this->assertEquals($operationalCompetence['archive'], NULL);
+        $this->assertIsArray($operational_competence);
+        $this->assertEquals($operational_competence['id'], 1);
+        $this->assertEquals($operational_competence['fk_competence_domain'], 1);
+        $this->assertEquals($operational_competence['name'], 'Analyser, structurer et documenter les exigences ainsi que les besoins');
+        $this->assertEquals($operational_competence['symbol'], 'A1');
+        $this->assertEquals($operational_competence['methodologic'], 'Travail structuré, documentation adéquate');
+        $this->assertEquals($operational_competence['social'], 'Comprendre et sentir les problèmes du client, communication avec des partenaires');
+        $this->assertEquals($operational_competence['personal'], 'Fiabilité, autoréflexion, interrogation constructive du problème');
+        $this->assertEquals($operational_competence['archive'], NULL);
     }
 
     /**
