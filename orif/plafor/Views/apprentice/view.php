@@ -109,27 +109,17 @@
 </div>
 
 <script type="text/babel">
-const invokeDisplayDetails = () => {
-    try {
-        displayDetails(null, <?=json_encode($userCourseMax)?>, 'integrated',
-            "<?=base_url("plafor/apprentice/getcourseplanprogress")?>" + '/' ,
-            "<?=base_url('plafor/apprentice/view_user_course')?>"
-        );
-    } catch (e) {
-        new Promise(resolve => setTimeout(resolve, 300))
-            .then(invokeDisplayDetails);
-    }
-};
-
-const invokeHydrationName = (event, userCourses, coursePlans) => {
-    document.querySelectorAll('.user-course-details-course-plan-name')
-        .forEach((node) =>
-    {
-        let coursePlanId = userCourses[event.target.value].fk_course_plan;
-        let officialName = coursePlans[coursePlanId].official_name;
-        node.innerHTML = new String(official_name);
-    });
-};
+    const invokeDisplayDetails = () => {
+        try {
+            displayDetails(null, <?= json_encode($userCourseMax) ?>, 'integrated',
+                "<?= base_url("plafor/apprentice/getCoursePlanProgress/") ?>",
+                "<?= base_url('plafor/apprentice/view_user_course') ?>"
+            );
+        } catch (e) {
+            new Promise(resolve => setTimeout(resolve, 300))
+                .then(invokeDisplayDetails);
+        }
+    };
 
 const invokeHydrationBeginDate = (event, userCourses) => {
     document.querySelectorAll('.user-course-details-begin-date').forEach(
@@ -159,24 +149,30 @@ const invokeHydrationStatus = (event, userCourses, userCoursesStatus) => {
     });
 }
 
-$(document).ready(()=>{
-    $('#usercourseSelector').val(<?=isset($userCourseMax)
-        ? $userCourseMax['id'] : null?>);
-    $('#usercourseSelector').change((event) => {
-        let userCourses = <?=json_encode($user_courses)?>;
-        let coursePlans = <?=json_encode($course_plans)?>;
-        let userCoursesStatus = <?= json_encode($user_course_status)?>;
-        invokeHydrationName(event, userCourses, coursePlans);
-        invokeHydrationBeginDate(event, userCourses);
-        invokeHydrationEndDate(event, userCourses);
-        invokeHydrationStatus(event, userCourses, userCoursesStatus);
-        document.querySelector('#detailsArray').setAttribute('course_plan_id',
-            userCourses[event.target.value].fk_course_plan);
-        displayDetails(null, userCourses[event.target.value], 'integrated',
-            "<?=base_url("plafor/apprentice/getcourseplanprogress")?>"
-            + '/' , "<?=base_url('plafor/apprentice/view_user_course')?>"
-        );
+    $(document).ready(() => {
+        $('#usercourseSelector').val(<?= isset($userCourseMax)
+            ? $userCourseMax['id'] : null ?>);
+
+        $('#usercourseSelector').change((event) => {
+            let userCourses = <?= json_encode($user_courses) ?>;
+            let coursePlans = <?= json_encode($course_plans) ?>;
+            let userCoursesStatus = <?= json_encode($user_course_status) ?>;
+
+            invokeHydrationBeginDate(event, userCourses);
+
+            invokeHydrationEndDate(event, userCourses);
+
+            invokeHydrationStatus(event, userCourses, userCoursesStatus);
+
+            document.querySelector('#detailsArray').setAttribute('course_plan_id',
+                userCourses[event.target.value].fk_course_plan);
+
+            displayDetails(null, userCourses[event.target.value], 'integrated',
+                "<?= base_url("plafor/apprentice/getCoursePlanProgress/") ?>",
+                "<?= base_url('plafor/apprentice/view_user_course') ?>"
+            );
+        });
+
+        invokeDisplayDetails();
     });
-    invokeDisplayDetails();
-});
 </script>

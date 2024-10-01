@@ -91,7 +91,7 @@ class CoursePlanModel extends Model {
         $coursePlans = [];
         $userCourseModel = model('UserCourseModel');
         $userCourses = $userCourseModel->where('fk_user', $userId)
-                                       ->withDeleted()->findAll(); 
+                                       ->withDeleted()->findAll();
         foreach ($userCourses as $userCourse) {
             $fk_course_plan = $userCourse['fk_course_plan'];
             $coursePlans[$fk_course_plan] = $userCourseModel
@@ -103,30 +103,30 @@ class CoursePlanModel extends Model {
         foreach ($coursePlans as $coursePlan) {
             $indexedCompetenceDomains = [];
             $competenceDomainModel = model('CompetenceDomainModel');
-            $competenceDomains = $competenceDomainModel
+            $competence_domains = $competenceDomainModel
                 ->getCompetenceDomains(false, $coursePlan['id']);
-            foreach ($competenceDomains as $competenceDomain) {
-                $indexedCompetenceDomains[$competenceDomain['id']]
-                    = $competenceDomain;
+            foreach ($competence_domains as $competence_domain) {
+                $indexedCompetenceDomains[$competence_domain['id']]
+                    = $competence_domain;
             }
             $coursePlan['competenceDomains'] = $indexedCompetenceDomains;
 
-            foreach ($coursePlan['competenceDomains'] as $competenceDomain) {
+            foreach ($coursePlan['competenceDomains'] as $competence_domain) {
                 # TODO Refectory to remove nested code
                 $operationalCompetences = [];
                 $indexedOperationalCompetences = [];
                 $operationalCompetenceModel = model('OperationalCompetenceModel');
-                $operationalCompetences = $operationalCompetenceModel->getOperationalCompetences(false, $competenceDomain['id']);
+                $operationalCompetences = $operationalCompetenceModel->getOperationalCompetences(false, $competence_domain['id']);
                 foreach ($operationalCompetences as $operationalCompetence) {
                     $indexedOperationalCompetences[$operationalCompetence['id']] = $operationalCompetence;
                 }
-                $competenceDomain['operationalCompetences'] = $indexedOperationalCompetences;
+                $competence_domain['operationalCompetences'] = $indexedOperationalCompetences;
 
-                foreach ($competenceDomain['operationalCompetences'] as $operationalCompetence) {
+                foreach ($competence_domain['operationalCompetences'] as $operationalCompetence) {
                     $userCourseModel->where(['fk_user' => $userId, 'fk_course_plan' => $coursePlan['id']])->first();
                     $intermediateArray = [];
                     $userCourse = $userCourseModel->where('fk_user', $userId)->where('fk_course_plan', $coursePlan['id'])->first();
-                
+
                     $objectiveModel = model('ObjectiveModel');
                     foreach ($objectiveModel->getObjectives(false, $operationalCompetence['id']) as $objective) {
                         $objectiveModel = model('ObjectiveModel');
@@ -137,10 +137,10 @@ class CoursePlanModel extends Model {
                     }
                     $objectives = $intermediateArray;
                     $operationalCompetence['objectives'] = $objectives;
-                    $competenceDomain['operationalCompetences'][$operationalCompetence['id']] = $operationalCompetence;
+                    $competence_domain['operationalCompetences'][$operationalCompetence['id']] = $operationalCompetence;
 
                 }
-                $coursePlan['competenceDomains'][$competenceDomain['id']] = $competenceDomain;
+                $coursePlan['competenceDomains'][$competence_domain['id']] = $competence_domain;
             }
             $coursePlans[$coursePlan['id']] = $coursePlan;
             }

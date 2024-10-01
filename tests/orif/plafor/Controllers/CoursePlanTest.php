@@ -2931,7 +2931,7 @@
      * Insert a competence domain linked to a course plan into database
      */
     private static function insertCompetenceDomain($coursePlanId) {
-        $competenceDomain = array(
+        $competence_domain = array(
             'symbol' => 'ZZZZZZZZZZ',
             'name' => 'Competence Domain Unit Test',
             'fk_course_plan' => $coursePlanId,
@@ -2941,7 +2941,7 @@
         $_POST['type'] = 'competence_domain';
         $_POST['fk_course_plan'] = $coursePlanId;
         $model = model('\Plafor\Models\CompetenceDomainModel');
-        return $model->insert($competenceDomain);
+        return $model->insert($competence_domain);
     }
 
     /**

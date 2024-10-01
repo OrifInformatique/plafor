@@ -33,7 +33,7 @@ helper('form');
         {
             foreach($user_courses as $user_course)
             {
-                $data[] = 
+                $data[] =
                 [
                     'id' => $user_course['id'],
                     'course_plan_number'    => $user_course['course_plan']['formation_number'],
@@ -43,7 +43,7 @@ helper('form');
                     'course_plan_status'    => $user_course['status'],
                 ];
             }
-            
+
             echo view('Common\Views\items_list',
             [
                 'columns' =>
@@ -57,7 +57,7 @@ helper('form');
                 'items'             => $data,
                 'primary_key_field' => 'id',
                 'url_update'        => 'plafor/apprentice/save_user_course/'.$id_apprentice.'/',
-                'url_delete'        => 'plafor/courseplan/delete_user_course/'
+                'url_hard_delete'   => 'plafor/apprentice/delete_user_course/2/'
             ]);
         }?>
     </div>

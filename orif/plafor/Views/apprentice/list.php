@@ -1,13 +1,67 @@
 <?php
 /**
- * Fichier de vue pour list_apprentice
+ * Lists all apprentices.
+ *
+ * Called by Apprentice/list_apprentice($with_archived)
  *
  * @author      Orif (ViDi, HeMa)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ *
  */
 
-view('\Plafor\templates\navigator',['reset'=>true]);
+
+
+/**
+ * *** Data needed for this view ***
+ *
+ * @param array $trainers List of all trainers.
+ * Array of key-values where keys are trainers IDs and values are trainers usernames.
+ * The two first entries are default trainer filter options : All, Unassigned.
+ * For trainer filter options.
+ *
+ * @param int $trainer_id ID of the trainer.
+ * To retrieve apprentices linked to the trainer.
+ *
+ * // TODO : Only give apprentice ID and username : only values needed
+ * @param array $apprentices List of apprentices, accordingly to the filter selected.
+ * All fields from table.
+ *
+ * @param array $coursesList List of all course plans.
+ * Array of key-values where keys are course plans IDs and values are course plans official names.
+ * To display followed course plans.
+ *
+ * @param array $courses List of all user courses.
+ * All fields from table.
+ *
+ * @param ?bool $with_archived Defines whether to show deleted entries.
+ *
+ */
+
+
+
+/**
+ * *** Data sent by this view ***
+ *
+ * === Trainers filter ===
+ *
+ * method GET
+ *
+ * action Apprentice/list_apprentice($with_archived)
+ *
+ * @param int $trainer_id Trainer, stored as trainer ID.
+ *
+ * === Deleted entries checkbox ===
+ *
+ * method POST
+ *
+ * action Apprentice/list_apprentce($with_archived)
+ *
+ * @param bool $with_archived Defines whether to show deleted entries.
+ * Value defined by the state of the checkbox once clicked.
+ *
+ */
+
 helper('form');
 ?>
 <div class="container">
@@ -75,32 +129,30 @@ helper('form');
     </div>
 </div>
 <script type="text/babel" defer>
-const invokeInitProgress = () => {
-    try {
-        initProgress("<?=base_url("plafor/apprentice/getcourseplanprogress")?>"
-            + '/', "<?=lang('plafor_lang.details_progress')?>");
-    } catch (e) {
-      new Promise(resolve => setTimeout(resolve, 300))
-            .then(invokeInitProgress);
-    }
-};
+    const invokeInitProgress = () => {
+        try {
+            initProgress('<?= base_url('plafor/apprentice/getCoursePlanProgress') ?>'
+                + '/', '<?= lang('plafor_lang.details_progress') ?>');
+        } catch (e) {
+        new Promise(resolve => setTimeout(resolve, 300))
+                .then(invokeInitProgress);
+        }
+    };
 
-$(document).ready(function () {
-    invokeInitProgress();
-    $('#toggle_deleted').change(e => {
-        let checked = e.currentTarget.checked;
-        let url = '<?=base_url("plafor/apprentice/list_apprentice") . '/'?>'
-            + (checked ? '1' : '0');
-        $.post(url , {}, data => {
-            $('#apprenticeslist').empty();
-            $('#apprenticeslist')[0].innerHTML = $(data)
-                .find('#apprenticeslist')[0].innerHTML;
-        }).then(()=>{
-            let url = "<?=base_url(
-                "plafor/apprentice/getcourseplanprogress")?>" + '/';
-            initProgress(url, "<?=lang('plafor_lang.details_progress')?>");
+    $(document).ready(function () {
+        invokeInitProgress();
+
+        $('#toggle_deleted').change(e => {
+            let checked = e.currentTarget.checked;
+            let url = '<?= base_url('plafor/apprentice/list_apprentice/')?>'+(checked ? '1' : '0');
+
+            $.post(url , {}, data => {
+                $('#apprenticeslist').empty();
+                $('#apprenticeslist')[0].innerHTML = $(data).find('#apprenticeslist')[0].innerHTML;
+            }).then(() => {
+                let url = '<?= base_url('plafor/apprentice/getCoursePlanProgress/') ?>';
+                initProgress(url, '<?= lang('plafor_lang.details_progress')?> ');
+            });
         });
     });
-});
 </script>
-

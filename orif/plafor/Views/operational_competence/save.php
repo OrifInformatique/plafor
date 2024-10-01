@@ -1,79 +1,77 @@
 <?php
 /**
- * Fichier de vue pour save_operational_competence
+ * Let the edition of a operational competence.
+ *
+ * Called by CoursePlan/save_operational_competence($competence_domain_id, $operational_competence_id)
  *
  * @author      Orif (ViDi, HeMa)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ *
  */
-?>
-<?php
-$update = !is_null($operational_competence);
-helper('form');
-$validation=\CodeIgniter\Config\Services::validation();
-?>
-<?php
-    // For some reasons, you can only set a type to input made with form_input if done with only a array as param, may need to be checked for later uses.
 
-    $data_symbol = array(
-        'name' => 'symbol',
-        'value' => $operational_competence_symbol ?? $operational_competence['symbol'] ?? '',
-        'max' => config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH,
-        'class' => 'form-control',
-        'id' => 'operational_competence_symbol'
-    );
-    
-    $data_name = array(
-        'name' => 'name',
-        'value' => $operational_competence_name ?? $operational_competence['name'] ?? '',
-        'max' => config('\Plafor\Config\PlaforConfig')->OPERATIONAL_COMPETENCE_NAME_MAX_LENGTH,
-        'class' => 'form-control',
-        'id' => 'operational_competence_name'
-    );
-    
-    $data_methodologic = array(
-        'name' => 'methodologic',
-        'value' => $operational_competence_methodologic ?? $operational_competence['methodologic'] ?? '',
-        'max' => config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH,
-        'class' => 'form-control',
-        'id' => 'operational_competence_methodologic'
-    );
-    
-    $data_social = array(
-        'name' => 'social',
-        'value' => $operational_competence_social ?? $operational_competence['social'] ?? '',
-        'max' => config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH,
-        'class' => 'form-control',
-        'id' => 'operational_competence_social'
-    );
-    
-    $data_personal = array(
-        'name' => 'personal',
-        'value' => $operational_competence_personal ?? $operational_competence['personal'] ?? '',
-        'max' => config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH,
-        'class' => 'form-control',
-        'id' => 'operational_competence_personal'
-    );
+
+
+/**
+ * *** Data needed fot this view ***
+ *
+ * @param array $operational_competence Existing operational competence.
+ * All fields from table.
+ *
+ * @param array $competence_domains List of all competence domains
+ * Array of key-values where keys are competence domains IDs and values are competence domains names.
+ *
+ * @param array $competence_domain_id ID of the parent competence domain.
+ * All fields from table.
+ *
+ * @param ?array $errors operational_comp_model errors.
+ *
+ */
+
+
+
+/**
+ * *** Data sent by this view ***
+ *
+ * method POST
+ *
+ * action CoursePlan/save_operational_competence($competence_domain_id, $operational_competence_id)
+ *
+ * @param int $id ID of the operational competence.
+ *
+ * @param string $type Type of the entry.
+ * For plafor validation rules.
+ *
+ * @param int $competence_domain Parent competence domain, stored as competence domain ID.
+ *
+ * @param string $symbol Symbol of the operational competence.
+ *
+ * @param string $name Name of the operational competence.
+ *
+ * @param string $methodologic Methologoic competence.
+ *
+ * @param string $social Social competence.
+ *
+ * @param string $personal Personal competence.
+ *
+ */
+
+helper('form');
+
+$symbol_max_length = config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH;
+$name_max_length = config('\Plafor\Config\PlaforConfig')->OPERATIONAL_COMPETENCE_NAME_MAX_LENGTH;
+$textarea_max_length = config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH;
+
 ?>
+
 <div class="container">
-    <!-- TITLE -->
-    <div class="row">
-        <div class="col">
-            <h1 class="title-section"><?= lang('plafor_lang.title_operational_competence_'.($update ? 'update' : 'new')); ?></h1>
-        </div>
-    </div>
-    
-    <!-- FORM OPEN -->
-    <?php
-    $attributes = array(
-        'id' => 'operational_competence_form',
-        'name' => 'operational_competence_form'
-    );
-    echo form_open(base_url('plafor/courseplan/save_operational_competence/'.$competence_domain['id'].'/'.($operational_competence['id'] ?? '0')), $attributes, [
-        'id' => $operational_competence['id'] ?? 0,
-        'type' => 'operational_competence',
-    ]);
-    ?>
+    <!-- Page title -->
+    <?= view('\Plafor/common/page_title',
+        ['title' => lang('plafor_lang.title_operational_competence_'.(!empty($operational_competence) ? 'update' : 'new'))]) ?>
+
+    <?= form_open(base_url('plafor/courseplan/save_operational_competence/'.$competence_domain_id.
+        '/'.($operational_competence['id'] ?? 0)),
+        [], ['id' => $operational_competence['id'] ?? 0, 'type' => 'operational_competence']) ?>
 
         <!-- ERROR MESSAGES -->
         <?php
@@ -103,12 +101,14 @@ $validation=\CodeIgniter\Config\Services::validation();
                 <?= form_textarea($data_personal); ?>
             </div>
         </div>
-                    
-        <!-- FORM BUTTONS -->
+
         <div class="row">
             <div class="col text-right">
-                <a class="btn btn-secondary" href="<?= base_url('plafor/courseplan/view_competence_domain/'.$competence_domain['id']) ?>"><?= lang('common_lang.btn_cancel'); ?></a>
-                <?= form_submit('save', lang('common_lang.btn_save'), ['class' => 'btn btn-primary']); ?>
+                <a class="btn btn-secondary" href="<?= base_url('plafor/courseplan/view_competence_domain/'.$competence_domain_id) ?>">
+                    <?= lang('common_lang.btn_cancel') ?>
+                </a>
+
+                <?= form_submit(null, lang('common_lang.btn_save'), ['class' => 'btn btn-primary']) ?>
             </div>
         </div>
     <?= form_close(); ?>

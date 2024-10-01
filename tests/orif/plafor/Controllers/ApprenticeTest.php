@@ -1259,14 +1259,14 @@
     }
 
     /**
-     * Asserts that the add_comment page redirects to the list_apprentice view
+     * Asserts that the save_comment page redirects to the list_apprentice view
      * when no status id is provided (no session)
      */
-    public function testadd_commentWithoutStatusIdWithoutSession()
+    public function testsave_commentWithoutStatusIdWithoutSession()
     {
-        // Execute add_comment method of Apprentice class
+        // Execute save_comment method of Apprentice class
         $result = $this->controller(Apprentice::class)
-            ->execute('add_comment');
+            ->execute('save_comment');
 
         // Assertions
         $response = $result->response();
@@ -1280,18 +1280,18 @@
     }
 
     /**
-     * Asserts that the add_comment page redirects to the list_apprentice view
+     * Asserts that the save_comment page redirects to the list_apprentice view
      * when a status id is provided (apprentice session)
      */
-    public function testadd_commentWithStatusIdWithApprenticeSession()
+    public function testsave_commentWithStatusIdWithApprenticeSession()
     {
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_guest;
 
-        // Execute add_comment method of Apprentice class
+        // Execute save_comment method of Apprentice class
         $result = $this->controller(Apprentice::class)
-        ->execute('add_comment', 1);
+        ->execute('save_comment', 1);
 
         // Assertions
         $response = $result->response();
@@ -1305,17 +1305,17 @@
     }
 
     /**
-     * Asserts that the add_comment page is loaded correctly when a status id is provided (trainer session)
+     * Asserts that the save_comment page is loaded correctly when a status id is provided (trainer session)
      */
-    public function testadd_commentWithStatusIdWithTrainerSession()
+    public function testsave_commentWithStatusIdWithTrainerSession()
     {
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_trainer;
 
-        // Execute add_comment method of Apprentice class
+        // Execute save_comment method of Apprentice class
         $result = $this->controller(Apprentice::class)
-            ->execute('add_comment', 1);
+            ->execute('save_comment', 1);
 
         // Assertions
         $response = $result->response();
@@ -1331,11 +1331,11 @@
     }
 
     /**
-     * Asserts that the add_comment page redirects to the
+     * Asserts that the save_comment page redirects to the
      * view_acquisition_status view when a status id is provided for a trainer
      * session (inserting a new comment)
      */
-    public function _testadd_commentPostedtWithStatusIdWithTrainerSession()
+    public function _testsave_commentPostedtWithStatusIdWithTrainerSession()
     {
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
@@ -1369,9 +1369,9 @@
         $_POST['comment'] = 'Comment Unit Test';
         $_REQUEST['comment'] = 'Comment Unit Test';
 
-        // Execute add_comment method of Apprentice class
+        // Execute save_comment method of Apprentice class
         $result = $this->controller(Apprentice::class)
-            ->execute('add_comment', $acquisitionStatusId);
+            ->execute('save_comment', $acquisitionStatusId);
 
         // Reset $_POST and $_REQUEST variables
         $_POST = array();
@@ -1418,11 +1418,11 @@
     }
 
     /**
-     * Asserts that the add_comment page redirects to the
+     * Asserts that the save_comment page redirects to the
      * view_acquisition_status view when a status id is provided for a trainer
      * session (inserting a new empty comment)
      */
-    public function _testadd_commentPostedtWithStatusIdWithTrainerSessionAndEmptyComment()
+    public function _testsave_commentPostedtWithStatusIdWithTrainerSessionAndEmptyComment()
     {
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')->access_lvl_trainer;
@@ -1451,9 +1451,9 @@
         $_POST['comment'] = '';
         $_REQUEST['comment'] = '';
 
-        // Execute add_comment method of Apprentice class
+        // Execute save_comment method of Apprentice class
         $result = $this->controller(Apprentice::class)
-        ->execute('add_comment', $acquisitionStatusId);
+        ->execute('save_comment', $acquisitionStatusId);
 
         // Reset $_POST and $_REQUEST variables
         $_POST = array();
@@ -1493,11 +1493,11 @@
     }
 
     /**
-     * Asserts that the add_comment page redirects to the
+     * Asserts that the save_comment page redirects to the
      * view_acquisition_status view when a status id is provided for a trainer
      * session (updating an existing comment)
      */
-    public function _testadd_commentPostedtWithStatusIdWithTrainerSessionAndExistingComment()
+    public function _testsave_commentPostedtWithStatusIdWithTrainerSessionAndExistingComment()
     {
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')->access_lvl_trainer;
@@ -1529,9 +1529,9 @@
         $_POST['comment'] = 'Comment Update Unit Test';
         $_REQUEST['comment'] = 'Comment Udpdate Unit Test';
 
-        // Execute add_comment method of Apprentice class
+        // Execute save_comment method of Apprentice class
         $result = $this->controller(Apprentice::class)
-        ->execute('add_comment', $acquisitionStatusId, $commentId);
+        ->execute('save_comment', $acquisitionStatusId, $commentId);
 
         // Reset $_POST and $_REQUEST variables
         $_POST = array();
@@ -2207,7 +2207,7 @@
         $_POST['type'] = 'competence_domain';
         $_POST['id'] = 0;
         $_POST['fk_course_plan'] = $coursePlanId;
-        $competenceDomain = array(
+        $competence_domain = array(
             'symbol' => 'ZZZZZZZZZZ',
             'name' => 'Competence Domain Unit Test',
             'fk_course_plan' => $coursePlanId,
@@ -2215,7 +2215,7 @@
         );
         $model = model('\Plafor\Models\CompetenceDomainModel');
 
-        $id = $model->insert($competenceDomain);
+        $id = $model->insert($competence_domain);
         assert($id, 'CompetenceDomain is not created.');
         return $id;
     }

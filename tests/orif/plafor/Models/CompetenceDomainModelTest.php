@@ -1,6 +1,6 @@
 <?php
 /**
- * Unit / Integration tests CompetenceDomainModelTest 
+ * Unit / Integration tests CompetenceDomainModelTest
  *
  * @author      Orif (CaLa)
  * @link        https://github.com/OrifInformatique
@@ -67,14 +67,14 @@ class CompetenceDomainModelTest extends CIUnitTestCase
     {
         // Gets the competence domains with the course plan id 1
         $competenceDomainModel = model('CompetenceDomainModel');
-        $competenceDomains = $competenceDomainModel->getCompetenceDomains(false, 1);
+        $competence_domains = $competenceDomainModel->getCompetenceDomains(false, 1);
 
         // Assertions
-        $this->assertIsArray($competenceDomains);
+        $this->assertIsArray($competence_domains);
 
         // For each competence domain, asserts that the course plan id is 1
-        foreach ($competenceDomains as $competenceDomain) {
-            $this->assertEquals($competenceDomain['fk_course_plan'], 1);
+        foreach ($competence_domains as $competence_domain) {
+            $this->assertEquals($competence_domain['fk_course_plan'], 1);
         }
     }
 
@@ -85,9 +85,9 @@ class CompetenceDomainModelTest extends CIUnitTestCase
     {
         // Gets the competence domains with the course plan id 1
         $competenceDomainModel = model('CompetenceDomainModel');
-        $competenceDomains = $competenceDomainModel->getCompetenceDomains(false);
+        $competence_domains = $competenceDomainModel->getCompetenceDomains(false);
 
         // Assertions
-        $this->assertIsArray($competenceDomains);
+        $this->assertIsArray($competence_domains);
     }
 }
