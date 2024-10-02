@@ -14,9 +14,8 @@ use CodeIgniter\HTTP\Response;
 use CodeIgniter\HTTP\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
-
-class GradeController extends \App\Controllers\BaseController{
-
+class GradeController extends \App\Controllers\BaseController
+{
     // Class Constant
     const m_ERROR_MISSING_PERMISSIONS = "\User/errors/403error";
 

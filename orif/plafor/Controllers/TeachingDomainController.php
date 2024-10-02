@@ -268,7 +268,7 @@ class TeachingDomainController extends \App\Controllers\BaseController
 
         $titles = [];
 
-        foreach ($this->m_teaching_domain_title_model->withDeleted()->findAll() as $domain_title)
+        foreach ($this->m_teaching_domain_title_model->withDeleted($domain_id > 0 ? true : false)->findAll() as $domain_title)
             $titles[$domain_title["id"]] = $domain_title["title"];
 
         $data_from_model = $this->m_teaching_domain_model->find($domain_id);
@@ -521,7 +521,7 @@ class TeachingDomainController extends \App\Controllers\BaseController
             // Deletes the subject
             case 2:
                 // Prevent the hard deletion of the subject if there are grades linked to it
-                if(!empty($this->m_grade_model->where("fk_teaching_module", $module_id)->findAll()))
+                if(!empty($this->m_grade_model->where("fk_teaching_subject", $subject_id)->findAll()))
                 {
                     return redirect()->to(base_url("plafor/courseplan/view_course_plan/".
                         $teaching_subject["teaching_domain"]["fk_course_plan"]));
@@ -709,6 +709,9 @@ class TeachingDomainController extends \App\Controllers\BaseController
                     return $this->display_view('\Common/manage_entry', $output);
                 }
 
+                $this->m_teaching_module_model->delete($module_id, true);
+                break;
+
             // Reactivates the module
             case 3:
                 if(!$confirm)
@@ -748,7 +751,7 @@ class TeachingDomainController extends \App\Controllers\BaseController
             {
                 // hard delete all links between modules and this domain
                 $this->m_teaching_domain_module_model->withDeleted()->where("fk_teaching_domain", $domain_id)->delete();
-                
+
                 unset($_POST["submitted"]);
 
                 // foreach module_id passed, create a link
@@ -762,7 +765,7 @@ class TeachingDomainController extends \App\Controllers\BaseController
 
                     $this->m_teaching_domain_module_model->insert($data_to_model);
                 }
-                
+
                 // Return to previous page if there is NO error
                 if (empty($this->m_teaching_domain_module_model->errors()))
                     return redirect()->to("plafor/courseplan/view_course_plan/".
@@ -772,7 +775,7 @@ class TeachingDomainController extends \App\Controllers\BaseController
             // Get a list with all modules
             $list_all_modules = [];
             foreach ($this->m_teaching_module_model->withDeleted()->findAll() as $module) {
-                
+
                 // Check if there is a link between the domain and the module
                 $is_linked = false;
                 $link = [
@@ -780,7 +783,7 @@ class TeachingDomainController extends \App\Controllers\BaseController
                     "fk_teaching_module" => $module["id"],
                 ];
 
-                if (!empty($this->m_teaching_domain_module_model->withDeleted()->where($link)->find())) 
+                if (!empty($this->m_teaching_domain_module_model->withDeleted()->where($link)->find()))
                     $is_linked = true;
 
                 $list_all_modules[] = [
