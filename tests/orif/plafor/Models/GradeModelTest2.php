@@ -31,4 +31,30 @@ class GradeModelTest2 extends CIUnitTestCase
         $this->assertEquals(4.3, $result);
     }
 
+    public function testGetSchoolReportData()
+    {
+        // Arrange
+        $userCourseId = 101;
+
+        $gradeModel = model('GradeModel');
+
+        $cfcAverage = 4.3;
+        $modules = 4.4;
+        $tpiGrade = 4.5;
+        $cbeGrade = 4.4;
+        $ecgGrade = 4.4;
+
+        // Act
+        $result = $gradeModel->getSchoolReportData($userCourseId);
+
+        // Assert
+        $this->assertEquals([
+            "cfc_average" => $cfcAverage,
+            "modules" => $modules,
+            "tpi_grade" => $tpiGrade,
+            "cbe" => $cbeGrade,
+            "ecg" => $ecgGrade,
+        ], $result);
+    }
+
 }

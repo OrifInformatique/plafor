@@ -244,13 +244,8 @@ class Apprentice extends \App\Controllers\BaseController
         //     //  "weighting" => float,          // Weighting of modules (in CFC average). Required.
         //     //  "average" => float,            // Average of school (80%) and non-school (20%) averages. Can be empty.
         // ];
-        $school_report_data = [
-            "cfc_average"           => $cfc_average,// TODO
-            "modules"               => $modules,    // TODO
-            "tpi_grade"             => $tpi_grade,  // TODO
-            "cbe"                   => $cbe,        // TODO
-            "ecg"                   => $ecg,        // TODO
-        ];
+        $school_report_data = $this->m_grade_model
+                                   ->getSchoolReportData($user_course_id);
         $data_to_view = [
             "title"                 => lang("plafor_lang.title_view_apprentice"),
             "apprentice"            => $apprentice,

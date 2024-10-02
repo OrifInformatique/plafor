@@ -59,4 +59,19 @@ class TeachingDomainModelWithSeedTest extends CIUnitTestCase
         $this->assertEquals($expectedWeight, $result);
     }
 
+    public function testGetTpiDomain()
+    {
+        // Arrange
+        $userCourseId = 101;
+        $tpiDomainName = 'Travail pratique individuel';
+        $teachingDomainModel = model('TeachingDomainModel');
+
+        // Act
+        $domain = $teachingDomainModel->getTpiDomain($userCourseId);
+
+        // Assert
+        $this->assertNotNull($domain);
+        $this->assertEquals($tpiDomainName, $domain['title']);
+    }
+
 }

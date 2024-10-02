@@ -138,24 +138,67 @@ class TeachingDomainModel extends Model
         return $domainIds;
     }
 
-    public function getITDomainWeight(int $userCourseID,
-        bool $withDeleted = true): ?float
+    private function getDomainByUserCourseAndName(int $userCourseId,
+        string $domainName, bool $withDeleted = true): ?array
     {
-        // magic string
-        $domainNameForModuleWeight = 'Informatique';
-
-        $domainIds = $this->getTeachingDomainIdByUserCourse($userCourseID,
+        $domainIds = $this->getTeachingDomainIdByUserCourse($userCourseId,
             $withDeleted);
         if (empty($domainIds)) return null;
         $domains = array_map(fn($id) => $this->withDeleted($withDeleted)
             ->find($id), $domainIds);
-        $ITDomainsFilted = array_filter($domains,
-            fn($domain) => $domain['title'] === $domainNameForModuleWeight
+        $domainsFilted = array_filter($domains,
+            fn($domain) => $domain['title'] === $domainName
         );
-        $ITDomain = $ITDomainsFilted[array_key_last($ITDomainsFilted)] ?? null;
+        $domain = $domainsFilted[array_key_last($domainsFilted)] ?? null;
+        if (is_null($domain)) return null;
+        return $domain;
+    }
+
+    public function getITDomainWeight(int $userCourseId,
+        bool $withDeleted = true): ?float
+    {
+        // TODO find a better way
+        // magic string
+        $domainNameForModuleWeight = 'Informatique';
+
+        $ITDomain = $this->getDomainByUserCourseAndName($userCourseId,
+            $domainNameForModuleWeight, $withDeleted);
         if (is_null($ITDomain)) return null;
         $ITWeight = $ITDomain['domain_weight'];
         return $ITWeight;
+    }
+
+    public function getTpiDomain(int $userCourseId,
+        bool $withDeleted = true): ?array
+    {
+        // TODO find a better way
+        // magic string
+        $tpiDomainName = 'Travail pratique individuel';
+        $domain = $this->getDomainByUserCourseAndName($userCourseId,
+            $tpiDomainName, $withDeleted);
+        return $domain;
+    }
+
+    public function getCbeDomain(int $userCourseId,
+        bool $withDeleted = true): ?array
+    {
+        // TODO find a better way
+        // magic string
+        $domainName = 'Compétences de base élargies';
+        $domain = $this->getDomainByUserCourseAndName($userCourseId,
+            $domainName, $withDeleted);
+        return $domain;
+    }
+
+    public function getEcgDomain(int $userCourseId,
+        bool $withDeleted = true): ?array
+    {
+        // TODO find a better way
+        // magic string
+        $domainName = 'Culture générale';
+        $domain = $this->getDomainByUserCourseAndName($userCourseId,
+            $domainName, $withDeleted);
+        return $domain;
     }
 
 
