@@ -234,10 +234,11 @@ class GradeModel extends Model
      * grade is an associative array containing the grade data.
      * @return float The average grade.
      */
-    private function getAverageFromArray(array $grades): float
+    private function getAverageFromArray(array $grades): ?float
     {
         $onlyGrades = array_map(fn($row) => $row['grade'], $grades);
         $sum = array_sum($onlyGrades);
+        if (count($onlyGrades) === 0) return null;
         $average = $sum / count($onlyGrades);
         return $average;
     }
@@ -390,34 +391,169 @@ class GradeModel extends Model
         return $this->roundOneDecimalPoint($sumWithModule);
     }
 
+    // public function getSchoolReportData(int $userCourseId): array
+    // {
+    //     $teachingDomainModel = model('TeachingDomainModel');
+
+    //     $cfcAverage = $this->getApprenticeAverage($userCourseId);
+    //     $modules = $this->getApprenticeModuleAverageReal($userCourseId);
+
+    //     $tpiDomain = $teachingDomainModel->getTpiDomain($userCourseId);
+    //     $tpiGrade = $this
+    //         ->getApprenticeDomainAverageNotModule($userCourseId,
+    //             $tpiDomain['id']);
+
+    //     $cbeDomain = $teachingDomainModel->getCbeDomain($userCourseId);
+    //     $cbeGrade = $this ->getApprenticeDomainAverageNotModule($userCourseId,
+    //             $cbeDomain['id']);
+
+    //     $ecgDomain = $teachingDomainModel->getCbeDomain($userCourseId);
+    //     $ecgGrade = $this
+    //         ->getApprenticeDomainAverageNotModule($userCourseId,
+    //             $ecgDomain['id']);
+
+    //     return [
+    //         "cfc_average"           => $cfcAverage,
+    //         "modules"               => $modules,    
+    //         "tpi_grade"             => $tpiGrade,  
+    //         "cbe"                   => $cbeGrade,        
+    //         "ecg"                   => $ecgGrade,        
+    //     ];
+    // }
+    //
+    
     public function getSchoolReportData(int $userCourseId): array
     {
+        $data['cfc_average'] = $this->getApprenticeAverage($userCourseId);
+        $data['modules'] = $this->getModuleArrayForView($userCourseId);
+        $data['tpi_grade'] = $this->getTpiGradeForView($userCourseId);
+        $data['cbe'] = $this->getCbeGradeForView($userCourseId);
+        $data['ecg'] = $this->getEcgGradeForView($userCourseId);
+        return $data;
+    }
+
+    public function getModuleArrayForView(int $userCourseId): array
+    {
+        // potenration between epsic module and interentreprise module
+        $schoolWeight = config('\Plafor\Config\PlaforConfig')->SCHOOL_WEIGHT;
+        $externWeight = config('\Plafor\Config\PlaforConfig')->EXTERN_WEIGHT;
+
+        $gradeModel = model('GradeModel');
+        $schoolModules = $gradeModel
+            ->getApprenticeModulesGradesForView($userCourseId, isSchool: true);
+        $noSchoolModules = $gradeModel
+            ->getApprenticeModulesGradesForView($userCourseId,
+                isSchool: false);
+        $module['school']['modules'] = $schoolModules;
+        $module['school']['weighting'] = intval($schoolWeight * 100);
+        $module['non-school']['modules'] = $noSchoolModules;
+        $module['non-school']['weighting'] = intval($externWeight * 100);
         $teachingDomainModel = model('TeachingDomainModel');
+        $module['weighting'] = intval($teachingDomainModel
+            ->getITDomainWeight($userCourseId) * 100);
+        return $module;
+    }
 
-        $cfcAverage = $this->getApprenticeAverage($userCourseId);
-        $modules = $this->getApprenticeModuleAverageReal($userCourseId);
+    public function getApprenticeModulesGradesForView(int $userCourseId,
+        ?bool $isSchool = null): array
+    {
+        $this->select('teaching_module.module_number as number, '
+            . ' teaching_module.official_name as name, grade.id, '
+            . ' grade.grade as value')
+            ->join('teaching_module',
+            'teaching_module.id = fk_teaching_module', 'left')
+            ->join('user_course', 'user_course.id = fk_user_course ', 'left')
+            ->where('fk_user_course = ', $userCourseId)
+            ->where('fk_teaching_module is not null')
+            ->where('fk_teaching_subject is null')
+            ->allowCallbacks(false);
+        if (isset($isSchool)) $this->where('grade.is_school = ', $isSchool);
+        $data = $this->find();
+        $mapedData = array_map(function ($record) {
+            $record['grade']['id'] = $record['id'];
+            $record['grade']['value'] = $record['value'];
+            unset($record['id'], $record['value']);
+            return $record;
+        }, $data);
+        return $mapedData;
+    }
 
-        $tpiDomain = $teachingDomainModel->getTpiDomain($userCourseId);
-        $tpiGrade = $this
-            ->getApprenticeDomainAverageNotModule($userCourseId,
-                $tpiDomain['id']);
-
-        $cbeDomain = $teachingDomainModel->getCbeDomain($userCourseId);
-        $cbeGrade = $this ->getApprenticeDomainAverageNotModule($userCourseId,
-                $cbeDomain['id']);
-
-        $ecgDomain = $teachingDomainModel->getCbeDomain($userCourseId);
-        $ecgGrade = $this
-            ->getApprenticeDomainAverageNotModule($userCourseId,
-                $ecgDomain['id']);
-
+    public function getTpiGradeForView(int $userCourseId): ?array
+    {
+        $teachingDomainModel = model('TeachingDomainModel');
+        $domain = $teachingDomainModel->getTpiDomain($userCourseId);
+        if (is_null($domain)) return null;
+        $grade = $this->getApprenticeDomainAverageNotModule($userCourseId,
+            $domain['id']);
+        $gradeId = $this->getGradeIdForDomain($userCourseId, $domain['id']);
         return [
-            "cfc_average"           => $cfcAverage,
-            "modules"               => $modules,    
-            "tpi_grade"             => $tpiGrade,  
-            "cbe"                   => $cbeGrade,        
-            "ecg"                   => $ecgGrade,        
+            'id' => $gradeId,
+            'value' => $grade
         ];
     }
+
+    public function getGradeIdForDomain(int $userCourseId,
+        int $domainId): ?int
+    {
+        $subjectModel = model('TeachingSubjectModel');
+        [$subjectId] = $subjectModel->getTeachingSubjectIdByDomain($domainId);
+        $id = $this
+            ->select('id')
+            ->where('fk_user_course', $userCourseId)
+            ->where('fk_teaching_subject', $subjectId)
+            ->allowCallbacks(false)
+            ->first()['id'] ?? null;
+        return $id;
+    }
+
+    private function getDomainGradeForView(int $userCourseId,
+        callable $getDomain): ?array
+    {
+        $domain = $getDomain($userCourseId);
+        if (is_null($domain)) return null;
+        $teachingSubjectModel = model('TeachingSubjectModel');
+        $subjectIds = $teachingSubjectModel
+            ->getTeachingSubjectIdByDomain($domain['id']);
+        $subjectsWithGrades = array_map( fn($subjectId) => $this
+                ->getApprenticeSubjectGradesForView($userCourseId, $subjectId),
+            $subjectIds);
+        $data['subjects'] = $subjectsWithGrades;
+        $data['weighting'] = intval($domain['domain_weight'] * 100);
+        return $data;
+    }
+
+    public function getCbeGradeForView(int $userCourseId): ?array
+    {
+        $teachingDomainModel = model('TeachingDomainModel');
+        return $this->getDomainGradeForView($userCourseId,
+            [$teachingDomainModel, 'getCbeDomain']);
+    }
+
+    public function getApprenticeSubjectGradesForView(int $userCourseId,
+        int $subjectId): array
+    {
+        $teachingSubjectModel = model('TeachingSubjectModel');
+        $subject = $teachingSubjectModel
+            ->select('name, subject_weight as weighting')
+            ->allowCallbacks(false)
+            ->find($subjectId);
+        $subject['grades'] = $this
+            ->select('id, grade as value')
+            ->where('fk_teaching_subject', $subjectId)
+            ->allowCallbacks(false)
+            ->findAll();
+        $subject['weighting'] = intval($subject['weighting'] * 100);
+        return $subject;
+        
+    }
+
+    public function getEcgGradeForView(int $userCourseId): ?array
+    {
+        $teachingDomainModel = model('TeachingDomainModel');
+        return $this->getDomainGradeForView($userCourseId,
+            [$teachingDomainModel, 'getEcgDomain']);
+    }
+
+
     
 }

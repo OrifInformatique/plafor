@@ -207,45 +207,12 @@ class Apprentice extends \App\Controllers\BaseController
         $links = [];
         foreach ($this->trainer_apprentice_model->where('fk_apprentice', $apprentice_id)->findAll() as $link)
             $links[$link['id']]=$link;
-
-        // TODO: add school_report here
-        $school_report_data = [];
         
-        $cfc_average;                       // Average of all domains of the apprentice, rounded by '0.1'.
-        $modules = [];                      // All modules teached to the apprentice.
-
-        // d($this->m_grade_model->getApprenticeModulesGrades($list_user_courses[$user_course['id']], null));
-        // foreach ($this->m_grade_model->where("fk_user_course", $list_user_courses[$user_course['id']])->findAll() as $grade_module)
-        // $modules = [
-        //     "school" => [                   // All school modules teached to the apprentice. Required.
-        //         "modules" => [              // List of school modules teached to the apprentice. Required.
-        //             // "number" => int,        // Number of the module. Required.
-        //             // "name"   => string,     // Name of the module. Required.
-        //             // "grade"  =>  [          // Grade obtained by the apprentice to the module. Can be empty.
-        //             //     "id"    => int,     // ID of the grade. Required.
-        //             //     "value" => float,   // Value of the grade. Required.
-        //             // ]
-        //         ],
-        //         // "weighting" => float,       // Weighting of school modules. Required.
-        //         // "average"   => float,       // Average of school modules. Can be empty.
-        //     ],
-        //     "non-school" => [               // All non-school modules teached to the apprentice. Required.
-        //         "modules" => [              // List of school modules teached to the apprentice. Required.
-        //             // "number" => int,        // Number of the module. Required.
-        //             // "name"   => string,     // Name of the module. Required.
-        //             // "grade"  =>  [          // Grade obtained by the apprentice to the module. Can be empty.
-        //             //     "id"    => int,     // ID of the grade. Required.
-        //             //     "value" => float,   // Value of the grade. Required.
-        //             // ]
-        //         ],                          // List of non-school module teached to an apprentice.
-        //         // "weighting" => float,       // Weighting of non-school modules. Required.
-        //         // "average"   => float,       // Average of non-school modules. Can be empty.
-        //     ],
-        //     //  "weighting" => float,          // Weighting of modules (in CFC average). Required.
-        //     //  "average" => float,            // Average of school (80%) and non-school (20%) averages. Can be empty.
-        // ];
-        $school_report_data = $this->m_grade_model
-                                   ->getSchoolReportData($user_course_id);
+        if ($user_course_id) {
+            $school_report_data = $this->m_grade_model
+                                       ->getSchoolReportData($user_course_id);
+            d($school_report_data);
+        } 
         $data_to_view = [
             "title"                 => lang("plafor_lang.title_view_apprentice"),
             "apprentice"            => $apprentice,
@@ -255,13 +222,7 @@ class Apprentice extends \App\Controllers\BaseController
             "user_course_status"    => $list_user_course_status,
             "course_plans"          => $list_course_plans,
             "user_course_id" => $user_course_id,
-            "school_report_data"    => $school_report_data, // TODO: Add the arrays below inside this one
-
-            // "cfc_average"           => $cfc_average,// TODO
-            // "modules"               => $modules,    // TODO
-            // "tpi_grade"             => $tpi_grade,  // TODO
-            // "cbe"                   => $cbe,        // TODO
-            // "ecg"                   => $ecg,        // TODO
+            "school_report_data"    => $school_report_data ?? null,
         ];
 
         return $this->display_view("Plafor\apprentice/view", $data_to_view);
