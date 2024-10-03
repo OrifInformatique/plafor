@@ -267,10 +267,17 @@
         // TODO this in controller
         let urlMethod = '<?=base_url('plafor/apprentice/view_apprentice') ?>';
         let apprenticeId = '<?= $apprentice['id'] ?>';
+        let userCourseId = '<?= $user_course_id ?>';
+        if (userCourseId == '') {
+            let usercourseSelector = document.querySelector('#usercourseSelector');
+            let userCourseId = usercourseSelector.value;
+            let url = urlMethod + '/' + apprenticeId + '/' + userCourseId;
+            window.location.replace(url);
+        }
         // $('#usercourseSelector').val(<?= isset($userCourseMax)
         //     ? $userCourseMax['id'] : null ?>);
-        let usercourseSelector = document.querySelector('#usercourseSelector');
 
+        let usercourseSelector = document.querySelector('#usercourseSelector');
         usercourseSelector.addEventListener("change", (event) => {
             let userCourseId = usercourseSelector.value;
             let url = urlMethod + '/' + apprenticeId + '/' + userCourseId;
