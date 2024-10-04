@@ -444,14 +444,52 @@ class GradeModel extends Model
         $noSchoolModules = $gradeModel
             ->getApprenticeModulesGradesForView($userCourseId,
                 isSchool: false);
-        $module['school']['modules'] = $schoolModules;
-        $module['school']['weighting'] = intval($schoolWeight * 100);
-        $module['non-school']['modules'] = $noSchoolModules;
-        $module['non-school']['weighting'] = intval($externWeight * 100);
+        $modules['school']['modules'] = $schoolModules;
+        $modules['school']['weighting'] = intval($schoolWeight * 100);
+        $modules['non-school']['modules'] = $noSchoolModules;
+        $modules['non-school']['weighting'] = intval($externWeight * 100);
         $teachingDomainModel = model('TeachingDomainModel');
-        $module['weighting'] = intval($teachingDomainModel
+        $modules['weighting'] = intval($teachingDomainModel
             ->getITDomainWeight($userCourseId) * 100);
-        return $module;
+        return $this->putDefaultDataForModuleView($modules);
+    }
+
+    public function putDefaultDataForModuleView(array $viewModules): array
+    {
+        if (empty($viewModules['school']['modules'])) {
+            $viewModules['school']['modules'][0]['name']
+                = lang('module not found');
+            $viewModules['school']['modules'][0]['number']
+                = lang('module not found');
+        }
+        if (empty($viewModules['non-school']['modules'])) {
+            $viewModules['non-school']['modules'][0]['name']
+                = lang('module not found');
+            $viewModules['non-school']['modules'][0]['number']
+                = lang('module not found');
+        }
+        if (empty($viewModules['school']['weighting'])) {
+            $viewModules['school']['weighting']
+                = lang('weighting not found');
+        }
+        if (empty($viewModules['non-school']['weighting'])) {
+            $viewModules['non-school']['weighting']
+                = lang('weighting not found');
+        }
+        if (empty($viewModules['school']['modules'][0]['grade'])) {
+            $viewModules['school']['modules'][0]['grade']['id']
+                = lang('grade not found');
+            $viewModules['school']['modules'][0]['grade']['value']
+                = lang('grade not found');
+        }
+        if (empty($viewModules['non-school']['modules'][0]['grade'])) {
+            $viewModules['non-school']['modules'][0]['grade']['id']
+                = lang('grade not found');
+            $viewModules['non-school']['modules'][0]['grade']['value']
+                = lang('grade not found');
+        }
+        return $viewModules;
+
     }
 
     public function getApprenticeModulesGradesForView(int $userCourseId,
@@ -514,11 +552,28 @@ class GradeModel extends Model
         $teachingSubjectModel = model('TeachingSubjectModel');
         $subjectIds = $teachingSubjectModel
             ->getTeachingSubjectIdByDomain($domain['id']);
-        $subjectsWithGrades = array_map( fn($subjectId) => $this
+        $subjectsWithGrades = array_map(fn($subjectId) => $this
                 ->getApprenticeSubjectGradesForView($userCourseId, $subjectId),
             $subjectIds);
         $data['subjects'] = $subjectsWithGrades;
         $data['weighting'] = intval($domain['domain_weight'] * 100);
+        return $this->putDefaultDataForDomainGradeView($data);
+    }
+
+    private function putDefaultDataForDomainGradeView(array $data): array
+    {
+        $data['subjects'] = array_map(function ($subject) {
+            assert(count($subject['grades']) <= 8);
+            while (count($subject['grades']) !== 8)
+            {
+                $subject['grades'][] = [
+                    'id' => lang('grade not found'),
+                    'value' => lang('grade not found'),
+                ];
+                    
+            }
+            return $subject;
+        }, $data['subjects']);
         return $data;
     }
 
