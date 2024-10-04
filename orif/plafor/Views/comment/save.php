@@ -48,8 +48,7 @@ $max_length = config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH;
 
 <div class="container">
     <!-- Page title -->
-    <?= view('\Plafor/common/page_title',
-        ['title' => lang('plafor_lang.title_comment_'.(!empty($comment_id) ? 'update' : 'new'))]) ?>
+    <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
 
     <?= form_open(base_url('plafor/apprentice/save_comment/'.$acquisition_status_id.'/'.$comment_id)) ?>
         <!-- Form errors -->
@@ -57,7 +56,7 @@ $max_length = config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH;
 
         <div class="row">
             <div class="col-sm-12 form-group">
-                <?= form_label(lang('plafor_lang.field_comment'), 'comment',
+                <?= form_label(lang('plafor_lang.comment'), 'comment',
                     ['class' => 'form-label']) ?>
 
                 <?= form_textarea('comment', $comment_text,

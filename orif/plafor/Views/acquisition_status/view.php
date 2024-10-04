@@ -75,53 +75,42 @@ helper("AccessPermissions_helper")
     <!-- Comments -->
     <div class="row">
         <div class="col-md-12">
-            <p class="bg-primary text-white"><?= lang('plafor_lang.field_linked_comments') ?></p>
+            <p class="bg-primary text-white"><?= lang('plafor_lang.linked_comments') ?></p>
 		</div>
 
-        <!-- TODO : Use items_list common view for comments, where we can only hard delete. -->
-		<?php if(hasCurrentUserTrainerAccess()): ?>
-		    <div class="col mb-2">
-		        <a href="<?= base_url('plafor/apprentice/save_comment/'.$acquisition_status_id); ?>" class="btn btn-primary">
+		<?php if(hasCurrentUserApprenticeAccess()): ?>
+		    <div class="col-12 mb-2">
+		        <a href="<?= base_url('plafor/apprentice/save_comment/'.$acquisition_status_id) ?>" class="btn btn-primary">
                     <?= lang('plafor_lang.title_comment_new'); ?>
                 </a>
 		    </div>
 		<?php endif ?>
 
-        <div class="col-md-12">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th><?= lang('plafor_lang.field_comment'); ?></th>
-                        <th><?= lang('plafor_lang.field_comment_creater'); ?></th>
-                        <th><?= lang('plafor_lang.field_comment_date_creation'); ?></th>
-                        <th></th>
-                    </tr>
-                </thead>
+        <div class="col-12">
+            <?php foreach($comments as $comment): ?>
+                <div class="col-12 border border-secondary rounded mx-auto my-2 pt-2">
+                    <div class="col-12">
+                        <em class="mb-0">
+                            <?= $comment["fk_user"].', '.lang('plafor_lang.the_m').' '.$comment["date_creation"] ?>
+                        </em>
+                    </div>
 
-                <tbody>
-                    <?php foreach ($comments as $comment): ?>
-                        <tr>
-                            <td>
-                                <a href="<?= base_url('plafor/apprentice/save_comment/'.$acquisition_status_id.'/'.$comment['id'])?>">
-                                    <?= $comment['comment']; ?>
-                                </a>
-                            </td>
+                    <div class="col-12 py-2">
+                        <p class="mb-0"><?= $comment["comment"] ?></p>
+                    </div>
 
-                            <td><?= isset($trainers[$comment['fk_trainer']]) ? $trainers[$comment['fk_trainer']]['username'] : '' ?></td>
-                            <td><?= $comment['date_creation'] ?></td>
-
-                            <td>
-                                <a class="bi bi-trash" id="<?=$comment['id']?>" onClick="
-                            let obj = {yes: '<?= lang('common_lang.yes')?>',no: '<?= lang('common_lang.no') ?>',message: '<?= lang('plafor_lang.comment_delete') ?>',url: '<?= base_url('plafor/apprentice/delete_comment/'.$comment['id']) ?>'};
-                            displayNotif(event.pageX, event.pageY,obj)">
-                                </a>
-                            </td>
-                        </tr>
-                    <?php endforeach ?>
-                </tbody>
-            </table>
+                    <?php if(hasCurrentUserApprenticeAccess()): ?>
+                        <div class="col-12 py-2 border-top border-primary text-right">
+                            <a href="<?= base_url('plafor/apprentice/save_comment/'.$acquisition_status_id.'/'.$comment["id"]) ?>" class="btn btn-primary">
+                                <?= lang('common_lang.btn_edit'); ?>
+                            </a>
+                            <a href="<?= base_url('plafor/apprentice/delete_comment/2/'.$comment["id"]) ?>" class="btn btn-danger">
+                                <?= lang('common_lang.btn_hard_delete'); ?>
+                            </a>
+                        </div>
+                    <?php endif ?>
+                </div>
+            <?php endforeach ?>
         </div>
     </div>
 </div>
-
-<script src="<?=base_url('notif.js')?>"></script>

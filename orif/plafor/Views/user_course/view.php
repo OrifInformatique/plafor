@@ -108,12 +108,8 @@ helper("AccesPermissions_helper")
             <p><strong><?= lang('plafor_lang.field_user_course_status') ?></strong></p>
             <p><?= $user_course_status['name'] ?></p>
         </div>
-        <div class="col-md-6">
-            <p class="font-weight-bold"><?= lang('plafor_lang.apprentice') ?></p>
-            <a href="<?= base_url('plafor/apprentice/view_apprentice/'.$apprentice['id'])?>"><?=$apprentice['username']?></a>
-        </div>
 
-        <?php if(isCurrentUserAdmin()): ?>
+        <?php if(hasCurrentUserAdminAccess()): ?>
             <div class="col-md-10 mb-2">
                 <a class="btn btn-primary" href="<?= base_url('plafor/apprentice/save_user_course/'.$apprentice['id']."/".$user_course['id'])?>">
                     <?= lang('plafor_lang.title_user_course_update') ?>

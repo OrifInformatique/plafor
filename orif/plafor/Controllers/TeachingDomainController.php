@@ -64,7 +64,7 @@ class TeachingDomainController extends \App\Controllers\BaseController
      */
     public function getAllDomainsTitle(): string|RedirectResponse
     {
-        if (!hasCurrentUserAdminAccess())
+        if(!hasCurrentUserTrainerAccess())
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
 
         $with_archived = $this->request->getGet("wa") ?? false;
@@ -98,7 +98,7 @@ class TeachingDomainController extends \App\Controllers\BaseController
      */
     public function saveTeachingDomainTitle(int $domain_title_id = 0): string|RedirectResponse
     {
-        if (!hasCurrentUserAdminAccess())
+        if(!hasCurrentUserAdminAccess())
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
 
         $domain_title = $this->m_teaching_domain_title_model->find($domain_title_id);

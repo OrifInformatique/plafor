@@ -107,6 +107,9 @@ class Apprentice extends \App\Controllers\BaseController
      */
     public function list_apprentice(bool $with_archived = false): string
     {
+        if(!hasCurrentUserTrainerAccess())
+            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
+
         // Gets trainer information if they are connected
         $trainer_id = $this->request->getGet('trainer_id');
 
@@ -177,7 +180,7 @@ class Apprentice extends \App\Controllers\BaseController
      */
     public function view_apprentice(int $apprentice_id = 0): string
     {
-        if(!isCurrentUserTrainerOfApprentice($apprentice_id)
+        if(!hasCurrentUserTrainerAccess()
             && !isCurrentUserSelfApprentice($apprentice_id))
         {
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
@@ -291,6 +294,9 @@ class Apprentice extends \App\Controllers\BaseController
      */
     public function list_user_courses(int $apprentice_id = 0): string|RedirectResponse
     {
+        if(!hasCurrentUserTrainerAccess())
+            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
+
         $apprentice = $this->user_model->find($apprentice_id);
 
         if(empty($apprentice))
@@ -455,7 +461,7 @@ class Apprentice extends \App\Controllers\BaseController
             else
             {
                 $user_has_course = $this->user_course_model
-                    ->where(['fk_user' => $apprentice_id, 'fk_course_plan' => $fk_course_plan])
+                    ->where(['fk_user' => $apprentice_id, 'fk_course_plan' => $new_user_course["fk_course_plan"]])
                     ->findAll() ? true : false;
 
                 // If the apprentice already follows the course plan submitted, prevent the creation of the entry.
@@ -564,7 +570,7 @@ class Apprentice extends \App\Controllers\BaseController
         $user_course = $this->user_course_model->find($user_course_id);
         $apprentice = $this->user_model->withDeleted()->find($user_course['fk_user']);
 
-        if(!isCurrentUserTrainerOfApprentice($apprentice['id']))
+        if(!hasCurrentUserTrainerAccess())
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
 
         if(is_null($user_course) || !isset($action))
@@ -784,10 +790,15 @@ class Apprentice extends \App\Controllers\BaseController
 
         $objective         = $this->acquisition_status_model->getObjective($acquisition_status['fk_objective']);
         $acquisition_level = $this->acquisition_status_model->getAcquisitionLevel($acquisition_status['fk_acquisition_level']);
-        $comments          = $this->comment_model->where('fk_acquisition_status',$acquisition_status_id)->findAll();
+        $comments          = $this->comment_model->where('fk_acquisition_status', $acquisition_status_id)->findAll();
 
-        foreach ($this->user_model->getTrainers() as &$trainer)
-            $trainers[$trainer['id']] = $trainer;
+        foreach ($comments as &$comment)
+        {
+            $comment["fk_user"] = $this->user_model->find($comment["fk_user"])["username"] ?? lang('plafor_lang.unknown_author');
+
+            $comment["date_creation"] = Time::createFromFormat('Y-m-d H:i:s', $comment["date_creation"])
+                ->toLocalizedString('d MMMM yyyy, '.lang('plafor_lang.at').' H:mm:ss');
+        }
 
         $output = array
         (
@@ -795,7 +806,6 @@ class Apprentice extends \App\Controllers\BaseController
             'acquisition_level'     => $acquisition_level,
             'objective'             => $objective,
             'comments'              => $comments,
-            'trainers'              => $trainers,
         );
 
         return $this->display_view('Plafor\acquisition_status/view',$output);
@@ -870,11 +880,30 @@ class Apprentice extends \App\Controllers\BaseController
      */
     public function save_comment(int $acquisition_status_id = 0, int $comment_id = 0): string|RedirectResponse
     {
-        if(!hasCurrentUserTrainerAccess())
+        if(!hasCurrentUserApprenticeAccess())
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
 
+        $comment = $this->comment_model->find($comment_id);
+
+        if(isset($comment))
+        {
+            /**
+             * Does not allow access in these conditions :
+             *
+             * An apprentice tries to edit a comment other than his own.
+             * A trainer tries to edit a comment other than his own, or which does not belong to an apprentice.
+             * The user is not an admin.
+             */
+            if(!(isCurrentUserApprentice() && $_SESSION["user_id"] == $comment["fk_user"])
+                && !(isCurrentUserTrainer() && ($_SESSION["user_id"] == $comment["fk_user"]
+                    || isSpecifiedUserApprentice($comment["fk_user"])))
+                && !isCurrentUserAdmin())
+            {
+                return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
+            }
+        }
+
         $acquisition_status = $this->acquisition_status_model->find($acquisition_status_id);
-        $comment            = $this->comment_model->find($comment_id);
 
         if(is_null($acquisition_status))
             return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
@@ -884,7 +913,7 @@ class Apprentice extends \App\Controllers\BaseController
             $new_comment = array
             (
                 'id'                    => $comment_id,
-                'fk_trainer'            => $_SESSION['user_id'],
+                "fk_user"               => $_SESSION['user_id'],
                 'fk_acquisition_status' => $acquisition_status_id,
                 'comment'               => $this->request->getPost('comment'),
                 'date_creation'         => date('Y-m-d H:i:s'),
@@ -909,27 +938,94 @@ class Apprentice extends \App\Controllers\BaseController
     }
 
 
-    // TODO : Use the common delete view and logic for comments.
+
     /**
-     * Deletes a comment from an acquisition status.
+     * Alterate an acquisition status comment depending on $action.
+     * For every action, a action confirmation is displayed.
+     *
+     * @param int|null $action Action to apply on the comment.
+     *      - 2 for deleting (hard delete)
      *
      * @param int $comment_id ID of the comment.
+     *
+     * @param bool $confirm Defines whether the action has been confirmed.
      *
      * @return string|RedirectResponse
      *
      */
-    public function delete_comment(int $comment_id = 0): string|RedirectResponse
+    public function delete_comment(int|null $action = null, int $comment_id = 0, bool $confirm = false): string|RedirectResponse
     {
-        if(!hasCurrentUserTrainerAccess())
-            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
-
         $comment = $this->comment_model->find($comment_id);
-        $acquisition_status_id = $comment['fk_acquisition_status'];
 
-        if(is_null($comment))
+        if(!isset($action) || is_null($comment))
             return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
 
-        $this->comment_model->delete($comment_id);
+        if(isset($comment))
+        {
+            /**
+             * Does not allow access in these conditions :
+             *
+             * An apprentice tries to delete a comment other than his own.
+             * A trainer tries to delete a comment other than his own, or which does not belong to an apprentice.
+             * The user is not an admin.
+             */
+            if(!(isCurrentUserApprentice() && $_SESSION["user_id"] == $comment["fk_user"])
+                && !(isCurrentUserTrainer() && ($_SESSION["user_id"] == $comment["fk_user"]
+                    || isSpecifiedUserApprentice($comment["fk_user"])))
+                && !isCurrentUserAdmin())
+            {
+                return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
+            }
+        }
+
+        $acquisition_status_id = $comment['fk_acquisition_status'];
+
+        if(!$confirm)
+        {
+            $author = $this->user_model->find($comment["fk_user"])["username"] ?? lang('plafor_lang.unknown_author');
+
+            $creation_date = Time::createFromFormat('Y-m-d H:i:s', $comment["date_creation"])
+                ->toLocalizedString('d MMMM yyyy, '.lang('plafor_lang.at').' H:mm:ss');
+
+            $output = array
+            (
+                'entry' =>
+                [
+                    'type'    => lang('plafor_lang.comment'),
+                    // Displays only the 150 first chars of the comment.
+                    // If the comment is longer than 150 chars, it will add '...' at the end
+                    // to indicate that the text is longer than shown.
+                    'name'    => substr($comment["comment"], 0, 150).(strlen($comment["comment"]) > 150 ? '...' : ''),
+                    'data'    =>
+                    [
+                        [
+                            'name' => lang('plafor_lang.author'),
+                            'value' => $author
+                        ],
+                        [
+                            'name' => lang('plafor_lang.creation_date'),
+                            'value' => lang('plafor_lang.the_m').' '.$creation_date
+                        ]
+                    ]
+                ],
+                'cancel_btn_url' => base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status_id),
+            );
+        }
+
+        switch($action)
+        {
+            case 2:
+                if(!$confirm)
+                {
+                    $output['type'] = 'delete';
+                    $output['entry']['message'] = lang('plafor_lang.comment_delete_explaination');
+
+                    return $this->display_view('\Common/manage_entry', $output);
+                }
+
+                $this->comment_model->delete($comment_id, true);
+                break;
+        }
 
         return redirect()->to(base_url('plafor/apprentice/view_acquisition_status/'.$acquisition_status_id));
 
@@ -961,72 +1057,110 @@ class Apprentice extends \App\Controllers\BaseController
 
 
 
-    // BUG : This function isn't used. Should we use/keep it ?
+    // BUG : The LoginFilter.php doesn't work. In consequence, this function is never called.
     /**
      * Deletes or deactivates a user depending on $action
      *
-     * @param integer $user_id ID of the user to affect
-     * @param integer $action  Action to apply on the user
-     *      - 0 for displaying the confirmation
+     * When deleting an user, the LoginFilter redirects to this function
+     * instead of the classic function.
+     *
+     * @param int $user_id ID of the user.
+     *
+     * @param int $action Action to apply on the user.
      *      - 1 for deactivating (soft delete)
      *      - 2 for deleting (hard delete)
      *
-     * @return void
+     * @return string|RedirectResponse
      *
      */
-    public function delete_user($user_id = 0, $action = 0)
+    public function delete_user(int|null $action = null, int $user_id = 0, bool $confirm = false): string|RedirectResponse
     {
-        if($_SESSION['user_access'] < config('\User\Config\UserConfig')->access_lvl_admin)
-            return $this->display_view('\User\errors\403error');
+        if(!hasCurrentUserAdminAccess())
+            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
 
         $user = $this->user_model->withDeleted()->find($user_id);
 
         if(is_null($user))
             return redirect()->to(base_url('/user/admin/list_user'));
 
-        // Action to perform
+        if(!$confirm)
+        {
+            $output = array
+            (
+                'entry' =>
+                [
+                    'type'    => lang('plafor_lang.title_user'),
+                    'name'    => $user["username"],
+                    'message' => lang('plafor_lang.apprentice_link_delete_explanation'),
+                    'data'    =>
+                    [
+                        [
+                            'name' => lang('plafor_lang.apprentice'),
+                            'value' => $apprentice['username']
+                        ],
+                        [
+                            'name' => lang('plafor_lang.trainer'),
+                            'value' => $trainer['username']
+                        ]
+                    ]
+                ],
+                'cancel_btn_url' => base_url('plafor/apprentice/view_apprentice/'.$apprentice['id']),
+            );
+        }
+
         switch($action)
         {
-            // Displays confirmation
-            case 0:
-                $output = array(
-                    'user' => $user,
-                    'title' => lang('user_lang.title_user_delete')
-                );
-                return $this->display_view('\User\admin\delete_user', $output);
-
-            // Deactivates (soft delete) user
             case 1:
                 if($_SESSION['user_id'] != $user['id'])
-                    $this->user_model->delete($user_id, FALSE);
+                {
+                    if(!$confirm)
+                    {
+                        $output['type'] = 'disable';
+                        $output['entry']['message'] = lang('plafor_lang.user_disable_explaination');
+
+                        return $this->display_view('\Common/manage_entry', $output);
+                    }
+
+                    $this->user_model->delete($user_id);
+                }
 
                 break;
 
-            // Deletes user
             case 2:
                 if($_SESSION['user_id'] != $user['id'])
                 {
-                    // Deletes associated information
-                    foreach($this->trainer_apprentice_model->where('fk_apprentice',$user['id'])->orWhere('fk_trainer',$user['id'])->findAll() as $trainerApprentice)
-                        $trainerApprentice==null?:$this->trainer_apprentice_model->delete($trainerApprentice['id']);
-
-                    if(count($this->user_course_model->getUser($user['id']))>0)
+                    if(!$confirm)
                     {
-                        foreach($this->user_course_model->where('fk_user',$user['id'])->findAll() as $user_course)
+                        $output['type'] = 'delete';
+                        $output['entry']['message'] = lang('plafor_lang.user_delete_explaination');
+
+                        return $this->display_view('\Common/manage_entry', $output);
+                    }
+
+                    // Deletes associated information
+                    foreach($this->trainer_apprentice_model->where('fk_apprentice', $user['id'])
+                        ->orWhere('fk_trainer', $user['id'])->findAll() as $trainerApprentice)
+                    {
+                        is_null($trainerApprentice) ?: $this->trainer_apprentice_model->delete($trainerApprentice['id']);
+                    }
+
+                    if(count($this->user_course_model->getUser($user['id'])) > 0)
+                    {
+                        foreach($this->user_course_model->where('fk_user', $user['id'])->findAll() as $user_course)
                         {
                             foreach($this->user_course_model->getAcquisitionStatus($user_course['id']) as $acquisition_status)
                             {
-                                foreach ($this->comment_model->where('fk_acquisition_status',$acquisition_status['id']) as $comment)
-                                    $comment==null?:$this->comment_model->delete($comment['id'],true);
+                                foreach ($this->comment_model->where('fk_acquisition_status', $acquisition_status['id']) as $comment)
+                                    is_null($comment) ?: $this->comment_model->delete($comment['id'], true);
 
-                                $this->acquisition_status_model->delete($acquisition_status['id'],true);
+                                $this->acquisition_status_model->delete($acquisition_status['id'], true);
                             }
 
-                            $this->user_course_model->delete($user_course['id'],true);
+                            $this->user_course_model->delete($user_course['id'], true);
                         }
                     }
 
-                    $this->user_model->delete($user_id, TRUE);
+                    $this->user_model->delete($user_id, true);
                 }
 
                 break;

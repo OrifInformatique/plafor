@@ -71,6 +71,9 @@ class CoursePlan extends \App\Controllers\BaseController
      */
     public function list_course_plan(): string
     {
+        if(!hasCurrentUserTrainerAccess())
+            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
+
         $with_archived = $this->request->getGet('wa') ?? false;
 
         $course_plans = $this->course_plan_model->withDeleted($with_archived)->findAll();
@@ -110,6 +113,9 @@ class CoursePlan extends \App\Controllers\BaseController
      */
     public function view_course_plan(int $course_plan_id = 0): string|RedirectResponse
     {
+        if(!hasCurrentUserTrainerAccess())
+            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
+
         $with_archived = $this->request->getGet('wa') ?? false;
 
         $course_plan = $this->course_plan_model->withDeleted()->find($course_plan_id);
@@ -322,6 +328,9 @@ class CoursePlan extends \App\Controllers\BaseController
      */
     public function view_competence_domain(int $competence_domain_id = 0): string|RedirectResponse
     {
+        if(!hasCurrentUserTrainerAccess())
+            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
+
         $competence_domain = $this->comp_domain_model->withDeleted()->find($competence_domain_id);
 
         if(is_null($competence_domain))
@@ -490,6 +499,9 @@ class CoursePlan extends \App\Controllers\BaseController
      */
     public function view_operational_competence(int $operational_competence_id = 0): string|RedirectResponse
     {
+        if(!hasCurrentUserTrainerAccess())
+            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
+
         $operational_competence = $this->operational_comp_model->withDeleted()->find($operational_competence_id);
 
         if(is_null($operational_competence))
@@ -661,6 +673,9 @@ class CoursePlan extends \App\Controllers\BaseController
      */
     public function view_objective(int $objective_id = 0): string|RedirectResponse
     {
+        if(!hasCurrentUserTrainerAccess())
+            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
+
         $objective              = $this->objective_model->withDeleted()->find($objective_id);
         $operational_competence = $this->objective_model->getOperationalCompetence($objective['fk_operational_competence']);
         $competence_domain      = $this->operational_comp_model->getCompetenceDomain($operational_competence['fk_competence_domain']);
