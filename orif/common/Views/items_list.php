@@ -103,7 +103,10 @@ if(!isset($deleted_field))
     $deleted_field = 'archive';
 
 if(!isset($allow_hard_delete))
+{
     $allow_hard_delete = false;
+    unset($url_hard_delete);
+}
 
 if(!isset($primary_key_field))
     $primary_key_field = 'id';
