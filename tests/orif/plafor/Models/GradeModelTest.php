@@ -548,12 +548,12 @@ class GradeModelTest extends CIUnitTestCase
 
 
 
-    public function testGetApprenticeModuleAverageReal(): void
+    public function testGetWeightedModuleAverage(): void
     {
         $idUserCourse = 1;
 
         $gradeModel = model('GradeModel');
-        $result = $gradeModel->getApprenticeModuleAverageReal($idUserCourse);
+        $result = $gradeModel->getWeightedModuleAverage($idUserCourse);
 
         $expectedAverage = 4.4;
         $this->assertEquals($expectedAverage, $result);
