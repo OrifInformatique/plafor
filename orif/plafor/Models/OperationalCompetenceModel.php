@@ -58,31 +58,31 @@ class OperationalCompetenceModel extends \CodeIgniter\Model
      */
     public function getCompetenceDomain($fkCompetenceDomainId) {
         $competenceDomainModel = model('CompetenceDomainModel');
-        return $competenceDomainModel->find($fkCompetenceDomainId);
+        return $competenceDomainModel->withDeleted()->find($fkCompetenceDomainId);
     }
 
     /**
-     * @param $operationalCompetenceId
+     * @param $operational_competenceId
      * @return array
      */
-    public function getObjectives($operationalCompetenceId, $with_archived = 0)
+    public function getObjectives($operational_competenceId, $with_archived = 0)
     {
         $objectiveModel = model('ObjectiveModel');
         return $objectiveModel->withDeleted($with_archived)
                               ->where('fk_operational_competence',
-                                  $operationalCompetenceId)
+                                  $operational_competenceId)
                               ->findAll();
     }
 
     public function getOperationalCompetences($with_archived = false,
         $competence_domain_id = 0)
-    { 
-        $operationalCompetenceModel = model('OperationalCompetenceModel');
+    {
+        $operational_competenceModel = model('OperationalCompetenceModel');
         if($competence_domain_id == 0) {
-            return $operationalCompetenceModel->withDeleted($with_archived)
+            return $operational_competenceModel->withDeleted($with_archived)
                                               ->findall();
         } else {
-            return $operationalCompetenceModel
+            return $operational_competenceModel
                 ->where('fk_competence_domain', $competence_domain_id)
                 ->withDeleted($with_archived)->findall();
         }

@@ -42,7 +42,7 @@ class PlaforRules
     }
 
      /**
-     * Check if the given apprentice ID and the given trainer ID 
+     * Check if the given apprentice ID and the given trainer ID
      *  exist in the same row of the table "trainer_apprentice"
      *
      * @param  int $fkApprenticeId  : ID of the apprentice, required
@@ -61,10 +61,10 @@ class PlaforRules
         $error = lang('plafor_lang.apprentice_trainer_already_linked');
         return false;
     }
-    
+
     /**
      * Check if the symbol of the competence domain already exists in database
-     * 
+     *
      * @param $symbol   : The symbol to check
      * @param $params   : Optional parameters
      * @param $data     : Datas sent to the form
@@ -73,7 +73,7 @@ class PlaforRules
      */
     public function is_symbol_unique($symbol, string $params, array $data, &$error): bool {
         // Initializing variables depending on the type of data to validate
-        switch ($_POST['type']) {
+        switch($_POST['type']) {
             case 'competence_domain':
                 // For a competence domain
                 $parent = 'course_plan';

@@ -46,15 +46,15 @@ class TeachingModuleModel extends Model
 
     /**
      * Post-processing hook for find operations.
-     * 
+     *
      * @param array $data Contains the result from the find operation, along
      * with additional metadata.
      *   - $data['data']: The result data from the find operation.
      *   - $data['method']: The name of the find method that was called (e.g.
      *   'findAll', 'find', 'first').
-     * 
+     *
      * @return array $data The edited result data.
-     * 
+     *
      * This method applies additional processing to the result data based on
      * the type of find operation:
      * - findAll and find without an ID in the parameter call afterFindFindAll.
@@ -76,10 +76,10 @@ class TeachingModuleModel extends Model
 
     /**
      * Post-processing hook for findAll operations.
-     * 
+     *
      * Applies the afterFindFind method to each element of the result set
      * returned by findAll.
-     * 
+     *
      * @param array $data The result set from the findAll operation.
      * @return array The result set with each element processed by
      * afterFindFind.
@@ -91,24 +91,24 @@ class TeachingModuleModel extends Model
 
     /**
      * Post-processing hook for find and first operations.
-     * 
+     *
      * Enhances the result data by adding related teaching domains, including
      * soft deleted ones.
-     * 
+     *
      * Retrieves a list of teaching domains associated with the current
      * teaching module, including their IDs, titles, course plans, weights,
      * eliminatory status, and archive status.
-     * 
+     *
      * Note: This method also retrieves soft deleted teaching domains, in
      * addition to active ones.
-     * 
+     *
      * @param array $data The result data from the find or first operation.
      * @return array The enhanced result data with additional teaching domain
      * information.
      */
     protected function afterFindFind(array $data): array
     {
-        if (array_key_exists('id', $data)) { 
+        if (array_key_exists('id', $data)) {
             $teachingDomainModel = model('TeachingDomainModel');
             $data['teaching_domains'] = $teachingDomainModel
                 ->select('teaching_domain.id,'
@@ -129,21 +129,21 @@ class TeachingModuleModel extends Model
      * Retrieves the modules associated with a teaching domain.
      *
      * @param int $domainId The ID of the teaching domain.
-     * @param bool|null $withDeleted Indicates whether deleted modules should
+     * @param bool|null $with_archived Indicates whether deleted modules should
      * be included in the results. Defaults to true.
      *
      * @return array The list of modules associated with the teaching domain.
      */
     public function getByTeachingDomainId(int $domainId, ?bool
-        $withDeleted = true): array
+        $with_archived = true): array
     {
         $modules = $this->select('teaching_module.id,
             teaching_module.module_number, teaching_module.official_name,'
-            . ' teaching_module.version')
+            . ' teaching_module.version, teaching_module.archive')
              ->join('teaching_domain_module', 'teaching_module.id ='
                  . ' teaching_domain_module.fk_teaching_module', 'left')
              ->where('teaching_domain_module.fk_teaching_domain = ', $domainId)
-             ->withDeleted($withDeleted)
+             ->withDeleted($with_archived)
              ->find();
         return $modules;
     }

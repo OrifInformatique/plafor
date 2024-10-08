@@ -81,56 +81,6 @@
  *
  */
 
-
-
-/* Random data set for testing, can be deleted anytime */
-$grade_id = 0; // ID de la note
-
-$user_course_id = 98765; // ID du user_course de l'apprenti
-
-$apprentice = [
-    'id' => 2,
-    'username' => 'jane_smith', // Nom d'utilisateur de l'apprenti
-];
-
-$course_plan = "Computer Science"; // Nom du course_plan
-
-$subject_and_domains_list = [
-    lang('Grades.subjects') => [
-        's101' => 'Data Structures',
-        's102' => 'Operating Systems',
-        's103' => 'Networks',
-    ],
-    lang('Grades.modules') => [
-        'm101' => 'Module 1: Introduction to Data Structures',
-        'm102' => 'Module 2: Operating Systems Internals',
-    ],
-];
-
-$selected_entry = 's102';
-
-$grade = 5; // Valeur de la note (peut être laissée vide)
-
-$exam_date = '2024-07-01'; // Date de l'examen (peut être laissée vide)
-
-$is_exam_made_in_school = true; // Indication si l'examen a été réalisé à l'école
-
-/**
- * Data management
- *
- */
-
-// TODO : Move data management in controller
-
-if(isset($grade_id) && $grade_id > 0)
-    $title = lang('Grades.update_grade');
-
-else
-{
-    $title = lang('Grades.add_grade');
-    $grade_id = 0;
-}
-
 helper('form');
 
 $subject_or_module_label = lang('Grades.subject').' '.lang('Grades.or').' '.strtolower(lang('Grades.module'));

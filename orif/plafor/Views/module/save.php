@@ -51,26 +51,6 @@
  *
  */
 
-
-
-/**
- * Data management
- *
- */
-
-// TODO : Move data management in controller
-
-if(isset($module_id) && $module_id > 0)
-    $title = lang('Grades.update_module');
-
-else
-{
-    $title = lang('Grades.create_module');
-    $module_id = 0;
-}
-
-$domains = [];
-
 helper('form');
 
 $module_name_max_length = config('\Plafor\Config\PlaforConfig')->MODULE_OFFICIAL_NAME_MAX_LENGTH;
@@ -117,14 +97,6 @@ $module_number_max      = str_repeat(9, config('\Plafor\Config\PlaforConfig')->M
         </div>
 
         <div class="row">
-            <?php if($module_id > 0): ?>
-                <div class="col">
-                    <a href="<?= base_url('plafor/teachingdomain/deleteTeachingModule/'.$module_id) ?>" class="btn btn-danger">
-                        <?= lang('common_lang.btn_delete') ?>
-                    </a>
-                </div>
-            <?php endif ?>
-
             <div class="col text-right">
                 <a class="btn btn-secondary" href="<?= base_url('plafor/teachingdomain/getAllTeachingModule') ?>">
                     <?= lang('common_lang.btn_cancel') ?>

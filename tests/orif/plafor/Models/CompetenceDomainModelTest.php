@@ -1,6 +1,6 @@
 <?php
 /**
- * Unit / Integration tests CompetenceDomainModelTest 
+ * Unit / Integration tests CompetenceDomainModelTest
  *
  * @author      Orif (CaLa)
  * @link        https://github.com/OrifInformatique
@@ -49,14 +49,14 @@ class CompetenceDomainModelTest extends CIUnitTestCase
     {
         // Gets the operational competences with the competence domain id 1
         $competenceDomainModel = model('CompetenceDomainModel');
-        $operationalCompetences = $competenceDomainModel->getOperationalCompetences(1);
+        $operational_competences = $competenceDomainModel->getOperationalCompetences(1);
 
         // Assertions
-        $this->assertIsArray($operationalCompetences);
+        $this->assertIsArray($operational_competences);
 
         // For each operational competences, asserts that the competence domain is 1
-        foreach ($operationalCompetences as $operationalCompetence) {
-            $this->assertEquals($operationalCompetence['fk_competence_domain'], 1);
+        foreach ($operational_competences as $operational_competence) {
+            $this->assertEquals($operational_competence['fk_competence_domain'], 1);
         }
     }
 
@@ -67,14 +67,14 @@ class CompetenceDomainModelTest extends CIUnitTestCase
     {
         // Gets the competence domains with the course plan id 1
         $competenceDomainModel = model('CompetenceDomainModel');
-        $competenceDomains = $competenceDomainModel->getCompetenceDomains(false, 1);
+        $competence_domains = $competenceDomainModel->getCompetenceDomains(false, 1);
 
         // Assertions
-        $this->assertIsArray($competenceDomains);
+        $this->assertIsArray($competence_domains);
 
         // For each competence domain, asserts that the course plan id is 1
-        foreach ($competenceDomains as $competenceDomain) {
-            $this->assertEquals($competenceDomain['fk_course_plan'], 1);
+        foreach ($competence_domains as $competence_domain) {
+            $this->assertEquals($competence_domain['fk_course_plan'], 1);
         }
     }
 
@@ -85,9 +85,9 @@ class CompetenceDomainModelTest extends CIUnitTestCase
     {
         // Gets the competence domains with the course plan id 1
         $competenceDomainModel = model('CompetenceDomainModel');
-        $competenceDomains = $competenceDomainModel->getCompetenceDomains(false);
+        $competence_domains = $competenceDomainModel->getCompetenceDomains(false);
 
         // Assertions
-        $this->assertIsArray($competenceDomains);
+        $this->assertIsArray($competence_domains);
     }
 }

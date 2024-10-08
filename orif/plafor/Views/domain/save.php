@@ -41,6 +41,9 @@
  * @param ?bool $is_domain_eliminatory Defines whether the domain is eliminatory.
  * To edit an existing entry or remember user input.
  *
+ * @param ?bool $is_domain_archived Defines whether the domain is archived.
+ * To disable/delete/reactivate the entry.
+ *
  * @param array $errors teaching_domain_model errors. Can be empty.
  *
  */
@@ -71,48 +74,6 @@
  * Prevent this case by returning an error in the controller.
  *
  */
-
-
-
-// /* Random data set for testing, can be deleted anytime */
-// $title = lang('Grades.create_domain'); // Titre de la page
-
-// $domain_id = null; // ID du domaine (à éditer, peut être vide)
-
-// $parent_course_plan = [
-//     'id' => 345,
-//     'official_name' => 'Computer Science Engineering', // Nom officiel du plan de cours
-// ];
-
-// $domain_names = [
-//     1 => 'Software Development',
-//     2 => 'Network Administration',
-//     3 => 'Cybersecurity',
-// ];
-
-// $domain_name = 1; // ID du titre du domaine sélectionné (peut être vide)
-
-// $domain_weight = 40; // Ponderation du domaine (peut être vide)
-
-// $is_domain_eliminatory = false; // Le domaine est-il éliminatoire (peut être vide)
-
-// $errors = []; // Erreurs du modèle teaching_domain_model (peut être vide)
-
-/**
- * Data management
- *
- */
-
-// TODO : Move data management in controller
-
-if(isset($domain_id) && $domain_id > 0)
-    $title = lang('Grades.update_domain');
-
-else
-{
-    $title = lang('Grades.create_domain');
-    $domain_id = 0;
-}
 
 helper('form');
 
@@ -173,7 +134,7 @@ $new_domain_name = lang('Grades.name').' '.lang('Grades.of_a').' '.
                     ['class' => 'form-label']) ?>
 
                 <?= form_input('domain_weight', $domain_weight ?? '',
-                    ['class' => 'form-control', 'id' => 'domain_weight', 'min' => 0, 'max' => 100, 'step' => 5], 'number') ?>
+                    ['class' => 'form-control', 'id' => 'domain_weight', 'min' => 0, 'max' => 100], 'number') ?>
             </div>
 
             <div class="col-sm-3 form-group form-check form-check-inline">
@@ -188,9 +149,21 @@ $new_domain_name = lang('Grades.name').' '.lang('Grades.of_a').' '.
         <div class="row">
             <?php if($domain_id > 0): ?>
                 <div class="col">
-                    <a href="<?= base_url('plafor/teachingdomain/deleteTeachingDomain/'.$domain_id) ?>" class="btn btn-danger">
-                        <?= lang('common_lang.btn_delete') ?>
-                    </a>
+                    <?php if($is_domain_archived): ?>
+                        <a href="<?= base_url('plafor/teachingdomain/deleteTeachingDomain/3/'.$domain_id) ?>" class="btn btn-warning">
+                            <?= lang('common_lang.btn_reactivate') ?>
+                        </a>
+
+                        <a href="<?= base_url('plafor/teachingdomain/deleteTeachingDomain/2/'.$domain_id) ?>" class="btn btn-danger">
+                            <?= lang('common_lang.btn_hard_delete') ?>
+                        </a>
+
+                    <?php else: ?>
+                        <a href="<?= base_url('plafor/teachingdomain/deleteTeachingDomain/1/'.$domain_id) ?>" class="btn btn-warning">
+                            <?= lang('common_lang.btn_disable') ?>
+                        </a>
+
+                    <?php endif ?>
                 </div>
             <?php endif ?>
 

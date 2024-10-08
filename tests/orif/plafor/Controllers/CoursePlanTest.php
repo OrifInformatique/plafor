@@ -93,7 +93,7 @@
      */
     public function testsave_course_planWithAdministratorSessionUserAccessWithoutCoursePlanId()
     {
-        // $_POST = array();
+        // $_POST = [];
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_admin;
@@ -971,8 +971,8 @@
         $operational_competence_id = 1;
 
         // Disable operational competence
-        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
-        $operationalCompetenceModel->delete($operational_competence_id, false);
+        $operational_competenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $operational_competenceModel->delete($operational_competence_id, false);
 
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
@@ -1237,8 +1237,8 @@
         $_SESSION['logged_in'] = true;
 
         // Insert a new archived objective into database
-        $operationalCompetenceId = 1;
-        $objectiveId = self::insertArchivedObjective($operationalCompetenceId);
+        $operational_competenceId = 1;
+        $objectiveId = self::insertArchivedObjective($operational_competenceId);
 
         // Execute save_objective method of CoursePlan class
         $result = $this->controller(CoursePlan::class)
@@ -1378,8 +1378,8 @@
         $_SESSION['logged_in'] = true;
 
         // Insert a new archived objective into database
-        $operationalCompetenceId = 1;
-        $objectiveId = self::insertArchivedObjective($operationalCompetenceId);
+        $operational_competenceId = 1;
+        $objectiveId = self::insertArchivedObjective($operational_competenceId);
 
         // Execute delete_objective method of CoursePlan class
         $result = $this->controller(CoursePlan::class)
@@ -1976,8 +1976,8 @@
         ->execute('save_course_plan');
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Get course plan from database
         $coursePlanModel = model('\Plafor\Models\coursePlanModel');
@@ -2023,8 +2023,8 @@
         $result = $this->controller(CoursePlan::class)
             ->execute('save_course_plan');
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
          // Assertions
         $response = $result->response();
         $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
@@ -2075,8 +2075,8 @@
             ->execute('save_course_plan');
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
          // Assertions
         $response = $result->response();
@@ -2130,8 +2130,8 @@
             ->execute('save_course_plan', $coursePlanId);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Delete inserted course plan
         $coursePlanModel = model('\Plafor\Models\coursePlanModel');
@@ -2174,8 +2174,8 @@
         $result = $this->controller(CoursePlan::class)
             ->execute('save_competence_domain', 1);
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
         // Get competence domain from database
         $competenceDomainModel = model('\Plafor\Models\competenceDomainModel');
         $competenceDomainDb = $competenceDomainModel
@@ -2222,8 +2222,8 @@
         $result = $this->controller(CoursePlan::class)
             ->execute('save_competence_domain', 1);
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Assertions
         $response = $result->response();
@@ -2274,8 +2274,8 @@
         ->execute('save_competence_domain');
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Delete inserted competence domain
         $competenceDomainModel = model('\Plafor\Models\competenceDomainModel');
@@ -2331,8 +2331,8 @@
         ->execute('save_competence_domain');
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Delete inserted competence domain
         $competenceDomainModel = model('\Plafor\Models\competenceDomainModel');
@@ -2379,16 +2379,16 @@
             ->execute('save_operational_competence', 0, 1);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Get operational competence from database
-        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
-        $operationalCompetenceDb = $operationalCompetenceModel
+        $operational_competenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $operational_competenceDb = $operational_competenceModel
             ->where("name", 'Operational Competence Unit Test')->first();
         // Delete inserted operational competence
-        $operationalCompetenceModel
-            ->delete($operationalCompetenceDb['id'], true);
+        $operational_competenceModel
+            ->delete($operational_competenceDb['id'], true);
 
         // Assertions
         $response = $result->response();
@@ -2433,8 +2433,8 @@
         ->execute('save_operational_competence', 1, 0);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Assertions
         $response = $result->response();
@@ -2475,13 +2475,13 @@
 
         // Insert a new operational competence
         $competenceDomainId = 1;
-        $operationalCompetenceId = self::insertOperationalCompetence(
+        $operational_competenceId = self::insertOperationalCompetence(
             $competenceDomainId);
 
         // Prepare the POST request
         $_SERVER['REQUEST_METHOD'] = 'post';
-        $_POST['id'] = $operationalCompetenceId;
-        $_REQUEST['id'] = $operationalCompetenceId;
+        $_POST['id'] = $operational_competenceId;
+        $_REQUEST['id'] = $operational_competenceId;
         $_POST['symbol'] = 'ZZZZZZZZZZ';
         $_REQUEST['symbol'] = 'ZZZZZZZZZZ';
         $_POST['name'] = 'Operational Competence Update Unit Test';
@@ -2498,15 +2498,15 @@
         // Execute save_operational_competence method of CoursePlan class
         $result = $this->controller(CoursePlan::class)
             ->execute('save_operational_competence', $competenceDomainId,
-                $operationalCompetenceId);
+                $operational_competenceId);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Delete inserted operational competence
-        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
-        $operationalCompetenceModel->delete($operationalCompetenceId, true);
+        $operational_competenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $operational_competenceModel->delete($operational_competenceId, true);
 
         // Assertions
         $response = $result->response();
@@ -2551,8 +2551,8 @@
             ->execute('save_objective', 0, 1);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Get objective from database
         $objectiveModel = model('\Plafor\Models\objectiveModel');
@@ -2611,8 +2611,8 @@
             ->execute('save_objective', 0, 1);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Assertions
         $response = $result->response();
@@ -2649,8 +2649,8 @@
         $_SESSION['logged_in'] = true;
 
         // Insert a new objective into database
-        $operationalCompetenceId = 1;
-        $objectiveId = self::insertObjective($operationalCompetenceId);
+        $operational_competenceId = 1;
+        $objectiveId = self::insertObjective($operational_competenceId);
 
         // Prepare the POST request
         $_SERVER['REQUEST_METHOD'] = 'post';
@@ -2662,16 +2662,16 @@
         $_REQUEST['name'] = 'Objective Update Unit Test';
         $_POST['taxonomy'] = 99999;
         $_REQUEST['taxonomy'] = 99999;
-        $_POST['operational_competence'] = $operationalCompetenceId;
-        $_REQUEST['operational_competence'] = $operationalCompetenceId;
+        $_POST['operational_competence'] = $operational_competenceId;
+        $_REQUEST['operational_competence'] = $operational_competenceId;
 
         // Execute save_objective method of CoursePlan class
         $result = $this->controller(CoursePlan::class)
-        ->execute('save_objective', $objectiveId, $operationalCompetenceId);
+        ->execute('save_objective', $objectiveId, $operational_competenceId);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Delete inserted objective
         $objectiveModel = model('\Plafor\Models\objectiveModel');
@@ -2697,8 +2697,8 @@
         $_SESSION['logged_in'] = true;
 
         // Insert a new objective into database
-        $operationalCompetenceId = 1;
-        $objectiveId = self::insertObjective($operationalCompetenceId);
+        $operational_competenceId = 1;
+        $objectiveId = self::insertObjective($operational_competenceId);
 
         // Execute delete_objective method of CoursePlan class (to delete the inserted objective)
         $result = $this->controller(CoursePlan::class)
@@ -2725,15 +2725,15 @@
 
         // Insert a new operational competence
         $competenceDomainId = 1;
-        $operationalCompetenceId = self::insertOperationalCompetence($competenceDomainId);
+        $operational_competenceId = self::insertOperationalCompetence($competenceDomainId);
 
         // Execute delete_operational_competence method of CoursePlan class
         $result = $this->controller(CoursePlan::class)
-        ->execute('delete_operational_competence', $operationalCompetenceId, 1);
+        ->execute('delete_operational_competence', $operational_competenceId, 1);
 
         // Delete disabled operational competence
-        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
-        $operationalCompetenceModel->delete($operationalCompetenceId,
+        $operational_competenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $operational_competenceModel->delete($operational_competenceId,
             true);
 
         // Assertions
@@ -2760,10 +2760,10 @@
         $competenceDomainId = self::insertCompetenceDomain($coursePlanId);
 
         // Insert a new operational competence linked to the inserted competence domain
-        $operationalCompetenceId = self::insertOperationalCompetence($competenceDomainId);
+        $operational_competenceId = self::insertOperationalCompetence($competenceDomainId);
 
         // Insert a new objective linked to the inserted operational competence
-        $objectiveId = self::insertObjective($operationalCompetenceId);
+        $objectiveId = self::insertObjective($operational_competenceId);
 
         // Execute delete_competence_domain method of CoursePlan class
         $result = $this->controller(CoursePlan::class)
@@ -2774,8 +2774,8 @@
         $objectiveModel->delete($objectiveId, true);
 
         // Delete disabled operational competence
-        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
-        $operationalCompetenceModel->delete($operationalCompetenceId, true);
+        $operational_competenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $operational_competenceModel->delete($operational_competenceId, true);
 
         // Delete disabled competence domain
         $competenceDomainModel = model('\Plafor\Models\competenceDomainModel');
@@ -2807,10 +2807,10 @@
         $competenceDomainId = self::insertCompetenceDomain($coursePlanId);
 
         // Insert a new operational competence linked to the inserted competence domain
-        $operationalCompetenceId = self::insertOperationalCompetence($competenceDomainId);
+        $operational_competenceId = self::insertOperationalCompetence($competenceDomainId);
 
         // Insert a new objective linked to the inserted operational competence
-        $objectiveId = self::insertObjective($operationalCompetenceId);
+        $objectiveId = self::insertObjective($operational_competenceId);
 
         // Execute delete_course_plan method of CoursePlan class
         $result = $this->controller(CoursePlan::class)
@@ -2821,8 +2821,8 @@
         $objectiveModel->delete($objectiveId, true);
 
         // Delete disabled operational competence
-        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
-        $operationalCompetenceModel->delete($operationalCompetenceId, true);
+        $operational_competenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $operational_competenceModel->delete($operational_competenceId, true);
 
         // Delete disabled competence domain
         $competenceDomainModel = model('\Plafor\Models\competenceDomainModel');
@@ -2858,10 +2858,10 @@
         $competenceDomainId = self::insertCompetenceDomain($coursePlanId);
 
         // Insert a new operational competence linked to the inserted competence domain
-        $operationalCompetenceId = self::insertOperationalCompetence($competenceDomainId);
+        $operational_competenceId = self::insertOperationalCompetence($competenceDomainId);
 
         // Insert a new objective linked to the inserted operational competence
-        $objectiveId = self::insertObjective($operationalCompetenceId);
+        $objectiveId = self::insertObjective($operational_competenceId);
 
         // Insert a new user course
         $userCourseId = self::insertUserCourse($coursePlanId);
@@ -2878,8 +2878,8 @@
         $objectiveModel->delete($objectiveId, true);
 
         // Delete inserted operational competence
-        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
-        $operationalCompetenceModel->delete($operationalCompetenceId, true);
+        $operational_competenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $operational_competenceModel->delete($operational_competenceId, true);
 
         // Delete inserted competence domain
         $competenceDomainModel = model('\Plafor\Models\competenceDomainModel');
@@ -2931,7 +2931,7 @@
      * Insert a competence domain linked to a course plan into database
      */
     private static function insertCompetenceDomain($coursePlanId) {
-        $competenceDomain = array(
+        $competence_domain = array(
             'symbol' => 'ZZZZZZZZZZ',
             'name' => 'Competence Domain Unit Test',
             'fk_course_plan' => $coursePlanId,
@@ -2941,14 +2941,14 @@
         $_POST['type'] = 'competence_domain';
         $_POST['fk_course_plan'] = $coursePlanId;
         $model = model('\Plafor\Models\CompetenceDomainModel');
-        return $model->insert($competenceDomain);
+        return $model->insert($competence_domain);
     }
 
     /**
      * Insert an operational competence linked to a competence domain into database
      */
     private static function insertOperationalCompetence($competenceDomainId) {
-        $operationalCompetence = array(
+        $operational_competence = array(
             'id' => 0,
             'symbol' => 'ZZZZZZZZZZ',
             'name' => 'Operational Competence Unit Test',
@@ -2962,18 +2962,18 @@
         $_POST['type'] = 'operational_competence';
         $_POST['id'] = 0;
         $_POST['fk_competence_domain'] = $competenceDomainId;
-        return $model->insert($operationalCompetence);
+        return $model->insert($operational_competence);
     }
 
     /**
      * Insert an objective linked to an operational competence into database
      */
-    private static function insertObjective($operationalCompetenceId) {
+    private static function insertObjective($operational_competenceId) {
         $objective = array(
             'symbol' => 'ZZZZZZZZZZ',
             'taxonomy' => 99999,
             'name' => 'Objective Unit Test',
-            'fk_operational_competence' => $operationalCompetenceId
+            'fk_operational_competence' => $operational_competenceId
         );
         $_POST['type'] = 'objective';
         $_POST['id'] = 0;
@@ -2984,13 +2984,13 @@
     /**
      * Insert an archived objective linked to an operational competence into database
      */
-    private static function insertArchivedObjective($operationalCompetenceId) {
+    private static function insertArchivedObjective($operational_competenceId) {
         $objective = array(
             'symbol' => 'ZZZZZZZZZZ',
             'taxonomy' => 99999,
             'name' => 'Objective Unit Test',
             'archive' => '2023-04-24',
-            'fk_operational_competence' => $operationalCompetenceId
+            'fk_operational_competence' => $operational_competenceId
         );
 
         $objectiveModel = model('\Plafor\Models\objectiveModel');

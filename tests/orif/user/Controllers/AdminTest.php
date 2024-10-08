@@ -63,7 +63,7 @@ class AdminTest extends CIUnitTestCase
         $response = $this->get_response_and_assert($result);
         $this->assertInstanceOf(Response::class, $response);
         $this->assertNotEmpty($response->getBody());
-        
+
     }
 
     private function assert_redirect(TestResponse $result): void
@@ -77,7 +77,7 @@ class AdminTest extends CIUnitTestCase
      * Asserts that the list_user page is loaded correctly with an
      * administrator session
      */
-    public function testlist_userWithAdministratorSession() 
+    public function testlist_userWithAdministratorSession()
     {
         $_SESSION = $this->get_session_data();
         // Execute list_user method of Admin class
@@ -101,7 +101,7 @@ class AdminTest extends CIUnitTestCase
     /**
      * Asserts that the list_user page is loaded correctly with disabled users
      */
-    public function testlist_userWithDisabledUsers() 
+    public function testlist_userWithDisabledUsers()
     {
         $_SESSION = $this->get_session_data();
         $userModel = model(User_model::class);
@@ -131,7 +131,7 @@ class AdminTest extends CIUnitTestCase
      * Asserts that the list_user page is loaded correctly without disabled
      * users (after disabling user id 1)
      */
-    public function testlist_userWithoutDisabledUsers() 
+    public function testlist_userWithoutDisabledUsers()
     {
         $_SESSION = $this->get_session_data();
         $userModel = model(User_model::class);
@@ -159,7 +159,7 @@ class AdminTest extends CIUnitTestCase
      * Asserts that the password_change_user page is loaded correctly for the
      * user id 1
      */
-    public function testpassword_change_user() 
+    public function testpassword_change_user()
     {
         $_SESSION = $this->get_session_data();
         // Execute password_change_user method of Admin class
@@ -182,7 +182,7 @@ class AdminTest extends CIUnitTestCase
      * Asserts that the password_change_user page redirects to the list_user
      * view for a non existing user
      */
-    public function testpassword_change_userWithNonExistingUser() 
+    public function testpassword_change_userWithNonExistingUser()
     {
         $_SESSION = $this->get_session_data();
         // Execute password_change_user method of Admin class
@@ -197,7 +197,7 @@ class AdminTest extends CIUnitTestCase
      * Asserts that the delete_user page displays a warning message for the
      * user id 1 (no session)
      */
-    public function testdelete_userWithoutSession() 
+    public function testdelete_userWithoutSession()
     {
         $_SESSION = $this->get_session_data();
         // Execute delete_user method of Admin class (no action parameter is
@@ -213,9 +213,9 @@ class AdminTest extends CIUnitTestCase
      * Asserts that the delete_user page is loaded correctly for the user id 1
      * (with a session)
      */
-    public function testdelete_userWithSessionAndDefaultAction() 
+    public function testdelete_userWithSessionAndDefaultAction()
     {
-        // Initialize session 
+        // Initialize session
         $_SESSION = $this->get_session_data();
         $_SESSION['user_id'] = 2;
         // Execute delete_user method of Admin class (no action parameter is
@@ -388,14 +388,14 @@ class AdminTest extends CIUnitTestCase
     }
 
     /**
-     * Asserts that the form_user page is loaded correctly for the user id 1 
+     * Asserts that the form_user page is loaded correctly for the user id 1
      */
-    public function testsave_userWithUserId() 
+    public function testsave_userWithUserId()
     {
-        $_REQUEST = array();
-        $_POST = array();
+        $_REQUEST = [];
+        $_POST = [];
         $_SESSION = $this->get_session_data();
-        // Execute save_user method of Admin class 
+        // Execute save_user method of Admin class
         $userId = 1;
         $_SESSION['user_id'] = 1;
         $result = $this->controller(Admin::class)
@@ -438,11 +438,11 @@ class AdminTest extends CIUnitTestCase
      * Asserts that the form_user page is loaded correctly for a new user (no
      * user id)
      */
-    public function testsave_userWithoutUserId() 
+    public function testsave_userWithoutUserId()
     {
         $_SESSION = $this->get_session_data();
         $_SESSION['user_id'] = 1;
-        // Execute save_user method of Admin class 
+        // Execute save_user method of Admin class
         $result = $this->controller(Admin::class)
             ->execute('save_user');
 
@@ -480,15 +480,15 @@ class AdminTest extends CIUnitTestCase
      * Asserts that the form_user page is loaded correctly for the user id 1
      * with the session user id 1
      */
-    public function testsave_userWithUserIdWithSameSessionUserId() 
+    public function testsave_userWithUserIdWithSameSessionUserId()
     {
-        $_REQUEST = array();
-        $_POST = array();
+        $_REQUEST = [];
+        $_POST = [];
         // Initialize the session
         $_SESSION = $this->get_session_data();
         $_SESSION['user_id'] = 1;
 
-        // Execute save_user method of Admin class 
+        // Execute save_user method of Admin class
         $result = $this->controller(Admin::class)
             ->execute('save_user', 1);
 
@@ -532,8 +532,8 @@ class AdminTest extends CIUnitTestCase
      */
     public function testsave_userWithDisabledUserId()
     {
-        $_REQUEST = array();
-        $_POST = array();
+        $_REQUEST = [];
+        $_POST = [];
         $_SESSION = $this->get_session_data();
         $_SESSION['user_id'] = 1;
         // Instantiate a new user model
@@ -544,7 +544,7 @@ class AdminTest extends CIUnitTestCase
         // Disable user id 1
         $userModel->update($user_id, ['archive' => '2023-03-30 10:32:00']);
 
-        // Execute save_user method of Admin class 
+        // Execute save_user method of Admin class
         $result = $this->controller(Admin::class)
             ->execute('save_user', 1);
 
@@ -623,8 +623,8 @@ class AdminTest extends CIUnitTestCase
         $userModel->delete($userId, TRUE);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Assertions
         $this->assert_redirect($result);
@@ -668,8 +668,8 @@ class AdminTest extends CIUnitTestCase
         $userModel->delete($userId, TRUE);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Assertions
         $this->assert_reponse($result);
@@ -707,7 +707,7 @@ class AdminTest extends CIUnitTestCase
         $_POST['user_password_again'] = 'UserUnitTestPassword';
         $_REQUEST['user_password_again'] = 'UserUnitTestPassword';
 
-        // Execute save_user method of Admin class 
+        // Execute save_user method of Admin class
         $result = $this->controller(Admin::class)
             ->execute('save_user');
 
@@ -718,8 +718,8 @@ class AdminTest extends CIUnitTestCase
         $userModel->delete($userDb['id'], TRUE);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Assertions
         $this->assert_redirect($result);
@@ -754,13 +754,13 @@ class AdminTest extends CIUnitTestCase
         $_POST['user_password_again'] = 'UserUnitTestPasswordError';
         $_REQUEST['user_password_again'] = 'UserUnitTestPasswordError';
 
-        // Execute save_user method of Admin class 
+        // Execute save_user method of Admin class
         $result = $this->controller(Admin::class)
             ->execute('save_user');
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Assertions
         $this->assert_reponse($result);
@@ -785,10 +785,10 @@ class AdminTest extends CIUnitTestCase
         $userType = $this->get_guest_user_type();
         $username = 'SaveUserUnitTest';
         $userEmail = 'usersaveuserunittest@test.com';
-        $userPassword = 'UnitTestPassword';        
+        $userPassword = 'UnitTestPassword';
         $userId = self::insertUser($userType, $username, $userEmail,
             $userPassword);
-        
+
         // Prepare the POST request to update this user
         $_SERVER['REQUEST_METHOD'] = 'post';
         $_POST['id'] = $userId;
@@ -800,19 +800,19 @@ class AdminTest extends CIUnitTestCase
         $_POST['user_usertype'] = $this->get_registered_user_type();
         $_REQUEST['user_usertype'] = $this->get_registered_user_type();
 
-        // Execute save_user method of Admin class 
+        // Execute save_user method of Admin class
         $result = $this->controller(Admin::class)
             ->execute('save_user', $userId);
 
-        // Get user from database after update 
+        // Get user from database after update
         $userDbUpdate = $userModel->where("username", $username)->first();
 
         // Deletes inserted user
         $userModel->delete($userId, TRUE);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Assertions
         $this->assert_redirect($result);

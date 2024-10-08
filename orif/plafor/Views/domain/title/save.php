@@ -68,14 +68,6 @@ $domain_title_label = lang('Grades.name').' '.lang('Grades.of_a').' '.
         </div>
 
         <div class="row">
-            <?php if($domain_title_id > 0): ?>
-                <div class="col">
-                    <a href="<?= base_url('plafor/teachingdomain/deleteTeachingDomainTitle/'.$domain_title_id) ?>" class="btn btn-danger">
-                        <?= lang('common_lang.btn_delete') ?>
-                    </a>
-                </div>
-            <?php endif ?>
-
             <div class="col text-right">
                 <a class="btn btn-secondary" href="<?= base_url('plafor/teachingdomain/getAllDomainsTitle') ?>">
                     <?= lang('common_lang.btn_cancel') ?>

@@ -16,7 +16,7 @@ use User\Models\User_model;
 class CommentModel extends Model {
     protected $table = 'comment';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['fk_trainer', 'fk_acquisition_status',
+    protected $allowedFields = ['fk_user', 'fk_acquisition_status',
         'comment', 'date_creation'];
     protected $validationRules;
     private $acquisitionStatusModel = null;
@@ -26,7 +26,7 @@ class CommentModel extends Model {
     {
         $this->validationRules = array(
             'comment'=>[
-                'label' => 'plafor_lang.field_comment',
+                'label' => 'plafor_lang.comment',
                 'rules' => 'required|max_length['.config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH.']',
             ]
         );

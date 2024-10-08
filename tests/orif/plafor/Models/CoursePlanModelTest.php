@@ -1,6 +1,6 @@
 <?php
 /**
- * Unit / Integration tests CoursePlanModelTest 
+ * Unit / Integration tests CoursePlanModelTest
  *
  * @author      Orif (CaLa)
  * @link        https://github.com/OrifInformatique
@@ -29,14 +29,14 @@ class CoursePlanModelTest extends CIUnitTestCase
     {
         // Gets the competence domains with the course plan id 1
         $coursePlanModel = model('CoursePlanModel');
-        $competenceDomains = $coursePlanModel->getCompetenceDomains(1);
+        $competence_domains = $coursePlanModel->getCompetenceDomains(1);
 
         // Assertions
-        $this->assertIsArray($competenceDomains);
+        $this->assertIsArray($competence_domains);
 
         // For each competence domain, asserts that the course plan id is 1
-        foreach ($competenceDomains as $competenceDomain) {
-            $this->assertEquals($competenceDomain['fk_course_plan'], 1);
+        foreach ($competence_domains as $competence_domain) {
+            $this->assertEquals($competence_domain['fk_course_plan'], 1);
         }
     }
 
@@ -80,25 +80,25 @@ class CoursePlanModelTest extends CIUnitTestCase
         $this->assertIsArray($coursePlanProgress[$userId]['competenceDomains']);
 
         $competenceDomainId = 27;
-        $competenceDomain = $coursePlanProgress[$userId]['competenceDomains'][$competenceDomainId];
+        $competence_domain = $coursePlanProgress[$userId]['competenceDomains'][$competenceDomainId];
 
-        $this->assertIsArray($competenceDomain);
-        $this->assertEquals($competenceDomain['symbol'], 'A');
-        $this->assertEquals($competenceDomain['name'], 'Suivi des projets ICT');
+        $this->assertIsArray($competence_domain);
+        $this->assertEquals($competence_domain['symbol'], 'A');
+        $this->assertEquals($competence_domain['name'], 'Suivi des projets ICT');
 
-        $this->assertIsArray($competenceDomain['operationalCompetences']);
-        $operationalCompetenceId = 108;
-        $this->assertIsArray($competenceDomain['operationalCompetences'][$operationalCompetenceId]);
-        $operationalCompetence = $competenceDomain['operationalCompetences'][$operationalCompetenceId];
+        $this->assertIsArray($competence_domain['operationalCompetences']);
+        $operational_competenceId = 108;
+        $this->assertIsArray($competence_domain['operationalCompetences'][$operational_competenceId]);
+        $operational_competence = $competence_domain['operationalCompetences'][$operational_competenceId];
 
-        $this->assertEquals($operationalCompetence['symbol'], 'A1');
-        $this->assertEquals($operationalCompetence['name'], 'Clarifier et documenter les besoins des parties prenantes dans le cadre d’un projet ICT');
+        $this->assertEquals($operational_competence['symbol'], 'A1');
+        $this->assertEquals($operational_competence['name'], 'Clarifier et documenter les besoins des parties prenantes dans le cadre d’un projet ICT');
 
-        $this->assertIsArray($operationalCompetence['objectives']);
+        $this->assertIsArray($operational_competence['objectives']);
 
-        $this->assertIsArray($operationalCompetence['objectives'][1]);
-        $this->assertEquals($operationalCompetence['objectives'][1]['symbol'], 'A1.2');
-        $this->assertEquals($operationalCompetence['objectives'][1]['name'], 'Ils appliquent diverses techniques d’audition et d’observation (p. ex. questions ouvertes, questions fermées, réunion, workshop, technique du shadowing, simulation de la solution à rechercher en opérant un saut dans le temps.');
+        $this->assertIsArray($operational_competence['objectives'][1]);
+        $this->assertEquals($operational_competence['objectives'][1]['symbol'], 'A1.2');
+        $this->assertEquals($operational_competence['objectives'][1]['name'], 'Ils appliquent diverses techniques d’audition et d’observation (p. ex. questions ouvertes, questions fermées, réunion, workshop, technique du shadowing, simulation de la solution à rechercher en opérant un saut dans le temps.');
     }
 
     /**

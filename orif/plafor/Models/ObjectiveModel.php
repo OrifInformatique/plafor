@@ -21,7 +21,7 @@ class ObjectiveModel extends \CodeIgniter\Model
         'symbol', 'taxonomy', 'name'];
     protected $useSoftDeletes = true;
     protected $deletedField = 'archive';
-    private OperationalCompetenceModel $operationalCompetenceModel;
+    private OperationalCompetenceModel $operational_competenceModel;
     protected $validationRules;
 
     public function __construct(ConnectionInterface &$db = null,
@@ -49,8 +49,8 @@ class ObjectiveModel extends \CodeIgniter\Model
      * @return array|object|null
      */
     public function getOperationalCompetence($fkOperationalCompetenceId) {
-        $operationalCompetenceModel = model('OperationalCompetenceModel');
-        return $operationalCompetenceModel->withDeleted()
+        $operational_competenceModel = model('OperationalCompetenceModel');
+        return $operational_competenceModel->withDeleted()
                                           ->find($fkOperationalCompetenceId);
     }
 
