@@ -52,15 +52,15 @@ class GradeModel extends Model
 
     /**
      * Post-processing hook for find operations.
-     * 
+     *
      * @param array $data Contains the result from the find operation, along
      * with additional metadata.
      *   - $data['data']: The result data from the find operation.
      *   - $data['method']: The name of the find method that was called (e.g.
      *   'findAll', 'find', 'first').
-     * 
+     *
      * @return array $data The edited result data.
-     * 
+     *
      * This method applies additional processing to the result data based on
      * the type of find operation:
      * - findAll and find without an ID in the parameter call afterFindFindAll.
@@ -82,10 +82,10 @@ class GradeModel extends Model
 
     /**
      * Post-processing hook for findAll operations.
-     * 
+     *
      * Applies the afterFindFind method to each element of the result set
      * returned by findAll.
-     * 
+     *
      * @param array $data The result set from the findAll operation.
      * @return array The result set with each element processed by
      * afterFindFind.
@@ -97,18 +97,18 @@ class GradeModel extends Model
 
     /**
      * Post-processing hook for find and first operations.
-     * 
+     *
      * Enhances the result data by adding related information:
      * - Teaching subject name (if fk_teaching_subject is present)
      * - Teaching module name (if fk_teaching_module is present)
      * - User ID (if fk_user_course is present)
-     * 
+     *
      * @param array $data The result data from the find or first operation.
      * @return array The enhanced result data with additional information.
      */
     protected function afterFindFind(array $data): array
     {
-        if (isset($data['fk_teaching_subject'])) { 
+        if (isset($data['fk_teaching_subject'])) {
             $teachingSubjectModel = model('TeachingSubjectModel');
             $data['teaching_subject_name'] = $teachingSubjectModel
                 ->select('teaching_subject.name')
@@ -117,7 +117,7 @@ class GradeModel extends Model
         } else {
             unset($data['fk_teaching_subject']);
         }
-        if (isset($data['fk_teaching_module'])) { 
+        if (isset($data['fk_teaching_module'])) {
             $teachingModuleModel = model('TeachingModuleModel');
             $data['teaching_module_name'] = $teachingModuleModel
                 ->select('teaching_module.official_name')
@@ -126,7 +126,7 @@ class GradeModel extends Model
         } else {
             unset($data['fk_teaching_module']);
         }
-        if (isset($data['fk_user_course'])) { 
+        if (isset($data['fk_user_course'])) {
             $userCouseModel = model('UserCourseModel');
             $data['user_id'] = $userCouseModel
                 ->withDeleted()
@@ -141,7 +141,7 @@ class GradeModel extends Model
      *
      * @param int $userCourseId ID of the user_course
      * @param int $subjectId ID of the subject
-     * 
+     *
      * @return array
      *
      */
@@ -170,7 +170,7 @@ class GradeModel extends Model
      * @param bool $isSchool "true" to get only school modules grades
      *                        "false" to get only non school modules grades
      *                        NULL to get all modules grades
-     * 
+     *
      * @return array
      *
      */
@@ -204,7 +204,7 @@ class GradeModel extends Model
      *
      * @param int $userCourseId ID of the user_course
      * @param int $moduleId ID of the module
-     * 
+     *
      * @return array
      *
      */
@@ -228,7 +228,7 @@ class GradeModel extends Model
     /**
      * Calculates the average of an array of grades returned by the
      * getApprenticeSubjectGrades or getApprenticeModulesGrades methods.
-     * 
+     *
      * @param array $grades The array of grades returned by
      * getApprenticeSubjectGrades or getApprenticeModulesGrades, where each
      * grade is an associative array containing the grade data.
@@ -245,7 +245,7 @@ class GradeModel extends Model
 
     /**
      * Rounds a number to the nearest half point (e.g. 4.25 -> 4.5).
-     * 
+     *
      * @param float $number The number to round.
      * @return float The rounded number.
      */
@@ -256,7 +256,7 @@ class GradeModel extends Model
 
     /**
      * Rounds a number to one decimal point (e.g. 4.25 -> 4.3).
-     * 
+     *
      * @param float $number The number to round.
      * @return float The rounded number.
      */
@@ -267,13 +267,13 @@ class GradeModel extends Model
 
     /**
      * Calculates the average grade of an apprentice for a specific subject.
-     * 
+     *
      * @param int $userCourseId The ID of the user course.
      * @param int $subjectId The ID of the subject.
      * @param callable|null $roundMethod A callback function to round the
      * average grade. Defaults to rounding to one decimal point.
      * @return float The average grade of the apprentice for the subject.
-     * 
+     *
      * Example usage:
      * $data = $gradeModel->getApprenticeSubjectAverage($userCourseId,
      *     $subjectId, [$gradeModel, 'roundHalfPoint']);
@@ -292,14 +292,14 @@ class GradeModel extends Model
 
     /**
      * Calculates the average grade of an apprentice for a module.
-     * 
+     *
      * @param int $userCourseId The ID of the user course.
      * @param bool|null $isSchool Whether to consider school grades or not.
      * Defaults to null.
      * @param callable|null $roundMethod A callback function to round the
      * average grade. Defaults to rounding to one decimal point.
      * @return float The average grade of the apprentice for the module.
-     * 
+     *
      * Example usage:
      * $data = $gradeModel->getApprenticeModuleAverage($userCourseId,
      *     $isSchool, [$gradeModel, 'roundHalfPoint']);
@@ -351,7 +351,7 @@ class GradeModel extends Model
         return $roundMethod($average);
     }
 
-    
+
     /**
      * Calculates the average grade of an apprentice in a specific domain this
      * is not a module.
@@ -407,8 +407,9 @@ class GradeModel extends Model
         $domainIdsAndWeights = array_map(
             function($domainId) use ($teachingDomainModel)
         {
-            $domainWeight = $teachingDomainModel->select('domain_weight')
-                                ->find($domainId)['domain_weight'];
+            $domainWeightRaw = $teachingDomainModel->select('domain_weight')
+                                ->find($domainId);
+            $domainWeight = $domainWeightRaw['domain_weight'] ?? 0;
             return [$domainId, $domainWeight];
         }, $domainIds);
         // [0] => [grade, weight]
@@ -663,10 +664,11 @@ class GradeModel extends Model
         $data['weighting'] = intval($domain['domain_weight'] * 100);
         $data['average'] = $this->getApprenticeDomainAverageNotModule(
             $userCourseId, $domain['id']);
+        d($data);
         return $this->putDefaultDataForDomainGradeView($data);
     }
 
-    
+
     /**
      * Formats the domain grade data for the school report view
      * (school_report.php) by adding default values for missing grades.
@@ -682,6 +684,13 @@ class GradeModel extends Model
      */
     private function putDefaultDataForDomainGradeView(array $data): array
     {
+        if (empty($data['subjects'])) {
+            $data['subjects'][0] =
+                ['name' => ' ',
+                'weighting' => ' ',
+                'grades' => []
+                ];
+        }
         $data['subjects'] = array_map(function ($subject) {
             assert(count($subject['grades']) <= 8);
             while (count($subject['grades']) !== 8)
@@ -690,7 +699,7 @@ class GradeModel extends Model
                     'id' => ' ',
                     'value' => ' ', # grade not found
                 ];
-                    
+
             }
             return $subject;
         }, $data['subjects']);
@@ -745,11 +754,12 @@ class GradeModel extends Model
             ->allowCallbacks(false)
             ->orderBy('date')
             ->findAll();
+        d($subject, $subjectId, $userCourseId);
         $subject['weighting'] = intval($subject['weighting'] * 100);
         $subject['average'] = $this->getApprenticeSubjectAverage($userCourseId,
             $subjectId);
         return $subject;
-        
+
     }
 
     /**
@@ -772,5 +782,5 @@ class GradeModel extends Model
     }
 
 
-    
+
 }

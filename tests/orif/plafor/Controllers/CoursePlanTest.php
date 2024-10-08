@@ -7,15 +7,15 @@
  * @copyright   Copyright (c), Orif (https://www.orif.ch)
  */
 
- namespace Plafor\Controllers;
+namespace Plafor\Controllers;
 
- use CodeIgniter\Test\CIUnitTestCase;
- use CodeIgniter\Test\ControllerTestTrait;
- use CodeIgniter\Test\DatabaseTestTrait;
+use CodeIgniter\Test\CIUnitTestCase;
+use CodeIgniter\Test\ControllerTestTrait;
+use CodeIgniter\Test\DatabaseTestTrait;
 
- use Plafor\Models;
+use Plafor\Models;
 
- class CoursePlanTest extends CIUnitTestCase
+class CoursePlanTest extends CIUnitTestCase
 {
     use ControllerTestTrait;
     use DatabaseTestTrait;

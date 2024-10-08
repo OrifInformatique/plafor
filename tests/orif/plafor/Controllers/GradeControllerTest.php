@@ -1,6 +1,6 @@
 <?php
 /**
- * Unit tests TeachingDomainControllerTest
+ * Unit tests GradeControllerTest
  *
  * @author      Orif (CaLa)
  * @link        https://github.com/OrifInformatique
@@ -15,7 +15,7 @@
 
  use Plafor\Models;
 
- class TeachingDomainControllerTest extends CIUnitTestCase
+ class GradeControllerTest extends CIUnitTestCase
 {
     use ControllerTestTrait;
     use DatabaseTestTrait;
