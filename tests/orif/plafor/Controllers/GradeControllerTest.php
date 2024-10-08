@@ -30,7 +30,7 @@
 
     protected $seedOnce = false;
     protected $basePath = 'tests/_support/Database';
-    protected $seed     = 'TeachingDomainSeed';
+    protected $seed     = 'GradeControllerTest';
 
 
 }

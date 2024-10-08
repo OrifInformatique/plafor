@@ -1,6 +1,6 @@
 <?php
 /**
- * Unit / Integration tests UserCourseModelTest 
+ * Unit / Integration tests UserCourseModelTest
  *
  * @author      Orif (CaLa)
  * @link        https://github.com/OrifInformatique
@@ -69,7 +69,7 @@ class UserCourseModelTest extends CIUnitTestCase
 
         // Asserts that the list of acquisition statuses is an array
         $this->assertIsArray($acquisitionStatuses);
-        
+
         // For each acquisition status, asserts that the user course id is 1
         foreach ($acquisitionStatuses as $acquisitionStatus) {
             $this->assertEquals($acquisitionStatus['fk_user_course'], 1);
