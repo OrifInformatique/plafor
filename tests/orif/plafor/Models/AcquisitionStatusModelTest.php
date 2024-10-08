@@ -1,6 +1,6 @@
 <?php
 /**
- * Unit / Integration tests AcquisitionStatusModel 
+ * Unit / Integration tests AcquisitionStatusModel
  *
  * @author      Orif (CaLa)
  * @link        https://github.com/OrifInformatique
@@ -57,11 +57,11 @@ class AcquisitionStatusModelTest extends CIUnitTestCase
         // Assertions
         $this->assertIsArray($userCourse);
         $this->assertEquals($userCourse['id'], 1);
-        $this->assertEquals($userCourse['fk_user'], 6);
-        $this->assertEquals($userCourse['fk_course_plan'], 6);
+        $this->assertEquals($userCourse['fk_user'], 4);
+        $this->assertEquals($userCourse['fk_course_plan'], 5);
         $this->assertEquals($userCourse['fk_status'], 1);
-        $this->assertEquals($userCourse['date_begin'], '2020-07-09');
-        $this->assertEquals($userCourse['date_end'], '0000-00-00');
+        $this->assertEquals($userCourse['date_begin'], '2024-08-01');
+        $this->assertEquals($userCourse['date_end'], '2028-08-01');
     }
 
     /**

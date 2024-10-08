@@ -127,7 +127,7 @@ if(empty($tpi_grade)
     || $tpi_grade['value'] < 0
     || $tpi_grade['value'] > 6)
 {
-    $tpi_grade = lang('Grades.unavailable_short');
+    $tpi_grade['value'] = lang('Grades.unavailable_short');
 }
 
 if(empty($modules['average'])
@@ -225,7 +225,7 @@ else
     foreach($cbe['subjects'] as $cbe_subject)
     {
         if(empty($cbe_subject['name'])
-            || empty($cbe_subject['weighting']))
+            || !isset($cbe_subject['weighting']))
         {
             $errors[] = "Values are missing in cbe['subjects'] variable.";
             break;
@@ -256,7 +256,7 @@ else
     foreach($ecg['subjects'] as $ecg_subject)
     {
         if(empty($ecg_subject['name'])
-        || empty($ecg_subject['weighting']))
+        || !isset($ecg_subject['weighting']))
         {
             $errors[] = "Values are missing in ecg['subjects'] variable.";
             break;

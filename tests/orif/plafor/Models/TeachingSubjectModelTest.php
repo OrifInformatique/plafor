@@ -43,13 +43,13 @@ class TeachingSubjectModelTest extends CIUnitTestCase
         $expect = [
             'id' => $id,
             'name' => "Mathématiques",
-            'subject_weight' => "0.0",
+            'subject_weight' => "0.00",
             'archive' => null,
             'teaching_domain' => [
                 'id' => "1",
                 'fk_course_plan' => "5",
                 'fk_teaching_domain_title' => "1",
-                'domain_weight' => "0.1",
+                'domain_weight' => "0.10",
                 'is_eliminatory' => "0",
                 'archive' => null,
                 'title' => "Compétences de base élargies",
@@ -83,13 +83,13 @@ class TeachingSubjectModelTest extends CIUnitTestCase
         $expect = [
             'id' => "1",
             'name' => "Mathématiques",
-            'subject_weight' => "0.0",
+            'subject_weight' => "0.00",
             'archive' => null,
             'teaching_domain' => [
                 'id' => "1",
                 'fk_course_plan' => "5",
                 'fk_teaching_domain_title' => "1",
-                'domain_weight' => "0.1",
+                'domain_weight' => "0.10",
                 'is_eliminatory' => "0",
                 'archive' => null,
                 'title' => "Compétences de base élargies",
@@ -109,7 +109,7 @@ class TeachingSubjectModelTest extends CIUnitTestCase
         $teachingSubjectModel = model('TeachingSubjectModel');
         $data = $teachingSubjectModel->select('subject_weight')->first();
         $expect = [
-            'subject_weight' => '0.0'
+            'subject_weight' => '0.00'
         ];
         $this->assertEquals($expect, $data);
     }
@@ -197,5 +197,20 @@ class TeachingSubjectModelTest extends CIUnitTestCase
         $this->assertEquals($subjects, $subjects2);
     }
 
-}
+     public function testGetTeachingSubjectIdByDomain()
+        {
+            $teachingSubjectModel = model('TeachingSubjectModel');
+            // Arrange
+            $domainId = 1;
+            $expectedIds = [1, 2];
 
+            // Act
+            $result = $teachingSubjectModel
+                ->getTeachingSubjectIdByDomain($domainId);
+
+            // Assert
+            $this->assertIsArray($result);
+            $this->assertEquals($expectedIds, $result);
+        }
+
+}

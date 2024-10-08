@@ -1,81 +1,210 @@
 <?php
 /**
  * Class managing helper functions who check User Access permissions
- * File NEED to be like: FileName_helper.php
  *
- * @author      Orif (ViDi, ThJo)
+ * @author      Orif (ThJo)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ *
  */
 
 use CodeIgniter\CodeIgniter;
 
-
-
 /**
- * Check if the user is an Apprentice or has higher access
+ * Get the access level of the specified user.
  *
- * @return bool
+ * @param int|string|array $user User specified.
+ * Int and string values corresponds to the user ID.
+ * Array values corresponds to the entire user entry from database.
+ *
+ * @return int
+ *
  */
-function isCurrentUserApprentice() : bool {
+function getUserAccessLevel(int|string|array $user): int
+{
+    if(is_string($user) || is_int($user))
+    {
+        $user_type    = model("User_model")->find($user)["fk_user_type"];
+        $access_level = model("User_type_model")->find($user_type)["access_level"];
+    }
 
-    return $_SESSION["user_access"] >= config("\User\Config\UserConfig")->access_level_apprentice;
-}    
+    else
+        $access_level = model("User_type_model")->find($user["fk_user_type"])["access_level"];
 
-
-
-/**
- * Check if the user is a Trainer or has higher access OR
- * Check if the user is an Apprentice AND if it's is personnal page
- *
- * @param  int $apprentice_id => apprentice ID
- *
- * @return bool
- */ 
-function isCurrentUserSelfApprentice(int $apprentice_id) : bool {
-
-    return isCurrentUserTrainer()
-        || ($_SESSION["user_access"] == config("\User\Config\UserConfig")->access_level_apprentice
-        && $apprentice_id == $_SESSION["user_id"]);
-}        
+    return $access_level;
+}
 
 
+
+/* *************************************** */
+/* ********** APPRENTICE CHECKS ********** */
+/* *************************************** */
 
 /**
- * Check if the user is a Trainer or has higher access
+ * Check if the current user is an apprentice.
  *
  * @return bool
+ *
  */
-function isCurrentUserTrainer() : bool {
-
-    return $_SESSION["user_access"] >= config("\User\Config\UserConfig")->access_lvl_trainer;
+function isCurrentUserApprentice(): bool
+{
+    return $_SESSION["user_access"] == config("\User\Config\UserConfig")->access_level_apprentice;
 }
 
 
 
 /**
- * Check if the user is a trainer or has higher access AND
- * Check if the user is a trainer linked to the given apprentice
+ * Check if the specified user is an apprentice.
  *
- * @param int $apprentice_id => apprentice ID
+ * @param int|string|array $user User specified.
  *
  * @return bool
+ *
  */
-function isCurrentUserTrainerOfApprentice(int $apprentice_id) : bool{
+function isSpecifiedUserApprentice(int|string|array $user): bool
+{
+    return getUserAccessLevel($user) == config("\User\Config\UserConfig")->access_level_apprentice;
+}
 
-    return isCurrentUserTrainer()
-        && model("TrainerApprenticeModel")->isTrainerLinkedToApprentice($_SESSION["user_id"], $apprentice_id)
+
+
+/**
+ * Check if the current user has apprentice access or higher.
+ *
+ * @return bool
+ *
+ */
+function hasCurrentUserApprenticeAccess(): bool
+{
+    return isCurrentUserApprentice()
+        || isCurrentUserTrainer()
         || isCurrentUserAdmin();
 }
 
 
 
 /**
- * Check if the user is an Admin
+ * Check if the apprentice specified is the current user (apprentice).
+ *
+ * @param int $apprentice_id ID od the apprentice.
  *
  * @return bool
+ *
  */
-function isCurrentUserAdmin() : bool {
+function isCurrentUserSelfApprentice(int $apprentice_id): bool
+{
+    return isCurrentUserApprentice()
+        && $apprentice_id == $_SESSION["user_id"];
+}
 
-    return $_SESSION["user_access"] >= config("\User\Config\UserConfig")->access_lvl_admin;
+
+
+/* ************************************ */
+/* ********** TRAINER CHECKS ********** */
+/* ************************************ */
+
+
+/**
+ * Check if the current user is a trainer.
+ *
+ * @return bool
+ *
+ */
+function isCurrentUserTrainer(): bool
+{
+    return $_SESSION["user_access"] == config("\User\Config\UserConfig")->access_lvl_trainer;
+}
+
+
+
+/**
+ * Check if the specified user is a trainer.
+ *
+ * @param int|array $user User specified.
+ *
+ * @return bool
+ *
+ */
+function isSpecifiedUserTrainer(int|array $user): bool
+{
+    return getUserAccessLevel($user) == config("\User\Config\UserConfig")->access_lvl_trainer;
+}
+
+
+
+/**
+ * Check if the current user has trainer access or higher.
+ *
+ * @return bool
+ *
+ */
+function hasCurrentUserTrainerAccess(): bool
+{
+    return isCurrentUserTrainer()
+        || isCurrentUserAdmin();
+}
+
+
+
+/**
+ * Check if the current user is the trainer of the specified apprentice.
+ * If the current user is an administrator, the function will return true.
+ *
+ * @param int $apprentice_id ID of the apprentice.
+ *
+ * @return bool
+ *
+ */
+function isCurrentUserTrainerOfApprentice(int $apprentice_id): bool
+{
+    return isCurrentUserAdmin()
+        || isCurrentUserTrainer()
+        && model("TrainerApprenticeModel")->isTrainerLinkedToApprentice($_SESSION["user_id"], $apprentice_id);
+}
+
+
+
+/* ********************************** */
+/* ********** ADMIN CHECKS ********** */
+/* ********************************** */
+
+
+
+/**
+ * Check if the current user is an adminstrator.
+ *
+ * @return bool
+ *
+ */
+function isCurrentUserAdmin(): bool
+{
+    return $_SESSION["user_access"] == config("\User\Config\UserConfig")->access_lvl_admin;
+}
+
+
+
+/**
+ * Check if the specified user is an admin.
+ *
+ * @param int|string|array $user User specified.
+ *
+ * @return bool
+ *
+ */
+function isSpecifiedUserAdmin(int|string|array $user): bool
+{
+    return getUserAccessLevel($user) == config("\User\Config\UserConfig")->access_lvl_admin;
+}
+
+
+
+/**
+ * Check if the current user has adminstrator access.
+ *
+ * @return bool
+ *
+ */
+function hasCurrentUserAdminAccess(): bool
+{
+    return isCurrentUserAdmin();
 }

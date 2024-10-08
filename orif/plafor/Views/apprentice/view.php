@@ -55,6 +55,8 @@
  *
  */
 
+helper("AccessPermissions_helper")
+
 ?>
 
 <div class="container">
@@ -107,7 +109,7 @@
         <div class="col-sm-6">
             <p><strong><?= lang('plafor_lang.title_trainer_linked') ?></strong></p>
 
-            <?php if(service('session')->get('user_access') >= config('\User\Config\UserConfig')->access_lvl_trainer): ?>
+            <?php if(hasCurrentUserTrainerAccess()): ?>
                 <!-- List with ADMIN buttons, accessible for trainers or admin only -->
                 <table class="table table-hover table-borderless">
                     <tbody>
@@ -159,9 +161,15 @@
 
             <select class="form-control" id="usercourseSelector">
                 <?php foreach ($user_courses as $user_course): ?>
-                    <option value="<?= $user_course['id'] ?>">
-                        <?= $course_plans[$user_course['fk_course_plan']]['official_name'] ?>
-                    </option>
+                    <?php if ($user_course_id == $user_course['id'] ): ?>
+                        <option value="<?= $user_course['id'] ?>" selected>
+                            <?= $course_plans[$user_course['fk_course_plan']]['official_name'] ?>
+                        </option>
+                    <?php else: ?>
+                        <option value="<?= $user_course['id'] ?>">
+                            <?= $course_plans[$user_course['fk_course_plan']]['official_name'] ?>
+                        </option>
+                    <?php endif ?>
                 <?php endforeach ?>
             </select>
 
@@ -190,7 +198,7 @@
                 </div>
             </div>
 
-            <?php if(service('session')->get('user_access') >= config('\User\Config\UserConfig')->access_lvl_trainer): ?>
+            <?php if(hasCurrentUserTrainerAccess()): ?>
                 <a class="btn btn-primary text-white" href="<?= base_url('plafor/apprentice/list_user_courses/'.$apprentice['id']) ?>">
                     <?= lang('plafor_lang.btn_user_course_manage') ?>
                 </a>
@@ -258,28 +266,46 @@
     }
 
     $(document).ready(() => {
-        $('#usercourseSelector').val(<?= isset($userCourseMax)
-            ? $userCourseMax['id'] : null ?>);
+        // TODO this in controller
+        let urlMethod = '<?=base_url('plafor/apprentice/view_apprentice') ?>';
+        let apprenticeId = '<?= $apprentice['id'] ?>';
+        let userCourseId = '<?= $user_course_id ?>';
+        if (userCourseId == '') {
+            let usercourseSelector = document.querySelector('#usercourseSelector');
+            let userCourseId = usercourseSelector.value;
+            let url = urlMethod + '/' + apprenticeId + '/' + userCourseId;
+            window.location.replace(url);
+        }
+        // $('#usercourseSelector').val(<?= isset($userCourseMax)
+        //     ? $userCourseMax['id'] : null ?>);
 
-        $('#usercourseSelector').change((event) => {
-            let userCourses = <?= json_encode($user_courses) ?>;
-            let coursePlans = <?= json_encode($course_plans) ?>;
-            let userCoursesStatus = <?= json_encode($user_course_status) ?>;
-
-            invokeHydrationBeginDate(event, userCourses);
-
-            invokeHydrationEndDate(event, userCourses);
-
-            invokeHydrationStatus(event, userCourses, userCoursesStatus);
-
-            document.querySelector('#detailsArray').setAttribute('course_plan_id',
-                userCourses[event.target.value].fk_course_plan);
-
-            displayDetails(null, userCourses[event.target.value], 'integrated',
-                "<?= base_url("plafor/apprentice/getcourseplanprogress/")?>",
-                "<?=base_url('plafor/apprentice/view_user_course')?>"
-            );
+        let usercourseSelector = document.querySelector('#usercourseSelector');
+        usercourseSelector.addEventListener("change", (event) => {
+            let userCourseId = usercourseSelector.value;
+            let url = urlMethod + '/' + apprenticeId + '/' + userCourseId;
+            window.location.replace(url);
         });
+
+        let event = {
+            target: usercourseSelector
+        };
+        let userCourses = <?= json_encode($user_courses) ?>;
+        let coursePlans = <?= json_encode($course_plans) ?>;
+        let userCoursesStatus = <?= json_encode($user_course_status) ?>;
+
+        invokeHydrationBeginDate(event, userCourses);
+
+        invokeHydrationEndDate(event, userCourses);
+
+        invokeHydrationStatus(event, userCourses, userCoursesStatus);
+
+        document.querySelector('#detailsArray').setAttribute('course_plan_id',
+            userCourses[event.target.value].fk_course_plan);
+
+        // displayDetails(null, userCourses[event.target.value], 'integrated',
+        //     "<?= base_url("plafor/apprentice/getcourseplanprogress/")?>",
+        //     "<?=base_url('plafor/apprentice/view_user_course')?>"
+        // );
 
         invokeDisplayDetails();
     });

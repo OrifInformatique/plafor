@@ -79,8 +79,8 @@ class TrainerApprenticeModel extends \CodeIgniter\Model
     {
         $user_model = model('User_model');
 
-        $unassigned_apprentices = array();
-        $assigned_apprentices_list = array();
+        $unassigned_apprentices = [];
+        $assigned_apprentices_list = [];
 
         $apprentices = $user_model->getApprentices();
 

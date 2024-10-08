@@ -423,8 +423,8 @@
         ->execute('save_user_course', $userId);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Get user course from database
         $userCourseModel = model('\Plafor\Models\UserCourseModel');
@@ -483,8 +483,8 @@
         ->execute('save_user_course', $userId, $userCourseId);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Get user course from database
         $userCourseModel = model('\Plafor\Models\userCourseModel');
@@ -680,8 +680,8 @@
             ->execute('save_apprentice_link', $apprenticeId);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Get inserted apprentice link from database
         $trainerApprenticeModel = model('\Plafor\Models\trainerApprenticeModel');
@@ -747,8 +747,8 @@
         ->execute('save_apprentice_link', $apprenticeId, $apprenticeLinkId);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Delete inserted and updated apprentice link
         $trainerApprenticeModel = model('\Plafor\Models\trainerApprenticeModel');
@@ -1193,8 +1193,8 @@
             ->execute('save_acquisition_status', $acquisitionStatusId);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Reset acquisition status level
         $acquisitionStatus = [
@@ -1236,8 +1236,8 @@
         ->execute('save_acquisition_status', $acquisitionStatusId);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Assertions
         $response = $result->response();
@@ -1259,14 +1259,14 @@
     }
 
     /**
-     * Asserts that the add_comment page redirects to the list_apprentice view
+     * Asserts that the save_comment page redirects to the list_apprentice view
      * when no status id is provided (no session)
      */
-    public function testadd_commentWithoutStatusIdWithoutSession()
+    public function testsave_commentWithoutStatusIdWithoutSession()
     {
-        // Execute add_comment method of Apprentice class
+        // Execute save_comment method of Apprentice class
         $result = $this->controller(Apprentice::class)
-            ->execute('add_comment');
+            ->execute('save_comment');
 
         // Assertions
         $response = $result->response();
@@ -1280,18 +1280,18 @@
     }
 
     /**
-     * Asserts that the add_comment page redirects to the list_apprentice view
+     * Asserts that the save_comment page redirects to the list_apprentice view
      * when a status id is provided (apprentice session)
      */
-    public function testadd_commentWithStatusIdWithApprenticeSession()
+    public function testsave_commentWithStatusIdWithApprenticeSession()
     {
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_guest;
 
-        // Execute add_comment method of Apprentice class
+        // Execute save_comment method of Apprentice class
         $result = $this->controller(Apprentice::class)
-        ->execute('add_comment', 1);
+        ->execute('save_comment', 1);
 
         // Assertions
         $response = $result->response();
@@ -1305,17 +1305,17 @@
     }
 
     /**
-     * Asserts that the add_comment page is loaded correctly when a status id is provided (trainer session)
+     * Asserts that the save_comment page is loaded correctly when a status id is provided (trainer session)
      */
-    public function testadd_commentWithStatusIdWithTrainerSession()
+    public function testsave_commentWithStatusIdWithTrainerSession()
     {
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_trainer;
 
-        // Execute add_comment method of Apprentice class
+        // Execute save_comment method of Apprentice class
         $result = $this->controller(Apprentice::class)
-            ->execute('add_comment', 1);
+            ->execute('save_comment', 1);
 
         // Assertions
         $response = $result->response();
@@ -1331,11 +1331,11 @@
     }
 
     /**
-     * Asserts that the add_comment page redirects to the
+     * Asserts that the save_comment page redirects to the
      * view_acquisition_status view when a status id is provided for a trainer
      * session (inserting a new comment)
      */
-    public function _testadd_commentPostedtWithStatusIdWithTrainerSession()
+    public function _testsave_commentPostedtWithStatusIdWithTrainerSession()
     {
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
@@ -1350,11 +1350,11 @@
 
         // Insert a new operational competence linked to the inserted
         // competence domain
-        $operationalCompetenceId = self::insertOperationalCompetence(
+        $operational_competenceId = self::insertOperationalCompetence(
             $competenceDomainId);
 
         // Insert a new objective linked to the inserted operational competence
-        $objectiveId = self::insertObjective($operationalCompetenceId);
+        $objectiveId = self::insertObjective($operational_competenceId);
 
         // Insert a new user course linked to the inserted course plan
         $userCourseId = self::insertUserCourse(4, $coursePlanId);
@@ -1369,13 +1369,13 @@
         $_POST['comment'] = 'Comment Unit Test';
         $_REQUEST['comment'] = 'Comment Unit Test';
 
-        // Execute add_comment method of Apprentice class
+        // Execute save_comment method of Apprentice class
         $result = $this->controller(Apprentice::class)
-            ->execute('add_comment', $acquisitionStatusId);
+            ->execute('save_comment', $acquisitionStatusId);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Delete inserted comment
         $commentModel = model('\Plafor\Models\commentModel');
@@ -1394,8 +1394,8 @@
         $objectiveModel->delete($objectiveId, true);
 
         // Delete inserted operational competence
-        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
-        $operationalCompetenceModel->delete($operationalCompetenceId, true);
+        $operational_competenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $operational_competenceModel->delete($operational_competenceId, true);
 
         // Delete inserted competence domain
         $competenceDomainModel = model('\Plafor\Models\competenceDomainModel');
@@ -1418,11 +1418,11 @@
     }
 
     /**
-     * Asserts that the add_comment page redirects to the
+     * Asserts that the save_comment page redirects to the
      * view_acquisition_status view when a status id is provided for a trainer
      * session (inserting a new empty comment)
      */
-    public function _testadd_commentPostedtWithStatusIdWithTrainerSessionAndEmptyComment()
+    public function _testsave_commentPostedtWithStatusIdWithTrainerSessionAndEmptyComment()
     {
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')->access_lvl_trainer;
@@ -1435,10 +1435,10 @@
         $competenceDomainId = self::insertCompetenceDomain($coursePlanId);
 
         // Insert a new operational competence linked to the inserted competence domain
-        $operationalCompetenceId = self::insertOperationalCompetence($competenceDomainId);
+        $operational_competenceId = self::insertOperationalCompetence($competenceDomainId);
 
         // Insert a new objective linked to the inserted operational competence
-        $objectiveId = self::insertObjective($operationalCompetenceId);
+        $objectiveId = self::insertObjective($operational_competenceId);
 
         // Insert a new user course linked to the inserted course plan
         $userCourseId = self::insertUserCourse(4, $coursePlanId);
@@ -1451,13 +1451,13 @@
         $_POST['comment'] = '';
         $_REQUEST['comment'] = '';
 
-        // Execute add_comment method of Apprentice class
+        // Execute save_comment method of Apprentice class
         $result = $this->controller(Apprentice::class)
-        ->execute('add_comment', $acquisitionStatusId);
+        ->execute('save_comment', $acquisitionStatusId);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Delete inserted acquisition status
         $acquisitionStatusModel = model('\Plafor\Models\acquisitionStatusModel');
@@ -1472,8 +1472,8 @@
         $objectiveModel->delete($objectiveId, true);
 
         // Delete inserted operational competence
-        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
-        $operationalCompetenceModel->delete($operationalCompetenceId, true);
+        $operational_competenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $operational_competenceModel->delete($operational_competenceId, true);
 
         // Delete inserted competence domain
         $competenceDomainModel = model('\Plafor\Models\competenceDomainModel');
@@ -1493,11 +1493,11 @@
     }
 
     /**
-     * Asserts that the add_comment page redirects to the
+     * Asserts that the save_comment page redirects to the
      * view_acquisition_status view when a status id is provided for a trainer
      * session (updating an existing comment)
      */
-    public function _testadd_commentPostedtWithStatusIdWithTrainerSessionAndExistingComment()
+    public function _testsave_commentPostedtWithStatusIdWithTrainerSessionAndExistingComment()
     {
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')->access_lvl_trainer;
@@ -1510,10 +1510,10 @@
         $competenceDomainId = self::insertCompetenceDomain($coursePlanId);
 
         // Insert a new operational competence linked to the inserted competence domain
-        $operationalCompetenceId = self::insertOperationalCompetence($competenceDomainId);
+        $operational_competenceId = self::insertOperationalCompetence($competenceDomainId);
 
         // Insert a new objective linked to the inserted operational competence
-        $objectiveId = self::insertObjective($operationalCompetenceId);
+        $objectiveId = self::insertObjective($operational_competenceId);
 
         // Insert a new user course linked to the inserted course plan
         $userCourseId = self::insertUserCourse(4, $coursePlanId);
@@ -1529,13 +1529,13 @@
         $_POST['comment'] = 'Comment Update Unit Test';
         $_REQUEST['comment'] = 'Comment Udpdate Unit Test';
 
-        // Execute add_comment method of Apprentice class
+        // Execute save_comment method of Apprentice class
         $result = $this->controller(Apprentice::class)
-        ->execute('add_comment', $acquisitionStatusId, $commentId);
+        ->execute('save_comment', $acquisitionStatusId, $commentId);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Delete inserted comment
         $commentModel = model('\Plafor\Models\commentModel');
@@ -1554,8 +1554,8 @@
         $objectiveModel->delete($objectiveId, true);
 
         // Delete inserted operational competence
-        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
-        $operationalCompetenceModel->delete($operationalCompetenceId, true);
+        $operational_competenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $operational_competenceModel->delete($operational_competenceId, true);
 
         // Delete inserted competence domain
         $competenceDomainModel = model('\Plafor\Models\competenceDomainModel');
@@ -1902,10 +1902,10 @@
      */
     public function testview_user_courseWithUserCourseIdLinkedToASystemApprenticeWithAdministratorAccountForAGivenOperationalCompetence()
     {
-        $_POST = array();
-        $_GET = array();
-        $_SESSION = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_GET = [];
+        $_SESSION = [];
+        $_REQUEST = [];
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_admin;
@@ -1922,8 +1922,8 @@
             ->execute('view_user_course', 1);
 
         // Reset $_GET and $_REQUEST variables
-        $_GET = array();
-        $_REQUEST = array();
+        $_GET = [];
+        $_REQUEST = [];
 
         // Assertions
         $response = $result->response();
@@ -2116,10 +2116,10 @@
 
         // Insert a new operational competence linked to the inserted
         // competence domain
-        $operationalCompetenceId = self::insertOperationalCompetence($competenceDomainId);
+        $operational_competenceId = self::insertOperationalCompetence($competenceDomainId);
 
         // Insert a new objective linked to the inserted operational competence
-        $objectiveId = self::insertObjective($operationalCompetenceId);
+        $objectiveId = self::insertObjective($operational_competenceId);
 
         // Insert a new user course linked to the inserted course plan
         $userCourseId = self::insertUserCourse($apprenticeId, $coursePlanId);
@@ -2141,8 +2141,8 @@
         $objectiveModel->delete($objectiveId, true);
 
         // Delete inserted operational competence
-        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
-        $operationalCompetenceModel->delete($operationalCompetenceId, true);
+        $operational_competenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $operational_competenceModel->delete($operational_competenceId, true);
 
         // Delete inserted competence domain
         $competenceDomainModel = model('\Plafor\Models\competenceDomainModel');
@@ -2207,7 +2207,7 @@
         $_POST['type'] = 'competence_domain';
         $_POST['id'] = 0;
         $_POST['fk_course_plan'] = $coursePlanId;
-        $competenceDomain = array(
+        $competence_domain = array(
             'symbol' => 'ZZZZZZZZZZ',
             'name' => 'Competence Domain Unit Test',
             'fk_course_plan' => $coursePlanId,
@@ -2215,7 +2215,7 @@
         );
         $model = model('\Plafor\Models\CompetenceDomainModel');
 
-        $id = $model->insert($competenceDomain);
+        $id = $model->insert($competence_domain);
         assert($id, 'CompetenceDomain is not created.');
         return $id;
     }
@@ -2226,7 +2226,7 @@
      */
     private static function insertOperationalCompetence(int $competenceDomainId) : int
     {
-        $operationalCompetence = array(
+        $operational_competence = array(
             'id' => 0,
             'symbol' => 'ZZZZZZZZZZ',
             'name' => 'Operational Competence Unit Test',
@@ -2235,8 +2235,8 @@
             'personal' => 'Operational Competence Unit Test',
             'fk_competence_domain' => $competenceDomainId
         );
-        $operationalCompetenceModel = model('\Plafor\Models\operationalCompetenceModel');
-        $id = $operationalCompetenceModel->insert($operationalCompetence);
+        $operational_competenceModel = model('\Plafor\Models\operationalCompetenceModel');
+        $id = $operational_competenceModel->insert($operational_competence);
         assert($id, 'OperationalCompetence is not created');
         return $id;
     }
@@ -2244,13 +2244,13 @@
     /**
      * Insert an objective linked to an operational competence into database
      */
-    private static function insertObjective(int $operationalCompetenceId) : int
+    private static function insertObjective(int $operational_competenceId) : int
     {
         $objective = array(
             'symbol' => 'ZZZZZZZZZZ',
             'taxonomy' => 99999,
             'name' => 'Objective Unit Test',
-            'fk_operational_competence' => $operationalCompetenceId
+            'fk_operational_competence' => $operational_competenceId
         );
         $objectiveModel = model('\Plafor\Models\objectiveModel');
         $id = $objectiveModel->insert($objective);

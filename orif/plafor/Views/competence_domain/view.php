@@ -3,7 +3,7 @@
 /**
  * Shows a competence domain and its linked operational competences.
  *
- * Called by CoursePlan/view_competence_domain($comp_domain_id)
+ * Called by CoursePlan/view_competence_domain($competence_domain_id)
  *
  * @author      Orif (ViDi, HeMa)
  * @link        https://github.com/OrifInformatique
@@ -16,13 +16,13 @@
 /**
  * *** Data needed for this view ***
  *
- * // TODO : Directly put the title in the view, then delete this param
- * @param string $title Page title.
- *
  * @param array $course_plan Parent course plan of the competence domain.
  * All fields from table.
  *
  * @param array $competence_domain Competence domain.
+ * All fields from table.
+ *
+ * @param array $operational_competences Operational competences linked to the competence domain.
  * All fields from table.
  *
  * @param bool $with_archived Defines whether to show deleted entries.
@@ -36,7 +36,7 @@
  *
  * method GET
  *
- * action CoursePlan/view_competence_domain($comp_domain_id)
+ * action CoursePlan/view_competence_domain($competence_domain_id)
  *
  * @param bool $wa Defines whether to show deleted entries.
  *
@@ -47,10 +47,10 @@ helper('form')
 ?>
 
 <div class="container">
-     <?= view('\Plafor\templates\navigator', ['title' => lang('plafor_lang.details_competence_domain')]) ?>
+    <?= view('\Plafor\templates\navigator', ['title' => lang('plafor_lang.details_competence_domain')]) ?>
 
     <!-- Page title -->
-    <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
+    <?= view('\Plafor/common/page_title', ['title' => lang('plafor_lang.details_competence_domain')]) ?>
 
     <!-- Course plan details -->
     <?= view('\Plafor/course_plan/details', $course_plan) ?>
@@ -66,29 +66,13 @@ helper('form')
             </p>
         </div>
 
-        <?php
-        $datas = [];
-        // TODO : Call the model and arrange data in the controller, send the data to the view
-        $competenceDomainModel = model('\Plafor\Models\CompetenceDomainModel');
-
-        foreach ($competenceDomainModel->getOperationalCompetences($competence_domain['id'], $with_archived) as $operational_competence)
-        {
-            $datas[] =
-            [
-                'id'      => $operational_competence['id'],
-                'symbol'  => $operational_competence['symbol'],
-                'opComp'  => $operational_competence['name'],
-                'archive' => $operational_competence['archive']
-            ];
-        }
-
-        echo view('Common\Views\items_list',
+        <?= view('Common\Views\items_list',
         [
-            'items'   => $datas,
+            'items'   => $operational_competences,
             'columns' =>
             [
                 'symbol' => lang('plafor_lang.symbol'),
-                'opComp' => lang('plafor_lang.operational_competence')
+                'name'   => lang('plafor_lang.operational_competence')
             ],
             'with_deleted'  => true,
             'url_detail'    => 'plafor/courseplan/view_operational_competence/',

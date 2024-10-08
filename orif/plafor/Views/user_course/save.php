@@ -16,7 +16,7 @@
 /**
  * *** Data needed for this view ***
  *
- * // TODO : Add the page title as a param
+ * @param string $title Page title.
  *
  * @param array $course_plans List of all course plans.
  * Array of key-values where keys are course_plans IDs and values are course_plans official names.
@@ -63,11 +63,9 @@ helper('form');
 
 <div class="container">
     <!-- Page title -->
-    <?= view('\Plafor/common/page_title',
-        ['title' => $apprentice['username'].' - '.
-        lang('plafor_lang.title_user_course_'.(!empty($user_course) ? 'update' : 'new'))]) ?>
+    <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
 
-    <?= form_open('plafor/apprentice/save_user_course/'.$apprentice['id'].(!empty($user_course) ? '/'.$user_course['id'] : '')) ?>
+    <?= form_open('plafor/apprentice/save_user_course/'.$apprentice_id.(!empty($user_course) ? '/'.$user_course['id'] : '')) ?>
 
         <!-- Form errors -->
         <?= view('\Plafor/common/form_errors', ['errors' => $errors]) ?>
@@ -102,13 +100,13 @@ helper('form');
                 <?= form_label(lang('plafor_lang.field_user_course_status'), 'status',
                     ['class' => 'form-label']) ?>
 
-                <?= form_dropdown('status', $status, $user_course['fk_status'] ?? '',
+                <?= form_dropdown('status', $user_course_statuses, $user_course['fk_status'] ?? '',
                     ['class' => 'form-control', 'id' => 'status']) ?>
             </div>
         </div>
 
         <div class="col text-right">
-            <a class="btn btn-secondary" href="<?= base_url('plafor/apprentice/list_user_courses/'.$apprentice['id']) ?>">
+            <a class="btn btn-secondary" href="<?= base_url('plafor/apprentice/list_user_courses/'.$apprentice_id) ?>">
                 <?= lang('common_lang.btn_cancel') ?>
             </a>
 

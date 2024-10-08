@@ -25,7 +25,7 @@ return [
     'title_administrator' => 'Administrateur',
     'title_trainer'       => 'Formateur',
     'title_apprentice'    => 'Apprenti',
-    'title_user'    => 'Utilisateur',
+    'title_user'          => 'Utilisateur',
 
     //Apprentice
     'title_list_apprentice'             => 'Liste des apprentis',
@@ -79,8 +79,12 @@ return [
     'title_acquisition_status_edit' => 'Modifier un statut d\'acquisition',
 
     //Comment
-    'title_comment_save' => 'Ajouter un commentaire',
-    'comment_delete'     => 'Souhaitez-vous supprimer le commentaire ?',
+    'comment'         => 'Commentaire',
+    'author'          => 'Auteur',
+    'unknown_author'  => 'Auteur inconnu',
+    'creation_date'   => 'Date de création',
+    'linked_comments' => 'Commentaires liés',
+    'comment_delete_explaination'   => 'Toutes les informations concernant ce commentaire (auteur, texte, date de création) seront supprimées.',
 
     // User Course Status
     'title_in_progress' => 'En cours',
@@ -190,16 +194,12 @@ return [
     'field_user_course_course_plan'             => 'Formation',
     'field_user_course_status'                  => 'Statut de la formation',
     'field_user_course_objectives_status'       => 'Statuts d\'acquisition des objectifs',
-    'field_comment'                             => 'Commentaire',
-    'field_comment_creater'                     => 'Créateur du commentaire',
-    'field_comment_date_creation'               => 'Date de création du commentaire',
     'field_trainer_link'                        => 'Formateur(s) lié(s)',
     'field_trainers_name'                       => 'Nom des formateurs',
     'field_acquisition_level'                   => 'Niveau d\'acquisition',
     'field_id'                                  => 'Identifiant',
     'field_symbol'                              => 'Symbole',
     'field_taxonomy'                            => 'Taxonomie',
-    'field_linked_comments'                     => 'Commentaires liés',
 
     // Admin texts
     'admin_apprentices'  => 'Apprentis',
@@ -266,4 +266,10 @@ return [
     'current'                                     => 'En vigueur',
     'unassigned'                                  => 'Non assigné',
     'apprentices_already_assigned_to_course_plan' => 'Les apprentis suivants sont associés à ce plan de formation',
+
+    'the_m' => 'le',
+    'at' => 'à',
+
+    'user_disable_explanation'                => 'Toutes les informations concernant cet utilisateur (type d\'utilisateur, nom, mot de passe, email, date de création) seront désactivées.',
+    'user_delete_explanation'                => 'Toutes les informations concernant cet utilisateur (type d\'utilisateur, nom, mot de passe, email, date de création) seront supprimées.',
 ];

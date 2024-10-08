@@ -3,7 +3,7 @@
 /**
  * Shows an operational competence and its linked objectives.
  *
- * Called by CoursePlan/view_operational_competence($operational_comp_id)
+ * Called by CoursePlan/view_operational_competence($operational_competence_id)
  *
  * @author      Orif (ViDi, HeMa)
  * @link        https://github.com/OrifInformatique
@@ -15,9 +15,6 @@
 
 /**
  * *** Data needed by this view ***
- *
- * // TODO : Directly put the title in the view, then delete this param
- * @param string $title Page title.
  *
  * @param array $course_plan Course plan containing the operational competence.
  * All fields from table.
@@ -40,7 +37,7 @@
  *
  * method GET
  *
- * action CoursePlan/view_operational_competence($operational_comp_id)
+ * action CoursePlan/view_operational_competence($operational_competence_id)
  *
  * @param bool $wa Defines whether to show deleted entries.
  *

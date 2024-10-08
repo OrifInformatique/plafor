@@ -58,7 +58,7 @@
  *
  */
 
-helper('form');
+helper(['form', 'AccessPermissions_helper']);
 
 ?>
 
@@ -78,19 +78,18 @@ helper('form');
     <div class="col-12">
         <div class="d-flex justify-content-between">
             <div>
-                <?php if(service('session')->get('user_access') >= config('\User\Config\UserConfig')->access_lvl_admin): ?>
+                <?php if(hasCurrentUserAdminAccess()): ?>
                     <a href="<?= base_url('plafor/teachingdomain/saveTeachingDomain/'.$parent_course_plan_id) ?>" class="btn btn-primary">
                         <?=lang ('common_lang.btn_new_m').' '.substr(strtolower(lang('Grades.domain')), 0, 7) ?>
                     </a>
                 <?php endif ?>
             </div>
 
-            <!-- TODO : Make the checkbox display deleted teaching domains AND teaching subjects AND teaching modules when checked -->
             <div class="col-sm-6 d-flex justify-content-end align-content-center">
                 <?= form_label(lang('common_lang.btn_show_disabled'), 'toggle_deleted_teaching_domains_subjects',
                     ['class' => 'form-check-label mr-2', 'style' => 'margin-top: 5.5px;']) ?>
 
-                <?= form_checkbox('toggle_deleted', '', $with_deleted,
+                <?= form_checkbox('toggle_deleted', '', false,
                     ['class' => 'align-self-center', 'id' => 'toggle_deleted_teaching_domains_subjects',
                     'style' => 'width: 20px; height: 20px;']) ?>
             </div>
@@ -98,7 +97,7 @@ helper('form');
     </div>
 
     <!-- Domains list -->
-    <div class="col-12 mt-2">
+    <div id="teachingDomain" class="col-12 mt-2">
         <?php foreach($teaching_domains as $teaching_domain): ?>
             <!-- Domain details -->
             <div class="row mt-3 m-2 pt-2 border-top border-bottom border-primary align-items-center">
@@ -123,7 +122,7 @@ helper('form');
                 </p>
             </div>
 
-            <?php if(service('session')->get('user_access') >= config('\User\Config\UserConfig')->access_lvl_admin): ?>
+            <?php if(hasCurrentUserAdminAccess()): ?>
                 <div class="m-2">
                     <a href="<?= base_url('plafor/teachingdomain/saveTeachingSubject/'.$teaching_domain['id']) ?>" class="btn btn-primary">
                         <?= lang('common_lang.btn_new_f').' '.strtolower(lang('Grades.subject')) ?>
@@ -207,20 +206,22 @@ helper('form');
     </div>
 </div>
 
-<script>
+<!-- JQuery script to refresh items list after user action -->
+<?php if(isset($url_getView)): ?>
+    <script>
         $(document).ready(() =>
         {
             $('#toggle_deleted_teaching_domains_subjects').change(e =>
             {
                 let checked = e.currentTarget.checked;
 
-                history.replaceState(null, null, '<?= base_url('plafor/courseplan/view_course_plan/'.$parent_course_plan_id) ?>?wads=' + (checked ? 1 : 0))
-                $.get('<?= base_url('plafor/courseplan/view_course_plan/'.$parent_course_plan_id) ?>?wads=' + (checked ? 1 : 0), (datas) => {
+                history.replaceState(null, null, '<?= base_url($url_getView) ?>?wb=' + (checked ? 1 : 0))
+                $.get('<?= base_url($url_getView) ?>?wb=' + (checked ? 1 : 0), (datas) => {
                     let parser = new DOMParser();
 
-                    parser.parseFromString(datas, 'text/html').querySelectorAll('#itemsList').forEach((domTag) =>
+                    parser.parseFromString(datas, 'text/html').querySelectorAll('#teachingDomain').forEach((domTag) =>
                     {
-                        document.querySelectorAll('#itemsList').forEach((thisDomTag) =>
+                        document.querySelectorAll('#teachingDomain').forEach((thisDomTag) =>
                         {
                             thisDomTag.innerHTML = domTag.innerHTML;
                         })
@@ -229,3 +230,4 @@ helper('form');
             })
         });
     </script>
+<?php endif ?>

@@ -48,15 +48,15 @@ class TeachingDomainModel extends Model
 
     /**
      * Post-processing hook for find operations.
-     * 
+     *
      * @param array $data Contains the result from the find operation, along
      * with additional metadata.
      *   - $data['data']: The result data from the find operation.
      *   - $data['method']: The name of the find method that was called (e.g.
      *   'findAll', 'find', 'first').
-     * 
+     *
      * @return array $data The edited result data.
-     * 
+     *
      * This method applies additional processing to the result data based on
      * the type of find operation:
      * - findAll and find without an ID in the parameter call afterFindFindAll.
@@ -78,10 +78,10 @@ class TeachingDomainModel extends Model
 
     /**
      * Post-processing hook for findAll operations.
-     * 
+     *
      * Applies the afterFindFind method to each element of the result set
      * returned by findAll.
-     * 
+     *
      * @param array $data The result set from the findAll operation.
      * @return array The result set with each element processed by
      * afterFindFind.
@@ -93,27 +93,27 @@ class TeachingDomainModel extends Model
 
     /**
      * Post-processing hook for find and first operations.
-     * 
+     *
      * Enhances the result data by adding related information:
      * - Teaching domain title (if fk_teaching_domain_title is present)
      * - Course plan name (if fk_course_plan is present)
-     * 
+     *
      * These enhancements are achieved through joins with the
      * teaching_domain_title and course_plan tables.
-     * 
+     *
      * @param array $data The result data from the find or first operation.
      * @return array The enhanced result data with additional information.
      */
     protected function afterFindFind(array $data): array
     {
-        if (array_key_exists('fk_teaching_domain_title', $data)) { 
+        if (array_key_exists('fk_teaching_domain_title', $data)) {
             $data['title'] = $this->select('teaching_domain_title.title')
                                   ->join('teaching_domain_title',
              'teaching_domain_title.id = fk_teaching_domain_title', 'left')
              ->allowCallbacks(false)->withDeleted()
              ->find($data['id'])['title'];
         }
-        if (array_key_exists('fk_course_plan', $data)) { 
+        if (array_key_exists('fk_course_plan', $data)) {
             $data['course_plan_name'] = $this
                 ->select('course_plan.official_name')
              ->join('course_plan', 'course_plan.id = fk_course_plan', 'left')
@@ -122,5 +122,84 @@ class TeachingDomainModel extends Model
         }
         return $data;
     }
+
+    public function getTeachingDomainIdByUserCourse(int $userCourseId,
+        bool $withDeleted = true): array
+    {
+        $userCourseModel = model('CoursePlanModel');
+        $coursePlanId = $userCourseModel
+            ->getCoursePlanIdByUserCourse($userCourseId, $withDeleted);
+        $domainIdsRaw = $this
+            ->select('teaching_domain.id')
+            ->where('fk_course_plan = ', $coursePlanId)
+            ->withDeleted($withDeleted)
+            ->findAll();
+        $domainIds = array_map(fn($record) => $record['id'], $domainIdsRaw);
+        return $domainIds;
+    }
+
+    private function getDomainByUserCourseAndName(int $userCourseId,
+        string $domainName, bool $withDeleted = true): ?array
+    {
+        $domainIds = $this->getTeachingDomainIdByUserCourse($userCourseId,
+            $withDeleted);
+        if (empty($domainIds)) return null;
+        $domains = array_map(fn($id) => $this->withDeleted($withDeleted)
+            ->find($id), $domainIds);
+        $domainsFilted = array_filter($domains,
+            fn($domain) => $domain['title'] === $domainName
+        );
+        $domain = $domainsFilted[array_key_last($domainsFilted)] ?? null;
+        if (is_null($domain)) return null;
+        return $domain;
+    }
+
+    public function getITDomainWeight(int $userCourseId,
+        bool $withDeleted = true): ?float
+    {
+        // TODO find a better way
+        // magic string
+        $domainNameForModuleWeight = 'Informatique';
+
+        $ITDomain = $this->getDomainByUserCourseAndName($userCourseId,
+            $domainNameForModuleWeight, $withDeleted);
+        if (is_null($ITDomain)) return null;
+        $ITWeight = $ITDomain['domain_weight'];
+        return $ITWeight;
+    }
+
+    public function getTpiDomain(int $userCourseId,
+        bool $withDeleted = true): ?array
+    {
+        // TODO find a better way
+        // magic string
+        $tpiDomainName = 'Travail pratique individuel';
+        $domain = $this->getDomainByUserCourseAndName($userCourseId,
+            $tpiDomainName, $withDeleted);
+        return $domain;
+    }
+
+    public function getCbeDomain(int $userCourseId,
+        bool $withDeleted = true): ?array
+    {
+        // TODO find a better way
+        // magic string
+        $domainName = 'Compétences de base élargies';
+        $domain = $this->getDomainByUserCourseAndName($userCourseId,
+            $domainName, $withDeleted);
+        return $domain;
+    }
+
+    public function getEcgDomain(int $userCourseId,
+        bool $withDeleted = true): ?array
+    {
+        // TODO find a better way
+        // magic string
+        $domainName = 'Culture générale';
+        $domain = $this->getDomainByUserCourseAndName($userCourseId,
+            $domainName, $withDeleted);
+        return $domain;
+    }
+
 
 }

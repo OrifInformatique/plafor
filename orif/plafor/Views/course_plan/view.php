@@ -17,9 +17,6 @@
 /**
  * *** Data needed for this view ***
  *
- * // TODO : Directly put the title in the view, then delete this param
- * @param string $title Page title.
- *
  * @param array $course_plan Course plan we want to see its details.
  * All fields from table.
  *
@@ -52,7 +49,7 @@ helper('form');
     <?= view('\Plafor\templates\navigator', ['title' => lang('plafor_lang.title_view_course_plan')]) ?>
 
     <!-- Page title -->
-    <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
+    <?= view('\Plafor/common/page_title', ['title' => lang('plafor_lang.title_view_course_plan')]) ?>
 
     <!-- Course plan details -->
     <?= view('\Plafor/course_plan/details', $course_plan) ?>
@@ -63,27 +60,13 @@ helper('form');
             <p class="bg-primary text-white"><?= lang('plafor_lang.title_view_competence_domains_linked') ?></p>
         </div>
 
-        <?php
-        $datas = [];
-
-        foreach ($competence_domains as $competence_domain)
-        {
-            $datas[] =
-            [
-                'id'      => $competence_domain['id'],
-                'symbol'  => $competence_domain['symbol'],
-                'compDom' => $competence_domain['name'],
-                'archive' => $competence_domain['archive']
-            ];
-        }
-
-        echo view('Common\Views\items_list',
+        <?= view('Common\Views\items_list',
         [
-            'items'   => $datas,
+            'items'   => $competence_domains,
             'columns' =>
             [
                 'symbol'  => lang('plafor_lang.symbol'),
-                'compDom' => lang('plafor_lang.competence_domain')
+                'name' => lang('plafor_lang.competence_domain')
             ],
             'with_deleted'  => true,
             'url_detail'    => 'plafor/courseplan/view_competence_domain/',

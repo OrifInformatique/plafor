@@ -3,7 +3,7 @@
 /**
  * Let the edition of a operational competence.
  *
- * Called by CoursePlan/save_operational_competence($comp_domain_id, $operational_comp_id)
+ * Called by CoursePlan/save_operational_competence($competence_domain_id, $operational_competence_id)
  *
  * @author      Orif (ViDi, HeMa)
  * @link        https://github.com/OrifInformatique
@@ -22,8 +22,7 @@
  * @param array $competence_domains List of all competence domains
  * Array of key-values where keys are competence domains IDs and values are competence domains names.
  *
- * // TODO : Only give the competence domain id to the view : only value needed
- * @param array $competence_domain Parent competence domain.
+ * @param array $competence_domain_id ID of the parent competence domain.
  * All fields from table.
  *
  * @param ?array $errors operational_comp_model errors.
@@ -37,7 +36,7 @@
  *
  * method POST
  *
- * action CoursePlan/save_operational_competence($comp_domain_id, $operational_comp_id)
+ * action CoursePlan/save_operational_competence($competence_domain_id, $operational_competence_id)
  *
  * @param int $id ID of the operational competence.
  *
@@ -68,12 +67,11 @@ $textarea_max_length = config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGT
 
 <div class="container">
     <!-- Page title -->
-    <?= view('\Plafor/common/page_title',
-        ['title' => lang('plafor_lang.title_operational_competence_'.(!empty($operational_competence) ? 'update' : 'new'))]) ?>
+    <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
 
-    <?= form_open(base_url('plafor/courseplan/save_operational_competence/'.$competence_domain['id'].
-        '/'.($operational_competence['id'] ?? 0)),
-        [], ['id' => $operational_competence['id'] ?? 0, 'type' => 'operational_competence']) ?>
+    <?= form_open(base_url('plafor/courseplan/save_operational_competence/'.
+        $competence_domain_id.'/'.($operational_competence["id"] ?? '0')), null,
+        ['id' => $operational_competence["id"], 'type' => 'operational_competence']) ?>
 
         <!-- Form errors -->
         <?= view('\Plafor/common/form_errors', ['errors' => $errors]) ?>
@@ -129,7 +127,7 @@ $textarea_max_length = config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGT
 
         <div class="row">
             <div class="col text-right">
-                <a class="btn btn-secondary" href="<?= base_url('plafor/courseplan/view_competence_domain/'.$competence_domain['id']) ?>">
+                <a class="btn btn-secondary" href="<?= base_url('plafor/courseplan/view_competence_domain/'.$competence_domain_id) ?>">
                     <?= lang('common_lang.btn_cancel') ?>
                 </a>
 

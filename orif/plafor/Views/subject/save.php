@@ -59,24 +59,6 @@
  *
  */
 
-
-
-/**
- * Data management
- *
- */
-
-// TODO : Move data management into the controller displaying this view.
-
-if(isset($subject_id) && $subject_id > 0)
-    $title = lang('Grades.update_subject');
-
-else
-{
-    $title = lang('Grades.create_subject');
-    $subject_id = 0;
-}
-
 helper('form')
 
 ?>

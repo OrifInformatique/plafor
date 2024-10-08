@@ -49,24 +49,9 @@ use CodeIgniter\I18n\Time;
     <?= view('\Plafor/common/page_title', ['title' => lang('plafor_lang.title_course_plan_list')]) ?>
 
     <div class="row mt-2">
-        <?php
-        $datas = [];
-
-        foreach($course_plans as $course_plan)
-        {
-            $datas[] =
-            [
-                'id'         => $course_plan['id'],
-                'formNumber' => $course_plan['formation_number'],
-                'coursePlan' => $course_plan['official_name'],
-                'begin_date' => Time::createFromFormat('Y-m-d', $course_plan['date_begin'])->toLocalizedString('dd.MM.Y'),
-                'archive'    => $course_plan['archive']
-            ];
-        }
-
-        echo view('Common\Views\items_list',
+        <?= view('Common\Views\items_list',
         [
-            'items'   => $datas,
+            'items'   => $course_plans,
             'columns' =>
             [
                 'formNumber' => lang('plafor_lang.field_course_plan_formation_number'),
