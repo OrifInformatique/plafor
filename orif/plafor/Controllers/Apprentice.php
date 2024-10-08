@@ -223,7 +223,6 @@ class Apprentice extends \App\Controllers\BaseController
                                        ->getSchoolReportData($user_course_id);
             $data_to_view = array_merge($data_to_view,
                 $school_report_data);
-            d($data_to_view);
         } 
 
         return $this->display_view("Plafor\apprentice/view", $data_to_view);

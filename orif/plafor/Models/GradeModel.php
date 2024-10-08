@@ -407,37 +407,6 @@ class GradeModel extends Model
         return $this->roundOneDecimalPoint($sumWithModule);
     }
 
-    // public function getSchoolReportData(int $userCourseId): array
-    // {
-    //     $teachingDomainModel = model('TeachingDomainModel');
-
-    //     $cfcAverage = $this->getApprenticeAverage($userCourseId);
-    //     $modules = $this->getWeightedModuleAverage($userCourseId);
-
-    //     $tpiDomain = $teachingDomainModel->getTpiDomain($userCourseId);
-    //     $tpiGrade = $this
-    //         ->getApprenticeDomainAverageNotModule($userCourseId,
-    //             $tpiDomain['id']);
-
-    //     $cbeDomain = $teachingDomainModel->getCbeDomain($userCourseId);
-    //     $cbeGrade = $this ->getApprenticeDomainAverageNotModule($userCourseId,
-    //             $cbeDomain['id']);
-
-    //     $ecgDomain = $teachingDomainModel->getCbeDomain($userCourseId);
-    //     $ecgGrade = $this
-    //         ->getApprenticeDomainAverageNotModule($userCourseId,
-    //             $ecgDomain['id']);
-
-    //     return [
-    //         "cfc_average"           => $cfcAverage,
-    //         "modules"               => $modules,    
-    //         "tpi_grade"             => $tpiGrade,  
-    //         "cbe"                   => $cbeGrade,        
-    //         "ecg"                   => $ecgGrade,        
-    //     ];
-    // }
-    //
-    
     public function getSchoolReportData(int $userCourseId): array
     {
         $data['cfc_average'] = $this->getApprenticeAverage($userCourseId);
@@ -481,39 +450,38 @@ class GradeModel extends Model
     private function putDefaultDataForModuleView(array $viewModules): array
     {
         if (empty($viewModules['school']['modules'])) {
-            $viewModules['school']['modules'][0]['name']
-                = lang('module not found');
-            $viewModules['school']['modules'][0]['number']
-                = lang('module not found');
+            // module not found
+            $viewModules['school']['modules'][0]['name'] = ' ';
+            // module not found
+            $viewModules['school']['modules'][0]['number'] = ' ';
         }
         if (empty($viewModules['non-school']['modules'])) {
-            $viewModules['non-school']['modules'][0]['name']
-                = lang('module not found');
-            $viewModules['non-school']['modules'][0]['number']
-                = lang('module not found');
+            // module not found
+            $viewModules['non-school']['modules'][0]['name'] = ' ';
+            // module not found
+            $viewModules['non-school']['modules'][0]['number'] = ' ';
         }
         if (empty($viewModules['school']['weighting'])) {
-            $viewModules['school']['weighting']
-                = lang('weighting not found');
+            // weighting not found
+            $viewModules['school']['weighting'] = ' ';
         }
         if (empty($viewModules['non-school']['weighting'])) {
-            $viewModules['non-school']['weighting']
-                = lang('weighting not found');
+            // weighting not found
+            $viewModules['non-school']['weighting'] = ' ';
         }
         if (empty($viewModules['school']['modules'][0]['grade'])) {
-            $viewModules['school']['modules'][0]['grade']['id']
-                = lang('grade not found');
-            $viewModules['school']['modules'][0]['grade']['value']
-                = lang('grade not found');
+            // grade not found
+            $viewModules['school']['modules'][0]['grade']['id'] = ' ';
+            // grade not found
+            $viewModules['school']['modules'][0]['grade']['value'] = ' ';
         }
         if (empty($viewModules['non-school']['modules'][0]['grade'])) {
-            $viewModules['non-school']['modules'][0]['grade']['id']
-                = lang('grade not found');
-            $viewModules['non-school']['modules'][0]['grade']['value']
-                = lang('grade not found');
+            // grade not found
+            $viewModules['non-school']['modules'][0]['grade']['id'] = ' ';
+            // grade not found
+            $viewModules['non-school']['modules'][0]['grade']['value'] = ' ';
         }
         return $viewModules;
-
     }
 
     public function getApprenticeModulesGradesForView(int $userCourseId,
@@ -593,8 +561,8 @@ class GradeModel extends Model
             while (count($subject['grades']) !== 8)
             {
                 $subject['grades'][] = [
-                    'id' => lang('grade not found'),
-                    'value' => lang('grade not found'),
+                    'id' => ' ',
+                    'value' => ' ', # grade not found
                 ];
                     
             }
