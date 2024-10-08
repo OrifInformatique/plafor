@@ -42,7 +42,8 @@ class  TeachingDomainTitleModelTest extends CIUnitTestCase
         $data = $model->find($id);
         $expect = [
             'id' => 1,
-            'title' => 'Compétences de base élargies'
+            'title' => 'Compétences de base élargies',
+            'archive' => null
         ];
         $this->assertEquals($expect, $data);
     }

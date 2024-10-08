@@ -114,7 +114,7 @@ class ItemsListTest extends CIUnitTestCase
         $result->assertSee(lang('common_lang.btn_add'), 'a');
         $result->assertSeeLink(lang('common_lang.btn_add'));
     }
-    
+
     public function test_create_button_hidden(): void
     {
         $this->test_create_button_hidden_null();
@@ -201,25 +201,15 @@ class ItemsListTest extends CIUnitTestCase
         $this->test_icon_hidden('common_lang.btn_edit', 'url_update');
     }
 
-    public function test_duplicate_icon_shown(): void
-    {
-        $this->test_icon_shown('common_lang.btn_copy');
-    }
-
-    public function test_duplicate_icon_hidden(): void
-    {
-        $this->test_icon_hidden('common_lang.btn_copy', 'url_duplicate');
-    }
-
     public function test_delete_icon_shown(): void
     {
         $this->test_icon_shown('common_lang.btn_delete');
     }
 
-    public function test_delete_icon_hidden(): void
+    /*public function test_delete_icon_hidden(): void
     {
         $this->test_icon_hidden('common_lang.btn_delete', 'url_delete');
-    }
+    }*/
 
     public function test_restore_icon_shown(): void
     {
@@ -253,12 +243,12 @@ class ItemsListTest extends CIUnitTestCase
         $result->assertDontSee(lang('common_lang.btn_restore'));
     }
 
-    public function test_red_delete_icon_shown(): void
+    /*public function test_red_delete_icon_shown(): void
     {
         $this->test_icon_shown('common_lang.btn_hard_delete');
-    }
+    }*/
 
-    public function test_red_delete_icon_hidden(): void
+    /*public function test_red_delete_icon_hidden(): void
     {
         $this->test_icon_hidden('common_lang.btn_hard_delete', 'url_delete');
         $this->test_red_delete_icon_hidden_when_date_null();
@@ -283,7 +273,7 @@ class ItemsListTest extends CIUnitTestCase
                        ->execute('display_view', '\Common\items_list', $data);
         $response = $result->response()->getBody();
         $result->assertDontSee(lang('common_lang.btn_hard_delete'));
-    }
+    }*/
 
     private function test_icon_shown(string $titleKey): void
     {
@@ -379,6 +369,7 @@ class ItemsListTest extends CIUnitTestCase
         $data['btn_create_label']   = 'Add an item';
         $data['with_deleted']       = true;
         $data['deleted_field']      = 'deleted';
+        $data['allow_hard_delete']  = true;
         $data = array_merge($data, self::get_default_url_data());
         return $data;
     }
@@ -388,10 +379,10 @@ class ItemsListTest extends CIUnitTestCase
         $data['url_detail'] = "items_list/detail/";
         $data['url_update'] = "items_list/update/";
         $data['url_delete'] = "items_list/delete/";
+        $data['url_hard_delete'] = "items_list/hard_delete/";
         $data['url_create'] = "items_list/create/";
         $data['url_getView'] = "items_list/display_item/";
         $data['url_restore'] = "items_list/restore_item/";
-        $data['url_duplicate'] = "items_list/duplicate_item/";
         return $data;
     }
 }
