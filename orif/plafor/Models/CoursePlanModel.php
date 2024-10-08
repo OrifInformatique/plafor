@@ -147,5 +147,18 @@ class CoursePlanModel extends Model {
 
         return $coursePlans;
     }
+
+    public function getCoursePlanIdByUserCourse(int $userCourseId,
+        bool $withDeleted = true): ?int
+    {
+        $coursePlanId = $this
+            ->select('course_plan.id')
+            ->join('user_course', 'user_course.fk_course_plan =
+                course_plan.id', 'left')
+            ->where('user_course.id', $userCourseId)
+            ->withDeleted($withDeleted)
+            ->find()[0]['id'] ?? null;
+        return $coursePlanId;
+    }
 }
 ?>

@@ -49,6 +49,7 @@ class GradeModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
+
     /**
      * Post-processing hook for find operations.
      * 
@@ -138,14 +139,14 @@ class GradeModel extends Model
      * Gets all grades from a specific subject, from a specific user_course
      * (apprentice).
      *
-     * @param int $idUserCourse ID of the user_course
-     * @param int $idSubject ID of the subject
+     * @param int $userCourseId ID of the user_course
+     * @param int $subjectId ID of the subject
      * 
      * @return array
      *
      */
-    public function getApprenticeSubjectGrades(int $idUserCourse,
-        int $idSubject): array
+    public function getApprenticeSubjectGrades(int $userCourseId,
+        int $subjectId): array
     {
         $data = $this
             ->select('grade.fk_user_course, grade.fk_teaching_subject, '
@@ -154,8 +155,8 @@ class GradeModel extends Model
             ->join('teaching_subject',
             'teaching_subject.id = fk_teaching_subject', 'left')
             ->join('user_course', 'user_course.id = fk_user_course ', 'left')
-            ->where('fk_user_course = ', $idUserCourse)
-            ->where('fk_teaching_subject = ', $idSubject)
+            ->where('fk_user_course = ', $userCourseId)
+            ->where('fk_teaching_subject = ', $subjectId)
             ->allowCallbacks(false)
             ->find();
         return $data;
@@ -165,7 +166,7 @@ class GradeModel extends Model
      * Gets all grades from all modules, from a specific user_course
      * (apprentice).
      *
-     * @param int $idUserCourse ID of the user_course
+     * @param int $userCourseId ID of the user_course
      * @param bool $isSchool "true" to get only school modules grades
      *                        "false" to get only non school modules grades
      *                        NULL to get all modules grades
@@ -173,7 +174,7 @@ class GradeModel extends Model
      * @return array
      *
      */
-    public function getApprenticeModulesGrades(int $idUserCourse,
+    public function getApprenticeModulesGrades(int $userCourseId,
         ?bool $isSchool = null): array
     {
         $this->select('grade.fk_user_course, grade.fk_teaching_module, '
@@ -182,7 +183,7 @@ class GradeModel extends Model
             ->join('teaching_module',
             'teaching_module.id = fk_teaching_module', 'left')
             ->join('user_course', 'user_course.id = fk_user_course ', 'left')
-            ->where('fk_user_course = ', $idUserCourse)
+            ->where('fk_user_course = ', $userCourseId)
             ->where('fk_teaching_module is not null')
             ->where('fk_teaching_subject is null')
             ->allowCallbacks(false);
@@ -201,14 +202,14 @@ class GradeModel extends Model
      * Gets a grade from a specific module, from a specific user_course
      * (apprentice).
      *
-     * @param int $idUserCourse ID of the user_course
-     * @param int $id_module ID of the module
+     * @param int $userCourseId ID of the user_course
+     * @param int $moduleId ID of the module
      * 
      * @return array
      *
      */
-    public function getApprenticeModuleGrade(int $idUserCourse,
-        int $id_module): array
+    public function getApprenticeModuleGrade(int $userCourseId,
+        int $moduleId): array
     {
         $data = $this->select('grade.fk_user_course, '
             . 'grade.fk_teaching_module, grade.date, grade.grade, '
@@ -216,12 +217,13 @@ class GradeModel extends Model
             ->join('teaching_module',
             'teaching_module.id = fk_teaching_module', 'left')
             ->join('user_course', 'user_course.id = fk_user_course ', 'left')
-            ->where('fk_user_course = ', $idUserCourse)
-            ->where('fk_teaching_module = ', $id_module)
+            ->where('fk_user_course = ', $userCourseId)
+            ->where('fk_teaching_module = ', $moduleId)
             ->allowCallbacks(false)
             ->first();
         return $data;
     }
+
 
     /**
      * Calculates the average of an array of grades returned by the
@@ -232,10 +234,11 @@ class GradeModel extends Model
      * grade is an associative array containing the grade data.
      * @return float The average grade.
      */
-    private function getAverageFromArray(array $grades): float
+    private function getAverageFromArray(array $grades): ?float
     {
         $onlyGrades = array_map(fn($row) => $row['grade'], $grades);
         $sum = array_sum($onlyGrades);
+        if (count($onlyGrades) === 0) return null;
         $average = $sum / count($onlyGrades);
         return $average;
     }
@@ -265,21 +268,22 @@ class GradeModel extends Model
     /**
      * Calculates the average grade of an apprentice for a specific subject.
      * 
-     * @param int $idUserCourse The ID of the user course.
-     * @param int $idSubject The ID of the subject.
+     * @param int $userCourseId The ID of the user course.
+     * @param int $subjectId The ID of the subject.
      * @param callable|null $roundMethod A callback function to round the
      * average grade. Defaults to rounding to one decimal point.
      * @return float The average grade of the apprentice for the subject.
      * 
      * Example usage:
-     * $data = $gradeModel->getApprenticeSubjectAverage($idUserCourse,
-     *     $idSubject, [$gradeModel, 'roundHalfPoint']);
+     * $data = $gradeModel->getApprenticeSubjectAverage($userCourseId,
+     *     $subjectId, [$gradeModel, 'roundHalfPoint']);
      */
-    public function getApprenticeSubjectAverage(int $idUserCourse,
-        int $idSubject, ?callable $roundMethod = null): float
+    public function getApprenticeSubjectAverage(int $userCourseId,
+        int $subjectId, ?callable $roundMethod = null): ?float
     {
         $grades = $this
-            ->getApprenticeSubjectGrades($idUserCourse, $idSubject);
+            ->getApprenticeSubjectGrades($userCourseId, $subjectId);
+        if (count($grades) === 0) return null;
         $average = $this->getAverageFromArray($grades);
         $roundMethod = $roundMethod ?? [$this, 'roundOneDecimalPoint'];
         return $roundMethod($average);
@@ -289,7 +293,7 @@ class GradeModel extends Model
     /**
      * Calculates the average grade of an apprentice for a module.
      * 
-     * @param int $idUserCourse The ID of the user course.
+     * @param int $userCourseId The ID of the user course.
      * @param bool|null $isSchool Whether to consider school grades or not.
      * Defaults to null.
      * @param callable|null $roundMethod A callback function to round the
@@ -297,16 +301,476 @@ class GradeModel extends Model
      * @return float The average grade of the apprentice for the module.
      * 
      * Example usage:
-     * $data = $gradeModel->getApprenticeModuleAverage($idUserCourse,
+     * $data = $gradeModel->getApprenticeModuleAverage($userCourseId,
      *     $isSchool, [$gradeModel, 'roundHalfPoint']);
      */
-    public function getApprenticeModuleAverage(int $idUserCourse,
-        ?bool $isSchool = null, ?callable $roundMethod = null): float
+    public function getApprenticeModuleAverage(int $userCourseId,
+        ?bool $isSchool = null, ?callable $roundMethod = null): ?float
     {
-        $grades = $this->getApprenticeModulesGrades($idUserCourse,
+        $grades = $this->getApprenticeModulesGrades($userCourseId,
             $isSchool);
         $average = $this->getAverageFromArray($grades);
+        if (is_null($average)) return null;
         $roundMethod = $roundMethod ?? [$this, 'roundOneDecimalPoint'];
         return $roundMethod($average);
     }
+
+
+    /**
+     * Calculates the weighted average grade module for a user's course.
+     *
+     * This method retrieves the grades for school and inter-enterprise
+     * modules, calculates their respective averages, and then combines them
+     * using the defined weights.
+     *
+     * @param int $userCourseId The ID of the user's course.
+     * @param callable|null $roundMethod A callback function to round the
+     * result. Defaults to rounding to one decimal point.
+     *
+     * @return float The weighted average grade.
+     */
+    public function getWeightedModuleAverage(int $userCourseId,
+        ?callable $roundMethod = null): float
+    {
+        // Define the weights for school and inter-enterprise modules
+        $schoolWeight = config('\Plafor\Config\PlaforConfig')->SCHOOL_WEIGHT;
+        $externWeight = config('\Plafor\Config\PlaforConfig')->EXTERN_WEIGHT;
+
+        // Retrieve school module grades for the user's course
+        $schoolGrades = $this->getApprenticeModulesGrades($userCourseId, true);
+        $schoolAverage = $this->getAverageFromArray($schoolGrades);
+        // Retrieve inter-enterprise module grades for the user's course
+        $externGrades = $this
+            ->getApprenticeModulesGrades($userCourseId, false);
+        $externAverage = $this->getAverageFromArray($externGrades);
+        // Calculate the weighted average grade
+        $average = $schoolWeight * $schoolAverage + $externWeight
+            * $externAverage;
+        // potenration between epsic module and interentreprise module
+        $roundMethod = $roundMethod ?? [$this, 'roundOneDecimalPoint'];
+        return $roundMethod($average);
+    }
+
+    
+    /**
+     * Calculates the average grade of an apprentice in a specific domain this
+     * is not a module.
+     *
+     * @param int $userCourseId The ID of the user's course.
+     * @param int $domainId The ID of the domain.
+     * @param callable|null $roundMethod A callback function to round the
+     * result. Defaults to null.
+     *
+     * @return float|null The average grade of the apprentice in the domain, or
+     * null if no grade are available.
+     */
+    public function getApprenticeDomainAverageNotModule(int $userCourseId,
+        int $domainId, ?callable $roundMethod = null): ?float
+    {
+        $subjectModel = model('TeachingSubjectModel');
+        $subjectIds = $subjectModel
+            ->getTeachingSubjectIdByDomain($domainId);
+        $subjectAverages = array_map(fn($id) =>
+            $this->getApprenticeSubjectAverage($userCourseId, $id, fn($r) =>
+            $r), $subjectIds);
+        $subjectAveragesWithoutNull = array_filter($subjectAverages,
+            fn($average) => !is_null($average));
+        if (count($subjectAveragesWithoutNull) === 0) return null;
+        $averageDomain = array_sum($subjectAveragesWithoutNull) /
+            count($subjectAveragesWithoutNull);
+        $roundMethod = $roundMethod ?? [$this, 'roundOneDecimalPoint'];
+        return $roundMethod($averageDomain);
+    }
+
+    /**
+     * Calculates the overall average grade of an apprentice.
+     *
+     * This method takes into account both the module grade and the domain
+     * grades, weighted according to their respective weights.
+     *
+     * @param int $userCourseId The ID of the user's course.
+     *
+     * @return float The overall average grade of the apprentice, rounded to
+     * one decimal point.
+     */
+    public function getApprenticeAverage(int $userCourseId): float
+    {
+        // get module grade
+        $gradeModel = model('GradeModel');
+        $moduleGrade = $gradeModel
+            ->getWeightedModuleAverage($userCourseId);
+        // get other module
+        $teachingDomainModel = model('TeachingDomainModel');
+        $domainIds = $teachingDomainModel
+            ->getTeachingDomainIdByUserCourse($userCourseId);
+        // [0] => [id, weight]
+        $domainIdsAndWeights = array_map(
+            function($domainId) use ($teachingDomainModel)
+        {
+            $domainWeight = $teachingDomainModel->select('domain_weight')
+                                ->find($domainId)['domain_weight'];
+            return [$domainId, $domainWeight];
+        }, $domainIds);
+        // [0] => [grade, weight]
+        $domainGradesAndWeight = array_map(
+            function($domainIdAndWeight) use ($userCourseId)
+        {
+            $grade = $this->getApprenticeDomainAverageNotModule($userCourseId,
+                $domainIdAndWeight[0]);
+            return [$grade, $domainIdAndWeight[1]];
+        }, $domainIdsAndWeights);
+        $sum = array_reduce($domainGradesAndWeight, fn($sum, $gradeAndWeight)
+            => $sum + ($gradeAndWeight[0] ?? 0) * $gradeAndWeight[1], 0);
+
+        $ITWeight = $teachingDomainModel->getITDomainWeight($userCourseId);
+        $sumWithModule = $sum + $moduleGrade * $ITWeight;
+        return $this->roundOneDecimalPoint($sumWithModule);
+    }
+
+
+    /**
+     * Retrieves the data required for the school report view
+     * (school_report.php).
+     *
+     * This method collects various grades and data for a given user course ID,
+     * including the overall average grade, module grades, TPI grade, CBE
+     * grade, and ECG grade.
+     *
+     * @param int $userCourseId The ID of the user's course.
+     *
+     * @return array An array containing the school report data.
+     */
+    public function getSchoolReportData(int $userCourseId): array
+    {
+        $data['cfc_average'] = $this->getApprenticeAverage($userCourseId);
+        $data['modules'] = $this->getModuleArrayForView($userCourseId);
+        $data['tpi_grade'] = $this->getTpiGradeForView($userCourseId);
+        $data['cbe'] = $this->getCbeGradeForView($userCourseId);
+        $data['ecg'] = $this->getEcgGradeForView($userCourseId);
+        return $data;
+    }
+
+
+    /**
+     * Retrieves the module data for the school report view
+     * (school_report.php).
+     *
+     * This method collects and formats the module grades and averages for both
+     * school and non-school modules,
+     * including their respective weightings and overall average.
+     *
+     * @param int $userCourseId The ID of the user's course.
+     *
+     * @return array An array containing the formatted module data.
+     */
+    public function getModuleArrayForView(int $userCourseId): array
+    {
+        // potenration between epsic module and interentreprise module
+        $schoolWeight = config('\Plafor\Config\PlaforConfig')->SCHOOL_WEIGHT;
+        $externWeight = config('\Plafor\Config\PlaforConfig')->EXTERN_WEIGHT;
+
+        $gradeModel = model('GradeModel');
+        $schoolModules = $gradeModel
+            ->getApprenticeModulesGradesForView($userCourseId, isSchool: true);
+        $noSchoolModules = $gradeModel
+            ->getApprenticeModulesGradesForView($userCourseId,
+                isSchool: false);
+        $modules['school']['modules'] = $schoolModules;
+        $modules['school']['weighting'] = intval($schoolWeight * 100);
+        $modules['school']['average'] = $this
+            ->getApprenticeModuleAverage($userCourseId, isSchool: true);
+        $modules['non-school']['modules'] = $noSchoolModules;
+        $modules['non-school']['weighting'] = intval($externWeight * 100);
+        $modules['non-school']['average'] = $this
+            ->getApprenticeModuleAverage($userCourseId, isSchool: false);
+        $teachingDomainModel = model('TeachingDomainModel');
+        $modules['weighting'] = intval($teachingDomainModel
+            ->getITDomainWeight($userCourseId) * 100);
+        $modules['average'] = $this
+            ->getWeightedModuleAverage($userCourseId);
+        return $this->putDefaultDataForModuleView($modules);
+    }
+
+    /**
+     * Formats the module data for the school report view by adding default
+     * values for missing data.
+     *
+     * This method ensures that the module data array has the required
+     * structure and values, even if some data is missing, by adding default
+     * values for empty or non-existent keys.
+     *
+     * @param array $viewModules The module data array to be formatted.
+     *
+     * @return array The formatted module data array with default values for
+     * missing data.
+     */
+    private function putDefaultDataForModuleView(array $viewModules): array
+    {
+        if (empty($viewModules['school']['modules'])) {
+            // module not found
+            $viewModules['school']['modules'][0]['name'] = ' ';
+            // module not found
+            $viewModules['school']['modules'][0]['number'] = ' ';
+        }
+        if (empty($viewModules['non-school']['modules'])) {
+            // module not found
+            $viewModules['non-school']['modules'][0]['name'] = ' ';
+            // module not found
+            $viewModules['non-school']['modules'][0]['number'] = ' ';
+        }
+        if (empty($viewModules['school']['weighting'])) {
+            // weighting not found
+            $viewModules['school']['weighting'] = ' ';
+        }
+        if (empty($viewModules['non-school']['weighting'])) {
+            // weighting not found
+            $viewModules['non-school']['weighting'] = ' ';
+        }
+        if (empty($viewModules['school']['modules'][0]['grade'])) {
+            // grade not found
+            $viewModules['school']['modules'][0]['grade']['id'] = ' ';
+            // grade not found
+            $viewModules['school']['modules'][0]['grade']['value'] = ' ';
+        }
+        if (empty($viewModules['non-school']['modules'][0]['grade'])) {
+            // grade not found
+            $viewModules['non-school']['modules'][0]['grade']['id'] = ' ';
+            // grade not found
+            $viewModules['non-school']['modules'][0]['grade']['value'] = ' ';
+        }
+        return $viewModules;
+    }
+
+    /**
+     * Retrieves the module grades for an apprentice, filtered by school or
+     * non-school modules.
+     *
+     * This method retrieves the module grades for a given user course ID, with
+     * optional filtering by school or non-school modules.
+     *
+     * @param int $userCourseId The ID of the user's course.
+     * @param bool|null $isSchool Whether to filter by school modules (true) or
+     * non-school modules (false). Defaults to null.
+     *
+     * @return array An array of module grades, with each module containing its
+     * number, name, and grade details.
+     */
+    public function getApprenticeModulesGradesForView(int $userCourseId,
+        ?bool $isSchool = null): array
+    {
+        $this->select('teaching_module.module_number as number, '
+            . ' teaching_module.official_name as name, grade.id, '
+            . ' grade.grade as value')
+            ->join('teaching_module',
+            'teaching_module.id = fk_teaching_module', 'left')
+            ->join('user_course', 'user_course.id = fk_user_course ', 'left')
+            ->where('fk_user_course = ', $userCourseId)
+            ->where('fk_teaching_module is not null')
+            ->where('fk_teaching_subject is null')
+            ->allowCallbacks(false);
+        if (isset($isSchool)) $this->where('grade.is_school = ', $isSchool);
+        $data = $this->find();
+        $mapedData = array_map(function ($record) {
+            $record['grade']['id'] = $record['id'];
+            $record['grade']['value'] = $record['value'];
+            unset($record['id'], $record['value']);
+            return $record;
+        }, $data);
+        return $mapedData;
+    }
+
+    /**
+     * Retrieves the TPI grade for an apprentice, formatted for the school
+     * report view (school_report.php).
+     *
+     * This method retrieves the TPI domain for a given user course ID and
+     * returns the corresponding grade in a format suitable for display in the
+     * school report view.
+     *
+     * @param int $userCourseId The ID of the user's course.
+     *
+     * @return array|null An array containing the TPI grade ID and value, or
+     * null if the TPI domain is not found.
+     */
+    public function getTpiGradeForView(int $userCourseId): ?array
+    {
+        $teachingDomainModel = model('TeachingDomainModel');
+        $domain = $teachingDomainModel->getTpiDomain($userCourseId);
+        if (is_null($domain)) return null;
+        $grade = $this->getApprenticeDomainAverageNotModule($userCourseId,
+            $domain['id']);
+        $gradeId = $this->getGradeIdForDomain($userCourseId, $domain['id']);
+        return [
+            'id' => $gradeId,
+            'value' => $grade
+        ];
+    }
+
+
+    /**
+     * Retrieves the grade ID for a given domain and user course.
+     *
+     * This method retrieves the grade ID associated with a specific domain and
+     * user course ID.
+     *
+     * @param int $userCourseId The ID of the user's course.
+     * @param int $domainId The ID of the domain.
+     *
+     * @return int|null The grade ID, or null if not found.
+     */
+    public function getGradeIdForDomain(int $userCourseId,
+        int $domainId): ?int
+    {
+        $subjectModel = model('TeachingSubjectModel');
+        [$subjectId] = $subjectModel->getTeachingSubjectIdByDomain($domainId);
+        $id = $this
+            ->select('id')
+            ->where('fk_user_course', $userCourseId)
+            ->where('fk_teaching_subject', $subjectId)
+            ->allowCallbacks(false)
+            ->first()['id'] ?? null;
+        return $id;
+    }
+
+
+    /**
+     * Retrieves the domain grade data for a given user course, formatted for
+     * the school report view (school_report.php).
+     *
+     * This method retrieves the domain data, including subject grades,
+     * weighting, and average, and formats it for display in the school report
+     * view.
+     *
+     * @param int $userCourseId The ID of the user's course.
+     * @param callable $getDomain A callback function to retrieve the domain
+     * data.
+     *
+     * @return array|null An array containing the formatted domain grade data,
+     * or null if the domain is not found.
+     */
+    private function getDomainGradeForView(int $userCourseId,
+        callable $getDomain): ?array
+    {
+        $domain = $getDomain($userCourseId);
+        if (is_null($domain)) return null;
+        $teachingSubjectModel = model('TeachingSubjectModel');
+        $subjectIds = $teachingSubjectModel
+            ->getTeachingSubjectIdByDomain($domain['id']);
+        $subjectsWithGrades = array_map(fn($subjectId) => $this
+                ->getApprenticeSubjectGradesForView($userCourseId, $subjectId),
+            $subjectIds);
+        $data['subjects'] = $subjectsWithGrades;
+        $data['weighting'] = intval($domain['domain_weight'] * 100);
+        $data['average'] = $this->getApprenticeDomainAverageNotModule(
+            $userCourseId, $domain['id']);
+        return $this->putDefaultDataForDomainGradeView($data);
+    }
+
+    
+    /**
+     * Formats the domain grade data for the school report view
+     * (school_report.php) by adding default values for missing grades.
+     *
+     * This method ensures that each subject has exactly 8 grades, adding
+     * default values for any missing grades, to ensure proper display in the
+     * school report view.
+     *
+     * @param array $data The domain grade data to be formatted.
+     *
+     * @return array The formatted domain grade data with default values for
+     * missing grades.
+     */
+    private function putDefaultDataForDomainGradeView(array $data): array
+    {
+        $data['subjects'] = array_map(function ($subject) {
+            assert(count($subject['grades']) <= 8);
+            while (count($subject['grades']) !== 8)
+            {
+                $subject['grades'][] = [
+                    'id' => ' ',
+                    'value' => ' ', # grade not found
+                ];
+                    
+            }
+            return $subject;
+        }, $data['subjects']);
+        return $data;
+    }
+
+    /**
+     * Retrieves the CBE grade data for a given user course, formatted for the
+     * school report view (school_report.php).
+     *
+     * This method retrieves the CBE domain data and formats it for display in
+     * the school report view.
+     *
+     * @param int $userCourseId The ID of the user's course.
+     *
+     * @return array|null An array containing the formatted CBE grade data, or
+     * null if the CBE domain is not found.
+     */
+    public function getCbeGradeForView(int $userCourseId): ?array
+    {
+        $teachingDomainModel = model('TeachingDomainModel');
+        return $this->getDomainGradeForView($userCourseId,
+            [$teachingDomainModel, 'getCbeDomain']);
+    }
+
+    /**
+     * Retrieves the grades for a given subject and user course, formatted for
+     * the school report view (school_report.php).
+     *
+     * This method retrieves the subject data, including its name, weighting,
+     * grades, and average, and formats it for display in the school report
+     * view.
+     *
+     * @param int $userCourseId The ID of the user's course.
+     * @param int $subjectId The ID of the subject.
+     *
+     * @return array An array containing the formatted subject data, including
+     * its grades and average.
+     */
+    public function getApprenticeSubjectGradesForView(int $userCourseId,
+        int $subjectId): array
+    {
+        $teachingSubjectModel = model('TeachingSubjectModel');
+        $subject = $teachingSubjectModel
+            ->select('name, subject_weight as weighting')
+            ->allowCallbacks(false)
+            ->find($subjectId);
+        $subject['grades'] = $this
+            ->select('id, grade as value')
+            ->where('fk_teaching_subject', $subjectId)
+            ->where('fk_user_course', $userCourseId)
+            ->allowCallbacks(false)
+            ->orderBy('date')
+            ->findAll();
+        $subject['weighting'] = intval($subject['weighting'] * 100);
+        $subject['average'] = $this->getApprenticeSubjectAverage($userCourseId,
+            $subjectId);
+        return $subject;
+        
+    }
+
+    /**
+     * Retrieves the ECG grade data for a given user course, formatted for the
+     * school report view (school_report.php).
+     *
+     * This method retrieves the ECG domain data and formats it for display in
+     * the school report view.
+     *
+     * @param int $userCourseId The ID of the user's course.
+     *
+     * @return array|null An array containing the formatted ECG grade data, or
+     * null if the ECG domain is not found.
+     */
+    public function getEcgGradeForView(int $userCourseId): ?array
+    {
+        $teachingDomainModel = model('TeachingDomainModel');
+        return $this->getDomainGradeForView($userCourseId,
+            [$teachingDomainModel, 'getEcgDomain']);
+    }
+
+
+    
 }

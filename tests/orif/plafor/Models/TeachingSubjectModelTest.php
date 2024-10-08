@@ -197,5 +197,21 @@ class TeachingSubjectModelTest extends CIUnitTestCase
         $this->assertEquals($subjects, $subjects2);
     }
 
+     public function testGetTeachingSubjectIdByDomain()
+        {
+            $teachingSubjectModel = model('TeachingSubjectModel');
+            // Arrange
+            $domainId = 1;
+            $expectedIds = [1, 2];
+
+            // Act
+            $result = $teachingSubjectModel
+                ->getTeachingSubjectIdByDomain($domainId);
+
+            // Assert
+            $this->assertIsArray($result);
+            $this->assertEquals($expectedIds, $result);
+        }
+
 }
 
