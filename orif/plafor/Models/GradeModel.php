@@ -352,7 +352,18 @@ class GradeModel extends Model
     }
 
     
-    // for one of : connaissance de base élargie, ecg, note de tpi, 
+    /**
+     * Calculates the average grade of an apprentice in a specific domain this
+     * is not a module.
+     *
+     * @param int $userCourseId The ID of the user's course.
+     * @param int $domainId The ID of the domain.
+     * @param callable|null $roundMethod A callback function to round the
+     * result. Defaults to null.
+     *
+     * @return float|null The average grade of the apprentice in the domain, or
+     * null if no grade are available.
+     */
     public function getApprenticeDomainAverageNotModule(int $userCourseId,
         int $domainId, ?callable $roundMethod = null): ?float
     {
@@ -371,8 +382,17 @@ class GradeModel extends Model
         return $roundMethod($averageDomain);
     }
 
-    // cfc grade
-    // TODO check round
+    /**
+     * Calculates the overall average grade of an apprentice.
+     *
+     * This method takes into account both the module grade and the domain
+     * grades, weighted according to their respective weights.
+     *
+     * @param int $userCourseId The ID of the user's course.
+     *
+     * @return float The overall average grade of the apprentice, rounded to
+     * one decimal point.
+     */
     public function getApprenticeAverage(int $userCourseId): float
     {
         // get module grade
@@ -407,6 +427,19 @@ class GradeModel extends Model
         return $this->roundOneDecimalPoint($sumWithModule);
     }
 
+
+    /**
+     * Retrieves the data required for the school report view
+     * (school_report.php).
+     *
+     * This method collects various grades and data for a given user course ID,
+     * including the overall average grade, module grades, TPI grade, CBE
+     * grade, and ECG grade.
+     *
+     * @param int $userCourseId The ID of the user's course.
+     *
+     * @return array An array containing the school report data.
+     */
     public function getSchoolReportData(int $userCourseId): array
     {
         $data['cfc_average'] = $this->getApprenticeAverage($userCourseId);
@@ -417,6 +450,19 @@ class GradeModel extends Model
         return $data;
     }
 
+
+    /**
+     * Retrieves the module data for the school report view
+     * (school_report.php).
+     *
+     * This method collects and formats the module grades and averages for both
+     * school and non-school modules,
+     * including their respective weightings and overall average.
+     *
+     * @param int $userCourseId The ID of the user's course.
+     *
+     * @return array An array containing the formatted module data.
+     */
     public function getModuleArrayForView(int $userCourseId): array
     {
         // potenration between epsic module and interentreprise module
@@ -445,8 +491,19 @@ class GradeModel extends Model
         return $this->putDefaultDataForModuleView($modules);
     }
 
-    // add data for view error
-    // this use for getModuleArrayForView
+    /**
+     * Formats the module data for the school report view by adding default
+     * values for missing data.
+     *
+     * This method ensures that the module data array has the required
+     * structure and values, even if some data is missing, by adding default
+     * values for empty or non-existent keys.
+     *
+     * @param array $viewModules The module data array to be formatted.
+     *
+     * @return array The formatted module data array with default values for
+     * missing data.
+     */
     private function putDefaultDataForModuleView(array $viewModules): array
     {
         if (empty($viewModules['school']['modules'])) {
@@ -484,6 +541,20 @@ class GradeModel extends Model
         return $viewModules;
     }
 
+    /**
+     * Retrieves the module grades for an apprentice, filtered by school or
+     * non-school modules.
+     *
+     * This method retrieves the module grades for a given user course ID, with
+     * optional filtering by school or non-school modules.
+     *
+     * @param int $userCourseId The ID of the user's course.
+     * @param bool|null $isSchool Whether to filter by school modules (true) or
+     * non-school modules (false). Defaults to null.
+     *
+     * @return array An array of module grades, with each module containing its
+     * number, name, and grade details.
+     */
     public function getApprenticeModulesGradesForView(int $userCourseId,
         ?bool $isSchool = null): array
     {
@@ -508,6 +579,19 @@ class GradeModel extends Model
         return $mapedData;
     }
 
+    /**
+     * Retrieves the TPI grade for an apprentice, formatted for the school
+     * report view (school_report.php).
+     *
+     * This method retrieves the TPI domain for a given user course ID and
+     * returns the corresponding grade in a format suitable for display in the
+     * school report view.
+     *
+     * @param int $userCourseId The ID of the user's course.
+     *
+     * @return array|null An array containing the TPI grade ID and value, or
+     * null if the TPI domain is not found.
+     */
     public function getTpiGradeForView(int $userCourseId): ?array
     {
         $teachingDomainModel = model('TeachingDomainModel');
@@ -522,6 +606,18 @@ class GradeModel extends Model
         ];
     }
 
+
+    /**
+     * Retrieves the grade ID for a given domain and user course.
+     *
+     * This method retrieves the grade ID associated with a specific domain and
+     * user course ID.
+     *
+     * @param int $userCourseId The ID of the user's course.
+     * @param int $domainId The ID of the domain.
+     *
+     * @return int|null The grade ID, or null if not found.
+     */
     public function getGradeIdForDomain(int $userCourseId,
         int $domainId): ?int
     {
@@ -536,6 +632,22 @@ class GradeModel extends Model
         return $id;
     }
 
+
+    /**
+     * Retrieves the domain grade data for a given user course, formatted for
+     * the school report view (school_report.php).
+     *
+     * This method retrieves the domain data, including subject grades,
+     * weighting, and average, and formats it for display in the school report
+     * view.
+     *
+     * @param int $userCourseId The ID of the user's course.
+     * @param callable $getDomain A callback function to retrieve the domain
+     * data.
+     *
+     * @return array|null An array containing the formatted domain grade data,
+     * or null if the domain is not found.
+     */
     private function getDomainGradeForView(int $userCourseId,
         callable $getDomain): ?array
     {
@@ -554,6 +666,20 @@ class GradeModel extends Model
         return $this->putDefaultDataForDomainGradeView($data);
     }
 
+    
+    /**
+     * Formats the domain grade data for the school report view
+     * (school_report.php) by adding default values for missing grades.
+     *
+     * This method ensures that each subject has exactly 8 grades, adding
+     * default values for any missing grades, to ensure proper display in the
+     * school report view.
+     *
+     * @param array $data The domain grade data to be formatted.
+     *
+     * @return array The formatted domain grade data with default values for
+     * missing grades.
+     */
     private function putDefaultDataForDomainGradeView(array $data): array
     {
         $data['subjects'] = array_map(function ($subject) {
@@ -571,6 +697,18 @@ class GradeModel extends Model
         return $data;
     }
 
+    /**
+     * Retrieves the CBE grade data for a given user course, formatted for the
+     * school report view (school_report.php).
+     *
+     * This method retrieves the CBE domain data and formats it for display in
+     * the school report view.
+     *
+     * @param int $userCourseId The ID of the user's course.
+     *
+     * @return array|null An array containing the formatted CBE grade data, or
+     * null if the CBE domain is not found.
+     */
     public function getCbeGradeForView(int $userCourseId): ?array
     {
         $teachingDomainModel = model('TeachingDomainModel');
@@ -578,6 +716,20 @@ class GradeModel extends Model
             [$teachingDomainModel, 'getCbeDomain']);
     }
 
+    /**
+     * Retrieves the grades for a given subject and user course, formatted for
+     * the school report view (school_report.php).
+     *
+     * This method retrieves the subject data, including its name, weighting,
+     * grades, and average, and formats it for display in the school report
+     * view.
+     *
+     * @param int $userCourseId The ID of the user's course.
+     * @param int $subjectId The ID of the subject.
+     *
+     * @return array An array containing the formatted subject data, including
+     * its grades and average.
+     */
     public function getApprenticeSubjectGradesForView(int $userCourseId,
         int $subjectId): array
     {
@@ -600,6 +752,18 @@ class GradeModel extends Model
         
     }
 
+    /**
+     * Retrieves the ECG grade data for a given user course, formatted for the
+     * school report view (school_report.php).
+     *
+     * This method retrieves the ECG domain data and formats it for display in
+     * the school report view.
+     *
+     * @param int $userCourseId The ID of the user's course.
+     *
+     * @return array|null An array containing the formatted ECG grade data, or
+     * null if the ECG domain is not found.
+     */
     public function getEcgGradeForView(int $userCourseId): ?array
     {
         $teachingDomainModel = model('TeachingDomainModel');
