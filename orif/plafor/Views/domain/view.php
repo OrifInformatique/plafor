@@ -97,7 +97,7 @@ helper(['form', 'AccessPermissions_helper']);
     </div>
 
     <!-- Domains list -->
-    <div class="col-12 mt-2">
+    <div id="teachingDomain" class="col-12 mt-2">
         <?php foreach($teaching_domains as $teaching_domain): ?>
             <!-- Domain details -->
             <div class="row mt-3 m-2 pt-2 border-top border-bottom border-primary align-items-center">
@@ -205,3 +205,29 @@ helper(['form', 'AccessPermissions_helper']);
         <?php endforeach ?>
     </div>
 </div>
+
+<!-- JQuery script to refresh items list after user action -->
+<?php if(isset($url_getView)): ?>
+    <script>
+        $(document).ready(() =>
+        {
+            $('#toggle_deleted_teaching_domains_subjects').change(e =>
+            {
+                let checked = e.currentTarget.checked;
+
+                history.replaceState(null, null, '<?= base_url($url_getView) ?>?wb=' + (checked ? 1 : 0))
+                $.get('<?= base_url($url_getView) ?>?wb=' + (checked ? 1 : 0), (datas) => {
+                    let parser = new DOMParser();
+
+                    parser.parseFromString(datas, 'text/html').querySelectorAll('#teachingDomain').forEach((domTag) =>
+                    {
+                        document.querySelectorAll('#teachingDomain').forEach((thisDomTag) =>
+                        {
+                            thisDomTag.innerHTML = domTag.innerHTML;
+                        })
+                    })
+                })
+            })
+        });
+    </script>
+<?php endif ?>

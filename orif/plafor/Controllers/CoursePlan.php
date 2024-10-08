@@ -116,7 +116,8 @@ class CoursePlan extends \App\Controllers\BaseController
         if(!hasCurrentUserTrainerAccess())
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
 
-        $with_archived = $this->request->getGet('wa') ?? false;
+        // for competence domain checkbox JS
+        $with_archived_competence = $this->request->getGet('wa') ?? false;
 
         $course_plan = $this->course_plan_model->withDeleted()->find($course_plan_id);
 
@@ -126,35 +127,40 @@ class CoursePlan extends \App\Controllers\BaseController
         $course_plan['date_begin'] = Time::createFromFormat('Y-m-d', $course_plan['date_begin'])
             ->toLocalizedString('dd.MM.Y');
 
-        $competence_domains = $this->course_plan_model->getCompetenceDomains($course_plan_id, $with_archived);
+        $competence_domains = $this->course_plan_model->getCompetenceDomains($course_plan_id, $with_archived_competence);
 
-        $teaching_domains = [];
-
+        // for teaching domain checkbox JS
+        $with_archived_teaching = $this->request->getGet("wb") ?? false;        
+        
+        
         // Get teaching domains, subjects and modules
-        foreach ($this->m_teaching_domain_model->where("fk_course_plan", $course_plan_id)->findAll() as $domain)
+        $teaching_domains = [];
+        foreach ($this->m_teaching_domain_model->withDeleted($with_archived_teaching)->where("fk_course_plan", $course_plan_id)->findAll() as $domain)
         {
             $teaching_subjects = [];
             $teaching_modules = [];
 
             // Get teaching subjects of the domain
-            foreach ($this->m_teaching_subject_model->where("fk_teaching_domain", $domain["id"])->findAll() as $subject)
+            foreach ($this->m_teaching_subject_model->withDeleted($with_archived_teaching)->where("fk_teaching_domain", $domain["id"])->findAll() as $subject)
             {
                 $teaching_subjects[] =
                 [
                     "id"        => $subject["id"],
                     "name"      => $subject["name"],
                     "weighting" => $subject["subject_weight"],
+                    "archive"   => $subject["archive"],
                 ];
             }
 
             // Get teaching modules of the domain
-            foreach ($this->m_teaching_module_model->getByTeachingDomainId($domain["id"]) as $module)
+            foreach ($this->m_teaching_module_model->withDeleted($with_archived_teaching)->getByTeachingDomainId($domain["id"]) as $module)
             {
                 $teaching_modules[] =
                 [
-                    "id"     => $module["id"],
-                    "number" => $module["module_number"],
-                    "title"  => $module["official_name"],
+                    "id"        => $module["id"],
+                    "number"    => $module["module_number"],
+                    "title"     => $module["official_name"],
+                    "archive"   => $module["archive"],
                 ];
             }
 
@@ -163,12 +169,13 @@ class CoursePlan extends \App\Controllers\BaseController
 
             $teaching_domains[] =
             [
-                "id"             => $domain["id"],
-                "name"           => $domain["title"],
-                "weighting"      => $domain["domain_weight"],
-                "is_eliminatory" => $domain["is_eliminatory"],
-                "subjects"       => $teaching_subjects,
-                "modules"        => $teaching_modules,
+                "id"                => $domain["id"],
+                "name"              => $domain["title"],
+                "weighting"         => $domain["domain_weight"],
+                "is_eliminatory"    => $domain["is_eliminatory"],
+                "subjects"          => $teaching_subjects,
+                "modules"           => $teaching_modules,
+                "archive"           => $domain["archive"],
             ];
         }
 

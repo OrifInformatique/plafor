@@ -139,7 +139,7 @@ class TeachingModuleModel extends Model
     {
         $modules = $this->select('teaching_module.id,
             teaching_module.module_number, teaching_module.official_name,'
-            . ' teaching_module.version')
+            . ' teaching_module.version, teaching_module.archive')
              ->join('teaching_domain_module', 'teaching_module.id ='
                  . ' teaching_domain_module.fk_teaching_module', 'left')
              ->where('teaching_domain_module.fk_teaching_domain = ', $domainId)
