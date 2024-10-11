@@ -4,6 +4,8 @@ namespace Plafor\Models;
 use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
 
+helper("UnitTest_helper"); // The helper hold all Constants -> Plafor\orif\plafor\Helpers\UnitTest_helper.php
+
 class RefreshUserCourseModelTest extends CIUnitTestCase
 {
     use DatabaseTestTrait;
@@ -17,7 +19,6 @@ class RefreshUserCourseModelTest extends CIUnitTestCase
     protected $basePath = 'tests/_support/Database';
     protected $seed     = 'apprenticeTestSeed';
 
-    const TRAINER_USER_TYPE = 2;
 
     /**
      * Checks that the returned user is the expected one
@@ -26,17 +27,16 @@ class RefreshUserCourseModelTest extends CIUnitTestCase
     {
         // Gets the user with the user id 4
         $userCourseModel = model('UserCourseModel');
-        $userId = 4;
+        $userId = TRAINER_DEV_ID;
         $user = $userCourseModel->getUser($userId);
 
         // Assertions
         $this->assertIsArray($user);
         $this->assertEquals($user['id'], $userId);
-        $this->assertEquals($user['fk_user_type'], self::TRAINER_USER_TYPE);
-        $this->assertEquals($user['username'], 'FormateurDev');
-        $this->assertEquals($user['password'],
-            '$2y$10$Q3H8WodgKonQ60SIcu.eWuVKXmxqBw1X5hMpZzwjRKyCTB1H1l.pe');
-        $this->assertEquals($user['archive'], NULL);
-        $this->assertEquals($user['date_creation'], '2020-07-09 13:15:24');
+        $this->assertEquals($user['fk_user_type'], TRAINER_USER_TYPE);
+        $this->assertEquals($user['username'], TRAINER_DEV_NAME);
+        $this->assertEquals($user['password'],TRAINER_DEV_HASHED_PW);
+        $this->assertEquals($user['archive'], TRAINER_DEV_ARCHIVE);
+        $this->assertEquals($user['date_creation'], TRAINER_DEV_CREATION_DATE);
     }
 }

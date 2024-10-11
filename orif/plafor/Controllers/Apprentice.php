@@ -1039,7 +1039,7 @@ class Apprentice extends \App\Controllers\BaseController
      * @return string|RedirectResponse
      *
      */
-    public function delete_user(int|null $action = null, int $user_id = 0, bool $confirm = false): string|RedirectResponse
+    public function delete_user(?int $action = null, int $user_id = 0, bool $confirm = false): string|RedirectResponse
     {
         if(!hasCurrentUserAdminAccess())
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);

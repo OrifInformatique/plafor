@@ -5,89 +5,125 @@ namespace App\Database\Seeds;
 
 use CodeIgniter\Database\Seeder;
 
+helper("UnitTest_helper"); // The helper hold all Constants -> Plafor\orif\plafor\Helpers\UnitTest_helper.php
+
 class apprenticeTestSeed extends Seeder
 {
 
     public function insertUsers() {
         $users=[
-            array (
-                'fk_user_type' => '1',
-                'username' => 'admin2',
-                'password' => '$2y$10$tUB5R1MGgbO.zD//WArnceTY8IgnFkVVsudIdHBxIrEXJ2z3WBvcK',
-                'archive' => NULL,
-                'date_creation' => '2020-07-09 08:11:05',
-            ),
-            array (
-                'fk_user_type' => '2',
-                'username' => 'FormateurDev',
-                'password' => '$2y$10$Q3H8WodgKonQ60SIcu.eWuVKXmxqBw1X5hMpZzwjRKyCTB1H1l.pe',
-                'archive' => NULL,
-                'date_creation' => '2020-07-09 13:15:24',
-            ),
-            array (
-                'fk_user_type' => '2',
-                'username' => 'FormateurSysteme',
-                'password' => '$2y$10$Br7mIRYfLufWkrSpi2SyB.Wz0vHZQp7dQf7f2bKy5i/CkhHomSvli',
-                'archive' => NULL,
-                'date_creation' => '2020-07-09 13:15:47',
-            ),
-            array (
-                'fk_user_type' => '3',
-                'username' => 'ApprentiDev',
-                'password' => '$2y$10$6TLaMd5ljshybxANKgIYGOjY0Xur9EgdzcEPy1bgy2b8uyWYeVoEm',
-                'archive' => NULL,
-                'date_creation' => '2020-07-09 13:16:05',
-            ),
-            array (
-                'fk_user_type' => '3',
-                'username' => 'ApprentiSysteme',
-                'password' => '$2y$10$0ljkGcDQpTc0RDaN7Y2XcOhS8OB0t0QIhquLv9NcR79IVO9rCR/0.',
-                'archive' => NULL,
-                'date_creation' => '2020-07-09 13:16:27',
-            ),
-            array (
-                'fk_user_type' => '2',
-                'username' => 'FormateurOperateur',
-                'password' => '$2y$10$SbMYPxqnngLjxVGlG4hW..lrc.pr5Dd74nY.KqdANtEESIvmGRpWi',
-                'archive' => NULL,
-                'date_creation' => '2020-07-09 13:24:22',
-            ),
-            array (
-                'fk_user_type' => '3',
-                'username' => 'ApprentiOperateur',
-                'password' => '$2y$10$jPNxV2ZZ6Il2LiBQ.CWhNOoud6NsMRFILwHN8kpD410shWeiGpuxK',
-                'archive' => NULL,
-                'date_creation' => '2020-07-09 13:24:45',
-            ),
+            [
+                "id"            => ADMIN_ID,
+                "fk_user_type"  => ADMIN_USER_TYPE,
+                "username"      => ADMIN_NAME,
+                "password"      => ADMIN_HASHED_PW,
+                "archive"       => ADMIN_ARCHIVE,
+                "date_creation" => ADMIN_CREATION_DATE,
+            ],
+            [
+                "id"            => TRAINER_DEV_ID,
+                "fk_user_type"  => TRAINER_USER_TYPE,
+                "username"      => TRAINER_DEV_NAME,
+                "password"      => TRAINER_DEV_HASHED_PW,
+                "archive"       => TRAINER_DEV_ARCHIVE,
+                "date_creation" => TRAINER_DEV_CREATION_DATE,
+            ],
+            [
+                "id"            => TRAINER_SYS_ID,
+                "fk_user_type"  => TRAINER_USER_TYPE,
+                "username"      => TRAINER_SYS_NAME,
+                "password"      => TRAINER_SYS_HASHED_PW,
+                "archive"       => TRAINER_SYS_ARCHIVE,
+                "date_creation" => TRAINER_SYS_CREATION_DATE,
+            ],
+            [
+                "id"            => TRAINER_OPE_ID,
+                "fk_user_type"  => TRAINER_USER_TYPE,
+                "username"      => TRAINER_OPE_NAME,
+                "password"      => TRAINER_OPE_HASHED_PW,
+                "archive"       => TRAINER_OPE_ARCHIVE,
+                "date_creation" => TRAINER_OPE_CREATION_DATE,
+            ],
+            [
+                "id"            => APPRENTICE_DEV_ID,
+                "fk_user_type"  => APPRENTICE_USER_TYPE,
+                "username"      => APPRENTICE_DEV_NAME,
+                "password"      => APPRENTICE_DEV_HASHED_PW,
+                "archive"       => APPRENTICE_DEV_ARCHIVE,
+                "date_creation" => APPRENTICE_DEV_CREATION_DATE,
+            ],
+            [
+                "id"            => APPRENTICE_SYS_ID,
+                "fk_user_type"  => APPRENTICE_USER_TYPE,
+                "username"      => APPRENTICE_SYS_NAME,
+                "password"      => APPRENTICE_SYS_HASHED_PW,
+                "archive"       => APPRENTICE_SYS_ARCHIVE,
+                "date_creation" => APPRENTICE_SYS_CREATION_DATE,
+            ],
+            [
+                "id"            => APPRENTICE_OPE_ID,
+                "fk_user_type"  => APPRENTICE_USER_TYPE,
+                "username"      => APPRENTICE_OPE_NAME,
+                "password"      => APPRENTICE_OPE_HASHED_PW,
+                "archive"       => APPRENTICE_OPE_ARCHIVE,
+                "date_creation" => APPRENTICE_OPE_CREATION_DATE,
+            ],
         ];
         foreach ($users as $user){
             $this->db->table('user')->insert($user);
         }
     }
 
+
     public function insertUserCourses() {
-        $user_course = array(
-            # dév
-            array('fk_user' => '6','fk_course_plan' => '6','fk_status' => '1','date_begin' => '2020-07-09','date_end' => '0000-00-00'),
-            # sys
-            array('fk_user' => '7','fk_course_plan' => '5','fk_status' => '1','date_begin' => '2020-07-09','date_end' => '0000-00-00'),
-            # op
-            array('fk_user' => '9','fk_course_plan' => '4','fk_status' => '1','date_begin' => '2020-07-09','date_end' => '0000-00-00')
-        );
+        $user_course = [
+            [
+                "fk_user" => APPRENTICE_DEV_ID,
+                "fk_course_plan" => COURSE_PLAN_DEV_ID,
+                "fk_status" => "1",
+                "date_begin" => "2020-07-09",
+                "date_end" => "0000-00-00"],
+            [
+                "fk_user" => APPRENTICE_SYS_ID,
+                "fk_course_plan" => COURSE_PLAN_SYS_ID,
+                "fk_status" => "1",
+                "date_begin" => "2020-07-09",
+                "date_end" => "0000-00-00"],
+            [
+                "fk_user" => APPRENTICE_OPE_ID,
+                "fk_course_plan" => COURSE_PLAN_OPE_ID,
+                "fk_status" => "1",
+                "date_begin" => "2020-07-09",
+                "date_end" => "0000-00-00"]
+        ];
         foreach ($user_course as $user_coursee){
             $this->db->table('user_course')->insert($user_coursee);
         }
     }
 
+
     public function insertTrainerApprentice() {
-        $trainer_apprentice = array(
-            array('fk_trainer' => '4','fk_apprentice' => '6'),
-            array('fk_trainer' => '5','fk_apprentice' => '7'),
-            array('fk_trainer' => '8','fk_apprentice' => '9')
-        );
-        foreach ($trainer_apprentice as $trainer_apprenticee)
-        $this->db->table('trainer_apprentice')->insert($trainer_apprenticee);
+        $trainer_apprentice_links = [
+            [   
+                "id"            => LINK_DEV_ID,
+                "fk_trainer"    => TRAINER_DEV_ID,
+                "fk_apprentice" => APPRENTICE_DEV_ID
+            ],
+            [
+                "id"            => LINK_SYS_ID,
+                "fk_trainer"    => TRAINER_SYS_ID,
+                "fk_apprentice" => APPRENTICE_SYS_ID
+            ],
+            [
+                "id"            => LINK_OPE_ID,
+                "fk_trainer"    => TRAINER_OPE_ID,
+                "fk_apprentice" => APPRENTICE_OPE_ID
+            ],
+        ];
+        foreach ($trainer_apprentice_links as $trainer_apprentice_link)
+        $this->db->table("trainer_apprentice")->insert($trainer_apprentice_link);
     }
+
 
     public function insertAcquisisitionStatus() {
         $acquisition_status = array(
