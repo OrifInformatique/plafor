@@ -9,12 +9,14 @@
 
 namespace Plafor\Controllers;
 
+use App\Controllers\BaseController;
+
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\Response;
 use CodeIgniter\HTTP\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
-class GradeController extends \App\Controllers\BaseController
+class GradeController extends BaseController
 {
     // Class Constant
     const m_ERROR_MISSING_PERMISSIONS = "\User/errors/403error";
@@ -31,7 +33,8 @@ class GradeController extends \App\Controllers\BaseController
      * @return void
      *
      */
-    public function initController(RequestInterface $request, ResponseInterface $response, LoggerInterface $logger): void
+    public function initController(RequestInterface $request, ResponseInterface
+        $response, LoggerInterface $logger): void
     {
         $this->access_level = "@";
 
@@ -47,51 +50,56 @@ class GradeController extends \App\Controllers\BaseController
         helper("AccessPermissions_helper");
     }
 
-
-
-    /**
-     * Calculate the average of all grades.
-     *
-     * @param array $grades
-     *
-     * @return int
-     *
-     */
-    private function calculateAverageGrade(array $grades): int
+    private function getsubjectAndModulesList(int $userCourseId): array
     {
-        $nbr_grade = count($array);
-        $all_grade = array_column($array, "grade");
-        $total_grade = array_sum($all_grade);
+        helper('grade_helper');
+        $list = getSubjectsAndModulesList($userCourseId);
+        return $list;
 
-        return $total_grade / $nbr_grade;
     }
 
-
-
-    /**
-     * Inserts or modifies the grade of an apprentice.
-     *
-     * @param int $apprentice_id ID of the apprentice.
-     *
-     * @param int $grade_id ID of the grade.
-     *
-     * @return string|RedirectResponse
-     *
-     */
-    public function saveGrade(int $apprentice_id = 0, int $grade_id = 0): string|RedirectResponse
+    private function getApprentice(int $userCourseId): array
     {
-        if (!isCurrentUserTrainerOfApprentice($apprentice_id)
-            && !isCurrentUserSelfApprentice($apprentice_id))
-        {
-            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
-        }
+        helper('grade_helper');
+        $apprentice = getApprentice($userCourseId);
+        return $apprentice;
+    }
 
-        $user_course_id = $this->request->getPost("user_course_id");
+    private function saveGradeGet(int $userCourseId, int $gradeId): String
+    {
+        $data = array();
+        $data['grade_id'] = $gradeId;
+        $data['user_course_id'] = $userCourseId;
+        $data["errors"] = $this->m_grade_model->errors();
+        $data['apprentice'] = $this->getApprentice($userCourseId);
+        $data['course_plan'] = model('CoursePlanModel')
+            ->getCoursePlanIdByUserCourse($userCourseId);
+        $data['subject_and_domains_list'] = $this
+            ->getsubjectAndModulesList($userCourseId);
+        return $this->display_view("\Plafor/grade/save", $data);
 
-        if (count($_POST) > 0){
-            d($_POST);
-            // TODO: check if it's a subject or a module s or m (parse the first char of the string)
+        $title = lang(
+            $grade_id == 0 ? 'Grades.add_grade' : 'Grades.update_grade');
+
+        $data_to_view =
+        [
+            "title"                 => $title,
+            "grade_id"              => $grade_id,
+            // "user_course_id"        => $data_from_model["user_course_id"],
+            // "subject" => $subject_id,
+            // "module" => $module_id,
+            // "date"  => $date,
+            // "grade" => $grade,
+            // "is_school" => $is_school,
+            // "errors"  => $this->m_grade_model->errors()
+        ];
+    }
+
+    private function saveGradePost(int $grade_id): RedirectResponse
+    {
+            $user_course_id = $this->request->getPost("user_course_id");
             $selected_entry = $this->request->getPost("selected_entry");
+            // TODO: check if it's a subject or a module s or m (parse the first char of the string)
 
             // $grades = []; // TODO: check what is needed ??
             // foreach ($this->m_grade_model->where("fk_user_course", $user_course_id)->withDeleted($with_archived)->findAll() as $grade){
@@ -133,24 +141,37 @@ class GradeController extends \App\Controllers\BaseController
 
             if (empty($this->m_grade_model->errors()))
                 return redirect()->to("plafor/grade/showAllGrade");
+    }
+
+    /**
+     * Inserts or modifies the grade of an apprentice.
+     *
+     * @param int $gradeId ID of the grade.
+     *
+     * @return string|RedirectResponse
+     *
+     */
+    public function saveGrade(int $userCourseId,
+        int $gradeId = 0): string|RedirectResponse
+    {
+        $UserCourseModel = $this->m_user_course_model;
+
+        $apprenticeId = $UserCourseModel
+            ->find($userCourseId)['fk_user'];
+
+        if (!isCurrentUserTrainerOfApprentice($apprenticeId)
+            && !isCurrentUserSelfApprentice($apprenticeId))
+        {
+            return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
+        }
+        if ($this->request->is('post')) {
+            return $this->saveGradePost($gradeId);
+        }
+        if ($this->request->is('get')) {
+            return $this->saveGradeGet($userCourseId, $gradeId);
         }
 
-        $data_from_model = $this->m_grade_model->withDeleted()->find($grade_id);
-
-        $data_to_view =
-        [
-            "title"                 => $grade_id == 0 ? lang('Grades.add_grade') : lang('Grades.update_grade'),
-            // "grade_id"              => $grade_id,
-            // "user_course_id"        => $data_from_model["user_course_id"],
-            // "subject" => $subject_id,
-            // "module" => $module_id,
-            // "date"  => $date,
-            // "grade" => $grade,
-            // "is_school" => $is_school,
-            // "errors"  => $this->m_grade_model->errors()
-        ];
-
-        return $this->display_view("\Plafor/grade/save", $data_to_view);
+        assert(false, 'Unimplemented');
     }
 
 
@@ -171,7 +192,8 @@ class GradeController extends \App\Controllers\BaseController
      * @return string|RedirectResponse
      *
      */
-    public function deleteGrade(int|null $action = null, int $grade_id = 0, bool $confirm = false): string|RedirectResponse
+    public function deleteGrade(int|null $action = null, int $grade_id = 0,
+        bool $confirm = false): string|RedirectResponse
     {
         $grade = $this->m_grade_model->withDeleted()->find($grade_id);
 
