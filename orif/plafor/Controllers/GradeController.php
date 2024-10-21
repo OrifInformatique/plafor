@@ -175,7 +175,7 @@ class GradeController extends BaseController
         }
         $data = $post;
         $data['errors'] = $this->m_grade_model->errors();
-        $data['grade_id'] ??= 0;
+        $data['grade_id'] ??= $gradeId;
         $data['apprentice'] = $this->getApprentice($userCourseId);
         $data['course_plan'] = model('CoursePlanModel')
             ->getCoursePlanIdByUserCourse($userCourseId);
