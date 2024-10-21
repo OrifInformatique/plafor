@@ -171,7 +171,7 @@ class GradeController extends BaseController
             return $this->saveGradeGet($userCourseId, $gradeId);
         }
 
-        assert(false, 'Unimplemented');
+        assert(false, 'GradeController saveGrade methods http unimplemented');
     }
 
 
