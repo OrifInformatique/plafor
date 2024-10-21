@@ -90,12 +90,12 @@ $subject_or_module_label = lang('Grades.subject').' '.lang('Grades.or').' '.strt
 <div class="container">
     <!-- Page title -->
     <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
-
-    <?= form_open(base_url('plafor/grade/saveGrade/'.$grade_id),
-        [], ['user_course_id' => $user_course_id]) ?>
+    <?= form_open(url_to('updateGrade', $user_course_id, $grade_id), [],
+        ['user_course_id' => $user_course_id]) ?>
 
         <!-- Form errors -->
         <?= view('\Plafor/common/form_errors', ['errors' => $errors]) ?>
+
 
         <div class="row">
             <div class="col form-group">
@@ -156,7 +156,7 @@ $subject_or_module_label = lang('Grades.subject').' '.lang('Grades.or').' '.strt
         <div class="row">
             <?php if($grade_id > 0): ?>
                 <div class="col">
-                    <a href="<?= base_url('plafor/grade/deleteGrade/'.$grade_id) ?>" class="btn btn-danger">
+                    <a href="<?= url_to('deleteGrade', 1, $grade_id) ?>" class="btn btn-danger">
                         <?= lang('common_lang.btn_delete') ?>
                     </a>
                 </div>

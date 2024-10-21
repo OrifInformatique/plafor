@@ -29,9 +29,9 @@ function getSubjects(int $userCourseId): array
         ->find($subjectId)['name'] ?? ' '], $subjectIds);
 
     $formatedSubjects = array_reduce($subjectIdsWithNames,
-        fn($carry, $row) => [...$carry, $row[0] => $row[1]], []);
+        fn($carry, $row) => [...$carry, 's' . $row[0] => $row[1]], []);
 
-    sort($formatedSubjects);
+    asort($formatedSubjects);
 
     return $formatedSubjects;
 
@@ -50,10 +50,10 @@ function getModules(int $userCourseId): array
         fn($carry, $row) => [...$carry, ...$row], []);
 
     $formatedModules = array_reduce($modules, fn($carry, $row) =>
-        [...$carry,
-        $row['id'] => $row['module_number'] . ' ' .$row['official_name']], []);
+        [...$carry, 'm' . $row['id'] => $row['module_number'] . ' '
+        .$row['official_name']], []);
 
-    sort($formatedModules);
+    asort($formatedModules);
     return $formatedModules;
 }
 
