@@ -187,6 +187,8 @@ switch($type)
         <?php endif ?>
 
         <!-- Actions -->
+        <?php helper('form'); ?>
+        <?= form_open($primary_action['url']) ?>
         <div class="text-right">
             <!-- Cancel button -->
             <a class="btn btn-secondary" href="<?= $cancel_btn_url ?>">
@@ -202,10 +204,9 @@ switch($type)
 
             <!-- Primary action -->
             <?php if(isset($primary_action) && !empty($primary_action)): ?>
-                <a class="btn btn-danger" href="<?= $primary_action['url'] ?>">
-                    <?= $primary_action['name'] ?>
-                </a>
+                <?= form_submit(null, $primary_action['name'], ['class' => 'btn btn-danger']) ?>
             <?php endif ?>
         </div>
+        <?= form_close() ?>
     </div>
 </div>
