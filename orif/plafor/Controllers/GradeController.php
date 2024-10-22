@@ -84,7 +84,17 @@ class GradeController extends BaseController
 
     }
 
-    private function saveGradeGet(int $userCourseId, int $gradeId): String
+    // selectedDomain: tpi, cbe, ecg, modules
+    private function getSelectedEntry(int $userCourseId,
+        string $selectedDomain): ?string
+    {
+        helper('grade_helper');
+        return getSelectedEntry($userCourseId, $selectedDomain);
+    }
+
+
+    private function saveGradeGet(int $userCourseId, int $gradeId,
+        ?string $selectedDomain = null): string
     {
         if ($gradeId !== 0) {
             $data = $this->formatGradeForFormUpdate($gradeId);
@@ -99,21 +109,16 @@ class GradeController extends BaseController
             ->getsubjectAndModulesList($userCourseId);
         $data['title'] = lang(
             $gradeId == 0 ? 'Grades.add_grade' : 'Grades.update_grade');
+        if (!is_null($selectedDomain)) {
+            $data['selected_entry'] = $this->getSelectedEntry($userCourseId,
+                $selectedDomain);
+            if (is_null($data['selected_entry'])) {
+                unset($data['selected_entry']);
+            }
+            $data['is_exam_made_in_school'] = $selectedDomain !== 'modules';
+        }
         return $this->display_view("\Plafor/grade/save", $data);
 
-
-        $data_to_view =
-        [
-            "title"                 => $title,
-            "grade_id"              => $grade_id,
-            // "user_course_id"        => $data_from_model["user_course_id"],
-            // "subject" => $subject_id,
-            // "module" => $module_id,
-            // "date"  => $date,
-            // "grade" => $grade,
-            // "is_school" => $is_school,
-            // "errors"  => $this->m_grade_model->errors()
-        ];
     }
 
     private function saveGradePost(int $userCourseId,
@@ -196,8 +201,8 @@ class GradeController extends BaseController
      * @return string|RedirectResponse
      *
      */
-    public function saveGrade(int $userCourseId,
-        int $gradeId = 0): string|RedirectResponse
+    public function saveGrade(int $userCourseId, int $gradeId = 0, ?string
+        $selectedDomain = null): string|RedirectResponse
     {
         $UserCourseModel = $this->m_user_course_model;
 
@@ -217,7 +222,8 @@ class GradeController extends BaseController
             return $this->saveGradePost($userCourseId, $gradeId);
         }
         if ($this->request->is('get')) {
-            return $this->saveGradeGet($userCourseId, $gradeId);
+            return $this->saveGradeGet($userCourseId, $gradeId,
+                $selectedDomain);
         }
 
         assert(false, 'GradeController saveGrade methods http unimplemented');

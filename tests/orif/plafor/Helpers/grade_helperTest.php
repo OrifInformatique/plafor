@@ -4,7 +4,7 @@
 use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
 
-class GradeHelperTest extends CIUnitTestCase
+class Grade_HelperTest extends CIUnitTestCase
 {
 
     use DatabaseTestTrait;
@@ -52,6 +52,23 @@ class GradeHelperTest extends CIUnitTestCase
         $userCourseId = 101;
         $list = getApprentice($userCourseId);
         $this->assertTrue(is_array($list));
+    }
+
+    public function testgetSelectedEntry(): void
+    {
+        helper('grade_helper');
+        $userCourseId = 101;
+        $selectedDomain = 'tpi';
+        $formatedId = getSelectedEntry($userCourseId, $selectedDomain);
+        $this->assertTrue(is_string($formatedId));
+    }
+
+    public function testGetSelectedEntryForModules(): void
+    {
+        helper('grade_helper');
+        $userCourseId = 101;
+        $formatedId = getSelectedEntryForModules($userCourseId);
+        $this->assertTrue(is_string($formatedId));
     }
 
 }

@@ -334,7 +334,7 @@ else
             <p class="bg-secondary"><?= lang('Grades.modules') ?></p>
 
             <div class="mb-3">
-                <a href="<?= url_to('insertGrade', $user_course_id) ?>" class="btn btn-primary">
+                <a href="<?= url_to('insertGradeWithPreselect', $user_course_id, 0, 'modules' ) ?>" class="btn btn-primary">
                     <?= lang('Grades.add_grade') ?>
                 </a>
             </div>
@@ -447,7 +447,7 @@ else
             <p class="bg-secondary"><?= lang('Grades.TPI_long') ?></p>
 
             <div class="mb-3">
-                <a href="<?= url_to('insertGrade', $user_course_id) ?>" class="btn btn-primary">
+                <a href="<?= url_to('insertGradeWithPreselect', $user_course_id, 0, 'tpi' ) ?>" class="btn btn-primary">
                     <?= lang('Grades.add_grade') ?>
                 </a>
             </div>
@@ -482,7 +482,7 @@ else
                 <p class="bg-secondary"><?= lang('Grades.CBE_long') ?></p>
 
                 <div class="mb-3">
-                    <a href="<?= url_to('insertGrade', $user_course_id) ?>" class="btn btn-primary">
+                <a href="<?= url_to('insertGradeWithPreselect', $user_course_id, 0, 'cbe' ) ?>" class="btn btn-primary">
                         <?= lang('Grades.add_grade') ?>
                     </a>
                 </div>
@@ -543,7 +543,7 @@ else
                 <p class="bg-secondary"><?= lang('Grades.ECG_long') ?></p>
 
                 <div class="mb-3">
-                    <a href="<?= url_to('insertGrade', $user_course_id) ?>" class="btn btn-primary">
+                <a href="<?= url_to('insertGradeWithPreselect', $user_course_id, 0, 'ecg' ) ?>" class="btn btn-primary">
                         <?= lang('Grades.add_grade') ?>
                     </a>
                 </div>

@@ -67,3 +67,49 @@ function getApprentice(int $userCourseId): ?array
     $user = $userModel->select('id, username')->find($userId);
     return $user;
 }
+
+// selectedDomain: tpi, cbe, ecg, modules
+function getSelectedEntryForSubject(int $userCourseId,
+    string $selectedDomain): ?string
+{
+    $domainModel = model('TeachingDomainModel');
+    // match selectedDomain
+    $getDomain = match ($selectedDomain) {
+        'tpi' => [$domainModel, 'getTpiDomain'],
+        'cbe' => [$domainModel, 'getCbeDomain'],
+        'ecg' => [$domainModel, 'getEcgDomain'],
+        default => null,
+    };
+    if (is_null($getDomain)) {
+        assert('Unimplemented domain or unknown label for domain in match');
+        return null;
+    }
+    $domain = $getDomain($userCourseId, withDeleted: true);
+    if (empty($domain)) return null;
+    // get subjects from domain -> metod
+    $subjectModel = model('TeachingSubjectModel');
+    $subjects = $subjectModel->getTeachingSubjectIdByDomain($domain['id']);
+    // get the first subject from subjects -> [0]
+    $formatedId = 's' . $subjects[0];
+    return $formatedId;
+}
+
+function getSelectedEntryForModules(int $userCourseId): ?string
+{
+    $domainModel = model('TeachingDomainModel');
+    $domain = $domainModel->getITDomain($userCourseId, withDeleted: true);
+    if (empty($domain)) return null;
+    $moduleModel = model('TeachingModuleModel');
+    $modules = $moduleModel->getByTeachingDomainId($domain['id']);
+    $formatedId = 'm' . $modules[0]['id'];
+    return $formatedId;
+}
+
+// selectedDomain: tpi, cbe, ecg, modules
+function getSelectedEntry(int $userCourseId, string $selectedDomain): ?string
+{
+    if ($selectedDomain === 'modules') {
+        return getSelectedEntryForModules($userCourseId);
+    }
+    return getSelectedEntryForSubject($userCourseId, $selectedDomain);
+}
