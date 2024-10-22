@@ -125,7 +125,7 @@ return [
     'title_objective_delete'                => 'Supprimer l\'objectif',
     'title_objective_enable'                => 'Réactiver l\'objectif',
     'title_user_course_list'                => 'Liste des formations',
-    'title_user_course_update'              => 'modifer la formation',
+    'title_user_course_update'              => 'Modifer la formation',
     'title_user_course_new'                 => 'nouvelle formation',
     'title_user_course_delete'              => 'Supprimer la formation',
     'title_apprentice_link_list'            => 'Liste des formateurs',

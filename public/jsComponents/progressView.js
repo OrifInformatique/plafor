@@ -409,29 +409,50 @@ var CompetenceDomainAccordion = function (_React$Component5) {
     _createClass(CompetenceDomainAccordion, [{
         key: 'render',
         value: function render() {
-            return React.createElement(
+            return React.createElement
+            (
                 'div',
                 null,
-                React.createElement(
+
+                React.createElement
+                (
                     'div',
-                    { className: 'compdomContainer' },
-                    React.createElement(
+                    {
+                        className: 'compdomContainer'
+                    },
+
+                    React.createElement
+                    (
                         'span',
-                        { className: 'compdomSymbol text-primary' },
+                        {
+                            className: 'compdomSymbol'
+                        },
                         this.props.competenceDomain.symbol
                     ),
-                    React.createElement(
+                    React.createElement
+                    (
                         'p',
                         null,
                         this.props.competenceDomain.name
                     )
                 ),
-                React.createElement(
+
+                React.createElement
+                (
                     'span',
-                    { style: { width: '100%', display: 'flex', justifyContent: 'center', paddingLeft: '3rem', paddingRight: '3rem' } },
-                    React.createElement(Progressbar, { colors: ['#6ca77f', '#AE9B70', '#d9af47', '#D9918D'],
-                        elements: getCompDomainProgress(this.props.competenceDomain),
-                        timeToRefresh: '10', elementToGroup: 1, disabled: false
+                    {
+                        style: { width: '100%', display: 'flex', justifyContent: 'center', paddingLeft: '3rem', paddingRight: '3rem' }
+                    },
+
+                    React.createElement
+                    (
+                        Progressbar,
+                        {
+                            colors: ['#6ca77f', '#AE9B70', '#d9af47', '#D9918D'],
+                            elements: getCompDomainProgress(this.props.competenceDomain),
+                            timeToRefresh: '10',
+                            elementToGroup: 1,
+                            disabled: false
                     })
                 )
             );
@@ -453,22 +474,49 @@ var OperationalCompetenceAccordion = function (_React$Component6) {
     _createClass(OperationalCompetenceAccordion, [{
         key: 'render',
         value: function render() {
-            return React.createElement(
+            return React.createElement
+            (
                 'div',
-                { className: 'opcompContainer' },
-                React.createElement(
-                    'a',
-                    { className: 'opcompSymbol text-secondary', href: this.props.baseUrl + ('/' + this.props.userCourseId + '?operationalCompetenceId=' + this.props.operationnalCompetence.operationnalCompetence.id) },
+                {
+                    className: 'opcompContainer'
+                },
+
+                React.createElement
+                (
+                    'span',
+                    {
+                        className: 'opcompSymbol'
+                    },
                     this.props.operationnalCompetence.symbol
                 ),
-                React.createElement(
-                    'p',
-                    { style: { paddingLeft: '2rem', paddingRight: '2rem' } },
-                    this.props.operationnalCompetence.name,
-                    React.createElement(Progressbar, { colors: ['#6ca77f', '#AE9B70', '#d9af47', '#D9918D'],
-                        elements: getOpCompProgress(this.props.operationnalCompetence.operationnalCompetence),
-                        timeToRefresh: '10', elementToGroup: 1, disabled: false
-                    })
+
+                React.createElement
+                (
+                    'div',
+                    {
+                        style: { width: '90%', margin: '0.75rem '}
+                    },
+
+                    React.createElement
+                    (
+                        'a',
+                        {
+                            href: this.props.baseUrl + ('/' + this.props.userCourseId + '?operationalCompetenceId=' + this.props.operationnalCompetence.operationnalCompetence.id)
+                        },
+                        this.props.operationnalCompetence.name,
+                    ),
+
+                    React.createElement
+                    (
+                        Progressbar,
+                        {
+                            colors: ['#6ca77f', '#AE9B70', '#d9af47', '#D9918D'],
+                            elements: getOpCompProgress(this.props.operationnalCompetence.operationnalCompetence),
+                            timeToRefresh: '10',
+                            elementToGroup: 1,
+                            disabled: false
+                        }
+                    )
                 )
             );
         }
@@ -499,13 +547,20 @@ var Accordion = function (_React$Component7) {
         key: 'openAccordion',
         value: function openAccordion(event) {
             event = event.currentTarget;
-            if (event.classList.contains('bi-arrow-down-square')) {
-                event.classList.remove('bi-arrow-down-square');
-                event.classList.add('bi-arrow-up-square');
-            } else {
-                event.classList.remove('bi-arrow-up-square');
-                event.classList.add('bi-arrow-down-square');
+
+            if(event.innerHTML == 'Afficher les compétences opérationnelles')
+            {
+                event.innerHTML = 'Cacher les compétences opérationnelles';
             }
+
+            else
+            {
+                event.innerHTML = 'Afficher les compétences opérationnelles';
+            }
+
+            event.classList.toggle('bg-primary');
+            event.classList.toggle('text-white');
+            event.classList.toggle('text-primary');
 
             event.parentElement.nextElementSibling.classList.toggle('ac-hidden');
         }
@@ -514,35 +569,67 @@ var Accordion = function (_React$Component7) {
         value: function render() {
             var _this11 = this;
 
-            return React.createElement(
+            return React.createElement
+            (
                 'div',
-                { className: 'accordionContainer' },
-                React.createElement(
+                {
+                    className: 'accordionContainer'
+                },
+
+                React.createElement
+                (
                     'header',
-                    { className: 'compdomContainerHeader bg-primary text-white' },
-                    React.createElement(
+                    {
+                        className: 'compdomContainerHeader bg-primary text-white'
+                    },
+
+                    React.createElement
+                    (
                         'b',
                         null,
                         'Domaine de competence'
                     )
                 ),
-                React.createElement(CompetenceDomainAccordion, { competenceDomain: this.props.datas.competenceDomain }),
-                React.createElement(
+
+                React.createElement
+                (
+                    CompetenceDomainAccordion,
+                    {
+                        competenceDomain: this.props.datas.competenceDomain
+                    }
+                ),
+
+                React.createElement
+                (
                     'div',
-                    { className: 'opcompContainerList' },
-                    React.createElement(
+                    {
+                        className: 'opcompContainerList'
+                    },
+
+                    React.createElement
+                    (
                         'header',
-                        { className: 'opcompContainerHeader bg-secondary text-white' },
-                        React.createElement(
-                            'b',
-                            null,
-                            'Competences operationnelles '
+                        {
+                            className: 'opcompContainerHeader bg-secondary text-white'
+                        },
+
+                        React.createElement
+                        (
+                            'strong',
+                            {
+                                className: 'border border-primary p-2 m-2 rounded bg-primary text-white',
+                                style: {'cursor': 'pointer', 'user-select': 'none'},
+                                onClick: function onClick(e)
+                                {
+                                    return _this11.openAccordion(e);
+                                }
+                            },
+                            'Afficher les compétences opérationnelles'
                         ),
-                        React.createElement('i', { className: 'bi bi-arrow-down-square openLogo', onClick: function onClick(e) {
-                                return _this11.openAccordion(e);
-                            } })
                     ),
-                    React.createElement(
+
+                    React.createElement
+                    (
                         'div',
                         { className: 'opcompList ac-hidden' },
                         this.operationnalCompetencesAccordion
