@@ -25,7 +25,7 @@
  *      'is_linked' => bool,   Defines whether the module is linked to the domain. Required.
  * ]
  *
- * @param int $domain_id ID of the domain we link modules to.
+ * @param int $parent_domain Parent domain.
  * For redirection.
  *
  * @param int $parent_course_plan_id Id of the parent course plan.
@@ -58,8 +58,17 @@ helper('form');
     <!-- Page title -->
     <?= view('\Plafor/common/page_title', ['title' => lang('Grades.link_modules_to_domain')]) ?>
 
-    <?= form_open(base_url('plafor/teachingdomain/saveTeachingModuleLink/'.$domain_id),
-        [], ['submitted' => true]) ?>
+    <?= form_open(base_url('plafor/teachingdomain/saveTeachingModuleLink/'.$parent_domain["id"]), null, ['submitted' => true]) ?>
+        <div class="row mb-3">
+            <div class="col">
+                <?= form_label(lang('Grades.module_parent_domain'), 'parent_domain',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_input('parent_domain', $parent_domain["title"],
+                    ['class' => 'form-control', 'id' => 'parent_domain', 'disabled' => true]) ?>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col">
                 <p class="bg-primary text-white m-0"><?= lang('Grades.modules_list') ?></p>
