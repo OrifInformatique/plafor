@@ -81,7 +81,8 @@ function getSelectedEntryForSubject(int $userCourseId,
         default => null,
     };
     if (is_null($getDomain)) {
-        assert('Unimplemented domain or unknown label for domain in match');
+        assert(false,
+            'Unimplemented domain or unknown label for domain in match');
         return null;
     }
     $domain = $getDomain($userCourseId, withDeleted: true);
@@ -112,4 +113,20 @@ function getSelectedEntry(int $userCourseId, string $selectedDomain): ?string
         return getSelectedEntryForModules($userCourseId);
     }
     return getSelectedEntryForSubject($userCourseId, $selectedDomain);
+}
+
+function isGradeInCourse(int $userCourseId, int $gradeId): bool
+{
+    if ($gradeId === 0) return true;
+    $gradeModel = model('GradeModel');
+    $grade = $gradeModel
+        ->select('fk_user_course')
+        ->allowCallbacks(false)
+        ->withDeleted()
+        ->find($gradeId);
+    assert(!empty($gradeId), 'grade not found');
+    if (empty($grade)) return false;
+    $courseIdOfGrade = $grade['fk_user_course'];
+    $isAuthorised = $courseIdOfGrade == $userCourseId;
+    return $isAuthorised;
 }

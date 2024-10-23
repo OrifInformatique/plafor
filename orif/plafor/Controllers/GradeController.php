@@ -193,6 +193,12 @@ class GradeController extends BaseController
 
     }
 
+    private function isGradeInCourse(int $userCourseId, int $gradeId): bool
+    {
+        helper('grade_helper');
+        return isGradeInCourse($userCourseId, $gradeId);
+    }
+
     /**
      * Inserts or modifies the grade of an apprentice.
      *
@@ -204,19 +210,20 @@ class GradeController extends BaseController
     public function saveGrade(int $userCourseId, int $gradeId = 0, ?string
         $selectedDomain = null): string|RedirectResponse
     {
-        $UserCourseModel = $this->m_user_course_model;
+        $courseModel = $this->m_user_course_model;
+        $apprenticeId = $courseModel->find($userCourseId)['fk_user'];
 
-        $apprenticeId = $UserCourseModel
-            ->find($userCourseId)['fk_user'];
+        $isTrainerOfUserOrIsHimself =
+            (isCurrentUserTrainerOfApprentice($apprenticeId) ||
+            isCurrentUserSelfApprentice($apprenticeId));
 
-        if (!isCurrentUserTrainerOfApprentice($apprenticeId)
-            && !isCurrentUserSelfApprentice($apprenticeId))
+        $isAuthorised = $isTrainerOfUserOrIsHimself &&
+            $this->isGradeInCourse($userCourseId, $gradeId);
+
+        if (!$isAuthorised)
         {
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
-        // TODO check if id grade is autorized
-        // isCurrenUserSelfNote
-        // or isCurrenUserTrainerOfApprentice
 
         if ($this->request->is('post')) {
             return $this->saveGradePost($userCourseId, $gradeId);

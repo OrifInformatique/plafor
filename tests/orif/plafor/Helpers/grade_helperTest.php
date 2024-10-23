@@ -71,4 +71,13 @@ class Grade_HelperTest extends CIUnitTestCase
         $this->assertTrue(is_string($formatedId));
     }
 
+    public function testIsGradeInCourse(): void
+    {
+        helper('grade_helper');
+        $userCourseId = 101;
+        $gradeId = 5;
+        $isGradeInCourse = isGradeInCourse($userCourseId, $gradeId);
+        $this->assertTrue(is_bool($isGradeInCourse));
+    }
+
 }
