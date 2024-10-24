@@ -9,12 +9,16 @@
 
 namespace Plafor\Controllers;
 
+use App\Controllers\BaseController;
+
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\Response;
 use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\HTTP\RedirectResponse;
 use Psr\Log\LoggerInterface;
+use CodeIgniter\I18n\Time;
 
-class GradeController extends \App\Controllers\BaseController
+class GradeController extends BaseController
 {
     // Class Constant
     const m_ERROR_MISSING_PERMISSIONS = "\User/errors/403error";
@@ -31,7 +35,8 @@ class GradeController extends \App\Controllers\BaseController
      * @return void
      *
      */
-    public function initController(RequestInterface $request, ResponseInterface $response, LoggerInterface $logger): void
+    public function initController(RequestInterface $request, ResponseInterface
+        $response, LoggerInterface $logger): void
     {
         $this->access_level = "@";
 
@@ -47,110 +52,155 @@ class GradeController extends \App\Controllers\BaseController
         helper("AccessPermissions_helper");
     }
 
-
-
-    /**
-     * Calculate the average of all grades.
-     *
-     * @param array $grades
-     *
-     * @return int
-     *
-     */
-    private function calculateAverageGrade(array $grades): int
+    private function getsubjectAndModulesList(int $userCourseId,
+        ?string $selectedDomain=null): array
     {
-        $nbr_grade = count($array);
-        $all_grade = array_column($array, "grade");
-        $total_grade = array_sum($all_grade);
+        helper('grade_helper');
+        $list = getSubjectsAndModulesList($userCourseId, $selectedDomain);
+        return $list;
 
-        return $total_grade / $nbr_grade;
+    }
+
+    private function getApprentice(int $userCourseId): array
+    {
+        helper('grade_helper');
+        $apprentice = getApprentice($userCourseId);
+        return $apprentice;
+    }
+
+    private function formatGradeForFormUpdate(int $gradeId): array
+    {
+        $grade = $this->m_grade_model->find($gradeId);
+        if (isset($grade['fk_teaching_subject'])) {
+            $data['selected_entry'] = 's' . $grade['fk_teaching_subject'];
+        }
+        if (isset($grade['fk_teaching_module'])) {
+            $data['selected_entry'] = 'm' . $grade['fk_teaching_module'];
+        }
+        $data['is_exam_made_in_school'] = $grade['is_school'] === '1' ? true :
+            false;
+        $data['exam_date'] = $grade['date'];
+        $data['grade'] = $grade['grade'];
+        return $data;
+
+    }
+
+    // selectedDomain: tpi, cbe, ecg, modules
+    private function getSelectedEntry(int $userCourseId,
+        ?string $selectedDomain = null): ?string
+    {
+
+        helper('grade_helper');
+        return getSelectedEntry($userCourseId, $selectedDomain);
     }
 
 
+    private function saveGradeGet(int $userCourseId, int $gradeId,
+        ?string $selectedDomain = null): string
+    {
+        if ($gradeId !== 0) {
+            $data = $this->formatGradeForFormUpdate($gradeId);
+        }
+        $data['grade_id'] = $gradeId;
+        $data['user_course_id'] = $userCourseId;
+        $data["errors"] = $this->m_grade_model->errors();
+        $data['apprentice'] = $this->getApprentice($userCourseId);
+        $data['course_plan'] = model('CoursePlanModel')
+            ->getCoursePlanIdByUserCourse($userCourseId);
+
+        $data['subject_and_domains_list'] = $this
+            ->getsubjectAndModulesList($userCourseId, $selectedDomain);
+
+        $data['title'] = lang(
+            $gradeId == 0 ? 'Grades.add_grade' : 'Grades.update_grade');
+        if (!is_null($selectedDomain)) {
+            // begin is not yet necessary
+            $data['selected_entry'] = $this->getSelectedEntry($userCourseId,
+                $selectedDomain);
+            if (is_null($data['selected_entry'])) {
+                unset($data['selected_entry']);
+            }
+            // end is not yet necessary
+            $data['is_exam_made_in_school'] = $selectedDomain !== 'modules';
+        }
+        return $this->display_view("\Plafor/grade/save", $data);
+    }
+
+    private function saveGradePost(int $userCourseId,
+        int $gradeId): RedirectResponse | string
+    {
+        $post = $this->request->getPost();
+        if ($gradeId !== 0) $grade['id'] = $gradeId;
+        $grade['fk_user_course'] = $userCourseId;
+        $grade['fk_teaching_subject'] = $post['subject'][0] === 's' ?
+            intval(substr($post['subject'], 1)) : null;
+
+        $grade['fk_teaching_module'] = $post['subject'][0] === 'm' ?
+            intval(substr($post['subject'], 1)) : null;
+
+        $grade['date'] = $post['exam_date'] ?? null;
+        $grade['grade'] = $post['grade'];
+        $grade['is_school'] = $post['is_exam_made_at_school'] ?? null;
+        $grade['is_school'] = $grade['is_school'] === '1' ? 1 : 0;
+        if ($this->m_grade_model->save($grade)) {
+            $apprentice = $this->getApprentice($userCourseId);
+            return redirect()->to(base_url(
+                'plafor/apprentice/view_apprentice/'. $apprentice['id'] . '/' .
+                $userCourseId));
+        }
+        $data = $post;
+        $data['errors'] = $this->m_grade_model->errors();
+        $data['grade_id'] ??= $gradeId;
+        $data['apprentice'] = $this->getApprentice($userCourseId);
+        $data['course_plan'] = model('CoursePlanModel')
+            ->getCoursePlanIdByUserCourse($userCourseId);
+
+        $data['subject_and_domains_list'] = $this
+            ->getsubjectAndModulesList($userCourseId);
+
+        $data['selected_entry'] = $data['subject'];
+        $data['is_exam_made_in_school'] = $grade['is_school'];
+        return $this->display_view("\Plafor/grade/save", $data);
+    }
+
+    private function isGradeInCourse(int $userCourseId, int $gradeId): bool
+    {
+        helper('grade_helper');
+        return isGradeInCourse($userCourseId, $gradeId);
+    }
 
     /**
      * Inserts or modifies the grade of an apprentice.
      *
-     * @param int $apprentice_id ID of the apprentice.
-     *
-     * @param int $grade_id ID of the grade.
+     * @param int $gradeId ID of the grade.
      *
      * @return string|RedirectResponse
      *
      */
-    public function saveGrade(int $apprentice_id = 0, int $grade_id = 0): string|RedirectResponse
+    public function saveGrade(int $userCourseId, int $gradeId = 0, ?string
+        $selectedDomain = null): string|RedirectResponse
     {
-        if (!isCurrentUserTrainerOfApprentice($apprentice_id)
-            && !isCurrentUserSelfApprentice($apprentice_id))
+        $courseModel = $this->m_user_course_model;
+        $apprenticeId = $courseModel->find($userCourseId)['fk_user'];
+        $isTrainerOfUserOrIsHimself =
+            (isCurrentUserTrainerOfApprentice($apprenticeId) ||
+            isCurrentUserSelfApprentice($apprenticeId));
+
+        $isAuthorised = $isTrainerOfUserOrIsHimself &&
+            $this->isGradeInCourse($userCourseId, $gradeId);
+
+        if (!$isAuthorised)
         {
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
-
-        $user_course_id = $this->request->getPost("user_course_id");
-
-        if (count($_POST) > 0){
-            d($_POST);
-            // TODO: check if it's a subject or a module s or m (parse the first char of the string)
-            $selected_entry = $this->request->getPost("selected_entry");
-
-            // $grades = []; // TODO: check what is needed ??
-            // foreach ($this->m_grade_model->where("fk_user_course", $user_course_id)->withDeleted($with_archived)->findAll() as $grade){
-            //     dd($this->m_grade_model->where("fk_user_course", $user_course_id)->withDeleted($with_archived)->findAll());
-            //     $grades [] = [
-            //         "id"                        => $grade["id"],
-            //         "user_course_id"            => $grade["module_number"],
-            //         "apprentice"                => [
-            //             "id"                        => int,
-            //             "username"                  => string,
-            //         ],
-            //         "course_plan"               => $grade["official_name"],
-            //         "subject_and_domains_list"  => [
-            //             lang("Grades.subjects")     => [], // List of sujects contained in the course_plan. Required.
-            //                 //Array of key-values where keys are subjects IDs with a "s" before and values are subject names.
-
-            //             lang("Grades.modules")      => [],// List of modules contained in the course_plan. Required.
-            //                 //Array of key-values where keys are modules IDs with a "m" before and values are modules names.
-            //         ],
-            //         "selected_entry"            => $grade["version"],
-            //         "grade"                     => $grade["grade"],
-            //         "exam_date"                 => $grade["date"],
-            //         "is_exam_made_in_school"    => $grade["is_school"],
-            //     ];
-            // }
-
-            $data_to_model =
-            [
-                "id"                    => $grade_id,
-                "fk_user_course"        => $user_course_id,
-                "fk_teaching_subject"   => $subject_id,
-                "fk_teaching_module"    => $module_id,
-                "date"                  => $this->request->getPost("exam_date"),
-                "grade"                 => $this->request->getPost("grade"),
-                "is_school"             => $this->request->getPost("is_exam_made_in_school"),
-            ];
-
-            $this->m_grade_model->save($data_to_model);
-
-            if (empty($this->m_grade_model->errors()))
-                return redirect()->to("plafor/grade/showAllGrade");
+        if ($this->request->is('post')) {
+            return $this->saveGradePost($userCourseId, $gradeId);
         }
-
-        $data_from_model = $this->m_grade_model->withDeleted()->find($grade_id);
-
-        $data_to_view =
-        [
-            "title"                 => $grade_id == 0 ? lang('Grades.add_grade') : lang('Grades.update_grade'),
-            // "grade_id"              => $grade_id,
-            // "user_course_id"        => $data_from_model["user_course_id"],
-            // "subject" => $subject_id,
-            // "module" => $module_id,
-            // "date"  => $date,
-            // "grade" => $grade,
-            // "is_school" => $is_school,
-            // "errors"  => $this->m_grade_model->errors()
-        ];
-
-        return $this->display_view("\Plafor/grade/save", $data_to_view);
+        if ($this->request->is('get')) {
+            return $this->saveGradeGet($userCourseId, $gradeId,
+                $selectedDomain);
+        }
+        assert(false, 'GradeController saveGrade methods http unimplemented');
     }
 
 
@@ -171,7 +221,8 @@ class GradeController extends \App\Controllers\BaseController
      * @return string|RedirectResponse
      *
      */
-    public function deleteGrade(int|null $action = null, int $grade_id = 0, bool $confirm = false): string|RedirectResponse
+    public function deleteGrade(?int $action = null, int $grade_id = 0,
+        bool $confirm = false): string|RedirectResponse
     {
         $grade = $this->m_grade_model->withDeleted()->find($grade_id);
 
@@ -179,15 +230,15 @@ class GradeController extends \App\Controllers\BaseController
             return redirect()->to("plafor/grade/save");
 
         $user_course = $this->m_user_course_model->find($grade["fk_user_course"]);
-        $apprentice_id = $this->m_user_model->find($user_course["fk_user"]);
+        $apprentice = $this->m_user_model->find($user_course["fk_user"]);
 
         if (!isCurrentUserTrainerOfApprentice($apprentice["id"]))
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
 
-        if($grade["fk_teaching_subject"] > 0)
+        if (isset($grade["fk_teaching_subject"]))
             $subject = $this->m_teaching_subject_model->find($grade['fk_teaching_subject']);
 
-        elseif($grade["fk_teaching_module"] > 0)
+        elseif (isset($grade["fk_teaching_module"]))
             $module = $this->m_teaching_module_model->find($grade['fk_teaching_module']);
 
         // No subject or module : prevents going further.
@@ -200,7 +251,7 @@ class GradeController extends \App\Controllers\BaseController
             [
                 "entry" =>
                 [
-                    "type"  => lang("plafor_lang.name_grade"),
+                    "type"  => lang("Grades.grade"),
                     "name"  => "",
                     "data"  =>
                     [
@@ -218,7 +269,8 @@ class GradeController extends \App\Controllers\BaseController
                         ]
                     ]
                 ],
-                "cancel_btn_url" => base_url("plafor/grade/save/".$grade_id)
+    
+                "cancel_btn_url" => url_to('updateGrade', $user_course['id'], $grade_id)
             ];
         }
 

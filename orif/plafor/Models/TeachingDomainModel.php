@@ -157,15 +157,22 @@ class TeachingDomainModel extends Model
     public function getITDomainWeight(int $userCourseId,
         bool $withDeleted = true): ?float
     {
-        // TODO find a better way
-        // magic string
-        $domainNameForModuleWeight = 'Informatique';
-
-        $ITDomain = $this->getDomainByUserCourseAndName($userCourseId,
-            $domainNameForModuleWeight, $withDeleted);
+        $ITDomain = $this->getITDomain($userCourseId, $withDeleted);
         if (is_null($ITDomain)) return null;
         $ITWeight = $ITDomain['domain_weight'];
         return $ITWeight;
+    }
+
+    public function getITDomain(int $userCourseId,
+        bool $withDeleted = true): ?array
+    {
+        // TODO find a better way
+        // magic string
+        $domainNameForModuleWeight = 'Informatique';
+        $ITDomain = $this->getDomainByUserCourseAndName($userCourseId,
+            $domainNameForModuleWeight, $withDeleted);
+        return $ITDomain;
+
     }
 
     public function getTpiDomain(int $userCourseId,
