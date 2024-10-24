@@ -52,10 +52,11 @@ class GradeController extends BaseController
         helper("AccessPermissions_helper");
     }
 
-    private function getsubjectAndModulesList(int $userCourseId): array
+    private function getsubjectAndModulesList(int $userCourseId,
+        ?string $selectedDomain=null): array
     {
         helper('grade_helper');
-        $list = getSubjectsAndModulesList($userCourseId);
+        $list = getSubjectsAndModulesList($userCourseId, $selectedDomain);
         return $list;
 
     }
@@ -86,8 +87,9 @@ class GradeController extends BaseController
 
     // selectedDomain: tpi, cbe, ecg, modules
     private function getSelectedEntry(int $userCourseId,
-        string $selectedDomain): ?string
+        ?string $selectedDomain = null): ?string
     {
+
         helper('grade_helper');
         return getSelectedEntry($userCourseId, $selectedDomain);
     }
@@ -105,30 +107,30 @@ class GradeController extends BaseController
         $data['apprentice'] = $this->getApprentice($userCourseId);
         $data['course_plan'] = model('CoursePlanModel')
             ->getCoursePlanIdByUserCourse($userCourseId);
+
         $data['subject_and_domains_list'] = $this
-            ->getsubjectAndModulesList($userCourseId);
+            ->getsubjectAndModulesList($userCourseId, $selectedDomain);
+
         $data['title'] = lang(
             $gradeId == 0 ? 'Grades.add_grade' : 'Grades.update_grade');
         if (!is_null($selectedDomain)) {
+            // begin is not yet necessary
             $data['selected_entry'] = $this->getSelectedEntry($userCourseId,
                 $selectedDomain);
             if (is_null($data['selected_entry'])) {
                 unset($data['selected_entry']);
             }
+            // end is not yet necessary
             $data['is_exam_made_in_school'] = $selectedDomain !== 'modules';
         }
         return $this->display_view("\Plafor/grade/save", $data);
-
     }
 
     private function saveGradePost(int $userCourseId,
         int $gradeId): RedirectResponse | string
     {
         $post = $this->request->getPost();
-        
-        if ($gradeId !== 0) {
-            $grade['id'] = $gradeId;
-        }
+        if ($gradeId !== 0) $grade['id'] = $gradeId;
         $grade['fk_user_course'] = $userCourseId;
         $grade['fk_teaching_subject'] = $post['subject'][0] === 's' ?
             intval(substr($post['subject'], 1)) : null;
@@ -140,38 +142,6 @@ class GradeController extends BaseController
         $grade['grade'] = $post['grade'];
         $grade['is_school'] = $post['is_exam_made_at_school'] ?? null;
         $grade['is_school'] = $grade['is_school'] === '1' ? 1 : 0;
-        
-
-        // $user_course_id = $this->request->getPost("user_course_id");
-        // $selected_entry = $this->request->getPost("selected_entry");
-        // TODO: check if it's a subject or a module s or m (parse the first char of the string)
-
-        // $grades = []; // TODO: check what is needed ??
-        // foreach ($this->m_grade_model->where("fk_user_course", $user_course_id)->withDeleted($with_archived)->findAll() as $grade){
-        //     dd($this->m_grade_model->where("fk_user_course", $user_course_id)->withDeleted($with_archived)->findAll());
-        //     $grades [] = [
-        //         "id"                        => $grade["id"],
-        //         "user_course_id"            => $grade["module_number"],
-        //         "apprentice"                => [
-        //             "id"                        => int,
-        //             "username"                  => string,
-        //         ],
-        //         "course_plan"               => $grade["official_name"],
-        //         "subject_and_domains_list"  => [
-        //             lang("Grades.subjects")     => [], // List of sujects contained in the course_plan. Required.
-        //                 //Array of key-values where keys are subjects IDs with a "s" before and values are subject names.
-
-        //             lang("Grades.modules")      => [],// List of modules contained in the course_plan. Required.
-        //                 //Array of key-values where keys are modules IDs with a "m" before and values are modules names.
-        //         ],
-        //         "selected_entry"            => $grade["version"],
-        //         "grade"                     => $grade["grade"],
-        //         "exam_date"                 => $grade["date"],
-        //         "is_exam_made_in_school"    => $grade["is_school"],
-        //     ];
-        // }
-
-
         if ($this->m_grade_model->save($grade)) {
             $apprentice = $this->getApprentice($userCourseId);
             return redirect()->to(base_url(
@@ -184,13 +154,13 @@ class GradeController extends BaseController
         $data['apprentice'] = $this->getApprentice($userCourseId);
         $data['course_plan'] = model('CoursePlanModel')
             ->getCoursePlanIdByUserCourse($userCourseId);
+
         $data['subject_and_domains_list'] = $this
             ->getsubjectAndModulesList($userCourseId);
+
         $data['selected_entry'] = $data['subject'];
         $data['is_exam_made_in_school'] = $grade['is_school'];
         return $this->display_view("\Plafor/grade/save", $data);
-        
-
     }
 
     private function isGradeInCourse(int $userCourseId, int $gradeId): bool
@@ -212,7 +182,6 @@ class GradeController extends BaseController
     {
         $courseModel = $this->m_user_course_model;
         $apprenticeId = $courseModel->find($userCourseId)['fk_user'];
-
         $isTrainerOfUserOrIsHimself =
             (isCurrentUserTrainerOfApprentice($apprenticeId) ||
             isCurrentUserSelfApprentice($apprenticeId));
@@ -224,7 +193,6 @@ class GradeController extends BaseController
         {
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
         }
-
         if ($this->request->is('post')) {
             return $this->saveGradePost($userCourseId, $gradeId);
         }
@@ -232,7 +200,6 @@ class GradeController extends BaseController
             return $this->saveGradeGet($userCourseId, $gradeId,
                 $selectedDomain);
         }
-
         assert(false, 'GradeController saveGrade methods http unimplemented');
     }
 

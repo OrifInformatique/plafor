@@ -1,17 +1,43 @@
 <?php
 
 
-function getSubjectsAndModulesList(int $userCourseId): array
+function getSubjectsAndModulesList(int $userCourseId,
+    ?string $selectedDomain = null): array
 {
-    $list[lang('Grades.subjects')] = getSubjects($userCourseId);
+    $defaultList = getSubjectsAndModulesListAll($userCourseId);
+    if (is_null($selectedDomain)) { 
+        return $defaultList;
+    }
+    if ($selectedDomain === 'modules') {
+        $list[lang('Grades.modules')] = getModules($userCourseId);
+        return $list;
+    }
+    $domainModel = model('TeachingDomainModel');
+    $getDomain = match ($selectedDomain) {
+        'tpi' => [$domainModel, 'getTpiDomain'],
+        'cbe' => [$domainModel, 'getCbeDomain'],
+        'ecg' => [$domainModel, 'getEcgDomain'],
+        default => null,
+    };
+    if (is_null($getDomain)) return $defaultList;
+    $domain = $getDomain($userCourseId, withDeleted: true);
+    if (empty($domain)) return $defaultList;
+    $subjectModel = model('TeachingSubjectModel');
+    $subjectIds = $subjectModel->getTeachingSubjectIdByDomain($domain['id']);
+    return getSubjects($subjectIds); 
+}
+
+function getSubjectsAndModulesListAll(int $userCourseId) {
+    $list[lang('Grades.subjects')] = getSubjectsAll($userCourseId);
     $list[lang('Grades.modules')] = getModules($userCourseId);
     return $list;
 }
 
-function getSubjects(int $userCourseId): array
+
+
+function getSubjectsAll(int $userCourseId): array
 {
     $domainModel = model('TeachingDomainModel');
-
     $domainIds = $domainModel
         ->getTeachingDomainIdByUserCourse($userCourseId);
 
@@ -23,6 +49,12 @@ function getSubjects(int $userCourseId): array
     $subjectIds = array_reduce($subjectIdsPerDomain,
         fn($carry, $row) => [...$carry, ...$row], []);
 
+    return getSubjects($subjectIds); 
+}
+
+function getSubjects(array $subjectIds): array
+{
+    $subjectModel = model('TeachingSubjectModel');
     // [0] => [subjectId, name]
     $subjectIdsWithNames = array_map(fn($subjectId) =>
         [$subjectId, $subjectModel->select('name')->allowCallbacks(false)
@@ -32,9 +64,7 @@ function getSubjects(int $userCourseId): array
         fn($carry, $row) => [...$carry, 's' . $row[0] => $row[1]], []);
 
     asort($formatedSubjects);
-
     return $formatedSubjects;
-
 }
 
 function getModules(int $userCourseId): array
@@ -87,10 +117,8 @@ function getSelectedEntryForSubject(int $userCourseId,
     }
     $domain = $getDomain($userCourseId, withDeleted: true);
     if (empty($domain)) return null;
-    // get subjects from domain -> metod
     $subjectModel = model('TeachingSubjectModel');
     $subjects = $subjectModel->getTeachingSubjectIdByDomain($domain['id']);
-    // get the first subject from subjects -> [0]
     $formatedId = 's' . $subjects[0];
     return $formatedId;
 }

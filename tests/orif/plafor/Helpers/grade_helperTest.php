@@ -29,11 +29,11 @@ class Grade_HelperTest extends CIUnitTestCase
         $this->assertTrue(is_array($modules));
     }
 
-    public function testGetSubjects(): void
+    public function testGetSubjectsAll(): void
     {
         helper('grade_helper');
         $userCourseId = 101;
-        $subjects = getSubjects($userCourseId);
+        $subjects = getSubjectsAll($userCourseId);
         $this->assertTrue(is_array($subjects));
     }
 
@@ -78,6 +78,33 @@ class Grade_HelperTest extends CIUnitTestCase
         $gradeId = 5;
         $isGradeInCourse = isGradeInCourse($userCourseId, $gradeId);
         $this->assertTrue(is_bool($isGradeInCourse));
+    }
+
+    public function testGetSubjectsAndModulesListAll():void
+    {
+        helper('grade_helper');
+        $userCourseId = 101;
+        $list = getSubjectsAndModulesListAll($userCourseId);
+        $this->assertTrue(is_array($list));
+    }
+
+    public function testGetSubjects():void
+    {
+        helper('grade_helper');
+        $subjectIds[0] = 1;
+        $subjectIds[2] = 2;
+        $list = getSubjects($subjectIds);
+        $this->assertTrue(is_array($list));
+    }
+
+    public function testGetSelectedEntryForSubject(): void
+    {
+        helper('grade_helper');
+        $userCourseId = 101;
+        $selectedDomain = 'tpi';
+        $formatedId = getSelectedEntryForSubject($userCourseId,
+            $selectedDomain);
+        $this->assertTrue(is_string($formatedId));
     }
 
 }
