@@ -156,7 +156,8 @@ $subject_or_module_label = lang('Grades.subject').' '.lang('Grades.or').' '.strt
         <div class="row">
             <?php if($grade_id > 0): ?>
                 <div class="col">
-                    <a href="<?= url_to('deleteGrade', 1, $grade_id) ?>" class="btn btn-danger">
+                    <?php // 2 is hard deleted ?>
+                    <a href="<?= url_to('deleteGrade', 2, $grade_id) ?>" class="btn btn-danger">
                         <?= lang('common_lang.btn_delete') ?>
                     </a>
                 </div>
