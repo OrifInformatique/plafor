@@ -130,9 +130,9 @@ class CoursePlan extends \App\Controllers\BaseController
         $competence_domains = $this->course_plan_model->getCompetenceDomains($course_plan_id, $with_archived_competence);
 
         // for teaching domain checkbox JS
-        $with_archived_teaching = $this->request->getGet("wb") ?? false;        
-        
-        
+        $with_archived_teaching = $this->request->getGet("wb") ?? false;
+
+
         // Get teaching domains, subjects and modules
         $teaching_domains = [];
         foreach ($this->m_teaching_domain_model->withDeleted($with_archived_teaching)->where("fk_course_plan", $course_plan_id)->findAll() as $domain)
@@ -206,9 +206,6 @@ class CoursePlan extends \App\Controllers\BaseController
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
 
         $course_plan = $this->course_plan_model->withDeleted()->find($course_plan_id);
-
-        if(is_null($course_plan))
-            return redirect()->to(base_url('plafor/courseplan/list_course_plan'));
 
         if(count($_POST) > 0)
         {
@@ -380,10 +377,10 @@ class CoursePlan extends \App\Controllers\BaseController
         if(!hasCurrentUserAdminAccess())
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
 
-        $course_plan = $this->course_plan_model->withDeleted()->find($course_plan_id);
+        $parent_course_plan = $this->course_plan_model->withDeleted()->find($course_plan_id);
         $competence_domain = $this->comp_domain_model->withDeleted()->find($competence_domain_id);
 
-        if(is_null($course_plan)
+        if(is_null($parent_course_plan)
             || !is_null($competence_domain)
             && $competence_domain['fk_course_plan'] != $course_plan_id)
         {
@@ -395,7 +392,7 @@ class CoursePlan extends \App\Controllers\BaseController
             $new_competence_domain = array
             (
                 'id'                => $competence_domain_id,
-                'fk_course_plan'    => $this->request->getPost('course_plan'),
+                'fk_course_plan'    => $this->request->getPost('parent_course_plan_id'),
                 'symbol'            => $this->request->getPost('symbol'),
                 'name'              => $this->request->getPost('name')
             );
@@ -406,18 +403,12 @@ class CoursePlan extends \App\Controllers\BaseController
                 return redirect()->to(base_url('plafor/courseplan/view_course_plan/'.$course_plan_id));
         }
 
-        $course_plans = [];
-
-        foreach ($this->course_plan_model->withDeleted()->findAll() as $course_plan)
-            $course_plans[$course_plan["id"]] = $course_plan['official_name'];
-
         $output = array
         (
             'title'                 => lang('plafor_lang.title_competence_domain_'.
                 (!is_null($competence_domain) ? 'update' : 'new')),
             'competence_domain'     => $competence_domain,
-            'course_plans'          => $course_plans,
-            'parent_course_plan_id' => $course_plan_id,
+            'parent_course_plan'    => $parent_course_plan,
             'errors'                => $this->comp_domain_model->errors(),
         );
 
@@ -548,10 +539,10 @@ class CoursePlan extends \App\Controllers\BaseController
         if(!hasCurrentUserAdminAccess())
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
 
-        $competence_domain = $this->comp_domain_model->withDeleted()->find($competence_domain_id);
+        $parent_competence_domain = $this->comp_domain_model->withDeleted()->find($competence_domain_id);
         $operational_competence = $this->operational_comp_model->withDeleted()->find($operational_competence_id);
 
-        if(is_null($competence_domain)
+        if(is_null($parent_competence_domain)
             || !is_null($operational_competence)
             && $operational_competence['fk_competence_domain'] != $competence_domain_id)
         {
@@ -563,7 +554,7 @@ class CoursePlan extends \App\Controllers\BaseController
             $new_operational_comp = array
             (
                 'id'                    => $operational_competence_id,
-                'fk_competence_domain'  => $this->request->getPost('competence_domain'),
+                'fk_competence_domain'  => $this->request->getPost('parent_competence_domain_id'),
                 'name'                  => $this->request->getPost('name'),
                 'symbol'                => $this->request->getPost('symbol'),
                 'methodologic'          => $this->request->getPost('methodologic'),
@@ -577,19 +568,13 @@ class CoursePlan extends \App\Controllers\BaseController
                 return redirect()->to(base_url('plafor/courseplan/view_competence_domain/'.$competence_domain_id));
         }
 
-        $competence_domains = [];
-
-        foreach ($this->comp_domain_model->withDeleted()->findAll() as $competence_domain)
-            $competence_domains[$competence_domain['id']] = $competence_domain['name'];
-
         $output = array
         (
-            'title'                  => lang('plafor_lang.title_operational_competence_'.
+            'title'                    => lang('plafor_lang.title_operational_competence_'.
                 (!is_null($operational_competence) ? 'update': 'new')),
-            'operational_competence' => $operational_competence,
-            'competence_domains'     => $competence_domains,
-            'competence_domain_id'   => $competence_domain_id,
-            'errors'                 =>  $this->operational_comp_model->errors(),
+            'operational_competence'   => $operational_competence,
+            'parent_competence_domain' => $parent_competence_domain,
+            'errors'                   => $this->operational_comp_model->errors(),
         );
 
         return $this->display_view('\Plafor\operational_competence/save', $output);
@@ -725,20 +710,24 @@ class CoursePlan extends \App\Controllers\BaseController
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
 
         $objective = $this->objective_model->withDeleted()->find($objective_id);
-        $operational_competence = $this->operational_comp_model->withDeleted()->find($operational_competence_id);
+        $parent_operational_competence = $this->operational_comp_model->withDeleted()->find($operational_competence_id);
 
-        if(is_null($operational_competence))
+        if(is_null($parent_operational_competence)
+            || !is_null($objective)
+            && $objective['fk_operational_competence'] != $operational_competence_id)
+        {
             return redirect()->to(base_url('plafor/courseplan/list_course_plan'));
+        }
 
         if(count($_POST) > 0)
         {
             $new_objective = array
             (
                 'id'                        => $objective_id,
+                'fk_operational_competence' => $this->request->getPost('parent_operational_competence_id'),
                 'symbol'                    => $this->request->getPost('symbol'),
                 'taxonomy'                  => $this->request->getPost('taxonomy'),
-                'name'                      => $this->request->getPost('name'),
-                'fk_operational_competence' => $this->request->getPost('operational_competence')
+                'name'                      => $this->request->getPost('name')
             );
 
             $this->objective_model->save($new_objective);
@@ -765,18 +754,12 @@ class CoursePlan extends \App\Controllers\BaseController
             return redirect()->to(base_url('plafor/courseplan/view_operational_competence/'.$operational_competence_id));
         }
 
-        $operational_competences = [];
-
-        foreach ($this->operational_comp_model->withDeleted()->findAll() as $operational_competence)
-            $operational_competences[$operational_competence['id']] = $operational_competence['name'];
-
         $output = array
         (
-            'title'                     => lang('plafor_lang.title_objective_' . (is_null($objective) ? 'new' : 'update')),
-            'objective'                 => $objective,
-            'operational_competences'   => $operational_competences,
-            'operational_competence_id' => $operational_competence_id,
-            'errors'                    => $this->objective_model->errors(),
+            'title'                         => lang('plafor_lang.title_objective_' . (is_null($objective) ? 'new': 'update')),
+            'objective'                     => $objective,
+            'parent_operational_competence' => $parent_operational_competence,
+            'errors'                        => $this->objective_model->errors(),
         );
 
         return $this->display_view('\Plafor\objective/save', $output);

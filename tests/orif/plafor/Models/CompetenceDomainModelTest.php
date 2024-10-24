@@ -10,6 +10,8 @@ namespace Plafor\Models;
 
 use CodeIgniter\Test\CIUnitTestCase;
 
+helper("UnitTest_helper"); // The helper hold all Constants -> Plafor\orif\plafor\Helpers\UnitTest_helper.php
+
 class CompetenceDomainModelTest extends CIUnitTestCase
 {
     /**

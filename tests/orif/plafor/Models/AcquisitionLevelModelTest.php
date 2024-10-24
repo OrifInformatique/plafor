@@ -11,8 +11,11 @@ namespace Plafor\Models;
 use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
 
+helper("UnitTest_helper"); // The helper hold all Constants -> Plafor\orif\plafor\Helpers\UnitTest_helper.php
+
 class AcquisitionLevelModelTest extends CIUnitTestCase
 {
+
     const ACQUISITION_NOT_EXPLAINED = 1;
 
     use DatabaseTestTrait;

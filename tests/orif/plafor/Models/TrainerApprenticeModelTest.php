@@ -10,10 +10,10 @@ namespace Plafor\Models;
 
 use CodeIgniter\Test\CIUnitTestCase;
 
+helper("UnitTest_helper"); // The helper hold all Constants -> Plafor\orif\plafor\Helpers\UnitTest_helper.php
+
 class TrainerApprenticeModelTest extends CIUnitTestCase
 {
-    const TRAINER_USER_TYPE = 2;
-    const APPRENTICE_USER_TYPE = 3;
 
     /**
      * Asserts that getInstance method of TrainerApprenticeModel returns an instance of TrainerApprenticeModel
