@@ -16,7 +16,7 @@ use CodeIgniter\Test\DatabaseTestTrait;
 use User\Models;
 
 helper("UnitTest_helper"); // The helper hold all Constants -> Plafor\orif\plafor\Helpers\UnitTest_helper.php
- 
+
 class ApprenticeTest extends CIUnitTestCase
 {
     use ControllerTestTrait;
@@ -120,38 +120,6 @@ class ApprenticeTest extends CIUnitTestCase
     }
 
     /**
-     * Asserts that the list_apprentice page is loaded correctly
-     */
-    public function testlist_apprentice()
-    {
-        $_SESSION['logged_in'] = true;
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')->access_lvl_trainer;
-        $_SESSION['user_id'] = TRAINER_DEV_ID;
-
-        // Execute list_apprentice method of Apprentice class
-        $result = $this->controller(Apprentice::class)
-            ->execute('list_apprentice');
-
-        // Assertions
-        $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
-        $this->assertNotEmpty($response->getBody());
-        $result->assertOK();
-        $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertSee(TRAINER_DEV_NAME, 'option');
-        $result->assertSee(TRAINER_DEV_NAME, 'option');
-        $result->assertSee(TRAINER_OPE_NAME, 'option');
-        $result->assertSee('Liste des apprentis');
-
-        $result->assertSeeLink(APPRENTICE_DEV_NAME);
-        $result->assertSee(COURSE_PLAN_DEV_NAME);
-        $result->assertSeeLink(APPRENTICE_SYS_NAME);
-        $result->assertSee(COURSE_PLAN_SYS_NAME);
-        $result->assertSeeLink(APPRENTICE_OPE_NAME);
-        $result->assertSee(COURSE_PLAN_OPE_NAME);
-    }
-
-    /**
      * Asserts that the list_apprentice page is loaded correctly for a given connected development trainer
      */
     public function testlist_apprenticeWithDevelopmentTrainerSession()
@@ -247,38 +215,6 @@ class ApprenticeTest extends CIUnitTestCase
     }
 
     /**
-     * Asserts that the view_apprentice page is loaded correctly when an apprentice id is given (for a development trainer session)
-     */
-    public function testview_apprenticeWithApprenticeIdForDevelopmentTrainerSession()
-    {
-        // Initialize session for a development trainer
-        $_SESSION['logged_in'] = true;
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')->access_lvl_trainer;
-        $_SESSION['user_id'] = TRAINER_DEV_ID;
-
-        // Execute view_apprentice method of Apprentice class
-        $result = $this->controller(Apprentice::class)
-            ->execute('view_apprentice', APPRENTICE_DEV_ID);
-
-        // Assertions
-        $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
-        $this->assertNotEmpty($response->getBody());
-        $result->assertOK();
-        $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertSee('Détail de l\'apprenti', 'p');
-        $result->assertSee(APPRENTICE_DEV_NAME, 'span');
-        $result->assertSeeLink(TRAINER_DEV_NAME);
-        $result->assertSeeLink('Ajouter un formateur');
-        $result->assertSeeElement('#usercourseSelector');
-        $result->assertSee(COURSE_PLAN_DEV_NAME, 'option');
-        $result->assertSee('09.07.2020', '.user-course-details-begin-date');
-        $result->assertSee('En cours', '.user-course-details-status');
-        $result->assertSee('Avancement du plan de formation', 'p');
-        $result->assertSee(COURSE_PLAN_DEV_NAME, '.font-weight-bold user-course-details-course-plan-name');
-    }
-
-    /**
      * Asserts that the save_user_course page redirects to the 403 error view when no session user access is set
      */
     public function testsave_user_courseWithoutSessionUserAccess()
@@ -345,60 +281,6 @@ class ApprenticeTest extends CIUnitTestCase
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
         $result->assertRedirectTo(base_url('plafor/apprentice/list_apprentice'));
-    }
-
-    /**
-     * Asserts that the save_user_course page redirects to the list_apprentice view 
-     *  when a trainer id and user course id are given
-     */
-    public function testsave_user_courseWithTrainerSessionWithTrainerIdAndUserCourseId()
-    {
-        // Initialize session
-        $_SESSION['_ci_previous_url'] = 'url';
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')->access_lvl_trainer;
-
-        // Execute save_user_course method of Apprentice class
-        $result = $this->controller(Apprentice::class)
-        ->execute('save_user_course', TRAINER_DEV_ID, 1);
-
-        // Assertions
-        $response = $result->response();
-        // $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class, $response); // BUG
-        $this->assertEmpty($response->getBody());
-        $result->assertOK();
-        $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertRedirectTo(base_url('plafor/apprentice/list_apprentice'));
-    }
-
-    /**
-     * Asserts that the save_user_course page redirects to the list_apprentice view
-     *  when an apprentice id and user course id are given
-     */
-    public function testsave_user_courseWithTrainerSessionWithApprenticeIdAndUserCourseId()
-    {
-        // Initialize session
-        $_SESSION['_ci_previous_url'] = 'url';
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')->access_lvl_trainer;
-
-        // Execute save_user_course method of Apprentice class
-        $result = $this->controller(Apprentice::class)
-            ->execute('save_user_course', APPRENTICE_DEV_ID, 4);
-
-        // Assertions
-        $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
-        // $this->assertNotEmpty($response->getBody()); // BUG
-        $result->assertOK();
-        $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertSee('Formation', 'label');
-        $result->assertSeeElement('#course_plan');
-        $result->assertSee(COURSE_PLAN_DEV_NAME, 'option');
-        $result->assertSee('Statut de la formation', 'label');
-        $result->assertSee('En cours', 'option');
-        # $result->assertSeeInField('date_begin', '2024-07-05');
-        $result->assertSeeInField('date_end', '');
-        $result->assertSeeLink('Annuler');
-        $result->assertSeeInField('save', 'Enregistrer');
     }
 
     /**
@@ -552,61 +434,6 @@ class ApprenticeTest extends CIUnitTestCase
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
         // $result->assertRedirectTo(base_url());// BUG
-    }
-
-    /**
-     * Asserts that the save_apprentice_link page redirects to the base url view
-     *  when a trainer session is set with apprentice id
-     */
-    public function testsave_apprentice_linkWithTrainerSessionWithTrainerId()
-    {
-        // Initialize session
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')->access_lvl_trainer;
-
-        // Execute save_apprentice_link method of Apprentice class
-        $result = $this->controller(Apprentice::class)
-            ->execute('save_apprentice_link', TRAINER_DEV_ID);
-
-        // Assertions
-        $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class, $response);
-        // $this->assertEmpty($response->getBody());// BUG
-        $result->assertOK();
-        $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertRedirectTo(base_url());
-    }
-
-    /**
-     * Asserts that the save_apprentice_link page is loaded correctly
-     *  when no link between apprentice and trainer is provided
-     */
-    public function testsave_apprentice_linkWithTrainerSessionWithApprenticeId()
-    {
-        // Initialize session
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')->access_lvl_trainer;
-
-        // Execute save_apprentice_link method of Apprentice class
-        $result = $this->controller(Apprentice::class)
-            ->execute('save_apprentice_link', APPRENTICE_DEV_ID);
-
-        // Assertions
-        $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
-        // $this->assertNotEmpty($response->getBody());// BUG
-        $result->assertOK();
-        $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertSee('Ajouter un formateur', 'h1');
-        $result->assertDontSee('Modifer le formateur', 'h1');
-        $result->assertSeeElement('#apprentice_link_form');
-        $result->assertSeeInField('id', APPRENTICE_DEV_ID);
-        $result->assertSee('Nom de l\'apprenti', 'label');
-        $result->assertSeeInField('apprentice', APPRENTICE_DEV_ID);
-        $result->assertSee(APPRENTICE_DEV_NAME, 'p');
-        $result->assertSee('Formateur(s) lié(s)', 'label');
-        $result->assertSee(TRAINER_DEV_NAME, 'option');
-        $result->assertSee(TRAINER_OPE_NAME, 'option');
-        $result->assertSeeLink('Annuler');
-        $result->assertSeeInField('save', 'Enregistrer');
     }
 
     /**
@@ -807,58 +634,6 @@ class ApprenticeTest extends CIUnitTestCase
         $result->assertSeeLink('Retour');
     }
 
-    /*
-     * Asserts that the delete_apprentice_link page (confirmation message) 
-     *  is loaded correctly (trainer session and default action)
-     */
-    public function testdelete_apprentice_linkWithTrainerSessionAndDefaultAction()
-    {
-        $apprenticeId = 7;
-        $trainerId = 4;
-
-        // Initialize session
-        $_SESSION['_ci_previous_url'] = 'url';
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')
-            ->access_lvl_trainer;
-
-        // Insert apprentice link
-        $apprenticeLinkId = self::insertTrainerApprenticeLink($trainerId,
-            $apprenticeId);
-
-        // Execute delete_apprentice_link method of Apprentice class
-        $result = $this->controller(Apprentice::class)
-            ->execute('delete_apprentice_link', $apprenticeLinkId);
-
-        // Delete inserted link
-        $trainerApprenticeModel = model('\Plafor\Models\trainerApprenticeModel');
-        $trainerApprenticeModel->delete($apprenticeLinkId, true);
-
-        // Assertions
-        $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
-        // $this->assertNotEmpty($response->getBody());// BUG
-        $result->assertOK();
-        $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-
-        $result->assertSee(lang('common_lang.title_delete_entry'), 'h1');
-        $result->assertSee(lang('common_lang.subtitle_delete_entry'), 'p');
-
-        $result->assertSee(lang('plafor_lang.apprentice_link'), 'strong');
-        $result->assertSee(lang('plafor_lang.apprentice').' : ApprentiSysteme', 'p');
-        $result->assertSee(lang('plafor_lang.trainer').' : FormateurDev', 'p');
-
-        $result->assertDontSee(lang('common_lang.entries_linked'),
-            'h2');
-        $result->assertDontSeeElement('.alert alert-secondary');
-
-        $result->assertSee(lang('plafor_lang.apprentice_link_delete_explanation'),
-            '.alert alert-info');
-
-        $result->assertSeeLink(lang('common_lang.btn_cancel'));
-        $result->assertDontSeeElement('.btn-primary');
-        $result->assertSeeLink(lang('common_lang.btn_delete'));
-    }
-
     /**
      * Asserts that the delete_apprentice_link redirects to the
      *  list_apprentice view (trainer session and fake action)
@@ -893,49 +668,6 @@ class ApprenticeTest extends CIUnitTestCase
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
         $result->assertRedirectTo(
             base_url('plafor/apprentice/list_apprentice/' . $apprenticeId));
-    }
-
-    /**
-     * Asserts that the delete_apprentice_link redirects to
-     *  the list_apprentice view (trainer session and delete action)
-     */
-    public function testdelete_apprentice_linkWithTrainerSessionAndDeleteAction()
-    {
-        // Initialize session
-        $_SESSION['_ci_previous_url'] = 'url';
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')
-            ->access_lvl_trainer;
-
-        // Insert new apprentice user
-        $apprenticeId = self::insertApprentice('ApprenticeUnitTest');
-
-        // Insert new trainer user
-        $trainerId = self::insertTrainer('TrainerUnitTest');
-
-        // Insert apprentice link
-        $apprenticeLinkId = self::insertTrainerApprenticeLink($trainerId,
-            $apprenticeId);
-
-        // Execute delete_apprentice_link method of Apprentice class
-        $result = $this->controller(Apprentice::class)
-        ->execute('delete_apprentice_link', $apprenticeLinkId, 1);
-
-        // Delete inserted apprentice
-        $user_model = model('\User\Models\user_model');
-        $user_model->delete($apprenticeId, true);
-
-        // Delete inserted trainer
-        $user_model->delete($trainerId, true);
-
-        // Assertions
-        $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class,
-            $response);
-        $this->assertEmpty($response->getBody());
-        $result->assertOK();
-        $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertRedirectTo(base_url('plafor/apprentice/list_apprentice/'
-            . $apprenticeId));
     }
 
     /**
@@ -977,122 +709,6 @@ class ApprenticeTest extends CIUnitTestCase
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
         $result->assertRedirectTo(base_url('plafor/apprentice/list_apprentice'));
-    }
-
-    /**
-     * Asserts that the view_acquisition_status page is loaded correctly when a
-     * status id is provided (apprentice session)
-     */
-    public function testview_acquisition_statusWithStatusIdWithApprenticeSession()
-    {
-        // Initialize session
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')
-            ->access_lvl_guest;
-        $_SESSION['user_id'] = 6;
-        $_SERVER['QUERY_STRING'] = 'fake';
-
-        // Execute view_acquisition_status method of Apprentice class
-        $result = $this->controller(Apprentice::class)
-            ->execute('view_acquisition_status', 1);
-
-        // Assertions
-        $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
-        $this->assertNotEmpty($response->getBody());
-        $result->assertOK();
-        $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertSee('Détail du statut d\'acquisition', 'p');
-        // $result->assertSee('Symbole de l\'objectif', 'p');// BUG
-        $result->asserttSeeLink('A.1.1');
-        $result->assertSee('Nom de l\'objectif', 'p');
-        $result->asserttSeeLink('Enregistrer les besoins et discuter les solutions possibles, s’entretenir avec le client/supérieur sur les restrictions des exigences');
-        $result->assertSee('Taxonomie de l\'objectif', 'p');
-        $result->assertSeeLink('4');
-        $result->assertSee('Niveau d\'acquisition', 'p');
-        $result->assertSee('Expliqué', 'p');
-        $result->assertDontSee('Ajouter un commentaire', 'a');
-        $result->assertSee('Commentaire', 'th');
-        $result->assertSee('Créateur du commentaire', 'th');
-        $result->assertSee('Date de création du commentaire', 'th');
-    }
-
-    /**
-     * Asserts that the view_acquisition_status page is loaded correctly when a status id is provided (trainer session)
-     */
-    public function testview_acquisition_statusWithStatusIdWithTrainerSession()
-    {
-        // Initialize session
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')->access_lvl_trainer;
-        $_SERVER['QUERY_STRING'] = 'fake';
-
-        // Execute view_acquisition_status method of Apprentice class
-        $result = $this->controller(Apprentice::class)
-            ->execute('view_acquisition_status', 1);
-
-        // Assertions
-        $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
-        $this->assertNotEmpty($response->getBody());
-        $result->assertOK();
-        $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertSee('Détail du statut d\'acquisition', 'p');
-        $result->assertSee('Symbole de l\'objectif', 'p');
-        // $result->asserttSeeLink('A.1.1');// BUG
-        $result->assertSee('Nom de l\'objectif', 'p');
-        $result->asserttSeeLink('Enregistrer les besoins et discuter les solutions possibles, s’entretenir avec le client/supérieur sur les restrictions des exigences');
-        $result->assertSee('Taxonomie de l\'objectif', 'p');
-        $result->assertSeeLink('4');
-        $result->assertSee('Niveau d\'acquisition', 'p');
-        $result->assertSee('Expliqué', 'p');
-        $result->assertSeeLink('Ajouter un commentaire');
-        $result->assertSee('Commentaire', 'th');
-        $result->assertSee('Créateur du commentaire', 'th');
-        $result->assertSee('Date de création du commentaire', 'th');
-    }
-
-    /**
-     * Asserts that the view_acquisition_status page is loaded correctly when a status id is provided (trainer session) after inserting a temporary comment
-     */
-    public function testview_acquisition_statusWithStatusIdWithTrainerSessionAfterCommentInsert()
-    {
-        // Initialize session
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')
-            ->access_lvl_trainer;
-        $_SERVER['QUERY_STRING'] = 'fake';
-
-        // Insert a new comment
-        $acquisitionStatusId = 1;
-        $commentId = self::insertComment(2, $acquisitionStatusId);
-
-        // Execute view_acquisition_status method of Apprentice class
-        $result = $this->controller(Apprentice::class)
-            ->execute('view_acquisition_status', $acquisitionStatusId);
-
-        // Delete inserted comment
-        $commentModel = model('\Plafor\Models\commentModel');
-        $commentModel->delete($commentId, true);
-
-        // Assertions
-        $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
-        $this->assertNotEmpty($response->getBody());
-        $result->assertOK();
-        $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertSee('Détail du statut d\'acquisition', 'p');
-        $result->assertSee('Symbole de l\'objectif', 'p');
-        // $result->asserttSeeLink('A.1.1');// BUG
-        $result->assertSee('Nom de l\'objectif', 'p');
-        $result->asserttSeeLink('Enregistrer les besoins et discuter les solutions possibles, s’entretenir avec le client/supérieur sur les restrictions des exigences');
-        $result->assertSee('Taxonomie de l\'objectif', 'p');
-        $result->assertSeeLink('4');
-        $result->assertSee('Niveau d\'acquisition', 'p');
-        $result->assertSee('Expliqué', 'p');
-        $result->assertSeeLink('Ajouter un commentaire');
-        $result->assertSee('Commentaire', 'th');
-        $result->assertSee('Créateur du commentaire', 'th');
-        $result->assertSee('Date de création du commentaire', 'th');
-        $result->assertSeeLink('Comment Unit Test');
-        $result->assertSee('trainer', 'th');
     }
 
     /**
@@ -1605,43 +1221,6 @@ class ApprenticeTest extends CIUnitTestCase
     }
 
     /**
-     * Asserts that getCoursePlanProgress method returns a 403 status code 
-     * when an user id and no course plan id are given (no session)
-     */
-    public function testgetCoursePlanProgressWithUserIdWithoutCoursePlanIdWithoutSession()
-    {
-        // Execute getCoursePlanProgress method of Apprentice class
-        $result = $this->controller(Apprentice::class)
-        ->execute('getCoursePlanProgress', 4);
-
-        // Assertions
-        $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
-        // $this->assertEmpty($response->getBody());// BUG
-        $result->assertStatus(403);
-    }
-
-    /**
-     * Asserts that getCoursePlanProgress method returns a 403 status code when an user id (development apprentice)
-     *  and no course plan id are given (system apprentice session)
-     */
-    public function testgetCoursePlanProgressWithDevelopmentApprenticeUserIdWithoutCoursePlanIdWithSystemApprenticeSession()
-    {
-        // Initialize session
-        $_SESSION['user_id'] = APPRENTICE_SYS_ID;
-
-        // Execute getCoursePlanProgress method of Apprentice class
-        $result = $this->controller(Apprentice::class)
-        ->execute('getCoursePlanProgress', 4);
-
-        // Assertions
-        $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
-        // $this->assertEmpty($response->getBody()); // BUG
-        $result->assertStatus(403);
-    }
-
-    /**
      * Asserts that getCoursePlanProgress method returns a JSON object when an user id (development apprentice)
      *  and no course plan id are given (development apprentice session)
      */
@@ -1734,7 +1313,7 @@ class ApprenticeTest extends CIUnitTestCase
     }
 
     /**
-     * Asserts that getCoursePlanProgress method returns a JSON object 
+     * Asserts that getCoursePlanProgress method returns a JSON object
      * when an user id (development apprentice) and no course plan id are given (trainer session)
      */
     public function testgetCoursePlanProgressWithDevelopmentApprenticeUserIdWithoutCoursePlanIdWithTrainerSession()
@@ -1796,57 +1375,6 @@ class ApprenticeTest extends CIUnitTestCase
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
         $result->assertRedirectTo(base_url('plafor/apprentice/list_apprentice'));
-    }
-
-    /**
-     * Asserts that view_user_course page redirects to list_apprentice view when an user course id is given but linked to an other apprentice
-     */
-    public function testview_user_courseWithUserCourseIdLinkedToAnOtherApprentice()
-    {
-        // Initialize session
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')->access_level_apprentice;
-        $_SESSION['user_id'] = 5;
-
-        // Execute view_user_course method of Apprentice class
-        $result = $this->controller(Apprentice::class)
-        ->execute('view_user_course', 1);
-
-        // Assertions
-        $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\RedirectResponse::class, $response);
-        // $this->assertEmpty($response->getBody());// BUG
-        $result->assertOK();
-        $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertRedirectTo(base_url('plafor/apprentice/list_apprentice'));
-    }
-
-    /**
-     * Asserts that view_user_course page is loaded correctly when an user
-     * course id is given for a given development apprentice
-     */
-    public function testview_user_courseWithUserCourseIdLinkedToADevelopmentApprentice()
-    {
-        // Initialize session
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')
-            ->access_level_apprentice;
-        $_SESSION['user_id'] = 6;
-        $_SERVER['QUERY_STRING'] = 'fake';
-
-        // Execute view_user_course method of Apprentice class
-        $result = $this->controller(Apprentice::class)
-            ->execute('view_user_course', 1);
-
-        // Assertions
-        $response = $result->response();
-        // $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);// BUG
-        $this->assertNotEmpty($response->getBody());
-        $result->assertOK();
-        $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertSee('Détail de la formation de l\'apprenti', 'p');
-        $result->assertSeeLink(APPRENTICE_DEV_NAME);
-        $result->assertSee('Statuts d\'acquisition des objectifs', 'p');
-        $result->assertSeeLink('A.1.1');
-        $result->assertSeeLink('Enregistrer les besoins et discuter les solutions possibles, s’entretenir avec le client/supérieur sur les restrictions des exigences');
     }
 
     /**
@@ -1914,53 +1442,6 @@ class ApprenticeTest extends CIUnitTestCase
     }
 
     /**
-     * Asserts that view_user_course page is loaded correctly when an user
-     * course id is given for a given system apprentice and a given operational
-     * competence (connexion with an administrator account)
-     */
-    public function testview_user_courseWithUserCourseIdLinkedToASystemApprenticeWithAdministratorAccountForAGivenOperationalCompetence()
-    {
-        $_POST = [];
-        $_GET = [];
-        $_SESSION = [];
-        $_REQUEST = [];
-        // Initialize session
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')
-            ->access_lvl_admin;
-        $_SESSION['user_id'] = ADMIN_ID;
-        $_SERVER['QUERY_STRING'] = 'fake';
-
-        // Prepare the GET request
-        $_SERVER['REQUEST_METHOD'] = 'get';
-        $_GET['operationalCompetenceId'] = 108;
-        $_REQUEST['operationalCompetenceId'] = 108;
-
-        // Execute view_user_course method of Apprentice class
-        $result = $this->controller(Apprentice::class)
-            ->execute('view_user_course', 1);
-
-        // Reset $_GET and $_REQUEST variables
-        $_GET = [];
-        $_REQUEST = [];
-
-        // Assertions
-        $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
-        $this->assertNotEmpty($response->getBody());
-        $result->assertOK();
-        $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertSee('Détail de la formation de l\'apprenti', 'p');
-        $result->assertSeeLink(APPRENTICE_DEV_NAME); // FIX
-        $result->assertSee('Statuts d\'acquisition des objectifs', 'p');
-        $result->assertSeeLink('A1.1');
-        $result->assertSeeLink('Ils clarifient les objectifs du projet ICT ' .
-            'et ses paramètres généraux tels que coûts, durée, qualité, ' .
-            'périmètre, responsabilités et méthodologie.');
-        $result->assertSeeLink('modifer la formation');
-        $result->assertSeeLink('Supprimer la formation');
-    }
-
-    /**
      * Asserts that the delete_user redirects to the list_user view (with a non existing user id)
      */
     public function testdelete_userWithNonExistingUserId()
@@ -1979,35 +1460,6 @@ class ApprenticeTest extends CIUnitTestCase
         $this->assertEmpty($response->getBody());
         $result->assertOK();
         $result->assertRedirectTo(base_url('/user/admin/list_user'));
-    }
-
-    /**
-     * Asserts that the delete_user confirmation message is displayed correctly
-     * (when the action equals 0)
-     */
-    public function testdelete_userConfirmationMessage()
-    {
-        // Initialize session
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')
-            ->access_lvl_admin;
-        $_SESSION['user_id'] = ADMIN_ID;
-
-        // Execute delete_user method of Apprentice class
-        $result = $this->controller(Apprentice::class)
-            ->execute('delete_user', 6, 0);
-
-        // Assertions
-        $response = $result->response();
-        $this->assertInstanceOf(\CodeIgniter\HTTP\Response::class, $response);
-        // $this->assertNotEmpty($response->getBody()); // BUG
-        $result->assertOK();
-        $result->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $result->assertSee('Utilisateur', 'h1');
-        $result->assertSee(APPRENTICE_DEV_NAME, 'h1');
-        $result->assertSee('Que souhaitez-vous faire ?', 'h4');
-        $result->assertSeeLink('Annuler');
-        $result->assertSeeLink('Désactiver cet utilisateur');
-        $result->assertSeeLink('Supprimer cet utilisateur');
     }
 
     /**

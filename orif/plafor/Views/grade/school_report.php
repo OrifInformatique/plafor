@@ -369,7 +369,7 @@ else
                 <tfoot>
                     <tr>
                         <td colspan="2" class="text-right">
-                            <?= lang('Grades.weighting')?> : <?= $modules['school']['weighting'] ?>
+                            <?= lang('Grades.weighting')?> : <?= $modules['school']['weighting'].'%' ?>
                         </td>
 
                         <td>
@@ -411,7 +411,7 @@ else
                 <tfoot>
                     <tr>
                         <td colspan="2" class="text-right">
-                            <?= lang('Grades.weighting')?> : <?= $modules['non-school']['weighting'] ?>
+                            <?= lang('Grades.weighting')?> : <?= $modules['non-school']['weighting'].'%' ?>
                         </td>
 
                         <td>
@@ -430,7 +430,7 @@ else
             <table class="table table-borderless">
                 <tr>
                     <td class="text-right">
-                        <?= lang('Grades.weighting')?> : <?= $modules['weighting'] ?>
+                        <?= lang('Grades.weighting')?> : <?= $modules['weighting'].'%' ?>
                     </td>
 
                     <td>
@@ -505,7 +505,7 @@ else
                     <tbody>
                         <?php foreach($cbe['subjects'] as $cbe_subject): ?>
                             <tr>
-                                <td><?= $cbe_subject['name'] ?> (<?= $cbe_subject['weighting'] ?>)</td>
+                                <td><?= $cbe_subject['name'] ?></td>
 
                                 <?php foreach($cbe_subject['grades'] as $cbe_subject_grade): ?>
                                     <td class="text-center">
@@ -523,7 +523,7 @@ else
                     <tfoot>
                         <tr>
                             <td colspan="9" class="text-right">
-                                <?= lang('Grades.weighting')?> : <?= $cbe['weighting'] ?>
+                                <?= lang('Grades.weighting')?> : <?= $cbe['weighting'].'%' ?>
                             </td>
 
                             <td>
@@ -566,7 +566,7 @@ else
                     <tbody>
                         <?php foreach($ecg['subjects'] as $ecg_subject): ?>
                             <tr>
-                                <td><?= $ecg_subject['name'] ?> (<?= $ecg_subject['weighting'] ?>)</td>
+                                <td><?= $ecg_subject['name'] ?></td>
 
                                 <?php foreach($ecg_subject['grades'] as $ecg_subject_grade): ?>
                                     <td class="text-center">
@@ -584,7 +584,7 @@ else
                     <tfoot>
                         <tr>
                             <td colspan="9" class="text-right">
-                                <?= lang('Grades.weighting')?> : <?= $ecg['weighting'] ?>
+                                <?= lang('Grades.weighting')?> : <?= $ecg['weighting'].'%' ?>
                             </td>
 
                             <td>
