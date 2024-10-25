@@ -107,4 +107,12 @@ class Grade_HelperTest extends CIUnitTestCase
         $this->assertTrue(is_string($formatedId));
     }
 
+    public function testGetCoursePlanName(): void
+    {
+        helper('grade_helper');
+        $userCourseId = 101;
+        $name = getCoursePlanName($userCourseId);
+        $this->assertTrue(is_string($name));
+    }
+
 }

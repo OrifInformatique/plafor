@@ -158,3 +158,17 @@ function isGradeInCourse(int $userCourseId, int $gradeId): bool
     $isAuthorised = $courseIdOfGrade == $userCourseId;
     return $isAuthorised;
 }
+
+function getCoursePlanName(int $userCourseId): ?string
+{
+    $coursePlanModel = model('CoursePlanModel');
+    $coursePlanId = $coursePlanModel
+        ->getCoursePlanIdByUserCourse($userCourseId);
+    $coursePlan = $coursePlanModel
+        ->select('official_name')
+        ->withDeleted()
+        ->find($coursePlanId);
+    assert(!empty($coursePlan));
+    return $coursePlan['official_name'] ?? null;
+
+}

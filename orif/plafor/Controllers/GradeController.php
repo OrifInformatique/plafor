@@ -105,8 +105,7 @@ class GradeController extends BaseController
         $data['user_course_id'] = $userCourseId;
         $data["errors"] = $this->m_grade_model->errors();
         $data['apprentice'] = $this->getApprentice($userCourseId);
-        $data['course_plan'] = model('CoursePlanModel')
-            ->getCoursePlanIdByUserCourse($userCourseId);
+        $data['course_plan'] = $this->getCoursePlanName($userCourseId);
 
         $data['subject_and_domains_list'] = $this
             ->getsubjectAndModulesList($userCourseId, $selectedDomain);
@@ -152,15 +151,19 @@ class GradeController extends BaseController
         $data['errors'] = $this->m_grade_model->errors();
         $data['grade_id'] ??= $gradeId;
         $data['apprentice'] = $this->getApprentice($userCourseId);
-        $data['course_plan'] = model('CoursePlanModel')
-            ->getCoursePlanIdByUserCourse($userCourseId);
-
+        $data['course_plan'] = $this->getCoursePlanName($userCourseId);
         $data['subject_and_domains_list'] = $this
             ->getsubjectAndModulesList($userCourseId);
 
         $data['selected_entry'] = $data['subject'];
         $data['is_exam_made_in_school'] = $grade['is_school'];
         return $this->display_view("\Plafor/grade/save", $data);
+    }
+
+    private function getCoursePlanName(int $userCourseId): ?string
+    {
+        helper('grade_helper');
+        return getCoursePlanName($userCourseId);
     }
 
     private function isGradeInCourse(int $userCourseId, int $gradeId): bool
