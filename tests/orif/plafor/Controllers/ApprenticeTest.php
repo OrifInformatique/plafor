@@ -254,7 +254,7 @@ class ApprenticeTest extends CIUnitTestCase
         // Initialize session for a development trainer
         $_SESSION['logged_in'] = true;
         $_SESSION['user_access'] = config('\User\Config\UserConfig')->access_lvl_trainer;
-        $_SESSION['user_id'] = APPRENTICE_DEV_ID;
+        $_SESSION['user_id'] = TRAINER_DEV_ID;
 
         // Execute view_apprentice method of Apprentice class
         $result = $this->controller(Apprentice::class)

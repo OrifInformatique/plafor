@@ -71,11 +71,11 @@ const LINK_OPE_ID = 102;
 const FAKE_LINK_ID = 999;
 
 // Course plans
-const COURSE_PLAN_DEV_ID = 6;
-const COURSE_PLAN_DEV_NAME = "Informaticienne / Informaticien avec CFC, orientation développement d'applications";
+const COURSE_PLAN_OPE_ID = 4;
+const COURSE_PLAN_OPE_NAME = "Opératrice en informatique / Opérateur en informatique avec CFC";
 
 const COURSE_PLAN_SYS_ID = 5;
 const COURSE_PLAN_SYS_NAME = "Informaticienne / Informaticien avec CFC, orientation exploitation et infrastructure";
 
-const COURSE_PLAN_OPE_ID = 4;
-const COURSE_PLAN_OPE_NAME = "Opératrice en informatique / Opérateur en informatique avec CFC";
+const COURSE_PLAN_DEV_ID = 6;
+const COURSE_PLAN_DEV_NAME = "Informaticienne / Informaticien avec CFC, orientation développement d'applications";

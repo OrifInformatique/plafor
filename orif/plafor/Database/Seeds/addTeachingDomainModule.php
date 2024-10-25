@@ -18,7 +18,7 @@ class addTeachingDomainModule extends Seeder {
                 "fk_teaching_domain" => 7,
                 "fk_teaching_module" => [1,2,3,4,5,6,7,17,18,19,
                                         22,24,25,27,28,30,31,32,33,34,
-                                        35,36,37,38,49,50,51,52,53,54,
+                                        35,36,37,38,43,49,50,51,52,53,54,
                                         55,56,57,58,59,60,62],
             ],
             [ // 3    => Infrastructure
@@ -31,7 +31,7 @@ class addTeachingDomainModule extends Seeder {
             [ // 11   => Operator
                 "fk_teaching_domain" => 11,
                 "fk_teaching_module" => [6,7,8,9,10,29,39,40,41,42,
-                                        43,44,45,47,48,60,61],
+                                        44,45,47,48,60,61],
             ],
         ];
 
