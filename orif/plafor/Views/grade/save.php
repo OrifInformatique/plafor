@@ -90,12 +90,12 @@ $subject_or_module_label = lang('Grades.subject').' '.lang('Grades.or').' '.strt
 <div class="container">
     <!-- Page title -->
     <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
-
-    <?= form_open(base_url('plafor/grade/saveGrade/'.$grade_id),
-        [], ['user_course_id' => $user_course_id]) ?>
+    <?= form_open(url_to('updateGrade', $user_course_id, $grade_id), [],
+        ['user_course_id' => $user_course_id]) ?>
 
         <!-- Form errors -->
         <?= view('\Plafor/common/form_errors', ['errors' => $errors]) ?>
+
 
         <div class="row">
             <div class="col form-group">
@@ -156,15 +156,15 @@ $subject_or_module_label = lang('Grades.subject').' '.lang('Grades.or').' '.strt
         <div class="row">
             <?php if($grade_id > 0): ?>
                 <div class="col">
-                    <a href="<?= base_url('plafor/grade/deleteGrade/'.$grade_id) ?>" class="btn btn-danger">
+                    <?php // 2 is hard deleted ?>
+                    <a href="<?= url_to('deleteGrade', 2, $grade_id) ?>" class="btn btn-danger">
                         <?= lang('common_lang.btn_delete') ?>
                     </a>
                 </div>
             <?php endif ?>
 
             <div class="col text-right">
-                <!-- TODO : Append $apprentice['id'] in cancel button base_url() link -->
-                <a class="btn btn-secondary" href="<?= base_url('plafor/apprentice/view_apprentice/') ?>">
+                <a class="btn btn-secondary" href="<?= base_url('plafor/apprentice/view_apprentice/'. $apprentice['id'] . '/' . $user_course_id) ?>">
                     <?= lang('common_lang.btn_cancel') ?>
                 </a>
 

@@ -62,7 +62,7 @@ $offical_name_max_length = config('\Plafor\Config\PlaforConfig')->OFFICIAL_NAME_
                     ['class' => 'form-label']) ?>
 
                 <?= form_input('formation_number', $course_plan['formation_number'] ?? '',
-                    ['class' => 'form-control', 'max' => $formation_number_max], 'number') ?>
+                    ['class' => 'form-control', 'id' => 'formation_number', 'max' => $formation_number_max], 'number') ?>
             </div>
 
             <div class="col-sm-12 form-group">
@@ -70,7 +70,7 @@ $offical_name_max_length = config('\Plafor\Config\PlaforConfig')->OFFICIAL_NAME_
                     ['class' => 'form-label']) ?>
 
                 <?= form_input('official_name', $course_plan['official_name'] ?? '',
-                    ['class' => 'form-control', 'maxlength' => $offical_name_max_length]) ?>
+                    ['class' => 'form-control', 'id' => 'official_name', 'maxlength' => $offical_name_max_length]) ?>
             </div>
 
             <div class="col-sm-12 form-group">
@@ -78,7 +78,7 @@ $offical_name_max_length = config('\Plafor\Config\PlaforConfig')->OFFICIAL_NAME_
                     ['class' => 'form-label']) ?>
 
                 <?= form_input('date_begin', $course_plan['date_begin'] ?? '',
-                    ['class' => 'form-control'], 'date') ?>
+                    ['class' => 'form-control', 'id' => 'date_begin',], 'date') ?>
             </div>
         </div>
 

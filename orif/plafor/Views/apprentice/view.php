@@ -60,7 +60,13 @@ helper("AccessPermissions_helper")
 ?>
 
 <div class="container">
-    <?= view('\Plafor\templates\navigator', ['title' => lang('plafor_lang.title_view_apprentice')]) ?>
+    <?php if (!is_null($user_course_id)): ?>
+        <?php // do no show the view for just update session variable ?>
+        <?php view('\Plafor\templates\navigator') ?>
+    <?php endif ?>
+    <a id="navigator-back" class="btn btn-outline-primary mr-2 bi bi-arrow-left-circle" href="<?= base_url('plafor/apprentice/list_apprentice')?>">
+        <?= lang("common_lang.btn_back") ?>
+    </a>
 
     <?php
 

@@ -330,7 +330,7 @@ class GradeModel extends Model
      * @return float The weighted average grade.
      */
     public function getWeightedModuleAverage(int $userCourseId,
-        ?callable $roundMethod = null): float
+        ?callable $roundMethod = null): ?float
     {
         // Define the weights for school and inter-enterprise modules
         $schoolWeight = config('\Plafor\Config\PlaforConfig')->SCHOOL_WEIGHT;
@@ -344,8 +344,11 @@ class GradeModel extends Model
             ->getApprenticeModulesGrades($userCourseId, false);
         $externAverage = $this->getAverageFromArray($externGrades);
         // Calculate the weighted average grade
-        $average = $schoolWeight * $schoolAverage + $externWeight
-            * $externAverage;
+        $schoolWeight = empty($schoolGrades) ? 0 : $schoolWeight;
+        $externWeight = empty($externGrades) ? 0 : $externWeight;
+        if (($schoolWeight + $externWeight) == 0) return null;
+        $average = ($schoolWeight * $schoolAverage + $externWeight
+            * $externAverage) / ($schoolWeight + $externWeight);
         // potenration between epsic module and interentreprise module
         $roundMethod = $roundMethod ?? [$this, 'roundOneDecimalPoint'];
         return $roundMethod($average);
@@ -393,39 +396,64 @@ class GradeModel extends Model
      * @return float The overall average grade of the apprentice, rounded to
      * one decimal point.
      */
-    public function getApprenticeAverage(int $userCourseId): float
+    public function getApprenticeAverage(int $userCourseId): ?float
     {
         // get module grade
-        $gradeModel = model('GradeModel');
-        $moduleGrade = $gradeModel
-            ->getWeightedModuleAverage($userCourseId);
+        $moduleGrade = $this->getWeightedModuleAverage($userCourseId);
+
         // get other module
         $teachingDomainModel = model('TeachingDomainModel');
+
         $domainIds = $teachingDomainModel
             ->getTeachingDomainIdByUserCourse($userCourseId);
+
         // [0] => [id, weight]
         $domainIdsAndWeights = array_map(
             function($domainId) use ($teachingDomainModel)
-        {
-            $domainWeightRaw = $teachingDomainModel->select('domain_weight')
-                                ->find($domainId);
-            $domainWeight = $domainWeightRaw['domain_weight'] ?? 0;
-            return [$domainId, $domainWeight];
-        }, $domainIds);
+            {
+                $domainWeightRaw = $teachingDomainModel
+                    ->select('domain_weight')
+                    ->find($domainId);
+                $domainWeight = $domainWeightRaw['domain_weight'] ?? 0;
+                return [$domainId, $domainWeight];
+            }, $domainIds);
+
         // [0] => [grade, weight]
         $domainGradesAndWeight = array_map(
             function($domainIdAndWeight) use ($userCourseId)
-        {
-            $grade = $this->getApprenticeDomainAverageNotModule($userCourseId,
-                $domainIdAndWeight[0]);
-            return [$grade, $domainIdAndWeight[1]];
-        }, $domainIdsAndWeights);
-        $sum = array_reduce($domainGradesAndWeight, fn($sum, $gradeAndWeight)
+            {
+                $grade = $this
+                    ->getApprenticeDomainAverageNotModule($userCourseId,
+                        $domainIdAndWeight[0]);
+                return [$grade, $domainIdAndWeight[1]];
+            }, $domainIdsAndWeights);
+
+        $domainGradesAndWeightWithoutZeroGrade = array_filter(
+            $domainGradesAndWeight, fn($row) => $row[0] != 0);
+
+        $domainGradeSum = array_reduce($domainGradesAndWeightWithoutZeroGrade,
+            fn($sum, $gradeAndWeight)
             => $sum + ($gradeAndWeight[0] ?? 0) * $gradeAndWeight[1], 0);
 
+        $domainWeightsSum = array_reduce(
+            $domainGradesAndWeightWithoutZeroGrade,
+            fn($sum, $gradeAndWeight) => $sum +  $gradeAndWeight[1], 0); 
+
         $ITWeight = $teachingDomainModel->getITDomainWeight($userCourseId);
-        $sumWithModule = $sum + $moduleGrade * $ITWeight;
-        return $this->roundOneDecimalPoint($sumWithModule);
+
+        $maybeNullITWeight = $moduleGrade == 0 ? 0 : $ITWeight;
+
+        $weightModuleGrade = $moduleGrade * $maybeNullITWeight;
+
+        $sumWithModule = $domainGradeSum + $weightModuleGrade;
+
+        $sumWeight = $domainWeightsSum + $maybeNullITWeight;
+
+        if ($sumWeight == 0) return null;
+
+        $weightedExistSum = $sumWithModule / $sumWeight;
+
+        return $this->roundOneDecimalPoint($weightedExistSum);
     }
 
 
@@ -470,10 +498,9 @@ class GradeModel extends Model
         $schoolWeight = config('\Plafor\Config\PlaforConfig')->SCHOOL_WEIGHT;
         $externWeight = config('\Plafor\Config\PlaforConfig')->EXTERN_WEIGHT;
 
-        $gradeModel = model('GradeModel');
-        $schoolModules = $gradeModel
+        $schoolModules = $this
             ->getApprenticeModulesGradesForView($userCourseId, isSchool: true);
-        $noSchoolModules = $gradeModel
+        $noSchoolModules = $this
             ->getApprenticeModulesGradesForView($userCourseId,
                 isSchool: false);
         $modules['school']['modules'] = $schoolModules;
@@ -664,7 +691,6 @@ class GradeModel extends Model
         $data['weighting'] = intval($domain['domain_weight'] * 100);
         $data['average'] = $this->getApprenticeDomainAverageNotModule(
             $userCourseId, $domain['id']);
-        d($data);
         return $this->putDefaultDataForDomainGradeView($data);
     }
 
@@ -754,7 +780,6 @@ class GradeModel extends Model
             ->allowCallbacks(false)
             ->orderBy('date')
             ->findAll();
-        d($subject, $subjectId, $userCourseId);
         $subject['weighting'] = intval($subject['weighting'] * 100);
         $subject['average'] = $this->getApprenticeSubjectAverage($userCourseId,
             $subjectId);

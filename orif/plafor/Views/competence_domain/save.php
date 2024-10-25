@@ -18,17 +18,11 @@
  *
  * @param string $title Page title.
  *
- * @param int $competence_domain_id ID of the competence domain.
- *
  * @param ?array $competence_domain Existing competence domain.
  * All fields from table.
  * For entry update.
  *
- * @param array $course_plans List of course plans.
- * Array of key-values where keys are course plans IDs and values are course plans official names.
- * For select options.
- *
- * @param int $parent_course_plan_id ID of the course plan.
+ * @param array $parent_course_plan Parent course plan.
  *
  * @param ?array $errors comp_domain_model errors.
  *
@@ -45,10 +39,10 @@
  *
  * @param int $id ID of the competence domain.
  *
+ * @param int $parent_course_plan_id ID of the parent course plan.
+ *
  * @param string $type Type of the entry.
  * For plafor validation rules.
- *
- * @param int $course_plan Parent course plan, stored as course plan ID.
  *
  * @param string $symbol Symbol of the competence domain.
  *
@@ -67,19 +61,19 @@ $name_max_length   = config('\Plafor\Config\PlaforConfig')->COMPETENCE_DOMAIN_NA
     <!-- Page title -->
     <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
 
-    <?= form_open(base_url('plafor/courseplan/save_competence_domain/'.$parent_course_plan_id.'/'.$competence_domain["id"]), null,
-        ['id' => $competence_domain['id'] ?? 0, 'type' => 'competence_domain']) ?>
+    <?= form_open(base_url('plafor/courseplan/save_competence_domain/'.$parent_course_plan["id"].'/'.($competence_domain["id"] ?? 0)), null,
+        ['id' => $competence_domain['id'] ?? 0, 'parent_course_plan_id' => $parent_course_plan["id"], 'type' => 'competence_domain']) ?>
 
         <!-- Form errors -->
         <?= view('\Plafor/common/form_errors', ['errors' => $errors]) ?>
 
         <div class="row">
             <div class="col-sm-12 form-group">
-                <?= form_label(lang('plafor_lang.field_competence_domain_course_plan'), 'course_plan',
+                <?= form_label(lang('plafor_lang.field_competence_domain_course_plan'), 'parent_course_plan',
                     ['class' => 'form-label']) ?>
 
-                <?= form_dropdown('course_plan', $course_plans, $parent_course_plan_id ?? '',
-                    ['class' => 'form-control']) ?>
+                <?= form_input('parent_course_plan', $parent_course_plan["official_name"] ?? '',
+                    ['class' => 'form-control', 'id' => 'parent_course_plan', 'disabled' => true]) ?>
             </div>
 
             <div class="col-sm-12 form-group">
@@ -87,7 +81,7 @@ $name_max_length   = config('\Plafor\Config\PlaforConfig')->COMPETENCE_DOMAIN_NA
                     ['class' => 'form-label']) ?>
 
                 <?= form_input('symbol', $competence_domain['symbol'] ?? '',
-                    ['class' => 'form-control', 'maxlength' => $symbol_max_length]) ?>
+                    ['class' => 'form-control', 'id' => 'competence_domain_symbol', 'maxlength' => $symbol_max_length]) ?>
             </div>
 
             <div class="col-sm-12 form-group">
@@ -95,14 +89,13 @@ $name_max_length   = config('\Plafor\Config\PlaforConfig')->COMPETENCE_DOMAIN_NA
                     ['class' => 'form-label']) ?>
 
                 <?= form_input('name', $competence_domain['name'] ?? '',
-                    ['class' => 'form-control', 'maxlength' => $name_max_length]) ?>
+                    ['class' => 'form-control', 'id' => 'competence_domain_name', 'maxlength' => $name_max_length]) ?>
             </div>
         </div>
 
         <div class="row">
             <div class="col text-right">
-                <a class="btn btn-secondary" href="<?= base_url('plafor/courseplan/view_course_plan/'
-                    .($parent_course_plan_id != null ? $parent_course_plan_id : '')) ?>">
+                <a class="btn btn-secondary" href="<?= base_url('plafor/courseplan/view_course_plan/'.$parent_course_plan["id"]) ?>">
                     <?= lang('common_lang.btn_cancel') ?>
                 </a>
 

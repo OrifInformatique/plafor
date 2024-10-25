@@ -334,7 +334,7 @@ else
             <p class="bg-secondary"><?= lang('Grades.modules') ?></p>
 
             <div class="mb-3">
-                <a href="<?= base_url('plafor/grade/saveGrade') ?>" class="btn btn-primary">
+                <a href="<?= url_to('insertGradeWithPreselect', $user_course_id, 0, 'modules' ) ?>" class="btn btn-primary">
                     <?= lang('Grades.add_grade') ?>
                 </a>
             </div>
@@ -358,7 +358,7 @@ else
                             <td><?= $school_module['number'] ?></td>
                             <td><?= $school_module['name'] ?></td>
                             <td>
-                                <a href="<?= base_url('plafor/grade/saveGrade/'.$school_module['grade']['id']) ?>">
+                                <a href="<?= url_to('updateGrade', $user_course_id, $school_module['grade']['id'])  ?>">
                                     <?= $school_module['grade']['value'] ?? '' ?>
                                 </a>
                             </td>
@@ -400,7 +400,7 @@ else
                             <td><?= $non_school_module['number'] ?></td>
                             <td><?= $non_school_module['name'] ?></td>
                             <td>
-                                <a href="<?= base_url('plafor/grade/saveGrade/'.$non_school_module['grade']['id']) ?>">
+                                <a href="<?= url_to('updateGrade', $user_course_id, $non_school_module['grade']['id']) ?>">
                                     <?= $non_school_module['grade']['value'] ?? '' ?>
                                 </a>
                             </td>
@@ -447,7 +447,7 @@ else
             <p class="bg-secondary"><?= lang('Grades.TPI_long') ?></p>
 
             <div class="mb-3">
-                <a href="<?= base_url('plafor/grade/saveGrade') ?>" class="btn btn-primary">
+                <a href="<?= url_to('insertGradeWithPreselect', $user_course_id, 0, 'tpi' ) ?>" class="btn btn-primary">
                     <?= lang('Grades.add_grade') ?>
                 </a>
             </div>
@@ -466,7 +466,7 @@ else
 
                         <td>
                             <strong>
-                                <a href="<?= base_url('plafor/grade/saveGrade/'.$tpi_grade['id']) ?>">
+                                <a href="<?= url_to('updateGrade', $user_course_id, $tpi_grade['id']) ?>">
                                     <?= $tpi_grade['value'] ?>
                                 </a>
                             </strong>
@@ -482,7 +482,7 @@ else
                 <p class="bg-secondary"><?= lang('Grades.CBE_long') ?></p>
 
                 <div class="mb-3">
-                    <a href="<?= base_url('plafor/grade/saveGrade') ?>" class="btn btn-primary">
+                <a href="<?= url_to('insertGradeWithPreselect', $user_course_id, 0, 'cbe' ) ?>" class="btn btn-primary">
                         <?= lang('Grades.add_grade') ?>
                     </a>
                 </div>
@@ -509,7 +509,7 @@ else
 
                                 <?php foreach($cbe_subject['grades'] as $cbe_subject_grade): ?>
                                     <td class="text-center">
-                                        <a href="<?= base_url('plafor/grade/saveGrade/'.$cbe_subject_grade['id']) ?>">
+                                        <a href="<?= url_to('updateGrade', $user_course_id, $cbe_subject_grade['id']) ?>">
                                             <?= $cbe_subject_grade['value'] ?? '' ?>
                                         </a>
                                     </td>
@@ -543,7 +543,7 @@ else
                 <p class="bg-secondary"><?= lang('Grades.ECG_long') ?></p>
 
                 <div class="mb-3">
-                    <a href="<?= base_url('plafor/grade/saveGrade') ?>" class="btn btn-primary">
+                <a href="<?= url_to('insertGradeWithPreselect', $user_course_id, 0, 'ecg' ) ?>" class="btn btn-primary">
                         <?= lang('Grades.add_grade') ?>
                     </a>
                 </div>
@@ -570,7 +570,7 @@ else
 
                                 <?php foreach($ecg_subject['grades'] as $ecg_subject_grade): ?>
                                     <td class="text-center">
-                                        <a href="<?= base_url('plafor/grade/saveGrade/'.$ecg_subject_grade['id']) ?>">
+                                        <a href="<?= url_to('updateGrade', $user_course_id, $ecg_subject_grade['id']) ?>">
                                             <?= $ecg_subject_grade['value'] ?? '' ?>
                                         </a>
                                     </td>

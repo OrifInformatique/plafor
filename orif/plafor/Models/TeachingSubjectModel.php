@@ -114,12 +114,12 @@ class TeachingSubjectModel extends Model
         return $data;
     }
 
-    public function getTeachingSubjectIdByDomain(int $idDomain): array
+    public function getTeachingSubjectIdByDomain(int $domainId): array
     {
         $rawIds = $this->select('teaching_subject.id')
             ->join('teaching_domain', 'teaching_domain.id = '
             . 'teaching_subject.fk_teaching_domain', 'left')
-            ->where('teaching_domain.id', $idDomain)
+            ->where('teaching_domain.id', $domainId)
             ->allowCallbacks(false)
             ->find();
         $ids = array_map(fn($record) => $record['id'], $rawIds);

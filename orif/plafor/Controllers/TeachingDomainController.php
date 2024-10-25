@@ -744,7 +744,9 @@ class TeachingDomainController extends \App\Controllers\BaseController
             if (!hasCurrentUserAdminAccess())
                 return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
 
-            if (empty($this->m_teaching_domain_model->withDeleted()->find($domain_id)))
+            $parent_domain = $this->m_teaching_domain_model->withDeleted()->find($domain_id);
+
+            if (empty($parent_domain))
                 return redirect()->to(previous_url());
 
             if(count($_POST) > 0)
@@ -796,9 +798,8 @@ class TeachingDomainController extends \App\Controllers\BaseController
 
             $data_to_view = [
                 "modules"               => $list_all_modules,
-                "domain_id"             => $domain_id,
-                "parent_course_plan_id" => $this->m_teaching_domain_model->find($domain_id)["fk_course_plan"],
-                "errors"                => $this->m_teaching_module_model->errors()
+                "parent_domain"         => $parent_domain,
+                "parent_course_plan_id" => $this->m_teaching_domain_model->find($domain_id)["fk_course_plan"]
             ];
 
             return $this->display_view("\Plafor/module/link", $data_to_view);
