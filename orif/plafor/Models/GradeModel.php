@@ -374,8 +374,8 @@ class GradeModel extends Model
         $subjectIds = $subjectModel
             ->getTeachingSubjectIdByDomain($domainId);
         $subjectAverages = array_map(fn($id) =>
-            $this->getApprenticeSubjectAverage($userCourseId, $id, fn($r) =>
-            $r), $subjectIds);
+            $this->getApprenticeSubjectAverage($userCourseId, $id),
+            $subjectIds);
         $subjectAveragesWithoutNull = array_filter($subjectAverages,
             fn($average) => !is_null($average));
         if (count($subjectAveragesWithoutNull) === 0) return null;
