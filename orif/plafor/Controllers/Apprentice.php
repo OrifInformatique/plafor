@@ -172,8 +172,8 @@ class Apprentice extends \App\Controllers\BaseController
      * Displays the details of an apprentice.
      *
      * @param int $apprentice_id ID of the apprentice.
-     * // TODO: Get the user_course inside the URL
-     * // TODO: Change the user_course ID whith the drop down menu (JS)
+     *
+     * @param int $user_course_id ID of the user course.
      *
      * @return string
      *

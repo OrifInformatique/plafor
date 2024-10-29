@@ -806,6 +806,4 @@ class GradeModel extends Model
             [$teachingDomainModel, 'getEcgDomain']);
     }
 
-
-
 }
