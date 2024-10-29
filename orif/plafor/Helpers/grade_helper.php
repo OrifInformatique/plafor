@@ -9,7 +9,9 @@ function getSubjectsAndModulesList(int $userCourseId,
         return $defaultList;
     }
     if ($selectedDomain === 'modules') {
-        $list[lang('Grades.modules')] = getModules($userCourseId);
+        $list[lang('Grades.modules')] = getModules($userCourseId,
+            toFiltered: true);
+
         return $list;
     }
     $domainModel = model('TeachingDomainModel');
@@ -67,19 +69,41 @@ function getSubjects(array $subjectIds): array
     return $formatedSubjects;
 }
 
-function getModules(int $userCourseId): array
+function hasGrade(int $userCourseId, int $moduleId): bool
+{
+    $gradeModel = model('GradeModel');
+    $grade = $gradeModel->select('id')
+          ->where('fk_user_course', $userCourseId)
+          ->where('fk_teaching_module', $moduleId)
+          ->allowCallbacks(false)
+          ->first();
+      return !empty($grade);
+}
+
+function getModules(int $userCourseId, bool $toFiltered = false): array
 {
     $domainModel = model('TeachingDomainModel');
+
     $domainIds = $domainModel
         ->getTeachingDomainIdByUserCourse($userCourseId);
+
     $moduleModel = model('TeachingModuleModel');
+
     $modulesPerDomain = array_map(
         fn($domainId) => $moduleModel->getByTeachingDomainId($domainId),
         $domainIds);
+
     $modules = array_reduce($modulesPerDomain,
         fn($carry, $row) => [...$carry, ...$row], []);
 
-    $formatedModules = array_reduce($modules, fn($carry, $row) =>
+    if ($toFiltered) {
+        $filteredModules = array_filter($modules,
+            fn($row) => !hasGrade($userCourseId, $row['id']));
+    } else {
+        $filteredModules = $modules;
+    }
+
+    $formatedModules = array_reduce($filteredModules, fn($carry, $row) =>
         [...$carry, 'm' . $row['id'] => $row['module_number'] . ' '
         .$row['official_name']], []);
 
