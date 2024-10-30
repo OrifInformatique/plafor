@@ -12,7 +12,7 @@ use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
 
 class RefreshCoursePlanModelTest extends CIUnitTestCase
-{
+{ 
     use DatabaseTestTrait;
 
     // For Migrations
@@ -27,17 +27,17 @@ class RefreshCoursePlanModelTest extends CIUnitTestCase
     // protected $seed     = 'apprenticeTestSeed';
 
      public function testGetCoursePlanIdByUserCourse()
-        {
-            $coursePlanModel = model('CoursePlanModel');
+    {
+        $coursePlanModel = model('CoursePlanModel');
 
-            $userCourseId = 101;
-            $expectedCoursePlanId = 6;
+        $userCourseId = 101;
+        $expectedCoursePlanId = 6;
 
-            $coursePlanId = $coursePlanModel
-                ->getCoursePlanIdByUserCourse($userCourseId);
+        $coursePlanId = $coursePlanModel
+            ->getCoursePlanIdByUserCourse($userCourseId);
 
-            $this->assertEquals($expectedCoursePlanId, $coursePlanId);
-        }
+        $this->assertEquals($expectedCoursePlanId, $coursePlanId);
+    }
 
     public function testGetCoursePlanIdByUserCourseNotFound()
     {
