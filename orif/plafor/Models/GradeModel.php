@@ -437,7 +437,7 @@ class GradeModel extends Model
 
         $domainWeightsSum = array_reduce(
             $domainGradesAndWeightWithoutZeroGrade,
-            fn($sum, $gradeAndWeight) => $sum +  $gradeAndWeight[1], 0); 
+            fn($sum, $gradeAndWeight) => $sum +  $gradeAndWeight[1], 0);
 
         $ITWeight = $teachingDomainModel->getITDomainWeight($userCourseId);
 
@@ -805,7 +805,5 @@ class GradeModel extends Model
         return $this->getDomainGradeForView($userCourseId,
             [$teachingDomainModel, 'getEcgDomain']);
     }
-
-
 
 }

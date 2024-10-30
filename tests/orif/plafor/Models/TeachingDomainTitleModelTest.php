@@ -5,7 +5,7 @@ namespace Plafor\Models;
 use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
 
-class  TeachingDomainTitleModelTest extends CIUnitTestCase
+class TeachingDomainTitleModelTest extends CIUnitTestCase
 {
     use DatabaseTestTrait;
 

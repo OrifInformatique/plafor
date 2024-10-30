@@ -172,8 +172,8 @@ class Apprentice extends \App\Controllers\BaseController
      * Displays the details of an apprentice.
      *
      * @param int $apprentice_id ID of the apprentice.
-     * // TODO: Get the user_course inside the URL
-     * // TODO: Change the user_course ID whith the drop down menu (JS)
+     *
+     * @param int $user_course_id ID of the user course.
      *
      * @return string
      *
@@ -242,7 +242,7 @@ class Apprentice extends \App\Controllers\BaseController
                                        ->getSchoolReportData($user_course_id);
             $data_to_view = array_merge($data_to_view,
                 $school_report_data);
-        } 
+        }
 
         return $this->display_view("Plafor\apprentice/view", $data_to_view);
     }
@@ -830,6 +830,7 @@ class Apprentice extends \App\Controllers\BaseController
             if(empty($this->acquisition_status_model->errors()))
                 $this->response->setStatusCode(200);
         }
+        return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
     }
 
 
@@ -1023,7 +1024,8 @@ class Apprentice extends \App\Controllers\BaseController
 
 
 
-    // BUG : The LoginFilter.php doesn't work. In consequence, this function is never called.
+    // TODO BUG : The LoginFilter.php doesn't work. In consequence, this function is never called.
+    // TODO fix apprentice and trainer variable
     /**
      * Deletes or deactivates a user depending on $action
      *
@@ -1041,6 +1043,10 @@ class Apprentice extends \App\Controllers\BaseController
      */
     public function delete_user(?int $action = null, int $user_id = 0, bool $confirm = false): string|RedirectResponse
     {
+        $apprentice['username'] = '';
+        $apprentice['id'] = '';
+        $trainer['username'] = '';
+        $trainer['id'] = '';
         if(!hasCurrentUserAdminAccess())
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
 

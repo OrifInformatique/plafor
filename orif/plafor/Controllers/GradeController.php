@@ -272,7 +272,7 @@ class GradeController extends BaseController
                         ]
                     ]
                 ],
-    
+
                 "cancel_btn_url" => url_to('updateGrade', $user_course['id'], $grade_id)
             ];
         }
