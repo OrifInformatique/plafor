@@ -9,15 +9,19 @@
  namespace Plafor\Controllers;
 
  use CodeIgniter\Test\CIUnitTestCase;
- use CodeIgniter\Test\ControllerTestTrait;
+ # use CodeIgniter\Test\ControllerTestTrait;
  use CodeIgniter\Test\DatabaseTestTrait;
+
+use CodeIgniter\Test\FeatureTestTrait;
 
  use Plafor\Models;
 
 class GradeControllerTest extends CIUnitTestCase
 {
-    use ControllerTestTrait;
+    # use ControllerTestTrait;
     use DatabaseTestTrait;
+
+    use FeatureTestTrait;
 
     protected $migrate     = true;
     protected $migrateOnce = false;
@@ -30,24 +34,22 @@ class GradeControllerTest extends CIUnitTestCase
 
     public function testSaveGrade()
     {
-        $_SESSION = [];
-        $_POST = [];
-        $_SESSION['logged_in'] = true;
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')
+
+        $session['logged_in'] = true;
+        $session['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_admin;
 
-        $result = $this->controller(GradeController::class)
-            ->execute('saveGrade', 1);
+        $result = $this->withSession($session)->get('plafor/grade/save/1');
     }
 
     public function testDeleteGrade()
     {
-        $_SESSION['logged_in'] = true;
-        $_SESSION['user_access'] = config('\User\Config\UserConfig')
+        $session['logged_in'] = true;
+        $session['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_admin;
 
-        $result = $this->controller(GradeController::class)
-            ->execute('deleteGrade', 0);
+        $result = $this->withSession($session)
+                       ->get('plafor/grade/delete/1/1');
     }
 
 }
