@@ -2,7 +2,6 @@
 /**
  * Unit tests GradeControllerTest
  *
- * @author      Orif (CaLa)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c), Orif (https://www.orif.ch)
  */
@@ -10,18 +9,19 @@
  namespace Plafor\Controllers;
 
  use CodeIgniter\Test\CIUnitTestCase;
- use CodeIgniter\Test\ControllerTestTrait;
+ # use CodeIgniter\Test\ControllerTestTrait;
  use CodeIgniter\Test\DatabaseTestTrait;
+
+use CodeIgniter\Test\FeatureTestTrait;
 
  use Plafor\Models;
 
- class GradeControllerTest extends CIUnitTestCase
+class GradeControllerTest extends CIUnitTestCase
 {
-    use ControllerTestTrait;
+    # use ControllerTestTrait;
     use DatabaseTestTrait;
 
-    const m_TRAINER_USER_TYPE = 2;
-    const m_APPRENTICE_USER_TYPE = 3;
+    use FeatureTestTrait;
 
     protected $migrate     = true;
     protected $migrateOnce = false;
@@ -30,7 +30,26 @@
 
     protected $seedOnce = false;
     protected $basePath = 'tests/_support/Database';
-    protected $seed     = 'GradeControllerTest';
+    protected $seed     = 'GradeControllerSeed';
 
+    public function testSaveGrade()
+    {
+
+        $session['logged_in'] = true;
+        $session['user_access'] = config('\User\Config\UserConfig')
+            ->access_lvl_admin;
+
+        $result = $this->withSession($session)->get('plafor/grade/save/1');
+    }
+
+    public function testDeleteGrade()
+    {
+        $session['logged_in'] = true;
+        $session['user_access'] = config('\User\Config\UserConfig')
+            ->access_lvl_admin;
+
+        $result = $this->withSession($session)
+                       ->get('plafor/grade/delete/1/1');
+    }
 
 }

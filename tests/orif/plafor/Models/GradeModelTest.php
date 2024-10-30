@@ -5,10 +5,7 @@ namespace Plafor\Models;
 use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
 
-// Temporary file for migrating GradeModelTest tests
-// Tests need to be updated to use IDs greater than 100
-// to avoid conflicts with data added by new seeds
-class GradeModelTest2 extends CIUnitTestCase
+class GradeModelTest extends CIUnitTestCase
 {
     use DatabaseTestTrait;
 
@@ -20,7 +17,7 @@ class GradeModelTest2 extends CIUnitTestCase
 
     // For Seeds
     protected $seedOnce = false;
-    protected $seed     = 'gradeModelTestSeed2';
+    protected $seed     = 'gradeModelTestSeed';
     protected $basePath = 'tests/_support/Database';
 
     /**
