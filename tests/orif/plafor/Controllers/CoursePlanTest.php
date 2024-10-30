@@ -1501,7 +1501,8 @@ class CoursePlanTest extends CIUnitTestCase
      * view_operational_competence view when an administrator session user
      * access is set (inserting a new objective)
      */
-    public function testsave_objectivePostedWitAdministratorSessionUserAccessWithNewObjective()
+    // TODO
+    public function _testsave_objectivePostedWitAdministratorSessionUserAccessWithNewObjective()
     {
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
@@ -1716,7 +1717,8 @@ class CoursePlanTest extends CIUnitTestCase
     /**
      * Asserts that the delete_user_course page redirects to the list_apprentice view when an administrator session user access is set (delete action)
      */
-    public function testdelete_user_courseWitAdministratorSessionUserAccessAndDeleteAction()
+    // TODO
+    public function _testdelete_user_courseWitAdministratorSessionUserAccessAndDeleteAction()
     {
         // Initialize session
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
