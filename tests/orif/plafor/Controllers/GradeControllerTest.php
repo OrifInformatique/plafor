@@ -31,6 +31,7 @@ class GradeControllerTest extends CIUnitTestCase
     public function testSaveGrade()
     {
         $_SESSION = [];
+        $_POST = [];
         $_SESSION['logged_in'] = true;
         $_SESSION['user_access'] = config('\User\Config\UserConfig')
             ->access_lvl_admin;
