@@ -830,6 +830,7 @@ class Apprentice extends \App\Controllers\BaseController
             if(empty($this->acquisition_status_model->errors()))
                 $this->response->setStatusCode(200);
         }
+        return redirect()->to(base_url('plafor/apprentice/list_apprentice'));
     }
 
 
@@ -1023,7 +1024,8 @@ class Apprentice extends \App\Controllers\BaseController
 
 
 
-    // BUG : The LoginFilter.php doesn't work. In consequence, this function is never called.
+    // TODO BUG : The LoginFilter.php doesn't work. In consequence, this function is never called.
+    // TODO fix apprentice and trainer variable
     /**
      * Deletes or deactivates a user depending on $action
      *
@@ -1041,6 +1043,10 @@ class Apprentice extends \App\Controllers\BaseController
      */
     public function delete_user(?int $action = null, int $user_id = 0, bool $confirm = false): string|RedirectResponse
     {
+        $apprentice['username'] = '';
+        $apprentice['id'] = '';
+        $trainer['username'] = '';
+        $trainer['id'] = '';
         if(!hasCurrentUserAdminAccess())
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
 
