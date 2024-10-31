@@ -124,4 +124,27 @@ class Grade_HelperTest extends CIUnitTestCase
         $this->assertTrue(is_bool($hasGrade));
     }
 
+    public function testAddSubject(): void
+    {
+        helper('grade_helper');
+        $list = addSubject(1, []);
+        $this->assertTrue(is_array($list));
+    }
+
+    public function testAddModule(): void
+    {
+        helper('grade_helper');
+        $list = addModule(1, []);
+        $this->assertTrue(is_array($list));
+    }
+
+    public function testAddHimself(): void
+    {
+        helper('grade_helper');
+        $list = addHimself(0, []);
+        $list = addHimself(1, []);
+        $list = addHimself(2, []);
+        $this->assertTrue(is_array($list));
+    }
+
 }
