@@ -42,12 +42,12 @@ class GradeController extends BaseController
 
         parent::initController($request, $response, $logger);
 
-        $this->m_grade_model              = model("GradeModel");
-        $this->m_teaching_module_model    = model("TeachingModuleModel");
-        $this->m_teaching_subject_model   = model("TeachingSubjectModel");
+        $this->m_grade_model = model("GradeModel");
+        $this->m_teaching_module_model = model("TeachingModuleModel");
+        $this->m_teaching_subject_model = model("TeachingSubjectModel");
         $this->m_trainer_apprentice_model = model("TrainerApprenticeModel");
-        $this->m_user_course_model        = model("UserCourseModel");
-        $this->m_user_model               = model("User_model");
+        $this->m_user_course_model = model("UserCourseModel");
+        $this->m_user_model = model("User_model");
 
         helper("AccessPermissions_helper");
     }
@@ -94,6 +94,12 @@ class GradeController extends BaseController
         return getSelectedEntry($userCourseId, $selectedDomain);
     }
 
+    private function addHimself(int $gradeId, array $formatedList): array
+    {
+        helper('grade_helper');
+        return addHimself($gradeId, $formatedList);
+
+    }
 
     private function saveGradeGet(int $userCourseId, int $gradeId,
         ?string $selectedDomain = null): string
@@ -106,16 +112,20 @@ class GradeController extends BaseController
         $data["errors"] = $this->m_grade_model->errors();
         $data['apprentice'] = $this->getApprentice($userCourseId);
         $data['course_plan'] = $this->getCoursePlanName($userCourseId);
-
-        $data['subject_and_domains_list'] = $this
+        $subjectAndModulesList = $this
             ->getsubjectAndModulesList($userCourseId, $selectedDomain);
+
+        $data['subject_and_domains_list'] = $this->addHimself($gradeId,
+            $subjectAndModulesList);
 
         $data['title'] = lang(
             $gradeId == 0 ? 'Grades.add_grade' : 'Grades.update_grade');
+
         if (!is_null($selectedDomain)) {
             // begin is not yet necessary
             $data['selected_entry'] = $this->getSelectedEntry($userCourseId,
                 $selectedDomain);
+
             if (is_null($data['selected_entry'])) {
                 unset($data['selected_entry']);
             }

@@ -4,7 +4,8 @@
 function getSubjectsAndModulesList(int $userCourseId,
     ?string $selectedDomain = null): array
 {
-    $defaultList = getSubjectsAndModulesListAll($userCourseId);
+    $defaultList = getSubjectsAndModulesListAll($userCourseId,
+        willBeFiltered: true);
     if (is_null($selectedDomain)) {
         return $defaultList;
     }
@@ -32,10 +33,15 @@ function getSubjectsAndModulesList(int $userCourseId,
     return getSubjects($filteredSubjectId);
 }
 
-function getSubjectsAndModulesListAll(int $userCourseId): array
+function getSubjectsAndModulesListAll(int $userCourseId,
+    ?bool $willBeFiltered = false): array
 {
-    $list[lang('Grades.subjects')] = getSubjectsAll($userCourseId);
-    $list[lang('Grades.modules')] = getModules($userCourseId);
+    $list[lang('Grades.subjects')] = getSubjectsAll($userCourseId,
+        $willBeFiltered);
+
+    $list[lang('Grades.modules')] = getModules($userCourseId,
+        $willBeFiltered);
+
     return $list;
 }
 
@@ -56,6 +62,8 @@ function getSubjectsAll(int $userCourseId, bool $willBeFiltered = false): array
         fn($carry, $row) => [...$carry, ...$row], []);
 
     if ($willBeFiltered) {
+        $filteredSubject = array_filter($subjectIds, fn($row) =>
+            !has8GradesOrMore($userCourseId, $row));
     } else {
         $filteredSubject = $subjectIds;
     }
@@ -216,4 +224,56 @@ function getCoursePlanName(int $userCourseId): ?string
     assert(!empty($coursePlan));
     return $coursePlan['official_name'] ?? null;
 
+}
+
+function addSubject(int $subjectId, array $subjects): array
+{
+    $subjectModel = model('TeachingSubjectModel');
+    $formatedSubjectId = 's'. $subjectId;
+    $subject = $subjectModel
+        ->select('name')
+        ->allowCallbacks(false)
+        ->find($subjectId);
+    assert(!empty($subject));
+    $subjectName = $subject['name'] ?? ' ';
+    $subjects[lang('Grades.subjects')][$formatedSubjectId]
+        = $subjectName;
+    return $subjects;
+
+}
+
+function addModule(int $moduleId, array $modules): array
+{
+    $moduleModel = model('TeachingModuleModel');
+    $formatedModuleId = 'm'. $moduleId;
+    $module = $moduleModel
+        ->select('official_name, module_number')
+        ->allowCallbacks(false)
+        ->withDeleted()
+        ->find($moduleId);
+    assert(!empty($module));
+    $formatedModuleId = 'm' . $moduleId;
+    $modules[lang('Grades.modules')][$formatedModuleId] =
+        "$module[module_number] $module[official_name]";
+    return $modules;
+}
+
+function addHimself(int $gradeId, array $formatedList): array
+{
+    if ($gradeId == 0) return $formatedList;
+    $gradeModel = model('GradeModel');
+    $grade = $gradeModel
+        ->select('fk_teaching_module, fk_teaching_subject')
+        ->allowCallbacks(false)
+        ->withDeleted()
+        ->find($gradeId);
+    assert(!empty($grade));
+    if (empty($grade)) return $formatedList;
+    assert(!is_null($grade['fk_teaching_module'])
+        || !is_null($grade['fk_teaching_subject']));
+    if (is_null($grade['fk_teaching_module'])) {
+        return addSubject($grade['fk_teaching_subject'], $formatedList);
+    } else {
+        return addModule($grade['fk_teaching_module'], $formatedList);
+    }
 }
