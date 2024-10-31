@@ -56,6 +56,8 @@ function getSubjectsAll(int $userCourseId, bool $willBeFiltered = false): array
         fn($carry, $row) => [...$carry, ...$row], []);
 
     if ($willBeFiltered) {
+        $filteredSubject = array_filter($subjectIds, fn($row) =>
+            !has8GradesOrMore($userCourseId, $row));
     } else {
         $filteredSubject = $subjectIds;
     }
