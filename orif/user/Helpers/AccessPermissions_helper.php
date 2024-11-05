@@ -159,7 +159,9 @@ function isCurrentUserTrainerOfApprentice(int $apprentice_id): bool
 {
     return isCurrentUserAdmin()
         || isCurrentUserTrainer()
-        && model("TrainerApprenticeModel")->isTrainerLinkedToApprentice($_SESSION["user_id"], $apprentice_id);
+        && model("TrainerApprenticeModel")
+            ->isTrainerLinkedToApprentice($_SESSION["user_id"],
+            $apprentice_id);
 }
 
 

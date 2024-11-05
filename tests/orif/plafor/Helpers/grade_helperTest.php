@@ -20,7 +20,7 @@ class Grade_HelperTest extends CIUnitTestCase
     protected $seed     = 'gradeModelTestSeed';
     protected $basePath = 'tests/_support/Database';
 
-    
+
     public function testGetModules(): void
     {
         helper('grade_helper');

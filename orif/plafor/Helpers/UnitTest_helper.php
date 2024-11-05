@@ -25,6 +25,7 @@ const ADMIN_HASHED_PW = '$2y$10$tUB5R1MGgbO.zD//WArnceTY8IgnFkVVsudIdHBxIrEXJ2z3
 const ADMIN_ARCHIVE = NULL;
 const ADMIN_CREATION_DATE = "2020-07-09 08:11:05";
 
+
 // Trainers
 const TRAINER_DEV_ID = 101;
 const TRAINER_DEV_NAME = "UT_FormateurDev";
@@ -79,3 +80,11 @@ const COURSE_PLAN_SYS_NAME = "Informaticienne / Informaticien avec CFC, orientat
 
 const COURSE_PLAN_DEV_ID = 6;
 const COURSE_PLAN_DEV_NAME = "Informaticienne / Informaticien avec CFC, orientation développement d'applications";
+
+// user course
+
+const USER_COUSE_DEV_ID = 101;
+
+// grade
+
+const APPRENTICE_DEV_ID_GRADE_ID = 101;

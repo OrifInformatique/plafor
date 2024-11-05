@@ -102,13 +102,18 @@ class TrainerApprenticeModel extends \CodeIgniter\Model
     /**
      * Check if the given trainer is linked to the given apprentice
      *
-     * @param  int $apprentice_id
-     * @param  int $trainer_id
+     * @param int $apprentice_id
+     * @param int $trainer_id
      *
      * @return bool
      */
-    public function isTrainerLinkedToApprentice(int $trainer_id, int $apprentice_id) : bool {
-        $list_apprentice[] = $this->getApprenticeIdsFromTrainer($trainer_id);
-        return in_array($apprentice_id, $list_apprentice);
+    public function isTrainerLinkedToApprentice(int $trainer_id,
+        int $apprentice_id) : bool
+    {
+        $link_id = $this->select('id')
+            ->where('fk_trainer', $trainer_id)
+            ->where('fk_apprentice', $apprentice_id)
+            ->first();
+        return !empty($link_id);
     }
 }
