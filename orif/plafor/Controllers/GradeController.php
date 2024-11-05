@@ -201,7 +201,11 @@ class GradeController extends BaseController
 
         $isAuthorised = $isTrainerOfUserOrIsHimself &&
             $this->isGradeInCourse($userCourseId, $gradeId);
-
+        if ($gradeId != 0 && isCurrentUserSelfApprentice($apprenticeId))
+        {
+            // if editing note and he is the apprentice
+            $isAuthorised = false;
+        }
         if (!$isAuthorised)
         {
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
