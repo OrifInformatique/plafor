@@ -80,3 +80,11 @@ const COURSE_PLAN_SYS_NAME = "Informaticienne / Informaticien avec CFC, orientat
 
 const COURSE_PLAN_DEV_ID = 6;
 const COURSE_PLAN_DEV_NAME = "Informaticienne / Informaticien avec CFC, orientation développement d'applications";
+
+// user course
+
+const USER_COUSE_DEV_ID = 101;
+
+// grade
+
+const APPRENTICE_DEV_ID_GRADE_ID = 101;

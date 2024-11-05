@@ -128,9 +128,10 @@ class GradeModel extends Model
         }
         if (isset($data['fk_user_course'])) {
             $userCouseModel = model('UserCourseModel');
-            $data['user_id'] = $userCouseModel
+            $userCouse = $userCouseModel
                 ->withDeleted()
-                ->find($data['fk_user_course'])['fk_user'];
+                ->find($data['fk_user_course']);
+            $data['user_id'] = $userCouse['fk_user'] ?? null;
         }
         return $data;
     }
