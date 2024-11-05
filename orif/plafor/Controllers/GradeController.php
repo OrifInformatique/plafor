@@ -38,6 +38,7 @@ class GradeController extends BaseController
     public function initController(RequestInterface $request, ResponseInterface
         $response, LoggerInterface $logger): void
     {
+         // '@' accessible for logged in users
         $this->access_level = "@";
 
         parent::initController($request, $response, $logger);

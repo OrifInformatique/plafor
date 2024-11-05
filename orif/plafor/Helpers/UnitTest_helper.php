@@ -25,6 +25,7 @@ const ADMIN_HASHED_PW = '$2y$10$tUB5R1MGgbO.zD//WArnceTY8IgnFkVVsudIdHBxIrEXJ2z3
 const ADMIN_ARCHIVE = NULL;
 const ADMIN_CREATION_DATE = "2020-07-09 08:11:05";
 
+
 // Trainers
 const TRAINER_DEV_ID = 101;
 const TRAINER_DEV_NAME = "UT_FormateurDev";

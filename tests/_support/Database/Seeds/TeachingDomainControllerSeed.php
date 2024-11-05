@@ -7,7 +7,7 @@ use CodeIgniter\Database\Seeder;
 
 class TeachingDomainControllerSeed extends Seeder {
 
-    
+
 
     public function run() {
         $grades = [
