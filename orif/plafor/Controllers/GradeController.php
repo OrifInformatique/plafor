@@ -202,11 +202,6 @@ class GradeController extends BaseController
 
         $isAuthorised = $isTrainerOfUserOrIsHimself &&
             $this->isGradeInCourse($userCourseId, $gradeId);
-        if ($gradeId != 0 && isCurrentUserSelfApprentice($apprenticeId))
-        {
-            // if editing note and he is the apprentice
-            $isAuthorised = false;
-        }
         if (!$isAuthorised)
         {
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
@@ -247,11 +242,21 @@ class GradeController extends BaseController
         if(is_null($grade) || !isset($action))
             return redirect()->to("plafor/grade/save");
 
-        $user_course = $this->m_user_course_model->find($grade["fk_user_course"]);
+        $user_course = $this->m_user_course_model
+                            ->find($grade["fk_user_course"]);
         $apprentice = $this->m_user_model->find($user_course["fk_user"]);
 
-        if (!isCurrentUserTrainerOfApprentice($apprentice["id"]))
+        $user_course_id = $user_course['id'];
+        $apprentice_id = $apprentice['id'];
+        $is_trainer_of_user_or_is_himself =
+            (isCurrentUserTrainerOfApprentice($apprentice_id) ||
+            isCurrentUserSelfApprentice($apprentice_id));
+
+        $is_authorised = $is_trainer_of_user_or_is_himself &&
+            $this->isGradeInCourse($user_course_id, $grade_id);
+        if (!$is_authorised) {
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
+        }
 
         if (isset($grade["fk_teaching_subject"]))
             $subject = $this->m_teaching_subject_model->find($grade['fk_teaching_subject']);

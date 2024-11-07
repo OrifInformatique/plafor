@@ -136,7 +136,7 @@ class GradeControllerTest extends CIUnitTestCase
 
         $result = $this->withSession($session)->get('plafor/grade/save/' .
             $userCourseId . '/' . $gradeId);
-        $result->assertSee(lang('user_lang.code_error_403'));
+        $result->assertSee(lang('Grades.update_grade'));
     }
 
     public function testSaveGradeWithTrainerGradeUpdate(): void
@@ -208,7 +208,7 @@ class GradeControllerTest extends CIUnitTestCase
         $result = $this->withSession($session)
                        ->get('plafor/grade/delete/2/' . $gradeId);
 
-        $result->assertSee(lang('user_lang.code_error_403'));
+        $result->assertSee(lang('common_lang.php.title_delete_entry'));
     }
 
     public function testDeleteGradeWithApprenticeAccount(): void
@@ -216,6 +216,7 @@ class GradeControllerTest extends CIUnitTestCase
         $session['logged_in'] = true;
         $session['user_access'] = config('\User\Config\UserConfig')
             ->access_level_apprentice;
+        $session['user_id'] = 999;
 
         $result = $this->withSession($session)
                        ->get('plafor/grade/delete/2/1');
