@@ -384,7 +384,7 @@ class GradeModel extends Model
         if (count($subjectAveragesWithoutNull) === 0) return null;
         $averageDomain = array_sum($subjectAveragesWithoutNull) /
             count($subjectAveragesWithoutNull);
-        $roundMethod = $roundMethod ?? [$this, 'roundOneDecimalPoint'];
+        $roundMethod = $roundMethod ?? [$this, 'roundHalfPoint'];
         return $roundMethod($averageDomain);
     }
 
