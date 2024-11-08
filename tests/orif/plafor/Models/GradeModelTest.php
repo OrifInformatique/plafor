@@ -408,7 +408,7 @@ class GradeModelTest extends CIUnitTestCase
     public function testGetApprenticeModuleAverageIsNotSchool(): void
     {
         // Arrange
-        $id_user_course = USER_COUSE_DEV_ID;
+        $id_user_course = USER_COURSE_DEV_ID;
         $is_school = false;
         $expect = 3;
         $gradeModel = model('GradeModel');
@@ -530,7 +530,7 @@ class GradeModelTest extends CIUnitTestCase
         // Arrange
         $gradeModel = model('GradeModel');
         // Act
-        $result = $gradeModel->getApprenticeAverage(USER_COUSE_DEV_ID);
+        $result = $gradeModel->getApprenticeAverage(USER_COURSE_DEV_ID);
         // Assert
         $this->assertEquals(4.4, $result);
     }
@@ -538,7 +538,7 @@ class GradeModelTest extends CIUnitTestCase
     public function testGetSchoolReportData(): void
     {
         // Arrange
-        $userCourseId = USER_COUSE_DEV_ID;
+        $userCourseId = USER_COURSE_DEV_ID;
         $gradeModel = model('GradeModel');
         // Act
         $result = $gradeModel->getSchoolReportData($userCourseId);
@@ -549,7 +549,7 @@ class GradeModelTest extends CIUnitTestCase
     public function testGetModuleArrayForView(): void
     {
         // Arrange
-        $userCourseId = USER_COUSE_DEV_ID;
+        $userCourseId = USER_COURSE_DEV_ID;
         // Act
         $gradeModel = model('GradeModel');
         $result = $gradeModel->getModuleArrayForView($userCourseId);
@@ -570,7 +570,7 @@ class GradeModelTest extends CIUnitTestCase
     public function testGetApprenticeModulesGradesForView()
     {
         // Arrange
-        $userCourseId = USER_COUSE_DEV_ID;
+        $userCourseId = USER_COURSE_DEV_ID;
         $isSchool = true;
         $gradeModel = model('GradeModel');
         // Act
@@ -592,7 +592,7 @@ class GradeModelTest extends CIUnitTestCase
     public function testGetGradeIdForDomain()
     {
         // Arrange
-        $userCourseId = USER_COUSE_DEV_ID;
+        $userCourseId = USER_COURSE_DEV_ID;
         $domainId = 8;
         $expectedGradeId = 13;
         $gradeModel = model('GradeModel');
@@ -605,7 +605,7 @@ class GradeModelTest extends CIUnitTestCase
     public function testGetTpiGradeForView()
     {
         // Arrange
-        $userCourseId = USER_COUSE_DEV_ID;
+        $userCourseId = USER_COURSE_DEV_ID;
         $expectedGrade = 4.5;
         $expectedGradeId = 13;
         $gradeModel = model('GradeModel');
@@ -623,7 +623,7 @@ class GradeModelTest extends CIUnitTestCase
     public function testGetApprenticeSubjectGradesForView()
     {
         // Arrange
-        $userCourseId = USER_COUSE_DEV_ID;
+        $userCourseId = USER_COURSE_DEV_ID;
         $subjectId = 1;
         $gradeModel = model('GradeModel');
         // Act
@@ -638,7 +638,7 @@ class GradeModelTest extends CIUnitTestCase
     {
         // Arrange
         $gradeModel = model('GradeModel');
-        $userCourseId = USER_COUSE_DEV_ID;
+        $userCourseId = USER_COURSE_DEV_ID;
 
         // Act
         $result = $gradeModel->getCbeGradeForView($userCourseId);
@@ -651,7 +651,7 @@ class GradeModelTest extends CIUnitTestCase
     {
         // Arrange
         $gradeModel = model('GradeModel');
-        $userCourseId = USER_COUSE_DEV_ID;
+        $userCourseId = USER_COURSE_DEV_ID;
         // Act
         $result = $gradeModel->getEcgGradeForView($userCourseId);
         // Assert
@@ -661,7 +661,7 @@ class GradeModelTest extends CIUnitTestCase
     public function testGetSchoolReportDataKeys()
     {
         // Arrange
-        $userCourseId = USER_COUSE_DEV_ID;
+        $userCourseId = USER_COURSE_DEV_ID;
         $gradeModel = model('GradeModel');
         // Act
         $result = $gradeModel->getSchoolReportData($userCourseId);
