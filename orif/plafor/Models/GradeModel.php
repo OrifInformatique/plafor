@@ -348,8 +348,10 @@ class GradeModel extends Model
         $schoolWeight = empty($schoolGrades) ? 0 : $schoolWeight;
         $externWeight = empty($externGrades) ? 0 : $externWeight;
         if (($schoolWeight + $externWeight) == 0) return null;
-        $average = ($schoolWeight * $schoolAverage + $externWeight
-            * $externAverage) / ($schoolWeight + $externWeight);
+        $roundedSchoolAverage = $this->roundHalfPoint($schoolAverage ?? 0);
+        $roundedExternAverage = $this->roundHalfPoint($externAverage ?? 0);
+        $average = ($schoolWeight * $roundedSchoolAverage + $externWeight
+            * $roundedExternAverage) / ($schoolWeight + $externWeight);
         // potenration between epsic module and interentreprise module
         $roundMethod = $roundMethod ?? [$this, 'roundOneDecimalPoint'];
         return $roundMethod($average);
