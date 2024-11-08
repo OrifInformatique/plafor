@@ -340,16 +340,16 @@ class GradeModel extends Model
         // Retrieve school module grades for the user's course
         $schoolGrades = $this->getApprenticeModulesGrades($userCourseId, true);
         $schoolAverage = $this->getAverageFromArray($schoolGrades);
-        $roundedSchoolAverage = $this->roundHalfPoint($schoolAverage);
         // Retrieve inter-enterprise module grades for the user's course
         $externGrades = $this
             ->getApprenticeModulesGrades($userCourseId, false);
         $externAverage = $this->getAverageFromArray($externGrades);
-        $roundedExternAverage = $this->roundHalfPoint($externAverage);
         // Calculate the weighted average grade
         $schoolWeight = empty($schoolGrades) ? 0 : $schoolWeight;
         $externWeight = empty($externGrades) ? 0 : $externWeight;
         if (($schoolWeight + $externWeight) == 0) return null;
+        $roundedSchoolAverage = $this->roundHalfPoint($schoolAverage ?? 0);
+        $roundedExternAverage = $this->roundHalfPoint($externAverage ?? 0);
         $average = ($schoolWeight * $roundedSchoolAverage + $externWeight
             * $roundedExternAverage) / ($schoolWeight + $externWeight);
         // potenration between epsic module and interentreprise module

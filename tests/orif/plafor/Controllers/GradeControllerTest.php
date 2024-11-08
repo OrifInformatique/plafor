@@ -14,7 +14,11 @@
 
 use CodeIgniter\Test\FeatureTestTrait;
 
- use Plafor\Models;
+use Plafor\Models;
+
+// The helper hold all Constants
+// -> Plafor\orif\plafor\Helpers\UnitTest_helper.php
+helper("UnitTest_helper");
 
 class GradeControllerTest extends CIUnitTestCase
 {
@@ -315,5 +319,4 @@ class GradeControllerTest extends CIUnitTestCase
             $this->assertTrue(true);
         }
     }
-
 }

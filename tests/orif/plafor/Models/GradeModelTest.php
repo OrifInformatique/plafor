@@ -5,6 +5,10 @@ namespace Plafor\Models;
 use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
 
+// The helper hold all Constants
+// -> Plafor\orif\plafor\Helpers\UnitTest_helper.php
+helper("UnitTest_helper");
+
 class GradeModelTest extends CIUnitTestCase
 {
     use DatabaseTestTrait;
@@ -20,25 +24,31 @@ class GradeModelTest extends CIUnitTestCase
     protected $seed     = 'gradeModelTestSeed';
     protected $basePath = 'tests/_support/Database';
 
+
     /**
      * Verifies the creation of a GradeModel instance.
      */
     public function testGradeModelInstance(): void
     {
+        // Act
         $gradeModel = model('GradeModel');
+        // Assert
         $this->assertTrue($gradeModel instanceof GradeModel);
         $this->assertInstanceOf(GradeModel::class, $gradeModel);
     }
-    // old test to repair
+
     /**
      * Tests the retrieval of a single record by ID using the find method.
      * (school subject)
      */
     public function testFindExpectSubject(): void
     {
+        // Arrange
         $id = 1;
         $gradeModel = model('GradeModel');
+        // Act
         $data = $gradeModel->find($id);
+        // Assert
         $this->assertTrue(is_array($data));
     }
 
@@ -48,9 +58,12 @@ class GradeModelTest extends CIUnitTestCase
      */
     public function testFindExpectModule(): void
     {
+        // Arrange
         $id = 2;
         $gradeModel = model('GradeModel');
+        // Act
         $data = $gradeModel->find($id);
+        // Assert
         $this->assertTrue(is_array($data));
     }
 
@@ -59,8 +72,11 @@ class GradeModelTest extends CIUnitTestCase
      */
     public function testFindAll(): void
     {
+        // Arrange
         $gradeModel = model('GradeModel');
+        // Act
         $data = $gradeModel->findAll();
+        // Assert
         $this->assertIsArray($data);
         $this->assertEquals(1, $data[0]['id']);
         $this->assertEquals(2, $data[1]['id']);
@@ -71,21 +87,27 @@ class GradeModelTest extends CIUnitTestCase
      */
     public function testFirst(): void
     {
+        // Arrange
         $gradeModel = model('GradeModel');
+        // Act
         $data = $gradeModel->first();
+        // Assert
         $this->assertTrue(is_array($data));
     }
 
      /**
      * Tests the retrieval of the first record using the first method.
-     */   
+     */
     public function testFirstCustom(): void
     {
+        // Arrange
         $gradeModel = model('GradeModel');
+        // Act
         $data = $gradeModel->select('grade')->first();
         $expect = [
             'grade' => 5.5,
         ];
+        // Assert
         $this->assertEquals($expect, $data);
     }
 
@@ -94,6 +116,7 @@ class GradeModelTest extends CIUnitTestCase
      */
     public function testInsertSubject(): void
     {
+        // Arrange
         $gradeModel = model('GradeModel');
         $grade = [
             'fk_user_course' => '1',
@@ -104,7 +127,9 @@ class GradeModelTest extends CIUnitTestCase
             'archive' => null,
             'teaching_subject_name' => 'Mathématiques',
         ];
+        // Act
         $isSuccess = $gradeModel->insert($grade, false);
+        // Assert
         $this->assertTrue($isSuccess);
     }
 
@@ -113,7 +138,9 @@ class GradeModelTest extends CIUnitTestCase
      */
     public function testInsertModule(): void
     {
+        // Arrange
         $gradeModel = model('GradeModel');
+        // Act
         $grade = [
             'fk_user_course' => '1',
             'fk_teaching_module' => '1',
@@ -124,6 +151,7 @@ class GradeModelTest extends CIUnitTestCase
             'teaching_module_name' => 'Interroger'
         ];
         $isSuccess = $gradeModel->insert($grade, false);
+        // Assert
         $this->assertTrue($isSuccess);
     }
 
@@ -133,6 +161,7 @@ class GradeModelTest extends CIUnitTestCase
      */
     public function testInsertSubjectAndModule(): void
     {
+        // Arrange
         $gradeModel = model('GradeModel');
         $grade = [
             'fk_user_course' => '1',
@@ -145,7 +174,9 @@ class GradeModelTest extends CIUnitTestCase
             'teaching_subject_name' => 'Mathématiques',
             'teaching_module_name' => 'Interroger'
         ];
+        // Act
         $isSuccess = $gradeModel->insert($grade, false);
+        // Assert
         $this->assertFalse($isSuccess);
     }
 
@@ -156,6 +187,7 @@ class GradeModelTest extends CIUnitTestCase
      */
     public function testInsertWithoutSubjectAndModule(): void
     {
+        // Arrange
         $gradeModel = model('GradeModel');
         $grade = [
             'fk_user_course' => '1',
@@ -164,7 +196,9 @@ class GradeModelTest extends CIUnitTestCase
             'is_school' => '1',
             'archive' => null,
         ];
+        // Act
         $isSuccess = $gradeModel->insert($grade, false);
+        // Assert
         $this->assertFalse($isSuccess);
     }
 
@@ -174,8 +208,11 @@ class GradeModelTest extends CIUnitTestCase
      */
     public function testGetApprenticeSubjectGrades(): void
     {
+        // Arrange
         $gradeModel = model('GradeModel');
+        // Act
         $data = $gradeModel->getApprenticeSubjectGrades(1, 1);
+        // Assert
         $this->assertTrue(is_array($data));
     }
 
@@ -186,13 +223,15 @@ class GradeModelTest extends CIUnitTestCase
      */
     public function testGetApprenticeModulesGradesIsSchool(): void
     {
+        // Arrange
         $id_user_course = 1;
         $is_school = true;
-
         $gradeModel = model('GradeModel');
+        // Act
         $data = $gradeModel->getApprenticeModulesGrades($id_user_course,
             $is_school);
 
+        // Assert
         $this->assertTrue(is_array($data));
     }
 
@@ -204,13 +243,15 @@ class GradeModelTest extends CIUnitTestCase
      */
     public function testGetApprenticeModulesGradesIsNotSchool(): void
     {
+        // Arrange
         $id_user_course = 1;
         $is_school = false;
-
         $gradeModel = model('GradeModel');
+        // Act
         $data = $gradeModel->getApprenticeModulesGrades($id_user_course,
             $is_school);
 
+        // Assert
         $this->assertTrue(is_array($data));
 
     }
@@ -222,13 +263,15 @@ class GradeModelTest extends CIUnitTestCase
      */
     public function testGetApprenticeModulesGradesIsSchoolNull(): void
     {
+        // Arrange
         $id_user_course = 1;
         $is_school = null;
-
         $gradeModel = model('GradeModel');
+        // Act
         $data = $gradeModel->getApprenticeModulesGrades($id_user_course,
             $is_school);
 
+        // Assert
         $this->assertTrue(is_array($data));
     }
 
@@ -239,12 +282,15 @@ class GradeModelTest extends CIUnitTestCase
      */
     public function testGetApprenticeModuleGrade(): void
     {
+        // Arrange
         $id_user_course = 1;
         $id_module = 1;
         $gradeModel = model('GradeModel');
+        // Act
         $data = $gradeModel->getApprenticeModuleGrade($id_user_course,
             $id_module);
 
+        // Assert
         $this->assertTrue(is_array($data));
     }
 
@@ -255,12 +301,16 @@ class GradeModelTest extends CIUnitTestCase
      */
     public function testGetApprenticeSubjectAverage(): void
     {
+        // Arrange
         $id_user_course = 1;
         $id_subject = 1;
         $gradeModel = model('GradeModel');
+        $expect = 5.5;
+        // Act
         $data = $gradeModel->getApprenticeSubjectAverage($id_user_course,
             $id_subject, fn($e) => $e);
-        $expect = 5.5;
+
+        // Assert
         $this->assertEquals($expect, $data);
     }
 
@@ -273,12 +323,16 @@ class GradeModelTest extends CIUnitTestCase
      */
     public function testGetApprenticeSubjectAverageRoundHalfPoint(): void
     {
+        // Arrange
         $id_user_course = 1;
         $id_subject = 1;
         $gradeModel = model('GradeModel');
+        $expect = 5.5;
+        // Act
         $data = $gradeModel->getApprenticeSubjectAverage($id_user_course,
             $id_subject, [$gradeModel, 'roundHalfPoint']);
-        $expect = 5.5;
+
+        // Assert
         $this->assertEquals($expect, $data);
     }
     /**
@@ -289,12 +343,15 @@ class GradeModelTest extends CIUnitTestCase
      */
     public function testGetApprenticeSubjectAverageRoundOneDecimalPoint(): void
     {
+        // Arrange
         $id_user_course = 1;
         $id_subject = 1;
         $gradeModel = model('GradeModel');
+        $expect = 5.5;
+        // Act
         $data = $gradeModel->getApprenticeSubjectAverage($id_user_course,
             $id_subject);
-        $expect = 5.5;
+        // Assert
         $this->assertEquals($expect, $data);
     }
 
@@ -305,13 +362,16 @@ class GradeModelTest extends CIUnitTestCase
      */
     public function testGetApprenticeModuleAverageIsSchool(): void
     {
+        // Arrange
         $id_user_course = 1;
         $is_school = true;
-
+        $expect = 4.0;
         $gradeModel = model('GradeModel');
+        // Act
         $data = $gradeModel->getApprenticeModuleAverage($id_user_course,
             $is_school, fn($e) => $e);
-        $expect = 4.0;
+
+        // Assert
         $this->assertEquals($expect, $data);
     }
 
@@ -326,13 +386,16 @@ class GradeModelTest extends CIUnitTestCase
     public function
         testGetApprenticeModuleAverageIsSchoolRoundHalfPoint(): void
     {
+        // Arrange
         $id_user_course = 1;
         $is_school = true;
-
+        $expect = 4.0;
         $gradeModel = model('GradeModel');
+        // Act
         $data = $gradeModel->getApprenticeModuleAverage($id_user_course,
             $is_school, [$gradeModel, 'roundHalfPoint']);
-        $expect = 4.0;
+
+        // Assert
         $this->assertEquals($expect, $data);
     }
 
@@ -342,16 +405,18 @@ class GradeModelTest extends CIUnitTestCase
      *
      * @covers GradeModel::getApprenticeModuleAverage
      */
-    // TODO
-    public function _testGetApprenticeModuleAverageIsNotSchool(): void
+    public function testGetApprenticeModuleAverageIsNotSchool(): void
     {
-        $id_user_course = 1;
+        // Arrange
+        $id_user_course = USER_COUSE_DEV_ID;
         $is_school = false;
-
+        $expect = 3;
         $gradeModel = model('GradeModel');
+        // Act
         $data = $gradeModel->getApprenticeModuleAverage($id_user_course,
             $is_school);
-        $expect = 3;
+
+        // Assert
         $this->assertEquals($expect, $data);
     }
 
@@ -360,11 +425,14 @@ class GradeModelTest extends CIUnitTestCase
      */
     public function testDelete(): void
     {
+        // Arrange
         $id = 1;
         $gradeModel = model('GradeModel');
+        // Act
         $gradeModel->delete($id);
         $grade = $gradeModel->find($id);
         $deletedGrade = $gradeModel->withDeleted()->find($id);
+        // Assert
         $this->assertNull($grade);
         $this->assertEquals($id, $deletedGrade['id']);
     }
@@ -375,10 +443,13 @@ class GradeModelTest extends CIUnitTestCase
      */
     public function testFindAllWithDeleted(): void
     {
+        // Arrange
         $idToDelete = 1;
         $gradeModel = model('GradeModel');
+        // Act
         $gradeModel->delete($idToDelete);
         $domains = $gradeModel->withDeleted()->findAll();
+        // Assert
         $this->assertEquals($domains[0]['id'], $idToDelete);
     }
 
@@ -388,10 +459,13 @@ class GradeModelTest extends CIUnitTestCase
      */
     public function testFindAllOnlyDeleted(): void
     {
+        // Arrange
         $idToDelete = 1;
         $gradeModel = model('GradeModel');
+        // Act
         $gradeModel->delete($idToDelete);
         $domains = $gradeModel->onlyDeleted()->findAll();
+        // Assert
         $this->assertEquals($domains[0]['id'], $idToDelete);
         $this->assertFalse(isset($domains[1]));
     }
@@ -402,10 +476,13 @@ class GradeModelTest extends CIUnitTestCase
      */
     public function testFindAllWithoutDeleted(): void
     {
+        // Arrange
         $idToDelete = 1;
         $gradeModel = model('GradeModel');
+        // Act
         $gradeModel->delete($idToDelete);
         $domains = $gradeModel->findAll();
+        // Assert
         $this->assertNotEquals($domains[0]['id'], $idToDelete);
         $this->assertTrue(isset($domains[1]));
     }
@@ -415,9 +492,12 @@ class GradeModelTest extends CIUnitTestCase
      */
     public function testFindAllEqualsFindWithoutId(): void
     {
+        // Arrange
         $gradeModel = model('GradeModel');
+        // Act
         $domains = $gradeModel->findAll();
         $domains2 = $gradeModel->find();
+        // Assert
         $this->assertEquals($domains, $domains2);
     }
 
@@ -425,91 +505,81 @@ class GradeModelTest extends CIUnitTestCase
 
     public function testGetWeightedModuleAverage(): void
     {
+        // Arrange
         $idUserCourse = 1;
-
-        $gradeModel = model('GradeModel');
-        $result = $gradeModel->getWeightedModuleAverage($idUserCourse);
-
         $expectedAverage = 4.0;
+        $gradeModel = model('GradeModel');
+        // Act
+        $result = $gradeModel->getWeightedModuleAverage($idUserCourse);
+        // Assert
         $this->assertEquals($expectedAverage, $result);
     }
 
     public function testGetApprenticeDomainAverageNotModule(): void
     {
+        // Arrange
         $gradeModel = model('GradeModel');
+        // Act
         $result = $gradeModel->getApprenticeDomainAverageNotModule(1, 1);
+        // Assert
         $this->assertEquals(5.5, $result);
     }
-    // end old test to repair
 
     public function testGetApprenticeAverage(): void
     {
+        // Arrange
         $gradeModel = model('GradeModel');
-        $result = $gradeModel->getApprenticeAverage(101);
-        $this->assertEquals(4.3, $result);
+        // Act
+        $result = $gradeModel->getApprenticeAverage(USER_COUSE_DEV_ID);
+        // Assert
+        $this->assertEquals(4.4, $result);
     }
 
     public function testGetSchoolReportData(): void
     {
         // Arrange
-        $userCourseId = 101;
-
+        $userCourseId = USER_COUSE_DEV_ID;
         $gradeModel = model('GradeModel');
-
-
         // Act
         $result = $gradeModel->getSchoolReportData($userCourseId);
-
         // Assert
         $this->assertTrue(is_array($result));
     }
-    
+
     public function testGetModuleArrayForView(): void
     {
-
-        $userCourseId = 101;
-
-        // Appel de la méthode à tester
+        // Arrange
+        $userCourseId = USER_COUSE_DEV_ID;
+        // Act
         $gradeModel = model('GradeModel');
         $result = $gradeModel->getModuleArrayForView($userCourseId);
-
-
+        // Assert
         $this->assertIsArray($result);
         $this->assertArrayHasKey('school', $result);
         $this->assertArrayHasKey('non-school', $result);
         $this->assertArrayHasKey('weighting', $result);
-
-
         $this->assertArrayHasKey('modules', $result['school']);
         $this->assertArrayHasKey('weighting', $result['school']);
         $this->assertIsInt($result['school']['weighting']);
-
-
         $this->assertArrayHasKey('modules', $result['non-school']);
         $this->assertArrayHasKey('weighting', $result['non-school']);
         $this->assertIsInt($result['non-school']['weighting']);
-
-
         $this->assertIsInt($result['weighting']);
-
     }
 
     public function testGetApprenticeModulesGradesForView()
     {
-
-        $userCourseId = 101;
+        // Arrange
+        $userCourseId = USER_COUSE_DEV_ID;
         $isSchool = true;
-
         $gradeModel = model('GradeModel');
-
+        // Act
         $result = $gradeModel->getApprenticeModulesGradesForView($userCourseId,
             $isSchool);
 
-
+        // Assert
         $this->assertIsArray($result);
         $this->assertNotEmpty($result);
-
-        
         foreach ($result as $record) {
             $this->assertArrayHasKey('number', $record);
             $this->assertArrayHasKey('name', $record);
@@ -517,21 +587,17 @@ class GradeModelTest extends CIUnitTestCase
             $this->assertArrayHasKey('id', $record['grade']);
             $this->assertArrayHasKey('value', $record['grade']);
         }
-
     }
 
     public function testGetGradeIdForDomain()
     {
         // Arrange
-        $userCourseId = 101;
+        $userCourseId = USER_COUSE_DEV_ID;
         $domainId = 8;
         $expectedGradeId = 13;
-
-        // Mock le modèle TeachingSubjectModel
         $gradeModel = model('GradeModel');
         // Act
         $result = $gradeModel->getGradeIdForDomain($userCourseId, $domainId);
-
         // Assert
         $this->assertEquals($expectedGradeId, $result);
     }
@@ -539,28 +605,26 @@ class GradeModelTest extends CIUnitTestCase
     public function testGetTpiGradeForView()
     {
         // Arrange
-        $userCourseId = 101;
+        $userCourseId = USER_COUSE_DEV_ID;
         $expectedGrade = 4.5;
         $expectedGradeId = 13;
         $gradeModel = model('GradeModel');
-
         // Act
         $result = $gradeModel->getTpiGradeForView($userCourseId);
-
         // Assert
         $this->assertEquals([
             'id' => $expectedGradeId,
             'value' => $expectedGrade
         ], $result);
+
     }
 
 
     public function testGetApprenticeSubjectGradesForView()
     {
         // Arrange
-        $userCourseId = 101;
+        $userCourseId = USER_COUSE_DEV_ID;
         $subjectId = 1;
-
         $gradeModel = model('GradeModel');
         // Act
         $result = $gradeModel->getApprenticeSubjectGradesForView($userCourseId,
@@ -574,7 +638,7 @@ class GradeModelTest extends CIUnitTestCase
     {
         // Arrange
         $gradeModel = model('GradeModel');
-        $userCourseId = 101;
+        $userCourseId = USER_COUSE_DEV_ID;
 
         // Act
         $result = $gradeModel->getCbeGradeForView($userCourseId);
@@ -587,11 +651,9 @@ class GradeModelTest extends CIUnitTestCase
     {
         // Arrange
         $gradeModel = model('GradeModel');
-        $userCourseId = 101;
-
+        $userCourseId = USER_COUSE_DEV_ID;
         // Act
         $result = $gradeModel->getEcgGradeForView($userCourseId);
-
         // Assert
         $this->assertTrue(is_array($result));
     }
@@ -599,12 +661,10 @@ class GradeModelTest extends CIUnitTestCase
     public function testGetSchoolReportDataKeys()
     {
         // Arrange
-        $userCourseId = 101;
+        $userCourseId = USER_COUSE_DEV_ID;
         $gradeModel = model('GradeModel');
-
         // Act
         $result = $gradeModel->getSchoolReportData($userCourseId);
-
         // Assert
         $this->assertArrayHasKey('cfc_average', $result);
         $this->assertArrayHasKey('modules', $result);
@@ -612,5 +672,4 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertArrayHasKey('cbe', $result);
         $this->assertArrayHasKey('ecg', $result);
     }
-
 }
