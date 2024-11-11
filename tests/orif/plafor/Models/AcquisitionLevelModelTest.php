@@ -27,7 +27,7 @@ class AcquisitionLevelModelTest extends CIUnitTestCase
 
     protected $seedOnce = false;
     protected $basePath = 'tests/_support/Database';
-    protected $seed     = 'apprenticeTestSeed';
+    protected $seed     = 'ApprenticeTestSeed';
 
     /**
      * Asserts that getInstance method of AcquisitionLevelModel returns an
