@@ -21,7 +21,7 @@ class GradeModelTest extends CIUnitTestCase
 
     // For Seeds
     protected $seedOnce = false;
-    protected $seed     = 'gradeModelTestSeed';
+    protected $seed     = 'GradeModelTestSeed';
     protected $basePath = 'tests/_support/Database';
 
 

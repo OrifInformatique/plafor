@@ -34,7 +34,7 @@ class FullGradeViewTest extends CIUnitTestCase
 
     protected $seedOnce = false;
     protected $basePath = 'tests/_support/Database';
-    protected $seed     = 'fullGradeTestSeed';
+    protected $seed     = 'FullGradeTestSeed';
 
 
     public function testViewGrade(): void

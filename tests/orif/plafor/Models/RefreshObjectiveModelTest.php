@@ -15,7 +15,7 @@ class RefreshObjectiveModelTest extends CIUnitTestCase
 
     protected $seedOnce = false;
     protected $basePath = 'tests/_support/Database';
-    protected $seed     = 'apprenticeTestSeed';
+    protected $seed     = 'ApprenticeTestSeed';
 
     /**
      * Checks that the getAcquisitionStatus method of ObjectiveModel returns
@@ -25,7 +25,7 @@ class RefreshObjectiveModelTest extends CIUnitTestCase
     {
         $objectiveId = 1;
         $userCourseId = 1;
-        // Gets the acquisition statuses with the objective id 1 
+        // Gets the acquisition statuses with the objective id 1
         $objectiveModel = model('ObjectiveModel');
         $acquisitionStatus = $objectiveModel
             ->getAcquisitionStatus($objectiveId, $userCourseId);

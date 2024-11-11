@@ -5,7 +5,7 @@ namespace App\Database\Seeds;
 
 use CodeIgniter\Database\Seeder;
 
-class gradeModelTestSeed extends Seeder
+class GradeModelTestSeed extends Seeder
 {
     public function insertUsers() {
         $users=[

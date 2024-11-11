@@ -17,7 +17,7 @@ class TeachingSubjectModelTest extends CIUnitTestCase
 
     // For Seeds
     // protected $seedOnce = false;
-    // protected $seed     = 'apprenticeTestSeed';
+    // protected $seed     = 'ApprenticeTestSeed';
     // protected $basePath = 'tests/_support/Database';
 
     /**

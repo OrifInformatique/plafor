@@ -17,7 +17,7 @@ class RefreshUserCourseModelTest extends CIUnitTestCase
 
     protected $seedOnce = false;
     protected $basePath = 'tests/_support/Database';
-    protected $seed     = 'apprenticeTestSeed';
+    protected $seed     = 'ApprenticeTestSeed';
 
 
     /**
