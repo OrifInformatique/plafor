@@ -7,7 +7,7 @@ use CodeIgniter\Database\Seeder;
 
 helper("UnitTest_helper"); // The helper hold all Constants -> Plafor\orif\plafor\Helpers\UnitTest_helper.php
 
-class apprenticeTestSeed extends Seeder
+class ApprenticeTestSeed extends Seeder
 {
 
     public function insertUsers() {

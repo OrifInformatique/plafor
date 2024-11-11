@@ -31,7 +31,7 @@ class CoursePlanTest extends CIUnitTestCase
 
     protected $seedOnce = false;
     protected $basePath = 'tests/_support/Database';
-    protected $seed     = 'apprenticeTestSeed';
+    protected $seed     = 'ApprenticeTestSeed';
 
     /**
      * Asserts that the save_course_plan page redirects to the 403 error view

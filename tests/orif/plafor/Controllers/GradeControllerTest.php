@@ -94,7 +94,7 @@ class GradeControllerTest extends CIUnitTestCase
         $session['user_id'] = TRAINER_DEV_ID;
         // Act
         $result = $this->withSession($session)->get('plafor/grade/save/'
-            . USER_COUSE_DEV_ID);
+            . USER_COURSE_DEV_ID);
 
         // Assert
         $result->assertSee(lang('Grades.add_grade'));
@@ -104,7 +104,7 @@ class GradeControllerTest extends CIUnitTestCase
     {
         try {
             // Act
-            $result = $this->get('plafor/grade/save/' . USER_COUSE_DEV_ID);
+            $result = $this->get('plafor/grade/save/' . USER_COURSE_DEV_ID);
             // Assert
             $this->assertTrue(false);
         } catch (\Exception $e) {
@@ -124,7 +124,7 @@ class GradeControllerTest extends CIUnitTestCase
         // fake user
         $session['user_id'] = 999;
         $gradeId = APPRENTICE_DEV_ID_GRADE_ID;
-        $userCourseId = USER_COUSE_DEV_ID;
+        $userCourseId = USER_COURSE_DEV_ID;
         // Act
         $result = $this->withSession($session)->get('plafor/grade/save/' .
             $userCourseId . '/' . $gradeId);
@@ -143,7 +143,7 @@ class GradeControllerTest extends CIUnitTestCase
         // fake user
         $session['user_id'] = 999;
         $gradeId = APPRENTICE_DEV_ID_GRADE_ID;
-        $userCourseId = USER_COUSE_DEV_ID;
+        $userCourseId = USER_COURSE_DEV_ID;
         // Act
         $result = $this->withSession($session)->get('plafor/grade/save/' .
             $userCourseId . '/' . $gradeId);
@@ -161,7 +161,7 @@ class GradeControllerTest extends CIUnitTestCase
 
         $session['user_id'] = APPRENTICE_DEV_ID;
         $gradeId = APPRENTICE_DEV_ID_GRADE_ID;
-        $userCourseId = USER_COUSE_DEV_ID;
+        $userCourseId = USER_COURSE_DEV_ID;
         // Act
         $result = $this->withSession($session)->get('plafor/grade/save/' .
             $userCourseId . '/' . $gradeId);
@@ -180,7 +180,7 @@ class GradeControllerTest extends CIUnitTestCase
         // fake user
         $session['user_id'] = 999;
         $gradeId = APPRENTICE_DEV_ID_GRADE_ID;
-        $userCourseId = USER_COUSE_DEV_ID;
+        $userCourseId = USER_COURSE_DEV_ID;
         // Act
         $result = $this->withSession($session)->get('plafor/grade/save/' .
             $userCourseId . '/' . $gradeId);
@@ -198,7 +198,7 @@ class GradeControllerTest extends CIUnitTestCase
 
         $session['user_id'] = TRAINER_DEV_ID;
         $gradeId = APPRENTICE_DEV_ID_GRADE_ID;
-        $userCourseId = USER_COUSE_DEV_ID;
+        $userCourseId = USER_COURSE_DEV_ID;
         // Act
         $result = $this->withSession($session)->get('plafor/grade/save/' .
             $userCourseId . '/' . $gradeId);
@@ -211,7 +211,7 @@ class GradeControllerTest extends CIUnitTestCase
     {
         // Arrange
         $gradeId = APPRENTICE_DEV_ID_GRADE_ID;
-        $userCourseId = USER_COUSE_DEV_ID;
+        $userCourseId = USER_COURSE_DEV_ID;
         try {
             // Act
             $result = $this->withSession($session)->get('plafor/grade/save/' .

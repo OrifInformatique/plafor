@@ -23,7 +23,7 @@ class RefreshTrainerApprenticeModelTest extends CIUnitTestCase
 
     protected $seedOnce = false;
     protected $basePath = 'tests/_support/Database';
-    protected $seed     = 'apprenticeTestSeed';
+    protected $seed     = 'ApprenticeTestSeed';
 
 
     /** Checks that the returned user is a trainer. Actually, it depends on the

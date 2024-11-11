@@ -12,7 +12,7 @@ use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
 
 class RefreshCoursePlanModelTest extends CIUnitTestCase
-{ 
+{
     use DatabaseTestTrait;
 
     // For Migrations
@@ -24,7 +24,6 @@ class RefreshCoursePlanModelTest extends CIUnitTestCase
     protected $seedOnce = false;
     protected $basePath = 'tests/_support/Database';
     protected $seed     = 'TeachingDomainModelTestSeed';
-    // protected $seed     = 'apprenticeTestSeed';
 
      public function testGetCoursePlanIdByUserCourse()
     {

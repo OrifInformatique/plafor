@@ -30,7 +30,7 @@ class ApprenticeTest extends CIUnitTestCase
 
     protected $seedOnce = false;
     protected $basePath = 'tests/_support/Database';
-    protected $seed     = 'apprenticeTestSeed';
+    protected $seed     = 'ApprenticeTestSeed';
 
     /**
      * Asserts that the default index route redirects to login route (no session)
