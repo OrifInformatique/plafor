@@ -9,6 +9,7 @@ use CodeIgniter\Filters\Honeypot;
 use CodeIgniter\Filters\InvalidChars;
 use CodeIgniter\Filters\SecureHeaders;
 use Plafor\Filters\LoginFilter;
+use Plafor\Filters\Cors;
 
 class Filters extends BaseConfig
 {
@@ -17,6 +18,7 @@ class Filters extends BaseConfig
      * make reading things nicer and simpler.
      */
     public array $aliases = [
+        'cors'          => Cors::class,
         'csrf'          => CSRF::class,
         'toolbar'       => DebugToolbar::class,
         'honeypot'      => Honeypot::class,
@@ -35,6 +37,7 @@ class Filters extends BaseConfig
             // 'csrf',
             // 'invalidchars',
             'login',
+            'cors',
         ],
         'after' => [
             'toolbar',
