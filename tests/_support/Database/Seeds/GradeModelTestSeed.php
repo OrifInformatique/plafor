@@ -171,7 +171,7 @@ class GradeModelTestSeed extends Seeder
                 'fk_teaching_subject' => 12,
                 'fk_teaching_module' => null,
                 'date' => '2024-08-27',
-                'grade' => 4.5,
+                'grade' => 4.5
                 'is_school' => true,
                 'archive' => null
             ],

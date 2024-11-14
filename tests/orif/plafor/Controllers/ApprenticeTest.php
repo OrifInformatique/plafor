@@ -39,7 +39,7 @@ class ApprenticeTest extends CIUnitTestCase
     {
         // Execute index method of Apprentice class
         $result = $this->controller(Apprentice::class)
-        ->execute('index');
+            ->execute('index');
 
         // Assertions
         $response = $result->response();

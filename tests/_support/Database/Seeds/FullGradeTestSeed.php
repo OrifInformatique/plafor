@@ -481,7 +481,7 @@ class FullGradeTestSeed extends Seeder {
 
     private function insertTPI() {
         $TPIGrade = [
-            'grade' => 4.5,
+            'grade' => 4.4,
             'fk_teaching_module' => null,
             'fk_user_course' => USER_COURSE_DEV_ID,
             'fk_teaching_subject' => 12, // tpi subject dev
