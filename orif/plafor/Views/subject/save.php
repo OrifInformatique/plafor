@@ -72,7 +72,7 @@ helper('form')
 
     <?= form_open(base_url('plafor/teachingdomain/saveTeachingSubject/').$parent_domain['id'].'/'.($subject_id ?? 0)) ?>
         <div class="row">
-            <div class="col-9 form-group">
+            <div class="col-6 form-group">
                 <?= form_label(lang('Grades.name'), 'subject_name',
                     ['class' => 'form-label']) ?>
 
@@ -86,6 +86,13 @@ helper('form')
 
                 <?= form_input('subject_weight', $subject_weight ?? '',
                     ['class' => 'form-control', 'id' => 'subject_weight', 'min' => 0, 'max' => 100], 'number') ?>
+            </div>
+            <div class="col-3 form-group">
+                <?= form_label(lang('Grades.round_multiple_average'), 'round_multiple',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_input('round_multiple', $round_multiple ?? '',
+                    ['class' => 'form-control', 'id' => 'round_multiple', 'min' => 0.1, 'max' => 1, 'step' => 0.1], 'number') ?>
             </div>
         </div>
 

@@ -277,3 +277,71 @@ function addHimself(int $gradeId, array $formatedList): array
         return addModule($grade['fk_teaching_module'], $formatedList);
     }
 }
+
+/**
+ * Rounds a number to the nearest half point (e.g. 4.25 -> 4.5).
+ *
+ * @param float $number The number to round.
+ * @return float The rounded number.
+ */
+function roundHalfPoint(float $number): float
+{
+    return mround($number, 0.5);
+}
+
+/**
+ * Rounds a number to one decimal point (e.g. 4.25 -> 4.3).
+ *
+ * @param float $number The number to round.
+ * @return float The rounded number.
+ */
+function roundOneDecimalPoint(float $number): float
+{
+    return mround($number, 0.1);
+}
+
+/**
+ * This is clone of the MROUND function in Microsoft Excel
+ * mround returns a number rounded to the desired multiple.
+ * @param float $number The value to round.
+ * @param float $multiple. The multiple to which you want to round number.
+ */
+function mround(float $number, float $multiple): float
+{
+    assert($multiple > 0);
+    // floating-point precision issues. Result is more precise if multiple is >
+    // 1
+    if ($multiple < 1) {
+        $multiple = 1 / $multiple;
+        return round($number * $multiple) / $multiple;
+    }
+    return round($number / $multiple) * $multiple;
+}
+
+function getRoundFunction(CodeIgniter\Model $model, int $id): callable
+{
+    $data = $model->select('round_multiple')
+                ->allowCallbacks(false)
+                ->find($id);
+
+    assert(!empty($data));
+    assert(!empty($data['round_multiple']));
+    $multiple = $data['round_multiple'];
+    return function(float $number) use ($multiple): float
+    {
+        return mround($number, $multiple);
+    };
+}
+
+function getSubjectRoundFunction(int $subjectId): callable
+{
+    $subjectModel = model('TeachingSubjectModel');
+    return getRoundFunction($subjectModel, $subjectId);
+}
+
+function getDomainRoundFunction(int $domainId): callable
+{
+    $domainModel = model('TeachingDomainModel');
+    return getRoundFunction($domainModel, $domainId);
+}
+

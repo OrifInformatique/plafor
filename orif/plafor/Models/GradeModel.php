@@ -252,7 +252,8 @@ class GradeModel extends Model
      */
     private function roundHalfPoint(float $number): float
     {
-        return round($number * 2) / 2;
+        helper('grade_helper');
+        return roundHalfPoint($number);
     }
 
     /**
@@ -263,7 +264,8 @@ class GradeModel extends Model
      */
     private function roundOneDecimalPoint(float $number): float
     {
-        return round($number * 10) / 10;
+        helper('grade_helper');
+        return roundOneDecimalPoint($number);
     }
 
     /**
@@ -286,9 +288,9 @@ class GradeModel extends Model
             ->getApprenticeSubjectGrades($userCourseId, $subjectId);
         if (count($grades) === 0) return null;
         $average = $this->getAverageFromArray($grades);
-        $roundMethod = $roundMethod ?? [$this, 'roundOneDecimalPoint'];
+        $roundMethod = $roundMethod ?? $this
+            ->getSubjectRoundFunction($subjectId);
         return $roundMethod($average);
-
     }
 
     /**
@@ -376,16 +378,32 @@ class GradeModel extends Model
         $subjectModel = model('TeachingSubjectModel');
         $subjectIds = $subjectModel
             ->getTeachingSubjectIdByDomain($domainId);
+
         $subjectAverages = array_map(fn($id) =>
             $this->getApprenticeSubjectAverage($userCourseId, $id),
             $subjectIds);
+
         $subjectAveragesWithoutNull = array_filter($subjectAverages,
             fn($average) => !is_null($average));
+
         if (count($subjectAveragesWithoutNull) === 0) return null;
-        $averageDomain = array_sum($subjectAveragesWithoutNull) /
-            count($subjectAveragesWithoutNull);
-        $roundMethod = $roundMethod ?? [$this, 'roundHalfPoint'];
+        $averageDomain = array_sum($subjectAveragesWithoutNull)
+            / count($subjectAveragesWithoutNull);
+
+        $roundMethod = $roundMethod ?? $this->getDomainRoundFunction($domainId);
         return $roundMethod($averageDomain);
+    }
+
+    private function getDomainRoundFunction(int $domainId): callable
+    {
+        helper('grade_helper');
+        return getDomainRoundFunction($domainId);
+    }
+
+    private function getSubjectRoundFunction(int $subjectId): callable
+    {
+        helper('grade_helper');
+        return getSubjectRoundFunction($subjectId);
     }
 
     /**

@@ -62,7 +62,6 @@ class FullGradeViewTest extends CIUnitTestCase
         $result->assertSee(3.5);
         $result->assertSee(3.0);
         $result->assertSee(4.8);
-        $result->assertSee(4.9);
         $result->assertSee("Mettre en œuvre des systèmes de codification, de compression et d’encryptage");
         $result->assertSee("Mettre en place l'infrastructure informatique d'une petite entreprise");
         $result->assertSee("Automatiser des procédures à l’aide de scripts");
@@ -110,11 +109,11 @@ class FullGradeViewTest extends CIUnitTestCase
         $expect['cbe']['subjects'][1]['average'] = 5.3;
         $expect['cbe']['average'] = 5.5;
 
-        $expect['tpi_grade']['value'] = 4.5;
+        $expect['tpi_grade']['value'] = 4.4;
         $expect['ecg']['subjects'][0]['average'] = 4.8;
         $expect['ecg']['subjects'][1]['average'] = 5.0;
         $expect['ecg']['subjects'][2]['average'] = 5.5;
-        $expect['ecg']['average'] = 5;
+        $expect['ecg']['average'] = 5.1;
         // Act
         $gradeModel = model('GradeModel');
         $schoolReportData = $gradeModel->getSchoolReportData($userCourseId);

@@ -14,7 +14,7 @@ class TeachingDomainModel extends Model
     protected $useSoftDeletes   = true;
     protected $protectFields    = true;
     protected $allowedFields    = ['fk_teaching_domain_title',
-        'fk_course_plan', 'domain_weight', 'is_eliminatory'];
+        'fk_course_plan', 'domain_weight', 'is_eliminatory', 'round_multiple'];
 
     // Dates
     protected $useTimestamps = false;
@@ -29,6 +29,7 @@ class TeachingDomainModel extends Model
         'fk_course_plan'        => 'is_natural_no_zero',
         'domain_weight'     => 'decimal',
         'is_eliminatory' => 'is_boolean_or_binary_value',
+        'round_multiple' => 'decimal',
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;

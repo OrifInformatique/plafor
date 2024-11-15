@@ -54,10 +54,11 @@ class TeachingSubjectModelTest extends CIUnitTestCase
                 'archive' => null,
                 'title' => "Compétences de base élargies",
                 'course_plan_name' => 'Informaticienne / Informaticien avec '
-                . 'CFC, orientation exploitation et infrastructure'
-            ]
+                . 'CFC, orientation exploitation et infrastructure',
+                'round_multiple' => 0.5,
+            ],
+            'round_multiple' => 0.1,
         ];
-
         $this->assertEquals($expect, $data);
     }
 
@@ -94,8 +95,10 @@ class TeachingSubjectModelTest extends CIUnitTestCase
                 'archive' => null,
                 'title' => "Compétences de base élargies",
                 'course_plan_name' => 'Informaticienne / Informaticien avec '
-                . 'CFC, orientation exploitation et infrastructure'
-            ]
+                . 'CFC, orientation exploitation et infrastructure',
+                'round_multiple' => 0.5,
+            ],
+            'round_multiple' => 0.1,
         ];
         $this->assertEquals($expect, $data);
     }
@@ -124,6 +127,7 @@ class TeachingSubjectModelTest extends CIUnitTestCase
             'fk_teaching_domain' => 1,
             'name' => 'test',
             'subject_weight' => 0.1,
+            'round_multiple' => 0.1,
         ];
         $isSuccess = $teachingSubjectModel->insert($teachingSubject, false);
         $this->assertTrue($isSuccess);

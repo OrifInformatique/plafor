@@ -24,7 +24,7 @@ class TeachingDomainTitleModel extends Model
 
     // Validation
     protected $validationRules      = [
-        'title' => 'string|max_length[50]'
+        'title' => 'required|string|max_length[50]'
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;

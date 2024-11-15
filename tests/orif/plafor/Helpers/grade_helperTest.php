@@ -147,4 +147,38 @@ class Grade_HelperTest extends CIUnitTestCase
         $this->assertTrue(is_array($list));
     }
 
+    public function testMround(): void
+    {
+        // arrange
+        helper('grade_helper');
+        $number = 3.25;
+        $expectedNumber = 3.3;
+        // act
+        $roundedNumber = mround($number, 0.1);
+        // assert
+        $this->assertEquals($expectedNumber, $roundedNumber);
+    }
+
+    public function testGetRoundFunction(): void
+    {
+        helper('grade_helper');
+        $subjectModel = model('TeachingSubjectModel');
+        $function = getRoundFunction($subjectModel, 1);
+        $this->assertTrue(is_callable($function));
+    }
+
+    public function testGetSubjectRoundFunction(): void
+    {
+        helper('grade_helper');
+        $function = getSubjectRoundFunction(1);
+        $this->assertTrue(is_callable($function));
+    }
+
+    public function testGetDomainRoundFunction(): void
+    {
+        helper('grade_helper');
+        $function = getDomainRoundFunction(1);
+        $this->assertTrue(is_callable($function));
+    }
+
 }
