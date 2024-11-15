@@ -120,7 +120,6 @@ $subject_or_module_label = lang('Grades.subject').' '.lang('Grades.or').' '.strt
                 <?= form_label($subject_or_module_label, 'subject',
                     ['class' => 'form-label']) ?>
 
-                <!-- TODO : Insert all subjects + modules teached to the apprentice as form_dropdown $options -->
                 <?= form_dropdown('subject', $subject_and_domains_list, $selected_entry ?? null,
                     ['class' => 'form-control', 'id' => 'subject']) ?>
             </div>

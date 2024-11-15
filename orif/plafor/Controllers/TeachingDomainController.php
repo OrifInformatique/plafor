@@ -226,6 +226,7 @@ class TeachingDomainController extends \App\Controllers\BaseController
             "official_name" => $course_plan["official_name"],
         ];
         $titles = [];
+        $titles[''] = lang('plafor_lang.field_default_option_in_drop_down');
         $domain_titles = $this->m_teaching_domain_title_model
                       ->withDeleted($domain_id > 0)
                       ->findAll();
@@ -267,9 +268,6 @@ class TeachingDomainController extends \App\Controllers\BaseController
     private function saveTeachingDomainPost(array $course_plan,
         int $domain_id): string|RedirectResponse
     {
-        // TODO : Vérifier que soit $domain_name (dropdown option) ou soit
-        // $new_domain_name (input text) soit renseingé. Renvoyer une
-        // erreur à la vue si non.
         $this->m_teaching_domain_title_model->transStart();
         if (!empty($this->request->getPost("new_domain_name"))) {
             $this->m_teaching_domain_title_model

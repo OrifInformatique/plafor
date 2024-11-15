@@ -96,7 +96,6 @@ $new_domain_name = lang('Grades.name').' '.lang('Grades.of_a').' '.
                 <?= form_label(lang('Grades.name'), 'domain_name',
                     ['class' => 'form-label']) ?>
 
-                <!-- TODO : List all domain names + first empty option for form_dropdown options -->
                 <?= form_dropdown('domain_name', $domain_names, $domain_name ?? '',
                     ['class' => 'form-control', 'id' => 'domain_name']) ?>
             </div>
