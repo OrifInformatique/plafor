@@ -133,14 +133,14 @@ $new_domain_name = lang('Grades.name').' '.lang('Grades.of_a').' '.
                     ['class' => 'form-label']) ?>
 
                 <?= form_input('domain_weight', $domain_weight ?? '',
-                    ['class' => 'form-control', 'id' => 'domain_weight', 'min' => 0, 'max' => 100], 'number') ?>
+                    ['class' => 'form-control', 'id' => 'domain_weight', 'min' => 0, 'max' => 100, 'required' => 'required'], 'number') ?>
             </div>
             <div class="col-sm-3 form-group">
                 <?= form_label(lang('Grades.round_multiple_average'), 'round_multiple',
                     ['class' => 'form-label']) ?>
 
                 <?= form_input('round_multiple', $round_multiple ?? 0.1,
-                    ['class' => 'form-control', 'id' => 'round_multiple', 'min' => 0.1, 'max' => 1, 'step' => 0.1], 'number') ?>
+                    ['class' => 'form-control', 'id' => 'round_multiple', 'min' => 0.1, 'max' => 1, 'step' => 0.1, 'required' => 'required'], 'number') ?>
             </div>
 
             <div class="col-sm-3 form-group form-check form-check-inline">

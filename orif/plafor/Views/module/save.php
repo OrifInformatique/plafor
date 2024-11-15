@@ -73,7 +73,7 @@ $module_number_max      = str_repeat(9, config('\Plafor\Config\PlaforConfig')->M
                     ['class' => 'form-label']) ?>
 
                 <?= form_input('module_name', $module_name ?? '',
-                    ['class' => 'form-control', 'id' => 'module_name', 'maxlength' => $module_name_max_length]) ?>
+                    ['class' => 'form-control', 'id' => 'module_name', 'maxlength' => $module_name_max_length, 'required' => 'required']) ?>
             </div>
         </div>
 
@@ -84,7 +84,8 @@ $module_number_max      = str_repeat(9, config('\Plafor\Config\PlaforConfig')->M
 
                 <?= form_input('module_number', $module_number ?? '',
                     ['class' => 'form-control', 'id' => 'module_number',
-                    'min' => $module_number_min, 'max' => $module_number_max], 'number') ?>
+                    'min' => $module_number_min, 'max' => $module_number_max,
+                    'required' => 'required'], 'number') ?>
             </div>
 
             <div class="col-sm-2 form-group">
@@ -92,7 +93,7 @@ $module_number_max      = str_repeat(9, config('\Plafor\Config\PlaforConfig')->M
                     ['class' => 'form-label']) ?>
 
                 <?= form_input('module_version', $module_version ?? '',
-                    ['class' => 'form-control', 'id' => 'module_version', 'min' => 1], 'number') ?>
+                    ['class' => 'form-control', 'id' => 'module_version', 'min' => 1, 'required' => 'required'], 'number') ?>
             </div>
         </div>
 

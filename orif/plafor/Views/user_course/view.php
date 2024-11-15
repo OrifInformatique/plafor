@@ -115,7 +115,7 @@ helper("AccesPermissions_helper")
                     <?= lang('plafor_lang.title_user_course_update') ?>
                 </a>
 
-                <a class="btn btn-danger" href="<?= base_url('plafor/courseplan/delete_user_course/'.$user_course['id'])?>">
+                <a class="btn btn-danger" href="<?= base_url('plafor/apprentice/delete_user_course/2/'.$user_course['id'])?>">
                     <?= lang('plafor_lang.title_user_course_delete') ?>
                 </a>
             </div>

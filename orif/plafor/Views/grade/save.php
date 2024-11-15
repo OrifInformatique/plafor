@@ -129,7 +129,7 @@ $subject_or_module_label = lang('Grades.subject').' '.lang('Grades.or').' '.strt
                     ['class' => 'form-label']) ?>
 
                 <?= form_input('grade', $grade ?? 0,
-                    ['class' => 'form-control', 'id' => 'grade', 'min' => 0, 'max' => 6, 'step' => 0.5], 'number') ?>
+                    ['class' => 'form-control', 'id' => 'grade', 'min' => 0, 'max' => 6, 'step' => 0.5, 'required' => 'required'], 'number') ?>
             </div>
 
             <div class="col-sm-4 form-group">
@@ -137,7 +137,7 @@ $subject_or_module_label = lang('Grades.subject').' '.lang('Grades.or').' '.strt
                     ['class' => 'form-label']) ?>
 
                 <?= form_input('exam_date', $exam_date ?? '',
-                    ['class' => 'form-control', 'id' => 'exam_date'], 'date') ?>
+                    ['class' => 'form-control', 'id' => 'exam_date', 'required' => 'required'], 'date') ?>
             </div>
 
             <div class="col-sm-4 form-group form-check form-check-inline">
