@@ -80,9 +80,7 @@
  * @param bool $is_exam_made_in_school Defines whether the exam has been made in school or not (concerns modules).
  *
  */
-
 helper('form');
-
 $subject_or_module_label = lang('Grades.subject').' '.lang('Grades.or').' '.strtolower(lang('Grades.module'));
 
 ?>
@@ -145,10 +143,13 @@ $subject_or_module_label = lang('Grades.subject').' '.lang('Grades.or').' '.strt
             <div class="col-sm-4 form-group form-check form-check-inline">
                 <?= form_label(lang('Grades.is_exam_made_at_school'), 'is_exam_made_at_school',
                     ['class' => 'form-check-label mr-2']) ?>
-
-                <!-- TODO : Auto-check and put on read-only the checkbox if a subject is selected -->
+                <?php if ((array_key_first($subject_and_domains_list) ?? ' ')[0] === 's') :?>
                 <?= form_checkbox('is_exam_made_at_school', true, $is_exam_made_in_school ?? false,
-                    ['class' => 'form-check-input', 'id' => 'is_exam_made_at_school']) ?>
+                    [ 'class' => 'form-check-input', 'id' => 'is_exam_made_at_school', 'disabled' => true]) ?>
+                <?php else: ?>
+                    <?= form_checkbox('is_exam_made_at_school', true, $is_exam_made_in_school ?? false,
+                        ['class' => 'form-check-input', 'id' => 'is_exam_made_at_school']) ?>
+                <?php endif ?>
             </div>
         </div>
 
