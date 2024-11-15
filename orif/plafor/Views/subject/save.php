@@ -91,7 +91,7 @@ helper('form')
                 <?= form_label(lang('Grades.round_multiple_average'), 'round_multiple',
                     ['class' => 'form-label']) ?>
 
-                <?= form_input('round_multiple', $round_multiple ?? '',
+                <?= form_input('round_multiple', $round_multiple ?? 0.1,
                     ['class' => 'form-control', 'id' => 'round_multiple', 'min' => 0.1, 'max' => 1, 'step' => 0.1], 'number') ?>
             </div>
         </div>
