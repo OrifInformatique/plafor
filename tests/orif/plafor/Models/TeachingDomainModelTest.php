@@ -49,7 +49,8 @@ class TeachingDomainModelTest extends CIUnitTestCase
             'is_eliminatory' => 0,
             'archive' => null,
             'fk_teaching_domain_title' => 1,
-            'fk_course_plan' => 5
+            'fk_course_plan' => 5,
+            'round_multiple' => "0.500",
         ];
         $this->assertEquals($expect, $data);
     }
@@ -84,7 +85,8 @@ class TeachingDomainModelTest extends CIUnitTestCase
             'is_eliminatory' => 0,
             'archive' => null,
             'fk_teaching_domain_title' => 1,
-            'fk_course_plan' => 5
+            'fk_course_plan' => 5,
+            'round_multiple' => '0.500',
         ];
         $this->assertEquals($expect, $data);
     }
@@ -114,6 +116,7 @@ class TeachingDomainModelTest extends CIUnitTestCase
             'fk_course_plan' => 1,
             'domain_weight' => 0.1,
             'is_eliminatory' => 1,
+            'round_multiple' => 0.1,
         ];
         $isSuccess = $teachingDomainModel->insert($teachingDomain, false);
         $this->assertTrue($isSuccess);
