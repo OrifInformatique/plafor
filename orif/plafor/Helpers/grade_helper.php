@@ -16,6 +16,7 @@ function getSubjectsAndModulesList(int $userCourseId,
         return $list;
     }
     $domainModel = model('TeachingDomainModel');
+    // TODO magic string find better way
     $getDomain = match ($selectedDomain) {
         'tpi' => [$domainModel, 'getTpiDomain'],
         'cbe' => [$domainModel, 'getCbeDomain'],
@@ -157,6 +158,7 @@ function getSelectedEntryForSubject(int $userCourseId,
 {
     $domainModel = model('TeachingDomainModel');
     // match selectedDomain
+    // TODO magic string find better way
     $getDomain = match ($selectedDomain) {
         'tpi' => [$domainModel, 'getTpiDomain'],
         'cbe' => [$domainModel, 'getCbeDomain'],
