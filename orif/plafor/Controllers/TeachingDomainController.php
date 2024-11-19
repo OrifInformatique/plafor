@@ -91,9 +91,10 @@ class TeachingDomainController extends \App\Controllers\BaseController
     /**
      * Adds or updates a teaching domain title.
      *
-     * @param int $domain_title_id  ID of the teaching domain.
+     * @param int $domain_title_id ID of the teaching domain.
      *
-     * @return string|RedirectResponse
+     * @return string|RedirectResponse The view to save the teaching domain
+     * title or a redirect to the list of teaching domain titles.
      *
      */
     public function saveTeachingDomainTitle(
@@ -218,6 +219,14 @@ class TeachingDomainController extends \App\Controllers\BaseController
         return redirect()->to(base_url("plafor/teachingdomain/getAllDomainsTitle"));
     }
 
+    /**
+     * Displays the form to save a teaching domain.
+     *
+     * @param array $course_plan The course plan.
+     * @param int $domain_id The ID of the teaching domain.
+     *
+     * @return string The view of the form to save the teaching domain.
+     */
     private function showSaveTeachingDomainForm(array $course_plan,
         int $domain_id): string
     {
@@ -265,6 +274,15 @@ class TeachingDomainController extends \App\Controllers\BaseController
         return $this->display_view("\Plafor/domain/save", $data_to_view);
     }
 
+    /**
+     * Saves a teaching domain.
+     *
+     * @param array $course_plan The course plan.
+     * @param int $domain_id The ID of the teaching domain.
+     *
+     * @return string|RedirectResponse The view of the form to save the
+     * teaching domain or a redirect to the course plan view.
+     */
     private function saveTeachingDomainPost(array $course_plan,
         int $domain_id): string|RedirectResponse
     {
@@ -662,7 +680,8 @@ class TeachingDomainController extends \App\Controllers\BaseController
      * @return string|RedirectResponse
      *
      */
-    public function saveTeachingModule(int $module_id = 0): string|RedirectResponse
+    public function saveTeachingModule(
+        int $module_id = 0): string|RedirectResponse
     {
         if (!hasCurrentUserAdminAccess())
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);

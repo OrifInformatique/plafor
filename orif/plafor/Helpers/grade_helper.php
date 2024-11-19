@@ -1,6 +1,15 @@
 <?php
 
 
+/**
+ * Retrieves the list of subjects and modules for a usercourse. The array
+ * is formatted for grade save view
+ *
+ * @param int $userCourseId ID of the user's course
+ * @param string|null $selectedDomain Selected domain (tpi, cbe, ecg,
+ * modules)
+ * @return array List of subjects and modules
+ */
 function getSubjectsAndModulesList(int $userCourseId,
     ?string $selectedDomain = null): array
 {
@@ -34,6 +43,15 @@ function getSubjectsAndModulesList(int $userCourseId,
     return getSubjects($filteredSubjectId);
 }
 
+/**
+ * Retrieves the list of all subjects and modules for a user course. The array
+ * is formatted for grade save view.
+ *
+ * @param int $userCourseId ID of the user's course
+ * @param bool $willBeFiltered Whether the list will be filtered
+ *
+ * @return array List of all subjects and modules
+ */
 function getSubjectsAndModulesListAll(int $userCourseId,
     ?bool $willBeFiltered = false): array
 {
@@ -48,6 +66,15 @@ function getSubjectsAndModulesListAll(int $userCourseId,
 
 
 
+/**
+ * Retrieves the list of all subjects for a user course. The array is formatted
+ * for grade save view.
+ *
+ * @param int $userCourseId ID of the user's course
+ * @param bool $willBeFiltered Whether the list will be filtered
+ *
+ * @return array List of all subjects
+ */
 function getSubjectsAll(int $userCourseId, bool $willBeFiltered = false): array
 {
     $domainModel = model('TeachingDomainModel');
@@ -72,6 +99,14 @@ function getSubjectsAll(int $userCourseId, bool $willBeFiltered = false): array
     return getSubjects($filteredSubject);
 }
 
+/**
+ * Retrieves the list of subjects for a given list of subject IDs. The array is
+ * formatted for grade save view.
+ *
+ * @param array $subjectIds List of subject IDs
+ *
+ * @return array List of subjects
+ */
 function getSubjects(array $subjectIds): array
 {
     $subjectModel = model('TeachingSubjectModel');
@@ -87,6 +122,14 @@ function getSubjects(array $subjectIds): array
     return $formatedSubjects;
 }
 
+/**
+ * Checks if a user has a grade for a given module.
+ *
+ * @param int $userCourseId ID of the user's course
+ * @param int $moduleId ID of the module
+ *
+ * @return bool Whether the user has a grade for the module
+ */
 function hasGrade(int $userCourseId, int $moduleId): bool
 {
     $gradeModel = model('GradeModel');
@@ -98,6 +141,14 @@ function hasGrade(int $userCourseId, int $moduleId): bool
       return !empty($grade);
 }
 
+/**
+ * Checks if a user has 8 or more grades for a given subject.
+ *
+ * @param int $userCourseId ID of the user's course
+ * @param int $subjectId ID of the subject
+ *
+ * @return bool Whether the user has 8 or more grades for the subject
+ */
 function has8GradesOrMore(int $userCourseId, int $subjectId): bool
 {
     $gradeModel = model('GradeModel');
@@ -110,6 +161,15 @@ function has8GradesOrMore(int $userCourseId, int $subjectId): bool
     return count($grade) >= 8;
 }
 
+/**
+ * Retrieves the list of modules for a user course. The array is formatted for
+ * grade save view.
+ *
+ * @param int $userCourseId ID of the user's course
+ * @param bool $willBeFiltered Whether the list will be filtered
+ *
+ * @return array List of modules
+ */
 function getModules(int $userCourseId, bool $willBeFiltered = false): array
 {
     $domainModel = model('TeachingDomainModel');
@@ -141,6 +201,12 @@ function getModules(int $userCourseId, bool $willBeFiltered = false): array
     return $formatedModules;
 }
 
+/**
+ * Retrieves the apprentice's id and username for a course.
+ *
+ * @param int $userCourseId ID of the user's course
+ * @return array Apprentice's information
+ */
 function getApprentice(int $userCourseId): ?array
 {
     $userCourseModel = model('UserCourseModel');
@@ -152,7 +218,14 @@ function getApprentice(int $userCourseId): ?array
     return $user;
 }
 
-// selectedDomain: tpi, cbe, ecg, modules
+/**
+ * Retrieves the selected entry for a given subject.
+ *
+ * @param int $userCourseId ID of the user's course
+ * @param string $selectedDomain Selected domain (tpi, cbe, ecg, modules)
+ *
+ * @return string|null Selected entry
+ */
 function getSelectedEntryForSubject(int $userCourseId,
     string $selectedDomain): ?string
 {
@@ -178,6 +251,14 @@ function getSelectedEntryForSubject(int $userCourseId,
     return $formatedId;
 }
 
+
+/**
+ * Retrieves the selected entry for modules.
+ *
+ * @param int $userCourseId ID of the user's course
+ *
+ * @return string|null Selected entry
+ */
 function getSelectedEntryForModules(int $userCourseId): ?string
 {
     $domainModel = model('TeachingDomainModel');
@@ -189,7 +270,14 @@ function getSelectedEntryForModules(int $userCourseId): ?string
     return $formatedId;
 }
 
-// selectedDomain: tpi, cbe, ecg, modules
+/**
+ * Retrieves the selected entry for a given domain.
+ *
+ * @param int $userCourseId ID of the user's course
+ * @param string $selectedDomain Selected domain (tpi, cbe, ecg, modules)
+ *
+ * @return string|null Selected entry
+ */
 function getSelectedEntry(int $userCourseId, string $selectedDomain): ?string
 {
     if ($selectedDomain === 'modules') {
@@ -198,6 +286,14 @@ function getSelectedEntry(int $userCourseId, string $selectedDomain): ?string
     return getSelectedEntryForSubject($userCourseId, $selectedDomain);
 }
 
+/**
+ * Checks if a grade is in a given course.
+ *
+ * @param int $userCourseId ID of the user's course
+ * @param int $gradeId ID of the grade
+ *
+ * @return bool Whether the grade is in the course
+ */
 function isGradeInCourse(int $userCourseId, int $gradeId): bool
 {
     if ($gradeId === 0) return true;
@@ -214,6 +310,13 @@ function isGradeInCourse(int $userCourseId, int $gradeId): bool
     return $isAuthorised;
 }
 
+/**
+ * Retrieves the course plan name for a given user course.
+ *
+ * @param int $userCourseId ID of the user's course
+ *
+ * @return string|null Course plan name
+ */
 function getCoursePlanName(int $userCourseId): ?string
 {
     $coursePlanModel = model('CoursePlanModel');
@@ -228,6 +331,14 @@ function getCoursePlanName(int $userCourseId): ?string
 
 }
 
+/**
+ * Adds a subject to a list of subjects.
+ *
+ * @param int $subjectId ID of the subject
+ * @param array $subjects List of subjects
+ *
+ * @return array List of subjects with the added subject
+ */
 function addSubject(int $subjectId, array $subjects): array
 {
     $subjectModel = model('TeachingSubjectModel');
@@ -244,6 +355,14 @@ function addSubject(int $subjectId, array $subjects): array
 
 }
 
+/**
+ * Adds a module to a list of modules.
+ *
+ * @param int $moduleId ID of the module
+ * @param array $modules List of modules
+ *
+ * @return array List of modules with the added module
+ */
 function addModule(int $moduleId, array $modules): array
 {
     $moduleModel = model('TeachingModuleModel');
@@ -260,6 +379,14 @@ function addModule(int $moduleId, array $modules): array
     return $modules;
 }
 
+/**
+ * Adds a grade to a list of grades.
+ *
+ * @param int $gradeId ID of the grade
+ * @param array $formatedList List of grades
+ *
+ * @return array List of grades with the added grade
+ */
 function addHimself(int $gradeId, array $formatedList): array
 {
     if ($gradeId == 0) return $formatedList;
@@ -320,6 +447,14 @@ function mround(float $number, float $multiple): float
     return round($number / $multiple) * $multiple;
 }
 
+/**
+ * Retrieves the rounding function for a given model and ID.
+ *
+ * @param CodeIgniter\Model $model The model to use
+ * @param int $id The ID to use to retrieve the rounding function
+ *
+ * @return callable The rounding function
+ */
 function getRoundFunction(CodeIgniter\Model $model, int $id): callable
 {
     $data = $model->select('round_multiple')
@@ -335,12 +470,26 @@ function getRoundFunction(CodeIgniter\Model $model, int $id): callable
     };
 }
 
+/**
+ * Retrieves the rounding function for a given subject.
+ *
+ * @param int $subjectId ID of the subject
+ *
+ * @return callable Rounding function
+ */
 function getSubjectRoundFunction(int $subjectId): callable
 {
     $subjectModel = model('TeachingSubjectModel');
     return getRoundFunction($subjectModel, $subjectId);
 }
 
+/**
+ * Retrieves the rounding function for a given domain.
+ *
+ * @param int $domainId ID of the domain
+ *
+ * @return callable Rounding function
+ */
 function getDomainRoundFunction(int $domainId): callable
 {
     $domainModel = model('TeachingDomainModel');
