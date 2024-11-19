@@ -60,7 +60,7 @@ $max_length = config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH;
                     ['class' => 'form-label']) ?>
 
                 <?= form_textarea('comment', $comment_text,
-                    ['class' => 'form-control', 'id' => 'comment', 'maxlength' => $max_length]) ?>
+                    ['class' => 'form-control', 'id' => 'comment', 'maxlength' => $max_length, 'required' => 'required']) ?>
             </div>
         </div>
 

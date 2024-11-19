@@ -225,7 +225,6 @@ helper("AccessPermissions_helper")
 
     <!-- Current course plan school report -->
     <div class="row mt-2">
-        <!-- TODO : Insert data needed for the view -->
         <?= view('\Plafor/grade/school_report') ?>
     </div>
 </div>
@@ -272,7 +271,6 @@ helper("AccessPermissions_helper")
     }
 
     $(document).ready(() => {
-        // TODO this in controller
         let urlMethod = '<?=base_url('plafor/apprentice/view_apprentice') ?>';
         let apprenticeId = '<?= $apprentice['id'] ?>';
         let userCourseId = '<?= $user_course_id ?>';

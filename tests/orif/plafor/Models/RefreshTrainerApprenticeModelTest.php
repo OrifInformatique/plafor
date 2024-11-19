@@ -1,6 +1,6 @@
 <?php
 /**
- * Unit / Integration tests TrainerApprenticeModelTest 
+ * Unit / Integration tests TrainerApprenticeModelTest
  *
  * @author      Orif (CaLa)
  * @link        https://github.com/OrifInformatique
@@ -10,7 +10,10 @@ namespace Plafor\Models;
 
 use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
-helper("UnitTest_helper"); // The helper hold all Constants -> Plafor\orif\plafor\Helpers\UnitTest_helper.php
+
+// The helper hold all Constants ->
+// Plafor\orif\plafor\Helpers\UnitTest_helper.php
+helper("UnitTest_helper");
 
 class RefreshTrainerApprenticeModelTest extends CIUnitTestCase
 {
@@ -44,7 +47,8 @@ class RefreshTrainerApprenticeModelTest extends CIUnitTestCase
         $this->assertEquals($trainer['username'], TRAINER_DEV_NAME);
         $this->assertEquals($trainer['password'], TRAINER_DEV_HASHED_PW);
         $this->assertEquals($trainer['archive'], TRAINER_DEV_ARCHIVE);
-        $this->assertEquals($trainer['date_creation'], TRAINER_DEV_CREATION_DATE);
+        $this->assertEquals($trainer['date_creation'],
+            TRAINER_DEV_CREATION_DATE);
     }
 
     /**
@@ -67,7 +71,8 @@ class RefreshTrainerApprenticeModelTest extends CIUnitTestCase
         $this->assertEquals($apprentice['username'], APPRENTICE_DEV_NAME);
         $this->assertEquals($apprentice['password'], APPRENTICE_DEV_HASHED_PW);
         $this->assertEquals($apprentice['archive'], APPRENTICE_DEV_ARCHIVE);
-        $this->assertEquals($apprentice['date_creation'], APPRENTICE_DEV_CREATION_DATE);
+        $this->assertEquals($apprentice['date_creation'],
+            APPRENTICE_DEV_CREATION_DATE);
     }
 
     /**
@@ -78,7 +83,8 @@ class RefreshTrainerApprenticeModelTest extends CIUnitTestCase
     {
         // Gets the list of apprentice ids linked to a trainer id
         $trainerApprenticeModel = model('TrainerApprenticeModel');
-        $apprenticeIds = $trainerApprenticeModel->getApprenticeIdsFromTrainer(TRAINER_SYS_ID);
+        $apprenticeIds = $trainerApprenticeModel
+            ->getApprenticeIdsFromTrainer(TRAINER_SYS_ID);
 
         // Assertions
         $this->assertIsArray($apprenticeIds);
@@ -86,10 +92,11 @@ class RefreshTrainerApprenticeModelTest extends CIUnitTestCase
         foreach ($apprenticeIds as $apprenticeId)
         {
             $trainerApprenticeModel = model('TrainerApprenticeModel');
-            $apprentice = $trainerApprenticeModel->getApprentice($apprenticeId);
+            $apprentice = $trainerApprenticeModel
+                ->getApprentice($apprenticeId);
 
-            $this->assertEquals($apprentice['fk_user_type'], APPRENTICE_USER_TYPE);
+            $this->assertEquals($apprentice['fk_user_type'],
+                APPRENTICE_USER_TYPE);
         }
     }
-
 }

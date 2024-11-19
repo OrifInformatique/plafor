@@ -1,6 +1,6 @@
 <?php
 /**
- * Unit / Integration tests AcquisitionLevelModelTest 
+ * Unit / Integration tests AcquisitionLevelModelTest
  *
  * @author      Orif (CaLa)
  * @link        https://github.com/OrifInformatique

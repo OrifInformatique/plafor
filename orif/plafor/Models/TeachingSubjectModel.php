@@ -26,7 +26,7 @@ class TeachingSubjectModel extends Model
     // Validation
     protected $validationRules      = [
         'fk_teaching_domain' => 'is_natural_no_zero',
-        'name' => 'string|max_length[50]',
+        'name' => 'required|string|max_length[50]',
         'subject_weight' => 'numeric',
         'round_multiple' => 'decimal',
     ];

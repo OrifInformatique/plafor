@@ -91,9 +91,10 @@ class TeachingDomainController extends \App\Controllers\BaseController
     /**
      * Adds or updates a teaching domain title.
      *
-     * @param int $domain_title_id  ID of the teaching domain.
+     * @param int $domain_title_id ID of the teaching domain.
      *
-     * @return string|RedirectResponse
+     * @return string|RedirectResponse The view to save the teaching domain
+     * title or a redirect to the list of teaching domain titles.
      *
      */
     public function saveTeachingDomainTitle(
@@ -218,6 +219,14 @@ class TeachingDomainController extends \App\Controllers\BaseController
         return redirect()->to(base_url("plafor/teachingdomain/getAllDomainsTitle"));
     }
 
+    /**
+     * Displays the form to save a teaching domain.
+     *
+     * @param array $course_plan The course plan.
+     * @param int $domain_id The ID of the teaching domain.
+     *
+     * @return string The view of the form to save the teaching domain.
+     */
     private function showSaveTeachingDomainForm(array $course_plan,
         int $domain_id): string
     {
@@ -226,6 +235,7 @@ class TeachingDomainController extends \App\Controllers\BaseController
             "official_name" => $course_plan["official_name"],
         ];
         $titles = [];
+        $titles[''] = lang('plafor_lang.field_default_option_in_drop_down');
         $domain_titles = $this->m_teaching_domain_title_model
                       ->withDeleted($domain_id > 0)
                       ->findAll();
@@ -264,12 +274,18 @@ class TeachingDomainController extends \App\Controllers\BaseController
         return $this->display_view("\Plafor/domain/save", $data_to_view);
     }
 
+    /**
+     * Saves a teaching domain.
+     *
+     * @param array $course_plan The course plan.
+     * @param int $domain_id The ID of the teaching domain.
+     *
+     * @return string|RedirectResponse The view of the form to save the
+     * teaching domain or a redirect to the course plan view.
+     */
     private function saveTeachingDomainPost(array $course_plan,
         int $domain_id): string|RedirectResponse
     {
-        // TODO : Vérifier que soit $domain_name (dropdown option) ou soit
-        // $new_domain_name (input text) soit renseingé. Renvoyer une
-        // erreur à la vue si non.
         $this->m_teaching_domain_title_model->transStart();
         if (!empty($this->request->getPost("new_domain_name"))) {
             $this->m_teaching_domain_title_model
@@ -664,7 +680,8 @@ class TeachingDomainController extends \App\Controllers\BaseController
      * @return string|RedirectResponse
      *
      */
-    public function saveTeachingModule(int $module_id = 0): string|RedirectResponse
+    public function saveTeachingModule(
+        int $module_id = 0): string|RedirectResponse
     {
         if (!hasCurrentUserAdminAccess())
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);

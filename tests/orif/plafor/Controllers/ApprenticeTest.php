@@ -15,7 +15,9 @@ use CodeIgniter\Test\DatabaseTestTrait;
 
 use User\Models;
 
-helper("UnitTest_helper"); // The helper hold all Constants -> Plafor\orif\plafor\Helpers\UnitTest_helper.php
+// The helper hold all Constants ->
+// Plafor\orif\plafor\Helpers\UnitTest_helper.php
+helper("UnitTest_helper");
 
 class ApprenticeTest extends CIUnitTestCase
 {

@@ -1,5 +1,5 @@
 <?php
-/**$wa
+/**
  * Unit tests TeachingDomainControllerTest
  *
  * @author      Orif (CaLa)

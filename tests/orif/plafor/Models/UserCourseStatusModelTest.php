@@ -1,6 +1,6 @@
 <?php
 /**
- * Unit / Integration tests UserCourseStatusModelTest 
+ * Unit / Integration tests UserCourseStatusModelTest
  *
  * @author      Orif (CaLa)
  * @link        https://github.com/OrifInformatique

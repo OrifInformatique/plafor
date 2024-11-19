@@ -63,7 +63,7 @@ $domain_title_label = lang('Grades.name').' '.lang('Grades.of_a').' '.
                     ['class' => 'form-label']) ?>
 
                 <?= form_input('domain_title', $domain_title ?? '',
-                    ['class' => 'form-control', 'id' => 'domain_title']) ?>
+                    ['class' => 'form-control', 'id' => 'domain_title', 'required' => 'required']) ?>
             </div>
         </div>
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Unit / Integration tests CoursePlanModelTest 
+ * Unit / Integration tests CoursePlanModelTest
  *
  * @author      Orif (CaLa)
  * @link        https://github.com/OrifInformatique
@@ -25,6 +25,12 @@ class RefreshCoursePlanModelTest extends CIUnitTestCase
     protected $basePath = 'tests/_support/Database';
     protected $seed     = 'TeachingDomainModelTestSeed';
 
+    /**
+     * Tests the getCoursePlanIdByUserCourse method to retrieve the course plan
+     * ID by user course.
+     *
+     * @covers \Plafor\Models\CoursePlanModel::getCoursePlanIdByUserCourse
+     */
      public function testGetCoursePlanIdByUserCourse()
     {
         $coursePlanModel = model('CoursePlanModel');
@@ -38,6 +44,12 @@ class RefreshCoursePlanModelTest extends CIUnitTestCase
         $this->assertEquals($expectedCoursePlanId, $coursePlanId);
     }
 
+    /**
+     * Tests the getCoursePlanIdByUserCourse method to retrieve the course plan
+     * ID by user course when the user course is not found.
+     *
+     * @covers \Plafor\Models\CoursePlanModel::getCoursePlanIdByUserCourse
+     */
     public function testGetCoursePlanIdByUserCourseNotFound()
     {
         $coursePlanModel = model('CoursePlanModel');
