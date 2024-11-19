@@ -4,7 +4,9 @@ namespace Plafor\Models;
 use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
 
-helper("UnitTest_helper"); // The helper hold all Constants -> Plafor\orif\plafor\Helpers\UnitTest_helper.php
+// The helper hold all Constants ->
+// Plafor\orif\plafor\Helpers\UnitTest_helper.php
+helper("UnitTest_helper");
 
 class RefreshUserCourseModelTest extends CIUnitTestCase
 {
