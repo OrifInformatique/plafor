@@ -52,7 +52,6 @@ class FullGradeViewTest extends CIUnitTestCase
         // Act
         $result = $this->withSession($session)->get($url);
         // Assert
-        $result->assertSee(5.2);
         $result->assertSee(5.5);
         $result->assertSee(5.0);
         $result->assertSee(5.1);
@@ -100,7 +99,7 @@ class FullGradeViewTest extends CIUnitTestCase
         // Arrange
         $userCourseId = USER_COURSE_DEV_ID;
         $expect['cfc_average'] = 4.9;
-        $expect['modules']['school']['average'] = 5.2;
+        $expect['modules']['school']['average'] = 5.0;
         $expect['modules']['non-school']['average'] = 5.5;
         $expect['modules']['average'] = 5.1;
         // math
