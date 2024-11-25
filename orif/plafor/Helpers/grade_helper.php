@@ -15,14 +15,10 @@ function getSubjectsAndModulesList(int $userCourseId,
 {
     $defaultList = getSubjectsAndModulesListAll($userCourseId,
         willBeFiltered: true);
-    if (is_null($selectedDomain)) {
-        return $defaultList;
-    }
-    if ($selectedDomain === 'modules') {
-        $list[lang('Grades.modules')] = getModules($userCourseId,
-            willBeFiltered: true);
 
-        return $list;
+    if (is_null($selectedDomain)) return $defaultList;
+    if ($selectedDomain === 'modules') {
+        return getModulesInArrayKey($userCourseId);
     }
     $domainModel = model('TeachingDomainModel');
     // TODO magic string find better way
@@ -35,12 +31,50 @@ function getSubjectsAndModulesList(int $userCourseId,
     if (is_null($getDomain)) return $defaultList;
     $domain = $getDomain($userCourseId, withDeleted: true);
     if (empty($domain)) return $defaultList;
+    return getSubjectsByDomainId($domain['id'], $userCourseId);
+}
+
+function getSubjectsByDomainId(int $domainId, int $userCourseId): array
+{
     $subjectModel = model('TeachingSubjectModel');
-    $subjectIds = $subjectModel->getTeachingSubjectIdByDomain($domain['id']);
+    $subjectIds = $subjectModel->getTeachingSubjectIdByDomain($domainId);
     $filteredSubjectId = array_filter($subjectIds, fn($row) =>
         !has8GradesOrMore($userCourseId, $row));
 
-    return getSubjects($filteredSubjectId);
+    $list[lang('Grades.subjects')] = getSubjects($filteredSubjectId);
+    return $list;
+}
+
+function getSubjectsOrModulesListByGradeId(int $gradeId): array
+{
+    assert($gradeId > 0);
+    $gradeModel = model('GradeModel');
+    $grade = $gradeModel->select('fk_teaching_module, '
+        . 'fk_teaching_subject, fk_user_course')
+        ->allowCallbacks(false)
+        ->withDeleted()
+        ->find($gradeId);
+
+    assert(!empty($grade));
+    if (isset($grade['fk_teaching_module'])) {
+        return getModulesInArrayKey($grade['fk_user_course']);
+    }
+    assert(!is_null($grade['fk_teaching_subject']));
+    $subjectModel = model('TeachingSubjectModel');
+    $subject = $subjectModel
+        ->select('fk_teaching_domain')
+        ->allowCallbacks(false)
+        ->find($grade['fk_teaching_subject']);
+
+    assert(!empty($subject));
+    return getSubjectsByDomainId($subject['fk_teaching_domain'],
+        $grade['fk_user_course']);
+}
+
+function getModulesInArrayKey(int $userCourseId): array
+{
+    $list[lang('Grades.modules')] = getModules($userCourseId);
+    return $list;
 }
 
 /**

@@ -66,9 +66,14 @@ class GradeController extends BaseController
         ?string $selectedDomain=null): array
     {
         helper('grade_helper');
-        $list = getSubjectsAndModulesList($userCourseId, $selectedDomain);
-        return $list;
+        return getSubjectsAndModulesList($userCourseId, $selectedDomain);
 
+    }
+
+    private function getSubjectsOrModulesListByGradeId(int $gradeId): array
+    {
+        helper('grade_helper');
+        return getSubjectsOrModulesListByGradeId($gradeId);
     }
 
     /**
@@ -80,8 +85,7 @@ class GradeController extends BaseController
     private function getApprentice(int $userCourseId): array
     {
         helper('grade_helper');
-        $apprentice = getApprentice($userCourseId);
-        return $apprentice;
+        return getApprentice($userCourseId);
     }
 
     /**
@@ -151,22 +155,26 @@ class GradeController extends BaseController
     private function saveGradeGet(int $userCourseId, int $gradeId,
         ?string $selectedDomain = null): string
     {
-        if ($gradeId !== 0) {
+        $isUpdate = $gradeId !== 0;
+        if ($isUpdate) {
             $data = $this->formatGradeForFormUpdate($gradeId);
+            $subjectAndModulesList = $this
+                ->getSubjectsOrModulesListByGradeId($gradeId);
+        } else {
+            $subjectAndModulesList = $this
+                ->getsubjectAndModulesList($userCourseId, $selectedDomain);
         }
         $data['grade_id'] = $gradeId;
         $data['user_course_id'] = $userCourseId;
         $data["errors"] = $this->m_grade_model->errors();
         $data['apprentice'] = $this->getApprentice($userCourseId);
         $data['course_plan'] = $this->getCoursePlanName($userCourseId);
-        $subjectAndModulesList = $this
-            ->getsubjectAndModulesList($userCourseId, $selectedDomain);
 
         $data['subject_and_domains_list'] = $this->addHimself($gradeId,
             $subjectAndModulesList);
 
         $data['title'] = lang(
-            $gradeId == 0 ? 'Grades.add_grade' : 'Grades.update_grade');
+            $isUpdate ? 'Grades.update_grade' : 'Grades.add_grade');
 
         if (!is_null($selectedDomain)) {
             // begin is not yet necessary
