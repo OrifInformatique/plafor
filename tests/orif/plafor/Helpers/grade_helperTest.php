@@ -366,7 +366,6 @@ class Grade_HelperTest extends CIUnitTestCase
         // Act
         $list = getSubjectsOrModulesListByGradeId($gradeId);
         // Assert
-        dd($list);
         $this->assertTrue(is_array($list));
     }
 
