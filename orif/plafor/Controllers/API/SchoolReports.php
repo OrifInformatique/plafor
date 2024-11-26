@@ -79,9 +79,11 @@ class SchoolReports extends ResourceController
     }
 
     /**
-     * Gets school report details of a specific apprentice user course.
+     * Gets the latest school report details from a specific apprentice.
+     * The course plan returned is the more recent user_course.
+     * The user_courses with the "current" status are selected first.
      *
-     * @param ?int $id ID of the user_course.
+     * @param ?int $id ID of the user course.
      *
      * @return Response
      *
@@ -98,13 +100,14 @@ class SchoolReports extends ResourceController
                     "id" => 101,
                     "course_plan_id" => 88605,
                     "official_name" => "Opératrice en informatique / Opérateur en informatique avec CFC",
+                    "date_begin" => "2022-08-01",
+                    "date_end" => "2026-07-31",
                     "global_average" => 5.0,
                     "teaching_domains" =>
                     [
                         [
                             "id" => 1,
                             "title" => "Compétences de base élargies",
-                            "average" => 5.0,
                             "weight" => 0.6,
                             "is_eliminatory" => false,
                             "subjects" =>
@@ -114,8 +117,8 @@ class SchoolReports extends ResourceController
                                     "name" => "Mathématiques",
                                     "weight" => 0.75,
                                     "grades" => [
-                                        ["grade" => 5, "date" => "2023-01-31"],
-                                        ["grade" => 4, "date" => "2024-06-31"]
+                                        ["id" => 1, "grade" => 5, "date" => "2023-01-31"],
+                                        ["id" => 2, "grade" => 4, "date" => "2024-06-31"],
                                     ]
                                 ],
                                 [
@@ -123,8 +126,8 @@ class SchoolReports extends ResourceController
                                     "name" => "Anglais",
                                     "weight" => 0.25,
                                     "grades" => [
-                                        ["grade" => 1, "date" => "2024-01-15"],
-                                        ["grade" => 6, "date" => "2024-02-20"]
+                                        ["id" => 3, "grade" => 1, "date" => "2024-01-15"],
+                                        ["id" => 4, "grade" => 6, "date" => "2024-02-20"],
                                     ]
                                 ]
                             ]
@@ -132,7 +135,6 @@ class SchoolReports extends ResourceController
                         [
                             "id" => 301,
                             "title" => "Informatique",
-                            "average" => 6.0,
                             "weight" => 0.4,
                             "is_eliminatory" => true,
                             "modules" =>
@@ -140,7 +142,7 @@ class SchoolReports extends ResourceController
                                 [
                                     "id" => 1,
                                     "module_number" => 320,
-                                    "name" => "Programmer orineté objet",
+                                    "name" => "Programmer orienté objet",
                                     "grade" => 4.5,
                                     "grade_date" => "2024-10-10",
                                     "is_school" => true

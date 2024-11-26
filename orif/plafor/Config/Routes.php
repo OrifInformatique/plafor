@@ -47,5 +47,10 @@ $routes->add('migration/(:any)','\Plafor\Controllers\Migration::$1');
 $routes->resource('api/school_reports',
     ['namespace' => 'Plafor\Controllers\API',
         'controller' => 'SchoolReports',
-        'only' => ['index', 'show']]);
+        'only' => ['index']]);
+
+$routes->resource('api/school_report',
+    ['namespace' => 'Plafor\Controllers\API',
+        'controller' => 'SchoolReports',
+        'only' => ['show']]);
 ?>
