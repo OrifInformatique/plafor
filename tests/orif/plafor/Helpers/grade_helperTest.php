@@ -333,4 +333,51 @@ class Grade_HelperTest extends CIUnitTestCase
         $this->assertTrue(is_callable($function));
     }
 
+    public function testGetModulesInArrayKey(): void
+    {
+        // Arrange
+        helper('grade_helper');
+        $userCourseId = 101;
+        // Act
+        $list = getModulesInArrayKey($userCourseId);
+        // Assert
+        $this->assertTrue(is_array($list));
+        $this->assertTrue(is_array($list['Modules']));
+    }
+
+    public function testGetSubjectsByDomainId():void
+    {
+        // Arrange
+        helper('grade_helper');
+        helper("UnitTest_helper");
+        $domainId = DEV_ECG_DOMAIN_ID;
+        $userCourseId = USER_COURSE_DEV_ID;
+        // Act
+        $list = getSubjectsByDomainId($domainId, $userCourseId);
+        // Assert
+        $this->assertTrue(is_array($list));
+    }
+
+    public function testGetSubjectsOrModulesListByGradeIdWithCBEGrade(): void
+    {
+        // Arrange
+        helper('grade_helper');
+        $gradeId = 1;
+        // Act
+        $list = getSubjectsOrModulesListByGradeId($gradeId);
+        // Assert
+        $this->assertTrue(is_array($list));
+    }
+
+    public function testGetSubjectsOrModulesListByGradeIdWithModuleGrade(): void
+    {
+        // Arrange
+        helper('grade_helper');
+        $gradeId = 2;
+        // Act
+        $list = getSubjectsOrModulesListByGradeId($gradeId);
+        // Assert
+        $this->assertTrue(is_array($list));
+    }
+
 }

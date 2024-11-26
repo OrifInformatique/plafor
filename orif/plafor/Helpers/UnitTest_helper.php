@@ -82,9 +82,10 @@ const COURSE_PLAN_DEV_ID = 6;
 const COURSE_PLAN_DEV_NAME = "Informaticienne / Informaticien avec CFC, orientation développement d'applications";
 
 // user course
-
 const USER_COURSE_DEV_ID = 101;
 
 // grade
-
 const APPRENTICE_DEV_ID_GRADE_ID = 101;
+
+// domain
+const DEV_ECG_DOMAIN_ID = 6;
