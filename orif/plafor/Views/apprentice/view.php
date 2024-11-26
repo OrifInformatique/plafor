@@ -225,7 +225,9 @@ helper("AccessPermissions_helper")
 
     <!-- Current course plan school report -->
     <div class="row mt-2">
-        <?= view('\Plafor/grade/school_report') ?>
+        <?php if (!empty($user_courses) && isset($user_course_id)): ?>
+            <?= view('\Plafor/grade/school_report') ?>
+        <?php endif ?>
     </div>
 </div>
 
@@ -271,6 +273,8 @@ helper("AccessPermissions_helper")
     }
 
     $(document).ready(() => {
+        const isUserCoursesEmpty = Boolean(<?= empty($user_course) ? 1 : 0 ?>);
+    if (isUserCoursesEmpty) return;
         let urlMethod = '<?=base_url('plafor/apprentice/view_apprentice') ?>';
         let apprenticeId = '<?= $apprentice['id'] ?>';
         let userCourseId = '<?= $user_course_id ?>';
