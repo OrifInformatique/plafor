@@ -143,12 +143,12 @@ $subject_or_module_label = lang('Grades.subject').' '.lang('Grades.or').' '.strt
             <div class="col-sm-4 form-group form-check form-check-inline">
                 <?= form_label(lang('Grades.is_exam_made_at_school'), 'is_exam_made_at_school',
                     ['class' => 'form-check-label mr-2']) ?>
-                <?php if ((array_key_first($subject_and_domains_list) ?? ' ')[0] === 's') :?>
-                <?= form_checkbox('is_exam_made_at_school', true, $is_exam_made_in_school ?? false,
-                    [ 'class' => 'form-check-input', 'id' => 'is_exam_made_at_school', 'disabled' => true]) ?>
-                <?php else: ?>
+                <?php if (array_key_exists(lang('Grades.modules'), $subject_and_domains_list)) :?>
                     <?= form_checkbox('is_exam_made_at_school', true, $is_exam_made_in_school ?? false,
                         ['class' => 'form-check-input', 'id' => 'is_exam_made_at_school']) ?>
+                <?php else: ?>
+                    <?= form_checkbox('is_exam_made_at_school', true, $is_exam_made_in_school ?? false,
+                        [ 'class' => 'form-check-input', 'id' => 'is_exam_made_at_school', 'disabled' => true]) ?>
                 <?php endif ?>
             </div>
         </div>
