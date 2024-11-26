@@ -129,7 +129,7 @@ $subject_or_module_label = lang('Grades.subject').' '.lang('Grades.or').' '.strt
                     ['class' => 'form-label']) ?>
 
                 <?= form_input('grade', $grade ?? 0,
-                    ['class' => 'form-control', 'id' => 'grade', 'min' => 0, 'max' => 6, 'step' => 0.5, 'required' => 'required'], 'number') ?>
+                    ['class' => 'form-control', 'id' => 'grade', 'min' => 0, 'max' => 6, 'step' => 0.1, 'required' => 'required'], 'number') ?>
             </div>
 
             <div class="col-sm-4 form-group">
