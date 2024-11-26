@@ -147,8 +147,10 @@ $subject_or_module_label = lang('Grades.subject').' '.lang('Grades.or').' '.strt
                     <?= form_checkbox('is_exam_made_at_school', true, $is_exam_made_in_school ?? false,
                         ['class' => 'form-check-input', 'id' => 'is_exam_made_at_school']) ?>
                 <?php else: ?>
-                    <?= form_checkbox('is_exam_made_at_school', true, $is_exam_made_in_school ?? false,
+                    <?= form_checkbox('', true, $is_exam_made_in_school ?? false,
                         [ 'class' => 'form-check-input', 'id' => 'is_exam_made_at_school', 'disabled' => true]) ?>
+                    <?= form_checkbox('is_exam_made_at_school', true, $is_exam_made_in_school ?? false,
+                        [ 'class' => 'form-check-input', 'id' => 'is_exam_made_at_school', 'hidden' => true]) ?>
                 <?php endif ?>
             </div>
         </div>
