@@ -282,6 +282,8 @@ class Apprentice extends \App\Controllers\BaseController
                 'course_plan_name'   => $course_plan["official_name"],
                 'date_begin'         => Time::createFromFormat('Y-m-d', $user_course['date_begin'])
                     ->toLocalizedString('dd.MM.Y'),
+                'date_end'           => Time::createFromFormat('Y-m-d', $user_course['date_end'])
+                ->toLocalizedString('dd.MM.Y'),
                 'course_plan_status' => $this->user_course_status_model->getUserCourseStatusName($user_course['fk_status'])
             ];
         }
