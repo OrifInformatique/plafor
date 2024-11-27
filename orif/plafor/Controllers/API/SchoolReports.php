@@ -28,50 +28,72 @@ class SchoolReports extends ResourceController
     {
         $school_reports_summaries =
         [
+            "apprentices" =>
             [
-                "user_id" => 1,
-                "username" => "Gabriel Da Costa Salgado",
-                "user_courses" =>
                 [
+                    "user_id" => 1,
+                    "username" => "Gabriel Da Costa Salgado",
+                    "fk_trainer" => 1,
+                    "user_courses" =>
                     [
-                        "id" => 1,
-                        "course_plan_id" => 88605,
-                        "official_name" => "Opératrice en informatique / Opérateur en informatique avec CFC",
-                        "global_average" => 5.0
+                        [
+                            "id" => 1,
+                            "course_plan_id" => 88605,
+                            "official_name" => "Opératrice en informatique / Opérateur en informatique avec CFC",
+                            "global_average" => 5.0
+                        ]
+                    ]
+                ],
+                [
+                    "user_id" => 2,
+                    "username" => "Dylan Dervey",
+                    "fk_trainer" => 2,
+                    "user_courses" =>
+                    [
+                        [
+                            "id" => 2,
+                            "course_plan_id" => 88611,
+                            "official_name" => "Informaticienne / Informaticien avec CFC, orientation développement d'applications",
+                            "global_average" => 1.5
+                        ],
+                        [
+                            "id" => 3,
+                            "course_plan_id" => 88611,
+                            "official_name" => "Informaticienne / Informaticien avec CFC, orientation explotation et infrastructure",
+                            "global_average" => 5.5
+                        ]
+                    ]
+                ],
+                [
+                    "user_id" => 3,
+                    "username" => "Je suis un nom extrêmement long pour voir comment l'interface réagit...",
+                    "fk_trainer" => 2,
+                    "user_courses" =>
+                    [
+                        [
+                            "id" => 4,
+                            "course_plan_id" => 329868168,
+                            "official_name" => "Formation",
+                            "global_average" => 6
+                        ]
                     ]
                 ]
             ],
+
+            "trainers" =>
             [
-                "user_id" => 2,
-                "username" => "Dylan Dervey",
-                "user_courses" =>
                 [
-                    [
-                        "id" => 2,
-                        "course_plan_id" => 88611,
-                        "official_name" => "Informaticienne / Informaticien avec CFC, orientation développement d'applications",
-                        "global_average" => 1.5
-                    ],
-                    [
-                        "id" => 3,
-                        "course_plan_id" => 88611,
-                        "official_name" => "Informaticienne / Informaticien avec CFC, orientation explotation et infrastructure",
-                        "global_average" => 5.5
-                    ]
-                ]
-            ],
-            [
-                "user_id" => 3,
-                "username" => "Je suis un nom extrêmement long pour voir comment l'interface réagit...",
-                "user_courses" =>
+                    "user_id" => 1,
+                    "username" => "Je suis un nom de formateur extrêmement long pour voir comment l'interface réagit..."
+                ],
                 [
-                    [
-                        "id" => 4,
-                        "course_plan_id" => 329868168,
-                        "official_name" => "Formation",
-                        "global_average" => 6
-                    ]
-                ]
+                    "user_id" => 2,
+                    "username" => "Didier Viret"
+                ],
+                [
+                    "user_id" => 3,
+                    "username" => "Je suis un nom de formateur un peu long."
+                ],
             ]
         ];
 
@@ -109,6 +131,7 @@ class SchoolReports extends ResourceController
                             "id" => 1,
                             "title" => "Compétences de base élargies",
                             "weight" => 0.6,
+                            "average" => 5,
                             "is_eliminatory" => false,
                             "subjects" =>
                             [
@@ -116,6 +139,7 @@ class SchoolReports extends ResourceController
                                     "id" => 1,
                                     "name" => "Mathématiques",
                                     "weight" => 0.75,
+                                    "average" => 2,
                                     "grades" => [
                                         ["id" => 1, "grade" => 5, "date" => "2023-01-31"],
                                         ["id" => 2, "grade" => 4, "date" => "2024-06-31"],
@@ -136,6 +160,7 @@ class SchoolReports extends ResourceController
                             "id" => 301,
                             "title" => "Informatique",
                             "weight" => 0.4,
+                            "average" => 5.5,
                             "is_eliminatory" => true,
                             "modules" =>
                             [
