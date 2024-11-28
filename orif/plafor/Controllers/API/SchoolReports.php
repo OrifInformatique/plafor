@@ -135,17 +135,15 @@ class SchoolReports extends ResourceController
                             [
                                 "id" => 1,
                                 "name" => "Mathématiques",
-                                "weight" => 0.75,
                                 "average" => 2,
                                 "grades" => [
-                                    ["id" => 1, "grade" => 5, "date" => "2023-01-31"],
-                                    ["id" => 2, "grade" => 4, "date" => "2024-06-31"],
+                                    ["id" => 1, "grade" => 5],
+                                    ["id" => 2, "grade" => 4],
                                 ]
                             ],
                             [
                                 "id" => 2,
                                 "name" => "Anglais",
-                                "weight" => 0.25,
                                 "average" => 3.5,
                                 "grades" => [
                                     ["id" => 3, "grade" => 1, "date" => "2024-01-15"],
@@ -159,6 +157,8 @@ class SchoolReports extends ResourceController
                         "title" => "Informatique",
                         "weight" => 0.4,
                         "average" => 5.5,
+                        "school_modules_average" => 6,
+                        "non_school_modules_average" => 4.5,
                         "is_eliminatory" => true,
                         "modules" =>
                         [
@@ -167,7 +167,6 @@ class SchoolReports extends ResourceController
                                 "module_number" => 320,
                                 "name" => "Programmer orienté objet",
                                 "grade" => 4.5,
-                                "grade_date" => "2024-10-10",
                                 "is_school" => true
                             ],
                             [
@@ -175,7 +174,6 @@ class SchoolReports extends ResourceController
                                 "module_number" => 431,
                                 "name" => "	Exécuter des mandats demandés autonome dans son propre environnement professionnel",
                                 "grade" => 1,
-                                "grade_date" => "2023-03-10",
                                 "is_school" => true
                             ],
                             [
@@ -183,12 +181,12 @@ class SchoolReports extends ResourceController
                                 "module_number" => 187,
                                 "name" => "	Mettre en service un poste de travail ICT avec le système d’exploitation",
                                 "grade" => 1,
-                                "grade_date" => "2024-12-10",
                                 "is_school" => false
                             ]
                         ]
                     ]
                 ],
+
                 "yearly_reports" =>
                 [
                     [
@@ -199,18 +197,16 @@ class SchoolReports extends ResourceController
                             [
                                 "id" => 1,
                                 "title" => "Compétences de base élargies",
-                                "weight" => 0.6,
                                 "average" => 5,
-                                "is_eliminatory" => false,
                                 "subjects" =>
                                 [
                                     [
                                         "id" => 1,
                                         "name" => "Mathématiques",
-                                        "weight" => 0.75,
                                         "average" => 5,
-                                        "grades" => [
-                                            ["id" => 1, "grade" => 5, "date" => "2023-01-31"],
+                                        "grades" =>
+                                        [
+                                            ["id" => 1, "grade" => 5]
                                         ]
                                     ],
                                 ]
@@ -218,19 +214,15 @@ class SchoolReports extends ResourceController
                             [
                                 "id" => 301,
                                 "title" => "Informatique",
-                                "weight" => 0.4,
                                 "average" => 1,
-                                "is_eliminatory" => true,
                                 "modules" =>
                                 [
                                     [
                                         "id" => 2,
                                         "module_number" => 431,
                                         "name" => "	Exécuter des mandats demandés autonome dans son propre environnement professionnel",
-                                        "grade" => 1,
-                                        "grade_date" => "2023-03-10",
-                                        "is_school" => true
-                                    ],
+                                        "grade" => 1
+                                    ]
                                 ]
                             ]
                         ]
@@ -243,28 +235,26 @@ class SchoolReports extends ResourceController
                             [
                                 "id" => 1,
                                 "title" => "Compétences de base élargies",
-                                "weight" => 0.6,
                                 "average" => 5,
-                                "is_eliminatory" => false,
                                 "subjects" =>
                                 [
                                     [
                                         "id" => 1,
                                         "name" => "Mathématiques",
-                                        "weight" => 0.75,
                                         "average" => 4,
-                                        "grades" => [
-                                            ["id" => 2, "grade" => 4, "date" => "2024-06-31"],
+                                        "grades" =>
+                                        [
+                                            ["id" => 2, "grade" => 4]
                                         ]
                                     ],
                                     [
                                         "id" => 2,
                                         "name" => "Anglais",
-                                        "weight" => 0.25,
                                         "average" => 3.5,
-                                        "grades" => [
-                                            ["id" => 3, "grade" => 1, "date" => "2024-01-15"],
-                                            ["id" => 4, "grade" => 6, "date" => "2024-02-20"],
+                                        "grades" =>
+                                        [
+                                            ["id" => 3, "grade" => 1],
+                                            ["id" => 4, "grade" => 6]
                                         ]
                                     ]
                                 ]
@@ -272,30 +262,24 @@ class SchoolReports extends ResourceController
                             [
                                 "id" => 301,
                                 "title" => "Informatique",
-                                "weight" => 0.4,
                                 "average" => 3,
-                                "is_eliminatory" => true,
                                 "modules" =>
                                 [
                                     [
                                         "id" => 1,
                                         "module_number" => 320,
                                         "name" => "Programmer orienté objet",
-                                        "grade" => 4.5,
-                                        "grade_date" => "2024-03-10",
-                                        "is_school" => true
+                                        "grade" => 4.5
                                     ],
                                     [
                                         "id" => 3,
                                         "module_number" => 187,
                                         "name" => "	Mettre en service un poste de travail ICT avec le système d’exploitation",
-                                        "grade" => 1,
-                                        "grade_date" => "2024-05-10",
-                                        "is_school" => false
+                                        "grade" => 1
                                     ]
                                 ]
                             ]
-                        ],
+                        ]
                     ]
                 ]
             ]
