@@ -14,7 +14,7 @@ class TeachingSubjectModel extends Model
     protected $useSoftDeletes   = true;
     protected $protectFields    = true;
     protected $allowedFields    = ['fk_teaching_domain', 'name',
-        'subject_weight'];
+        'subject_weight', 'round_multiple'];
 
     // Dates
     protected $useTimestamps = false;
@@ -26,8 +26,9 @@ class TeachingSubjectModel extends Model
     // Validation
     protected $validationRules      = [
         'fk_teaching_domain' => 'is_natural_no_zero',
-        'name' => 'string|max_length[50]',
-        'subject_weight' => 'numeric', 
+        'name' => 'required|string|max_length[50]',
+        'subject_weight' => 'numeric',
+        'round_multiple' => 'decimal',
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
@@ -46,15 +47,15 @@ class TeachingSubjectModel extends Model
 
     /**
      * Post-processing hook for find operations.
-     * 
+     *
      * @param array $data Contains the result from the find operation, along
      * with additional metadata.
      *   - $data['data']: The result data from the find operation.
      *   - $data['method']: The name of the find method that was called (e.g.
      *   'findAll', 'find', 'first').
-     * 
+     *
      * @return array $data The edited result data.
-     * 
+     *
      * This method applies additional processing to the result data based on
      * the type of find operation:
      * - findAll and find without an ID in the parameter call afterFindFindAll.
@@ -76,10 +77,10 @@ class TeachingSubjectModel extends Model
 
     /**
      * Post-processing hook for findAll operations.
-     * 
+     *
      * Applies the afterFindFind method to each element of the result set
      * returned by findAll.
-     * 
+     *
      * @param array $data The result set from the findAll operation.
      * @return array The result set with each element processed by
      * afterFindFind.
@@ -91,20 +92,20 @@ class TeachingSubjectModel extends Model
 
     /**
      * Post-processing hook for find and first operations.
-     * 
+     *
      * Enhances the result data by adding the related teaching domain,
      * including soft deleted ones.
-     * 
+     *
      * Retrieves the teaching domain associated with the current teaching
      * subject and adds it to the result data.
-     * 
+     *
      * @param array $data The result data from the find or first operation.
      * @return array The enhanced result data with additional teaching domain
      * information.
      */
     protected function afterFindFind(array $data): array
     {
-        if (array_key_exists('fk_teaching_domain', $data)) { 
+        if (array_key_exists('fk_teaching_domain', $data)) {
             $teachingDomainModel = model('TeachingDomainModel');
             $data['teaching_domain'] = $teachingDomainModel
                 ->withDeleted()

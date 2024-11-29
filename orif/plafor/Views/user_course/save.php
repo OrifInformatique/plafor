@@ -85,7 +85,7 @@ helper('form');
                     ['class' => 'form-label']) ?>
 
                 <?= form_input('date_begin', $user_course['date_begin'] ?? date("Y-m-d"),
-                    ['class' => 'form-control', 'id' => 'user_course_date_begin'], 'date') ?>
+                    ['class' => 'form-control', 'id' => 'user_course_date_begin', 'required' => 'required'], 'date') ?>
             </div>
 
             <div class="col-sm-6 form-group">

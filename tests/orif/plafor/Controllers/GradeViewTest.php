@@ -6,11 +6,11 @@
  * @copyright   Copyright (c), Orif (https://www.orif.ch)
  */
 
- namespace Plafor\Controllers;
+namespace Plafor\Controllers;
 
- use CodeIgniter\Test\CIUnitTestCase;
- # use CodeIgniter\Test\ControllerTestTrait;
- use CodeIgniter\Test\DatabaseTestTrait;
+use CodeIgniter\Test\CIUnitTestCase;
+# use CodeIgniter\Test\ControllerTestTrait;
+use CodeIgniter\Test\DatabaseTestTrait;
 
 use CodeIgniter\Test\FeatureTestTrait;
 
@@ -97,7 +97,7 @@ class GradeViewTest extends CIUnitTestCase
         // Arrange
         $userCourseId = USER_COURSE_DEV_ID;
         $expect['cfc_average'] = 5.2;
-        $expect['modules']['school']['average'] = 5.2;
+        $expect['modules']['school']['average'] = 5.0;
         $expect['modules']['non-school']['average'] = 5.5;
         $expect['modules']['average'] = 5.1;
         // math

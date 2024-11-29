@@ -10,13 +10,13 @@ These instructions will get you a copy of the project up and running on your loc
 
 This project is developed on an AMP server with PHP 8.1 and MySQL 8.0.
 It is based on the CodeIgniter 4 framework.
-- PHP 8.0 or newer
+- PHP 8.1 or newer
 - Composer
 - An empty database
 
 ### Installing
 
-After cloning this git repository, make a copy of the "env_dist" file and rename it to ".env". Adjust the content of this file to match your development environment.
+After cloning this git repository, make a copy of the `env_dist` file and rename it to `.env`. Adjust the content of this file to match your development environment.
 
 Get the required packages with a composer command :
 
@@ -30,7 +30,17 @@ Generate the database structure with spark :
 php spark migrate --all
 ```
 
-You should be able to run the application and login with admin => admin1234 or with trainer => trainer1234.
+You should be able to run the application and login with :
+- admin
+	- `admin1234`
+- trainer1
+	- `trainer1234`
+- trainer2
+	- `trainer1234`
+- app1
+	- `app1234`
+- app2
+	- `app1234`
 
 ## Running the tests
 

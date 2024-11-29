@@ -95,7 +95,7 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertTrue(is_array($data));
     }
 
-     /**
+    /**
      * Tests the retrieval of the first record using the first method.
      */
     public function testFirstCustom(): void
@@ -503,6 +503,12 @@ class GradeModelTest extends CIUnitTestCase
 
 
 
+    /**
+     * Tests the getWeightedModuleAverage method to retrieve the weighted
+     * average of modules.
+     *
+     * @covers \Plafor\Models\GradeModel::getWeightedModuleAverage
+     */
     public function testGetWeightedModuleAverage(): void
     {
         // Arrange
@@ -515,6 +521,12 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertEquals($expectedAverage, $result);
     }
 
+    /**
+     * Tests the getApprenticeDomainAverageNotModule method to retrieve the
+     * average of a domain for an apprentice, excluding modules.
+     *
+     * @covers \Plafor\Models\GradeModel::getApprenticeDomainAverageNotModule
+     */
     public function testGetApprenticeDomainAverageNotModule(): void
     {
         // Arrange
@@ -525,6 +537,12 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertEquals(5.5, $result);
     }
 
+    /**
+     * Tests the getApprenticeAverage method to retrieve the average of an
+     * apprentice.
+     *
+     * @covers \Plafor\Models\GradeModel::getApprenticeAverage
+     */
     public function testGetApprenticeAverage(): void
     {
         // Arrange
@@ -535,6 +553,11 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertEquals(4.4, $result);
     }
 
+    /**
+     * Tests the getSchoolReportData method to retrieve the school report data.
+     *
+     * @covers \Plafor\Models\GradeModel::getSchoolReportData
+     */
     public function testGetSchoolReportData(): void
     {
         // Arrange
@@ -546,6 +569,12 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertTrue(is_array($result));
     }
 
+    /**
+     * Tests the getModuleArrayForView method to retrieve the modules as an
+     * array for the view.
+     *
+     * @covers \Plafor\Models\GradeModel::getModuleArrayForView
+     */
     public function testGetModuleArrayForView(): void
     {
         // Arrange
@@ -567,6 +596,12 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertIsInt($result['weighting']);
     }
 
+    /**
+     * Tests the getApprenticeModulesGradesForView method to retrieve the
+     * grades of an apprentice's modules for the view.
+     *
+     * @covers \Plafor\Models\GradeModel::getApprenticeModulesGradesForView
+     */
     public function testGetApprenticeModulesGradesForView()
     {
         // Arrange
@@ -589,6 +624,12 @@ class GradeModelTest extends CIUnitTestCase
         }
     }
 
+    /**
+     * Tests the getGradeIdForDomain method to retrieve the grade ID for a
+     * domain.
+     *
+     * @covers \Plafor\Models\GradeModel::getGradeIdForDomain
+     */
     public function testGetGradeIdForDomain()
     {
         // Arrange
@@ -602,6 +643,12 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertEquals($expectedGradeId, $result);
     }
 
+    /**
+     * Tests the getTpiGradeForView method to retrieve the TPI grade for the
+     * view.
+     *
+     * @covers \Plafor\Models\GradeModel::getTpiGradeForView
+     */
     public function testGetTpiGradeForView()
     {
         // Arrange
@@ -620,6 +667,12 @@ class GradeModelTest extends CIUnitTestCase
     }
 
 
+    /**
+     * Tests the getApprenticeSubjectGradesForView method to retrieve the
+     * grades of an apprentice's subjects for the view.
+     *
+     * @covers \Plafor\Models\GradeModel::getApprenticeSubjectGradesForView
+     */
     public function testGetApprenticeSubjectGradesForView()
     {
         // Arrange
@@ -634,6 +687,12 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertTrue(is_array($result));
     }
 
+    /**
+     * Tests the getCbeGradeForView method to retrieve the CBE grade for the
+     * view.
+     *
+     * @covers \Plafor\Models\GradeModel::getCbeGradeForView
+     */
     public function testGetCbeGradeForView()
     {
         // Arrange
@@ -647,6 +706,12 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertTrue(is_array($result));
     }
 
+    /**
+     * Tests the getEcgGradeForView method to retrieve the ECG grade for the
+     * view.
+     *
+     * @covers \Plafor\Models\GradeModel::getEcgGradeForView
+     */
     public function testGetEcgGradeForView()
     {
         // Arrange
@@ -658,6 +723,11 @@ class GradeModelTest extends CIUnitTestCase
         $this->assertTrue(is_array($result));
     }
 
+    /**
+     * Tests the getSchoolReportData method to retrieve the school report data.
+     *
+     * @covers \Plafor\Models\GradeModel::getSchoolReportData
+     */
     public function testGetSchoolReportDataKeys()
     {
         // Arrange

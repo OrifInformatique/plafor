@@ -105,6 +105,7 @@ return [
     "semesters"      => "Semestres",
     "weighting"      => "Pondération",
     "weighting_in_%" => "Pondération (en %)",
+    "round_multiple_average" => "Arrondir la moyenne au multiple",
     "select_all"     => "Tout sélectionner",
     "deselect_all"   => "Tout déselectionner",
 

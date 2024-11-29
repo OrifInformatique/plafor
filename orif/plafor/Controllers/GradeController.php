@@ -53,22 +53,47 @@ class GradeController extends BaseController
         helper("AccessPermissions_helper");
     }
 
+    /**
+     * Retrieves the list of subjects and modules for a usercourse. The array
+     * is formatted for grade save view
+     *
+     * @param int $userCourseId ID of the user's course
+     * @param string|null $selectedDomain Selected domain (tpi, cbe, ecg,
+     * modules)
+     * @return array List of subjects and modules
+     */
     private function getsubjectAndModulesList(int $userCourseId,
         ?string $selectedDomain=null): array
     {
         helper('grade_helper');
-        $list = getSubjectsAndModulesList($userCourseId, $selectedDomain);
-        return $list;
+        return getSubjectsAndModulesList($userCourseId, $selectedDomain);
 
     }
 
+    private function getSubjectsOrModulesListByGradeId(int $gradeId): array
+    {
+        helper('grade_helper');
+        return getSubjectsOrModulesListByGradeId($gradeId);
+    }
+
+    /**
+     * Retrieves the apprentice's id and username for a course.
+     *
+     * @param int $userCourseId ID of the user's course
+     * @return array Apprentice's information
+     */
     private function getApprentice(int $userCourseId): array
     {
         helper('grade_helper');
-        $apprentice = getApprentice($userCourseId);
-        return $apprentice;
+        return getApprentice($userCourseId);
     }
 
+    /**
+     * Formats the grade data for the update view/form.
+     *
+     * @param int $gradeId ID of the grade
+     * @return array Formatted grade data
+     */
     private function formatGradeForFormUpdate(int $gradeId): array
     {
         $grade = $this->m_grade_model->find($gradeId);
@@ -86,7 +111,15 @@ class GradeController extends BaseController
 
     }
 
-    // selectedDomain: tpi, cbe, ecg, modules
+    /**
+     * Retrieves the selected entry for a usercourse and a selected domain.
+     * return subject id prefixed by s or module id prefixed by m
+     *
+     * @param int $userCourseId ID of the user's course
+     * @param string|null $selectedDomain Selected domain (tpi, cbe, ecg,
+     * modules)
+     * @return string|null Selected entry
+     */
     private function getSelectedEntry(int $userCourseId,
         ?string $selectedDomain = null): ?string
     {
@@ -95,6 +128,14 @@ class GradeController extends BaseController
         return getSelectedEntry($userCourseId, $selectedDomain);
     }
 
+    /**
+     * Adds the current subject or the module to the list of subjects and
+     * modules.
+     *
+     * @param int $gradeId ID of the grade
+     * @param array $formatedList Formatted list of subjects and modules
+     * @return array List of subjects and modules
+     */
     private function addHimself(int $gradeId, array $formatedList): array
     {
         helper('grade_helper');
@@ -102,25 +143,38 @@ class GradeController extends BaseController
 
     }
 
+    /**
+     * Show the view for the grade save page.
+     *
+     * @param int $userCourseId ID of the user's course
+     * @param int $gradeId ID of the grade
+     * @param string|null $selectedDomain Selected domain (tpi, cbe, ecg,
+     * modules)
+     * @return string View for the grade save page
+     */
     private function saveGradeGet(int $userCourseId, int $gradeId,
         ?string $selectedDomain = null): string
     {
-        if ($gradeId !== 0) {
+        $isUpdate = $gradeId !== 0;
+        if ($isUpdate) {
             $data = $this->formatGradeForFormUpdate($gradeId);
+            $subjectAndModulesList = $this
+                ->getSubjectsOrModulesListByGradeId($gradeId);
+        } else {
+            $subjectAndModulesList = $this
+                ->getsubjectAndModulesList($userCourseId, $selectedDomain);
         }
         $data['grade_id'] = $gradeId;
         $data['user_course_id'] = $userCourseId;
         $data["errors"] = $this->m_grade_model->errors();
         $data['apprentice'] = $this->getApprentice($userCourseId);
         $data['course_plan'] = $this->getCoursePlanName($userCourseId);
-        $subjectAndModulesList = $this
-            ->getsubjectAndModulesList($userCourseId, $selectedDomain);
 
         $data['subject_and_domains_list'] = $this->addHimself($gradeId,
             $subjectAndModulesList);
 
         $data['title'] = lang(
-            $gradeId == 0 ? 'Grades.add_grade' : 'Grades.update_grade');
+            $isUpdate ? 'Grades.update_grade' : 'Grades.add_grade');
 
         if (!is_null($selectedDomain)) {
             // begin is not yet necessary
@@ -136,6 +190,15 @@ class GradeController extends BaseController
         return $this->display_view("\Plafor/grade/save", $data);
     }
 
+    /**
+     * Saves the grade data and returns a redirect response or return the form
+     * if error
+     *
+     * @param int $userCourseId ID of the user's course
+     * @param int $gradeId ID of the grade
+     * @return RedirectResponse|string Redirect response or view for the grade
+     * save page
+     */
     private function saveGradePost(int $userCourseId,
         int $gradeId): RedirectResponse | string
     {
@@ -171,12 +234,25 @@ class GradeController extends BaseController
         return $this->display_view("\Plafor/grade/save", $data);
     }
 
+    /**
+     * Retrieves the course plan name for a user and a course.
+     *
+     * @param int $userCourseId ID of the user's course
+     * @return string|null Course plan name
+     */
     private function getCoursePlanName(int $userCourseId): ?string
     {
         helper('grade_helper');
         return getCoursePlanName($userCourseId);
     }
 
+    /**
+     * Checks if a grade is in a course.
+     *
+     * @param int $userCourseId ID of the user's course
+     * @param int $gradeId ID of the grade
+     * @return bool True if the grade is in the course, false otherwise
+     */
     private function isGradeInCourse(int $userCourseId, int $gradeId): bool
     {
         helper('grade_helper');
@@ -186,10 +262,12 @@ class GradeController extends BaseController
     /**
      * Inserts or modifies the grade of an apprentice.
      *
-     * @param int $gradeId ID of the grade.
-     *
-     * @return string|RedirectResponse
-     *
+     * @param int $userCourseId ID of the user's course
+     * @param int $gradeId ID of the grade (optional, default 0)
+     * @param string|null $selectedDomain Selected domain (tpi, cbe, ecg,
+     * modules) (optional)
+     * @return string|RedirectResponse View for the grade save page or redirect
+     * response
      */
     public function saveGrade(int $userCourseId, int $gradeId = 0, ?string
         $selectedDomain = null): string|RedirectResponse
@@ -226,10 +304,12 @@ class GradeController extends BaseController
      *      - 1 for deactivating (soft delete)
      *      - 2 for deleting (hard delete)
      *      - 3 for reactivating
-     *
+     *      (optional)
      * @param int $grade_id ID of the grade.
      *
      * @param bool $confirm Defines whether the action has been confirmed.
+     * (optional, default false) View for the action confirmation or redirect
+     * response
      *
      * @return string|RedirectResponse
      *

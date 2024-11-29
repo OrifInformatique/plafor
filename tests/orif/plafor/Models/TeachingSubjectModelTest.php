@@ -25,7 +25,10 @@ class TeachingSubjectModelTest extends CIUnitTestCase
      */
     public function testTeachingSubjectModelInstance()
     {
+        // Arrange
+        // Act
         $teachingSubjectModel = model('TeachingSubjectModel');
+        // Assert
         $this->assertTrue($teachingSubjectModel instanceof
             TeachingSubjectModel);
         $this->assertInstanceOf(TeachingSubjectModel::class,
@@ -37,9 +40,9 @@ class TeachingSubjectModelTest extends CIUnitTestCase
      */
     public function testFind()
     {
+        // Arrange
         $id = 1;
         $teachingSubjectModel = model('TeachingSubjectModel');
-        $data = $teachingSubjectModel->find($id);
         $expect = [
             'id' => $id,
             'name' => "Mathématiques",
@@ -54,10 +57,14 @@ class TeachingSubjectModelTest extends CIUnitTestCase
                 'archive' => null,
                 'title' => "Compétences de base élargies",
                 'course_plan_name' => 'Informaticienne / Informaticien avec '
-                . 'CFC, orientation exploitation et infrastructure'
-            ]
+                . 'CFC, orientation exploitation et infrastructure',
+                'round_multiple' => 0.5,
+            ],
+            'round_multiple' => 0.1,
         ];
-
+        // Act
+        $data = $teachingSubjectModel->find($id);
+        // Assert
         $this->assertEquals($expect, $data);
     }
 
@@ -66,8 +73,11 @@ class TeachingSubjectModelTest extends CIUnitTestCase
      */
     public function testFindAll()
     {
+        // Arrange
         $teachingSubjectModel = model('TeachingSubjectModel');
+        // Act
         $data = $teachingSubjectModel->findAll();
+        // Assert
         $this->assertIsArray($data);
         $this->assertEquals(1, $data[0]['id']);
         $this->assertEquals(2, $data[1]['id']);
@@ -78,8 +88,8 @@ class TeachingSubjectModelTest extends CIUnitTestCase
      */
     public function testFirst()
     {
+        // Arrange
         $teachingSubjectModel = model('TeachingSubjectModel');
-        $data = $teachingSubjectModel->first();
         $expect = [
             'id' => "1",
             'name' => "Mathématiques",
@@ -94,9 +104,14 @@ class TeachingSubjectModelTest extends CIUnitTestCase
                 'archive' => null,
                 'title' => "Compétences de base élargies",
                 'course_plan_name' => 'Informaticienne / Informaticien avec '
-                . 'CFC, orientation exploitation et infrastructure'
-            ]
+                . 'CFC, orientation exploitation et infrastructure',
+                'round_multiple' => 0.5,
+            ],
+            'round_multiple' => 0.1,
         ];
+        // Act
+        $data = $teachingSubjectModel->first();
+        // Assert
         $this->assertEquals($expect, $data);
     }
 
@@ -106,11 +121,14 @@ class TeachingSubjectModelTest extends CIUnitTestCase
      */
     public function testFirstCustom()
     {
+        // Arrange
         $teachingSubjectModel = model('TeachingSubjectModel');
-        $data = $teachingSubjectModel->select('subject_weight')->first();
         $expect = [
             'subject_weight' => '0.00'
         ];
+        // Act
+        $data = $teachingSubjectModel->select('subject_weight')->first();
+        // Assert
         $this->assertEquals($expect, $data);
     }
 
@@ -119,13 +137,17 @@ class TeachingSubjectModelTest extends CIUnitTestCase
      */
     public function testInsert()
     {
+        // Arrange
         $teachingSubjectModel = model('TeachingSubjectModel');
         $teachingSubject = [
             'fk_teaching_domain' => 1,
             'name' => 'test',
             'subject_weight' => 0.1,
+            'round_multiple' => 0.1,
         ];
+        // Act
         $isSuccess = $teachingSubjectModel->insert($teachingSubject, false);
+        // Assert
         $this->assertTrue($isSuccess);
     }
 
@@ -135,11 +157,14 @@ class TeachingSubjectModelTest extends CIUnitTestCase
      */
     public function testDelete(): void
     {
+        // Arrange
         $id = 1;
         $teachingSubjectModel = model('TeachingSubjectModel');
+        // Act
         $teachingSubjectModel->delete($id);
         $subject = $teachingSubjectModel->find($id);
         $deletedSubject = $teachingSubjectModel->withDeleted()->find($id);
+        // Assert
         $this->assertNull($subject);
         $this->assertEquals($id, $deletedSubject['id']);
     }
@@ -150,10 +175,13 @@ class TeachingSubjectModelTest extends CIUnitTestCase
      */
     public function testFindAllWithDeleted(): void
     {
+        // Arrange
         $idToDelete = 1;
         $teachingSubjectModel = model('TeachingSubjectModel');
+        // Act
         $teachingSubjectModel->delete($idToDelete);
         $subjects = $teachingSubjectModel->withDeleted()->findAll();
+        // Assert
         $this->assertEquals($subjects[0]['id'], $idToDelete);
     }
 
@@ -163,10 +191,13 @@ class TeachingSubjectModelTest extends CIUnitTestCase
      */
     public function testFindAllOnlyDeleted(): void
     {
+        // Arrange
         $idToDelete = 1;
         $teachingSubjectModel = model('TeachingSubjectModel');
+        // Act
         $teachingSubjectModel->delete($idToDelete);
         $subjects = $teachingSubjectModel->onlyDeleted()->findAll();
+        // Assert
         $this->assertEquals($subjects[0]['id'], $idToDelete);
         $this->assertFalse(isset($subjects[1]));
     }
@@ -177,10 +208,13 @@ class TeachingSubjectModelTest extends CIUnitTestCase
      */
     public function testFindAllWithoutDeleted(): void
     {
+        // Arrange
         $idToDelete = 1;
         $teachingSubjectModel = model('TeachingSubjectModel');
+        // Act
         $teachingSubjectModel->delete($idToDelete);
         $subjects = $teachingSubjectModel->findAll();
+        // Assert
         $this->assertNotEquals($subjects[0]['id'], $idToDelete);
         $this->assertTrue(isset($subjects[1]));
     }
@@ -191,26 +225,28 @@ class TeachingSubjectModelTest extends CIUnitTestCase
      */
     public function testFindAllEqualsFindWithoutId(): void
     {
+        // Arrange
         $teachingSubjectModel = model('TeachingSubjectModel');
+        // Act
         $subjects = $teachingSubjectModel->findAll();
         $subjects2 = $teachingSubjectModel->find();
+        // Assert
         $this->assertEquals($subjects, $subjects2);
     }
 
      public function testGetTeachingSubjectIdByDomain()
-        {
-            $teachingSubjectModel = model('TeachingSubjectModel');
-            // Arrange
-            $domainId = 1;
-            $expectedIds = [1, 2];
+    {
+        // Arrange
+        $teachingSubjectModel = model('TeachingSubjectModel');
+        $domainId = 1;
+        $expectedIds = [1, 2];
+        // Act
+        $result = $teachingSubjectModel
+            ->getTeachingSubjectIdByDomain($domainId);
 
-            // Act
-            $result = $teachingSubjectModel
-                ->getTeachingSubjectIdByDomain($domainId);
-
-            // Assert
-            $this->assertIsArray($result);
-            $this->assertEquals($expectedIds, $result);
-        }
+        // Assert
+        $this->assertIsArray($result);
+        $this->assertEquals($expectedIds, $result);
+    }
 
 }

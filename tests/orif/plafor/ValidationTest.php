@@ -39,33 +39,34 @@ class PlaforRulesTest extends CIUnitTestCase {
     /**
      * Test that the Trainer is NOT already linked to the Apprentice
      */
-    public function test_ApprenticeAndTrainerAlreadyLinked() {
-
+    public function test_ApprenticeAndTrainerAlreadyLinked(): void
+    {
         // Create an instance
         $new_link = model('TrainerApprenticeModel');
-
         // Fake fk
         $trainer_id = 5;
         $apprentice_id = 5;
         $error = ""; // error is a reference, so need to be set before
-    
         // Check if without data the result is CORRECT
         $validation = new PlaforRules;
-        $correct_result = $validation->AreApprenticeAndTrainerNotLinked($trainer_id, $apprentice_id, null, $error);
-        $this->assertTrue($correct_result);
+        $correct_result = $validation
+            ->AreApprenticeAndTrainerNotLinked($trainer_id,
+                $apprentice_id, null, $error);
 
+        $this->assertTrue($correct_result);
         // Insert data in the DB
         $data = array(
             'fk_trainer' => $trainer_id,
             'fk_apprentice' => $apprentice_id
         );
         $new_link->insert($data);
-
         // Check if with the data the result is INCORRECT
         $validation = new PlaforRules;
-        $wrong_result = $validation->AreApprenticeAndTrainerNotLinked($trainer_id, $apprentice_id, null, $error);
-        $this->assertFalse($wrong_result);
+        $wrong_result = $validation
+            ->AreApprenticeAndTrainerNotLinked($trainer_id,
+                $apprentice_id, null, $error);
 
+        $this->assertFalse($wrong_result);
         // Delete data
         $new_link->delete($new_link->getInsertID());
     }
@@ -79,6 +80,7 @@ class PlaforRulesTest extends CIUnitTestCase {
      */
     public function testIsModuleXorSubjectWithSubject(): void
     {
+        // Arrange
         $moduleOrSubjectId = 1;
         $params = null;
         $data = [
@@ -90,8 +92,11 @@ class PlaforRulesTest extends CIUnitTestCase {
             'is_school' => 1
         ];
         $validation = new PlaforRules;
+        // Act
         $result = $validation->is_module_xor_subject($moduleOrSubjectId,
             $params, $data);
+
+        // Assert
         $this->assertTrue($result);
     }
 
@@ -104,6 +109,7 @@ class PlaforRulesTest extends CIUnitTestCase {
      */
     public function testIsModuleXorSubjectWithModule(): void
     {
+        // Arrange
         $moduleOrSubjectId = 1;
         $params = null;
         $data = [
@@ -115,8 +121,11 @@ class PlaforRulesTest extends CIUnitTestCase {
             'is_school' => 1
         ];
         $validation = new PlaforRules;
+        // Act
         $result = $validation->is_module_xor_subject($moduleOrSubjectId,
             $params, $data);
+
+        // Assert
         $this->assertTrue($result);
     }
 
@@ -129,6 +138,7 @@ class PlaforRulesTest extends CIUnitTestCase {
      */
     public function testIsModuleXorSubjectWithTwo(): void
     {
+        // Arrange
         $moduleOrSubjectId = 1;
         $params = null;
         $data = [
@@ -140,8 +150,11 @@ class PlaforRulesTest extends CIUnitTestCase {
             'is_school' => 1
         ];
         $validation = new PlaforRules;
+        // Act
         $result = $validation->is_module_xor_subject($moduleOrSubjectId,
             $params, $data);
+
+        // Assert
         $this->assertFalse($result);
     }
 
@@ -154,6 +167,7 @@ class PlaforRulesTest extends CIUnitTestCase {
      */
     public function testIsModuleXorSubjectWithNone(): void
     {
+        // Arrange
         $moduleOrSubjectId = 1;
         $params = null;
         $data = [
@@ -165,8 +179,11 @@ class PlaforRulesTest extends CIUnitTestCase {
             'is_school' => 1
         ];
         $validation = new PlaforRules;
+        // Act
         $result = $validation->is_module_xor_subject($moduleOrSubjectId,
             $params, $data);
+
+        // Assert
         $this->assertFalse($result);
     }
 
@@ -178,9 +195,12 @@ class PlaforRulesTest extends CIUnitTestCase {
      */
     public function testIsBooleanOrBinaryValue_WithZero() :void
     {
+        // Arrange
         $data = 0;
         $validation = new PlaforRules;
+        // Act
         $result = $validation->is_boolean_or_binary_value($data);
+        // Assert
         $this->assertTrue($result);
     }
 
@@ -191,9 +211,12 @@ class PlaforRulesTest extends CIUnitTestCase {
      */
     public function testIsBooleanOrBinaryValue_WithStringOne() :void
     {
+        // Arrange
         $data = '1';
         $validation = new PlaforRules;
+        // Act
         $result = $validation->is_boolean_or_binary_value($data);
+        // Assert
         $this->assertTrue($result);
     }
 
@@ -204,9 +227,12 @@ class PlaforRulesTest extends CIUnitTestCase {
      */
     public function testIsBooleanOrBinaryValue_WithTrue() :void
     {
+        // Arrange
         $data = true;
         $validation = new PlaforRules;
+        // Act
         $result = $validation->is_boolean_or_binary_value($data);
+        // Assert
         $this->assertTrue($result);
     }
 
@@ -217,9 +243,12 @@ class PlaforRulesTest extends CIUnitTestCase {
      */
     public function testIsBooleanOrBinaryValue_WithFalse() :void
     {
+        // Arrange
         $data = false;
         $validation = new PlaforRules;
+        // Act
         $result = $validation->is_boolean_or_binary_value($data);
+        // Assert
         $this->assertTrue($result);
     }
 
@@ -230,9 +259,12 @@ class PlaforRulesTest extends CIUnitTestCase {
      */
     public function testIsBooleanOrBinaryValue_WithInvalidInteger() :void
     {
+        // Arrange
         $data = 3;
         $validation = new PlaforRules;
+        // Act
         $result = $validation->is_boolean_or_binary_value($data);
+        // Assert
         $this->assertFalse($result);
     }
 
@@ -243,9 +275,12 @@ class PlaforRulesTest extends CIUnitTestCase {
      */
     public function testIsBooleanOrBinaryValue_WithEmptyString() :void
     {
+        // Arrange
         $data = '';
         $validation = new PlaforRules;
+        // Act
         $result = $validation->is_boolean_or_binary_value($data);
+        // Assert
         $this->assertFalse($result);
     }
 
@@ -256,9 +291,12 @@ class PlaforRulesTest extends CIUnitTestCase {
      */
     public function testIsBooleanOrBinaryValue_WithInvalidString() :void
     {
+        // Arrange
         $data = 'a';
         $validation = new PlaforRules;
+        // Act
         $result = $validation->is_boolean_or_binary_value($data);
+        // Assert
         $this->assertFalse($result);
     }
 
@@ -269,10 +307,12 @@ class PlaforRulesTest extends CIUnitTestCase {
      */
     public function testIsBooleanOrBinaryValue_WithInvalidArray() :void
     {
+        // Arrange
         $data = [];
         $validation = new PlaforRules;
+        // Act
         $result = $validation->is_boolean_or_binary_value($data);
+        // Assert
         $this->assertFalse($result);
     }
-
 }

@@ -15,7 +15,9 @@ use CodeIgniter\Test\DatabaseTestTrait;
 
 use User\Models;
 
-helper("UnitTest_helper"); // The helper hold all Constants -> Plafor\orif\plafor\Helpers\UnitTest_helper.php
+// The helper hold all Constants ->
+// Plafor\orif\plafor\Helpers\UnitTest_helper.php
+helper("UnitTest_helper");
 
 class ApprenticeTest extends CIUnitTestCase
 {
@@ -39,7 +41,7 @@ class ApprenticeTest extends CIUnitTestCase
     {
         // Execute index method of Apprentice class
         $result = $this->controller(Apprentice::class)
-        ->execute('index');
+            ->execute('index');
 
         // Assertions
         $response = $result->response();

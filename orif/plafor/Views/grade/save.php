@@ -80,9 +80,7 @@
  * @param bool $is_exam_made_in_school Defines whether the exam has been made in school or not (concerns modules).
  *
  */
-
 helper('form');
-
 $subject_or_module_label = lang('Grades.subject').' '.lang('Grades.or').' '.strtolower(lang('Grades.module'));
 
 ?>
@@ -120,7 +118,6 @@ $subject_or_module_label = lang('Grades.subject').' '.lang('Grades.or').' '.strt
                 <?= form_label($subject_or_module_label, 'subject',
                     ['class' => 'form-label']) ?>
 
-                <!-- TODO : Insert all subjects + modules teached to the apprentice as form_dropdown $options -->
                 <?= form_dropdown('subject', $subject_and_domains_list, $selected_entry ?? null,
                     ['class' => 'form-control', 'id' => 'subject']) ?>
             </div>
@@ -132,7 +129,7 @@ $subject_or_module_label = lang('Grades.subject').' '.lang('Grades.or').' '.strt
                     ['class' => 'form-label']) ?>
 
                 <?= form_input('grade', $grade ?? 0,
-                    ['class' => 'form-control', 'id' => 'grade', 'min' => 0, 'max' => 6, 'step' => 0.5], 'number') ?>
+                    ['class' => 'form-control', 'id' => 'grade', 'min' => 0, 'max' => 6, 'step' => 0.1, 'required' => 'required'], 'number') ?>
             </div>
 
             <div class="col-sm-4 form-group">
@@ -140,16 +137,21 @@ $subject_or_module_label = lang('Grades.subject').' '.lang('Grades.or').' '.strt
                     ['class' => 'form-label']) ?>
 
                 <?= form_input('exam_date', $exam_date ?? '',
-                    ['class' => 'form-control', 'id' => 'exam_date'], 'date') ?>
+                    ['class' => 'form-control', 'id' => 'exam_date', 'required' => 'required'], 'date') ?>
             </div>
 
             <div class="col-sm-4 form-group form-check form-check-inline">
                 <?= form_label(lang('Grades.is_exam_made_at_school'), 'is_exam_made_at_school',
                     ['class' => 'form-check-label mr-2']) ?>
-
-                <!-- TODO : Auto-check and put on read-only the checkbox if a subject is selected -->
-                <?= form_checkbox('is_exam_made_at_school', true, $is_exam_made_in_school ?? false,
-                    ['class' => 'form-check-input', 'id' => 'is_exam_made_at_school']) ?>
+                <?php if (array_key_exists(lang('Grades.modules'), $subject_and_domains_list)) :?>
+                    <?= form_checkbox('is_exam_made_at_school', true, $is_exam_made_in_school ?? false,
+                        ['class' => 'form-check-input', 'id' => 'is_exam_made_at_school']) ?>
+                <?php else: ?>
+                    <?= form_checkbox('', true, $is_exam_made_in_school ?? false,
+                        [ 'class' => 'form-check-input', 'id' => 'is_exam_made_at_school', 'disabled' => true]) ?>
+                    <?= form_checkbox('is_exam_made_at_school', true, $is_exam_made_in_school ?? false,
+                        [ 'class' => 'form-check-input', 'id' => 'is_exam_made_at_school', 'hidden' => true]) ?>
+                <?php endif ?>
             </div>
         </div>
 

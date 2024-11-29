@@ -91,40 +91,41 @@ class TeachingDomainController extends \App\Controllers\BaseController
     /**
      * Adds or updates a teaching domain title.
      *
-     * @param int $domain_title_id  ID of the teaching domain.
+     * @param int $domain_title_id ID of the teaching domain.
      *
-     * @return string|RedirectResponse
+     * @return string|RedirectResponse The view to save the teaching domain
+     * title or a redirect to the list of teaching domain titles.
      *
      */
-    public function saveTeachingDomainTitle(int $domain_title_id = 0): string|RedirectResponse
+    public function saveTeachingDomainTitle(
+        int $domain_title_id = 0): string|RedirectResponse
     {
         if(!hasCurrentUserAdminAccess())
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
 
-        $domain_title = $this->m_teaching_domain_title_model->find($domain_title_id);
+        $domain_title = $this->m_teaching_domain_title_model
+                             ->find($domain_title_id);
 
-        if(count($_POST) > 0)
-        {
-            $data_to_model =
-            [
-                "id"                        => $domain_title_id,
-                "title"                     => $this->request->getPost("domain_title"),
+        if($this->request->is('post')) {
+            $data_to_model = [
+                "id" => $domain_title_id,
+                "title" => $this->request->getPost("domain_title"),
             ];
-
             $this->m_teaching_domain_title_model->save($data_to_model);
-
-            if (empty($this->m_teaching_domain_model->errors()))
-                return redirect()->to("plafor/teachingdomain/getAllDomainsTitle");
+            if (empty($this->m_teaching_domain_title_model->errors())) {
+                return redirect()
+                    ->to("plafor/teachingdomain/getAllDomainsTitle");
+            }
         }
+        $data_to_view = [
+            "title" => lang(is_null($domain_title)
+                ? "Grades.create_domain_title" : "Grades.update_domain_title"),
 
-        $data_to_view =
-        [
-            "title"                 => is_null($domain_title) ? lang("Grades.create_domain_title") : lang("Grades.update_domain_title"),
-            "domain_title_id"       => $domain_title_id,
-            "domain_title"          => $this->request->getPost("domain_title") ?? $domain_title["title"] ?? null,
-            "errors"                => $this->m_teaching_domain_model->errors()
+            "domain_title_id" => $domain_title_id,
+            "domain_title" => $this->request->getPost("domain_title")
+                ?? $domain_title["title"] ?? null,
+            "errors" => $this->m_teaching_domain_title_model->errors()
         ];
-
         return $this->display_view("\Plafor/domain/title/save", $data_to_view);
     }
 
@@ -218,6 +219,112 @@ class TeachingDomainController extends \App\Controllers\BaseController
         return redirect()->to(base_url("plafor/teachingdomain/getAllDomainsTitle"));
     }
 
+    /**
+     * Displays the form to save a teaching domain.
+     *
+     * @param array $course_plan The course plan.
+     * @param int $domain_id The ID of the teaching domain.
+     *
+     * @return string The view of the form to save the teaching domain.
+     */
+    private function showSaveTeachingDomainForm(array $course_plan,
+        int $domain_id): string
+    {
+        $parent_course_plan = [
+            "id" => $course_plan['id'],
+            "official_name" => $course_plan["official_name"],
+        ];
+        $titles = [];
+        $titles[''] = lang('plafor_lang.field_default_option_in_drop_down');
+        $domain_titles = $this->m_teaching_domain_title_model
+                      ->withDeleted($domain_id > 0)
+                      ->findAll();
+
+        foreach ($domain_titles as $domain_title) {
+            $titles[$domain_title["id"]] = $domain_title["title"];
+        }
+        $data_from_model = $this->m_teaching_domain_model
+                                ->find($domain_id);
+
+        $data_to_view = [
+            "title" => lang($domain_id == 0 ? "Grades.create_domain"
+                : "Grades.update_domain"),
+
+            "domain_id" => $domain_id,
+            "parent_course_plan" => $parent_course_plan,
+            "domain_name" => $this->request->getPost("domain_name")
+                ?? $this->m_teaching_domain_model
+                ->find($domain_id)["fk_teaching_domain_title"] ?? null,
+
+            "domain_names" => $titles,
+            "domain_weight" => $this->request->getPost("domain_weight")
+                ?? ($data_from_model["domain_weight"] ?? null) * 100,
+
+            "is_domain_eliminatory" => $this->request
+                ->getPost("is_domain_eliminatory")
+                ?? $data_from_model["is_eliminatory"] ?? null,
+
+            "is_domain_archived" => isset($data_from_model["archive"]),
+            "errors" => $this->m_teaching_domain_title_model->errors() +
+                $this->m_teaching_domain_model->errors(),
+
+            'round_multiple' => $this->request->getPost('round_multiple')
+                ?? $data_from_model['round_multiple'] ?? null,
+        ];
+        return $this->display_view("\Plafor/domain/save", $data_to_view);
+    }
+
+    /**
+     * Saves a teaching domain.
+     *
+     * @param array $course_plan The course plan.
+     * @param int $domain_id The ID of the teaching domain.
+     *
+     * @return string|RedirectResponse The view of the form to save the
+     * teaching domain or a redirect to the course plan view.
+     */
+    private function saveTeachingDomainPost(array $course_plan,
+        int $domain_id): string|RedirectResponse
+    {
+        $this->m_teaching_domain_title_model->transStart();
+        if (!empty($this->request->getPost("new_domain_name"))) {
+            $this->m_teaching_domain_title_model
+                 ->insert(['title' => $this->request
+                 ->getPost("new_domain_name")]);
+
+            $domain_name_id = $this->m_teaching_domain_title_model
+                                   ->getInsertID();
+
+            // if error, show form view
+            if (!empty($this->m_teaching_domain_title_model->errors())) {
+                $this->m_teaching_domain_model->transRollback();
+                return $this->showSaveTeachingDomainForm($course_plan,
+                    $domain_id);
+            }
+        } else {
+            $domain_name_id = $this->request->getPost("domain_name");
+        }
+        $data_to_model = [
+            "id" => $domain_id,
+            "fk_course_plan" => $course_plan['id'],
+            "fk_teaching_domain_title" => $domain_name_id,
+            "domain_weight" => $this->request->getPost("domain_weight") / 100,
+            "is_eliminatory" => $this->request
+                ->getPost("is_domain_eliminatory") ?? false,
+
+            'round_multiple' => $this->request->getPost('round_multiple'),
+        ];
+        $this->m_teaching_domain_model->save($data_to_model);
+        if (empty($this->m_teaching_domain_model->errors())) {
+            $this->m_teaching_domain_title_model->transCommit();
+            return redirect()->to("plafor/courseplan/view_course_plan/"
+                .$course_plan['id']);
+        }
+        // if error, show form view
+        $this->m_teaching_domain_title_model->transRollback();
+        return $this->showSaveTeachingDomainForm($course_plan, $domain_id);
+    }
+
 
 
     /**
@@ -230,64 +337,25 @@ class TeachingDomainController extends \App\Controllers\BaseController
      * @return string|RedirectResponse
      *
      */
-    public function saveTeachingDomain(int $course_plan_id = 0, int $domain_id = 0): string|RedirectResponse
+    public function saveTeachingDomain(int $course_plan_id = 0,
+        int $domain_id = 0): string|RedirectResponse
     {
-        if (!hasCurrentUserAdminAccess())
+        if (!hasCurrentUserAdminAccess()) {
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
-
-        $course_plan = $this->m_course_plan_model->withDeleted()->find($course_plan_id);
-
-        if (is_null($course_plan))
-            return redirect()->to("plafor/courseplan/view_course_plan/".$course_plan_id);
-
-        if(count($_POST) > 0)
-        {
-            // TODO : Vérifier que soit $domain_name (dropdown option) ou soit $new_domain_name (input text) soit renseingé. Renvoyer une erreur à la vue si non.
-            $domain_name = $this->request->getPost("new_domain_name") ?? $this->request->getPost("domain_name");
-
-            $data_to_model =
-            [
-                "id"                        => $domain_id,
-                "fk_course_plan"            => $course_plan_id,
-                "fk_teaching_domain_title"  => $domain_name_id,
-                "domain_weight"             => $this->request->getPost("domain_weight") ? $this->request->getPost("domain_weight") / 100 : null,
-                "is_eliminatory"            => $this->request->getPost("is_domain_eliminatory") ?? false
-            ];
-
-            $this->m_teaching_domain_model->save($data_to_model);
-
-            if (empty($this->m_teaching_domain_model->errors()))
-                return redirect()->to("plafor/courseplan/view_course_plan/".$course_plan_id);
         }
+        $course_plan = $this->m_course_plan_model->withDeleted()
+                                                 ->find($course_plan_id);
 
-        $parent_course_plan =
-        [
-            "id" => $course_plan_id,
-            "official_name" => $course_plan["official_name"],
-        ];
-
-        $titles = [];
-
-        foreach ($this->m_teaching_domain_title_model->withDeleted($domain_id > 0 ? true : false)->findAll() as $domain_title)
-            $titles[$domain_title["id"]] = $domain_title["title"];
-
-        $data_from_model = $this->m_teaching_domain_model->find($domain_id);
-
-        $data_to_view =
-        [
-            "title"                         => $domain_id == 0 ? lang("Grades.create_domain") : lang("Grades.update_domain"),
-            "domain_id"                     => $domain_id,
-            "parent_course_plan"            => $parent_course_plan,
-            "domain_name"                   => $this->m_teaching_domain_model->find($domain_id)["fk_teaching_domain_title"] ?? null,
-            "domain_names"                  => $titles,
-            "domain_weight"                 => isset($data_from_model["domain_weight"]) ? $data_from_model["domain_weight"] * 100 : null,
-            "is_domain_eliminatory"         => $data_from_model["is_eliminatory"] ?? null,
-            "is_domain_archived"            => !isset($data_from_model["archive"]) ? false : true,
-            "is_domain_archived"            => !isset($data_from_model["archive"]) ? false : true,
-            "errors"                        => $this->m_teaching_domain_model->errors()
-        ];
-
-        return $this->display_view("\Plafor/domain/save", $data_to_view);
+        if (is_null($course_plan)) {
+            return redirect()
+                ->to("plafor/courseplan/view_course_plan/".$course_plan_id);
+        }
+        // if method http post, save data
+        if($this->request->is('post')) {
+            return $this->saveTeachingDomainPost($course_plan, $domain_id);
+        }
+        // if method http get, show form view
+        return $this->showSaveTeachingDomainForm($course_plan, $domain_id);
     }
 
 
@@ -415,49 +483,61 @@ class TeachingDomainController extends \App\Controllers\BaseController
      * @return string|RedirectResponse
      *
      */
-    public function saveTeachingSubject(int $domain_id = 0, int $subject_id = 0) : string|RedirectResponse
+    public function saveTeachingSubject(int $domain_id = 0,
+        int $subject_id = 0) : string|RedirectResponse
     {
         if (!hasCurrentUserAdminAccess())
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
 
-        $teaching_domain = $this->m_teaching_domain_model->withDeleted()->find($domain_id);
+        $teaching_domain = $this->m_teaching_domain_model
+                                ->withDeleted()
+                                ->find($domain_id);
 
         if (empty($teaching_domain))
             return redirect()->to(previous_url());
 
-        $course_plan_id = $this->m_teaching_domain_model->find($domain_id)["fk_course_plan"];
+        $course_plan_id = $this->m_teaching_domain_model
+                               ->find($domain_id)["fk_course_plan"];
+        // if method http post, save data
+        if(count($_POST) > 0) {
+            $data_to_model = [
+                "id" => $subject_id,
+                "fk_teaching_domain" => $domain_id,
+                "name" => $this->request->getPost("subject_name"),
+                "subject_weight" => $this->request
+                                         ->getPost("subject_weight") / 100,
 
-        if(count($_POST) > 0)
-        {
-            $data_to_model =
-            [
-                "id"                    => $subject_id,
-                "fk_teaching_domain"    => $domain_id,
-                "name"                  => $this->request->getPost("subject_name"),
-                "subject_weight"        => $this->request->getPost("subject_weight") ? $this->request->getPost("subject_weight") / 100 : null,
+                'round_multiple' => $this->request->getPost('round_multiple'),
             ];
 
             $this->m_teaching_subject_model->save($data_to_model);
-
-            if (empty($this->m_teaching_subject_model->errors()))
-                return redirect()->to("plafor/courseplan/view_course_plan/".$course_plan_id);
+            if (empty($this->m_teaching_subject_model->errors())) {
+                return redirect()->to("plafor/courseplan/view_course_plan/"
+                . $course_plan_id);
+            }
         }
-
+        // if method http get or post when error, show form view
         $data_from_model = $this->m_teaching_subject_model->find($subject_id);
+        $data_to_view = [
+            "title" => lang($subject_id == 0 ? "Grades.create_subject"
+                : "Grades.update_subject"),
 
-        $data_to_view =
-        [
-            "title"                     => $subject_id == 0 ? lang("Grades.create_subject") : lang("Grades.update_subject"),
-            "parent_domain"             => ["id" => $domain_id, "name" => $teaching_domain["title"]],
-            "subject_id"                => $subject_id,
-            "subject_name"              => $data_from_model["name"] ?? null,
-            "subject_weight"            => isset($data_from_model["subject_weight"]) ? $data_from_model["subject_weight"] * 100 : null,
-            "is_subject_archived"       => !isset($data_from_model['archive']) ? false : true,
-            "is_subject_archived"       => !isset($data_from_model['archive']) ? false : true,
-            "parent_course_plan_id"     => $course_plan_id,
-            "errors"                    => $this->m_teaching_subject_model->errors()
+            "parent_domain" => ["id" => $domain_id,
+                "name" => $teaching_domain["title"]],
+
+            "subject_id" => $subject_id,
+            "subject_name" => $this->request->getPost("subject_name")
+                ?? $data_from_model["name"] ?? null,
+
+            "subject_weight" => $this->request->getPost("subject_weight")
+                ?? ($data_from_model["subject_weight"] ?? null) * 100,
+
+            "is_subject_archived" => isset($data_from_model['archive']),
+            "parent_course_plan_id" => $course_plan_id,
+            "errors" => $this->m_teaching_subject_model->errors(),
+            'round_multiple' => $this->request->getPost('round_multiple')
+                ?? $data_from_model['round_multiple'] ?? null,
         ];
-
         return $this->display_view("\Plafor/subject/save", $data_to_view);
     }
 
@@ -600,37 +680,45 @@ class TeachingDomainController extends \App\Controllers\BaseController
      * @return string|RedirectResponse
      *
      */
-    public function saveTeachingModule(int $module_id = 0): string|RedirectResponse
+    public function saveTeachingModule(
+        int $module_id = 0): string|RedirectResponse
     {
         if (!hasCurrentUserAdminAccess())
             return $this->display_view(self::m_ERROR_MISSING_PERMISSIONS);
 
-        if(count($_POST) > 0)
-        {
-            $data_to_model =
-            [
-                "id"                    => $module_id,
-                "module_number"         => $this->request->getPost("module_number"),
-                "official_name"         => $this->request->getPost("module_name"),
-                "version"               => $this->request->getPost("module_version"),
+        // if http post, insert in db
+        if($this->request->is('post')) {
+            $data_to_model = [
+                "id" => $module_id,
+                "module_number" => $this->request->getPost("module_number"),
+                "official_name" => $this->request->getPost("module_name"),
+                "version" => $this->request->getPost("module_version"),
             ];
-
             $this->m_teaching_module_model->save($data_to_model);
-
-            if (empty($this->m_teaching_module_model->errors()))
-                return redirect()->to("plafor/teachingdomain/getAllTeachingModule");
+            if (empty($this->m_teaching_module_model->errors())) {
+                return redirect()
+                    ->to("plafor/teachingdomain/getAllTeachingModule");
+            }
         }
+        // if http get or post with error, show the form
+        $data_from_model = $this->m_teaching_module_model->withDeleted()
+                                                         ->find($module_id);
 
-        $data_from_model = $this->m_teaching_module_model->withDeleted()->find($module_id);
+        $data_to_view = [
+            "title" => lang($module_id == 0 ? "Grades.create_module"
+                : "Grades.update_module"),
 
-        $data_to_view =
-        [
-            "title"                 => $module_id == 0 ? lang("Grades.create_module") : lang("Grades.update_module"),
-            "module_id"             => $module_id,
-            "module_number"         => $data_from_model["module_number"] ?? null,
-            "module_name"           => $data_from_model["official_name"] ?? null,
-            "module_version"        => $data_from_model["version"] ?? null,
-            "errors"                => $this->m_teaching_module_model->errors()
+            "module_id" => $module_id,
+            "module_number" => $this->request->getPost("module_number") ??
+                $data_from_model["module_number"] ?? null,
+
+            "module_name" => $this->request->getPost("module_name")??
+                $data_from_model["official_name"] ?? null,
+
+            "module_version" => $this->request->getPost("module_version") ??
+                $data_from_model["version"] ?? null,
+
+            "errors" => $this->m_teaching_module_model->errors()
         ];
 
         return $this->display_view("\Plafor/module/save", $data_to_view);

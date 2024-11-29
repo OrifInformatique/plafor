@@ -81,7 +81,7 @@ $name_max_length   = config('\Plafor\Config\PlaforConfig')->COMPETENCE_DOMAIN_NA
                     ['class' => 'form-label']) ?>
 
                 <?= form_input('symbol', $competence_domain['symbol'] ?? '',
-                    ['class' => 'form-control', 'id' => 'competence_domain_symbol', 'maxlength' => $symbol_max_length]) ?>
+                    ['class' => 'form-control', 'id' => 'competence_domain_symbol', 'maxlength' => $symbol_max_length, 'required' => 'required']) ?>
             </div>
 
             <div class="col-sm-12 form-group">
@@ -89,7 +89,7 @@ $name_max_length   = config('\Plafor\Config\PlaforConfig')->COMPETENCE_DOMAIN_NA
                     ['class' => 'form-label']) ?>
 
                 <?= form_input('name', $competence_domain['name'] ?? '',
-                    ['class' => 'form-control', 'id' => 'competence_domain_name', 'maxlength' => $name_max_length]) ?>
+                    ['class' => 'form-control', 'id' => 'competence_domain_name', 'maxlength' => $name_max_length, 'required' => 'required']) ?>
             </div>
         </div>
 

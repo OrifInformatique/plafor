@@ -200,6 +200,7 @@ return [
     'field_id'                                  => 'Identifiant',
     'field_symbol'                              => 'Symbole',
     'field_taxonomy'                            => 'Taxonomie',
+    'field_default_option_in_drop_down'         => 'Veuillez choisir une option',
 
     // Admin texts
     'admin_apprentices'  => 'Apprentis',

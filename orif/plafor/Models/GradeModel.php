@@ -252,7 +252,8 @@ class GradeModel extends Model
      */
     private function roundHalfPoint(float $number): float
     {
-        return round($number * 2) / 2;
+        helper('grade_helper');
+        return roundHalfPoint($number);
     }
 
     /**
@@ -263,7 +264,8 @@ class GradeModel extends Model
      */
     private function roundOneDecimalPoint(float $number): float
     {
-        return round($number * 10) / 10;
+        helper('grade_helper');
+        return roundOneDecimalPoint($number);
     }
 
     /**
@@ -286,9 +288,9 @@ class GradeModel extends Model
             ->getApprenticeSubjectGrades($userCourseId, $subjectId);
         if (count($grades) === 0) return null;
         $average = $this->getAverageFromArray($grades);
-        $roundMethod = $roundMethod ?? [$this, 'roundOneDecimalPoint'];
+        $roundMethod = $roundMethod ?? $this
+            ->getSubjectRoundFunction($subjectId);
         return $roundMethod($average);
-
     }
 
     /**
@@ -336,13 +338,13 @@ class GradeModel extends Model
         // Define the weights for school and inter-enterprise modules
         $schoolWeight = config('\Plafor\Config\PlaforConfig')->SCHOOL_WEIGHT;
         $externWeight = config('\Plafor\Config\PlaforConfig')->EXTERN_WEIGHT;
-
         // Retrieve school module grades for the user's course
         $schoolGrades = $this->getApprenticeModulesGrades($userCourseId, true);
         $schoolAverage = $this->getAverageFromArray($schoolGrades);
         // Retrieve inter-enterprise module grades for the user's course
         $externGrades = $this
             ->getApprenticeModulesGrades($userCourseId, false);
+
         $externAverage = $this->getAverageFromArray($externGrades);
         // Calculate the weighted average grade
         $schoolWeight = empty($schoolGrades) ? 0 : $schoolWeight;
@@ -352,6 +354,7 @@ class GradeModel extends Model
         $roundedExternAverage = $this->roundHalfPoint($externAverage ?? 0);
         $average = ($schoolWeight * $roundedSchoolAverage + $externWeight
             * $roundedExternAverage) / ($schoolWeight + $externWeight);
+
         // potenration between epsic module and interentreprise module
         $roundMethod = $roundMethod ?? [$this, 'roundOneDecimalPoint'];
         return $roundMethod($average);
@@ -376,16 +379,32 @@ class GradeModel extends Model
         $subjectModel = model('TeachingSubjectModel');
         $subjectIds = $subjectModel
             ->getTeachingSubjectIdByDomain($domainId);
+
         $subjectAverages = array_map(fn($id) =>
             $this->getApprenticeSubjectAverage($userCourseId, $id),
             $subjectIds);
+
         $subjectAveragesWithoutNull = array_filter($subjectAverages,
             fn($average) => !is_null($average));
+
         if (count($subjectAveragesWithoutNull) === 0) return null;
-        $averageDomain = array_sum($subjectAveragesWithoutNull) /
-            count($subjectAveragesWithoutNull);
-        $roundMethod = $roundMethod ?? [$this, 'roundHalfPoint'];
+        $averageDomain = array_sum($subjectAveragesWithoutNull)
+            / count($subjectAveragesWithoutNull);
+
+        $roundMethod = $roundMethod ?? $this->getDomainRoundFunction($domainId);
         return $roundMethod($averageDomain);
+    }
+
+    private function getDomainRoundFunction(int $domainId): callable
+    {
+        helper('grade_helper');
+        return getDomainRoundFunction($domainId);
+    }
+
+    private function getSubjectRoundFunction(int $subjectId): callable
+    {
+        helper('grade_helper');
+        return getSubjectRoundFunction($subjectId);
     }
 
     /**
@@ -500,25 +519,32 @@ class GradeModel extends Model
         // potenration between epsic module and interentreprise module
         $schoolWeight = config('\Plafor\Config\PlaforConfig')->SCHOOL_WEIGHT;
         $externWeight = config('\Plafor\Config\PlaforConfig')->EXTERN_WEIGHT;
-
         $schoolModules = $this
             ->getApprenticeModulesGradesForView($userCourseId, isSchool: true);
+
         $noSchoolModules = $this
             ->getApprenticeModulesGradesForView($userCourseId,
                 isSchool: false);
+
         $modules['school']['modules'] = $schoolModules;
         $modules['school']['weighting'] = intval($schoolWeight * 100);
         $modules['school']['average'] = $this
-            ->getApprenticeModuleAverage($userCourseId, isSchool: true);
+            ->getApprenticeModuleAverage($userCourseId, isSchool: true,
+                roundMethod: [$this, 'roundHalfPoint']);
+
         $modules['non-school']['modules'] = $noSchoolModules;
         $modules['non-school']['weighting'] = intval($externWeight * 100);
         $modules['non-school']['average'] = $this
-            ->getApprenticeModuleAverage($userCourseId, isSchool: false);
+            ->getApprenticeModuleAverage($userCourseId, isSchool: false,
+                roundMethod: [$this, 'roundHalfPoint']);
+
         $teachingDomainModel = model('TeachingDomainModel');
         $modules['weighting'] = intval($teachingDomainModel
             ->getITDomainWeight($userCourseId) * 100);
+
         $modules['average'] = $this
             ->getWeightedModuleAverage($userCourseId);
+
         return $this->putDefaultDataForModuleView($modules);
     }
 
