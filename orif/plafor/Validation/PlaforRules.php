@@ -25,17 +25,24 @@ class PlaforRules
      * @param $error            : string to set the error message
      * @return bool
      */
-    public function checkFormPlanNumber($number, $course_plan_id, $datas, &$error) {
-        if ($course_plan_id==0)
-        if(count((new CoursePlanModel())->getWhere(['formation_number'=>$number])->getResultArray())>0){
-            $error= lang('plafor_lang.form_number_not_unique');
-            return false;
+    public function checkFormPlanNumber($number, $course_plan_id, $datas,
+        &$error)
+    {
+        $model = model('CoursePlanModel');
+        $coursePlans = $model->getWhere(['formation_number'=>$number])
+            ->getResultArray();
+        // to update not to insert new
+        $withoutItself = array_filter($coursePlans,
+            fn($plan) => $course_plan_id != $plan['id']);
+        $isExisted = count($withoutItself) > 0;
+        if ($isExisted) {
+            $error = lang('plafor_lang.form_number_not_unique');
         }
-        return true;
+        return !$isExisted;
     }
 
      /**
-     * Check if the given apprentice ID and the given trainer ID 
+     * Check if the given apprentice ID and the given trainer ID
      *  exist in the same row of the table "trainer_apprentice"
      *
      * @param  int $fkApprenticeId  : ID of the apprentice, required
@@ -47,16 +54,17 @@ class PlaforRules
     public function AreApprenticeAndTrainerNotLinked($fkTrainerId, $fkApprenticeId, $datas, &$error) : bool{
         $array_where = array('fk_trainer' => $fkTrainerId, 'fk_apprentice' => $fkApprenticeId);
 
-        if (empty(TrainerApprenticeModel::getInstance()->getWhere($array_where)->getResultArray())){
+        $trainerApprenticeModel = model('TrainerApprenticeModel');
+        if (empty($trainerApprenticeModel->getWhere($array_where)->getResultArray())){
             return true;
         }
         $error = lang('plafor_lang.apprentice_trainer_already_linked');
         return false;
     }
-    
+
     /**
      * Check if the symbol of the competence domain already exists in database
-     * 
+     *
      * @param $symbol   : The symbol to check
      * @param $params   : Optional parameters
      * @param $data     : Datas sent to the form
@@ -65,23 +73,23 @@ class PlaforRules
      */
     public function is_symbol_unique($symbol, string $params, array $data, &$error): bool {
         // Initializing variables depending on the type of data to validate
-        switch ($_POST['type']) {
+        switch($_POST['type']) {
             case 'competence_domain':
                 // For a competence domain
                 $parent = 'course_plan';
-                $model = CompetenceDomainModel::getInstance();
+                $model = model('CompetenceDomainModel');
                 $error_str = 'same_competence_domain';
                 break;
             case 'operational_competence':
                 // For an operational competence
                 $parent = 'competence_domain';
-                $model = OperationalCompetenceModel::getInstance();
+                $model = model('OperationalCompetenceModel');
                 $error_str = 'same_operational_competence';
                 break;
             case 'objective':
                 // For an objective
                 $parent = 'operational_competence';
-                $model = ObjectiveModel::getInstance();
+                $model = model('ObjectiveModel');
                 $error_str = 'same_objective';
                 break;
         }
@@ -102,4 +110,76 @@ class PlaforRules
         }
         return true;
     }
+
+
+    /**
+     * Checks if a grade is associated with either a subject or a module, but
+     * not both.
+     *
+     * This validation rule checks if the data array contains either a subject
+     * (`fk_teaching_subject`) or a module (`fk_teaching_module`), but not both
+     * at the same time.
+     *
+     * @param mixed $value The value to validate (not used in this rule)
+     * @param string|null $params Additional parameters (not used in this rule)
+     * @param array $data The data array containing the grade information
+     * @param string|null $error The variable that will contain the validation
+     * error if it fails
+     *
+     * @return bool True if the validation is successful, false otherwise
+     */
+    public function is_module_xor_subject(mixed $value, ?string $params = null,
+        array $data,  ?string &$error = null): bool
+    {
+        $isValide = (isset($data['fk_teaching_subject']) xor
+            isset($data['fk_teaching_module']));
+        return $isValide;
+    }
+
+    /**
+     * Checks if the given value is a boolean or a binary representation.
+     *
+     * This function validates if the provided value is either a boolean (true
+     * or false) or a string/integer representation of 0 or 1.
+     *
+     * @param mixed $value The value to be validated.
+     *
+     * @return bool True if the value is a boolean or a binary representation,
+     * false otherwise.
+     */
+    public function is_boolean_or_binary_value(mixed $value): bool
+    {
+        $isValide = in_array($value, [0, 1, '0', '1', true, false], true);
+        return $isValide;
+    }
+
+    /**
+     * Checks if the link between a teaching domain and a teaching module is
+     * unique.
+     *
+     * This validation rule checks if the combination of teaching domain and
+     * teaching module is already present in the database.
+     * If it is, the method returns false, otherwise it returns true.
+     *
+     * Note: This method does not check for soft deleted links.
+     *
+     * @param mixed $value The value to be validated (not used in this rule).
+     * @param string|null $params The rule parameters (not used in this rule).
+     * @param array $data The form data.
+     * @param string|null $error The variable that will contain the error if
+     * validation fails.
+     *
+     * @return bool True if the link between the teaching domain and the
+     * teaching module is unique, false otherwise.
+     */
+    public function isDomainModuleLinkUnique(mixed $value, ?string $params =
+        null, array $data,  ?string &$error = null): bool
+    {
+        $model = model('TeachingDomainModuleModel');
+        $isIncorrect = $model
+            ->existsLinkBetweenDomainAndModule($data['fk_teaching_domain'],
+        $data['fk_teaching_module']);
+        return !$isIncorrect;
+    }
+
 }

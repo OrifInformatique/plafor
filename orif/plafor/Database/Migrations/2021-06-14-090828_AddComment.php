@@ -22,7 +22,7 @@ class AddComment extends Migration {
                 'unsigned' => true,
                 'auto_increment' => true,
             ],
-            'fk_trainer' => [
+            'fk_user' => [
                 'type' => 'int',
                 'null'=>true,
                 'unsigned' => true,
@@ -40,7 +40,7 @@ class AddComment extends Migration {
         ]);
 
         $this->forge->addKey('id', true, true);
-        $this->forge->addForeignKey('fk_trainer', 'user','id');
+        $this->forge->addForeignKey('fk_user', 'user','id');
         $this->forge->addForeignKey('fk_acquisition_status', 'acquisition_status','id');
         $this->forge->createTable('comment');
 

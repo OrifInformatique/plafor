@@ -47,4 +47,19 @@ return[
     'for'                            => 'Pour',
     'click_on_the_button'            => 'Cliquez sur le bouton',
     'above'                          => 'Ci-dessous',
+
+// Manage entry
+    'title_delete_entry'        => 'Suppression définitive',
+    'subtitle_delete_entry'     => 'Êtes-vous sûr(e) de vouloir supprimer définitivement cette entrée ?',
+
+    'title_disable_entry'       => 'Désactivation',
+    'subtitle_disable_entry'    => 'Êtes-vous sûr(e) de vouloir désactiver cette entrée ?',
+
+    'title_reactivate_entry'    => 'Réactivation',
+    'subtitle_reactivate_entry' => 'Êtes-vous sûr(e) de vouloir réactiver cette entrée ?',
+
+    'title_manage_entry'        => 'Gestion',
+    'subtitle_manage_entry'     => 'Êtes-vous sûr(e) de vouloir réaliser cette opération ?',
+
+    'entries_linked'            => 'Entrées liées',
 ];

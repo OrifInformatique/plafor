@@ -9,15 +9,16 @@
 namespace User\Models;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Validation\ValidationInterface;
+use Plafor\Models\TrainerApprenticeModel;
 
-class User_model extends \CodeIgniter\Model{
-    private static $userModel;
-    protected $table='user';
-    protected $primaryKey='id';
-    protected $allowedFields=['archive','date_creation','email','username','password','fk_user_type','azure_mail'];
-    protected $useSoftDeletes=true;
-    protected $deletedField="archive";
-    private $user_type_model=null;
+class User_model extends \CodeIgniter\Model {
+    protected $table = 'user';
+    protected $primaryKey = 'id';
+    protected $allowedFields = ['archive', 'date_creation', 'email',
+        'username', 'password', 'fk_user_type', 'azure_mail'];
+    protected $useSoftDeletes = true;
+    protected $deletedField = "archive";
+    private $user_type_model = null;
     protected $validationRules;
     protected $validationMessages;
 
@@ -64,15 +65,6 @@ class User_model extends \CodeIgniter\Model{
         ];
 
         parent::__construct($db, $validation);
-    }
-
-    /**
-     * @return User_model
-     */
-    public static function getInstance(){
-        if (User_model::$userModel==null)
-            User_model::$userModel=new User_model();
-        return User_model::$userModel;
     }
 
     /**
@@ -141,33 +133,61 @@ class User_model extends \CodeIgniter\Model{
         }
     }
 
+
+    # TODO Refactoring the User_model stays like in Packbase.
+
     /**
-     * @return array the list of apprentices
+     * Gets the list of apprentices
+     *
+     * @param bool $withDeleted If true, returns also deactivated apprentices
+     *
+     * @return array
+     *
      */
-    public static function getApprentices(bool $withDeleted=false){
+    public function getApprentices(bool $withDeleted = false)
+    {
+        $user_model = model('User_model');
+        $user_type_model = model('User_type_model');
 
-        if ($withDeleted)
-            return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('access_level', config("\User\Config\UserConfig")->access_level_apprentice)->first()['id'])->withDeleted()->findAll();
-        return User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Apprenti')->first()['id'])->findAll();
+        $fk_user_type = $user_type_model
+            ->where('name', 'Apprenti')
+            ->first()['id'];
 
+        return $user_model
+            ->where('fk_user_type', $fk_user_type)
+            ->orderBy('username', 'ASC')
+            ->withDeleted($withDeleted)
+            ->findAll();
     }
 
     /**
-     * @return array the list of trainers
+     * Gets the list of trainers
+     *
+     * @param bool $withDeleted If true, returns also deactivated trainers
+     *
+     * @return array
+     *
      */
-    public static function getTrainers(bool $withDelted=false){
-        $indexedTrainers = array();
-        if ($withDelted) {
-            $trainers = User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Formateur')->first()['id'])->withDeleted()->findAll();
-            foreach ($trainers as $trainer) {
-                $indexedTrainers[$trainer['id']] = $trainer;
-            }
-            return $indexedTrainers;
-        }
-        $trainers = User_model::getInstance()->where('fk_user_type',User_type_model::getInstance()->where('name','Formateur')->first()['id'])->findAll();
-        foreach ($trainers as $trainer) {
+    public function getTrainers(bool $withDeleted = false)
+    {
+        $indexedTrainers = [];
+
+        $user_model = model('User_model');
+        $user_type_model = model('User_type_model');
+
+        $fk_user_type = $user_type_model
+            ->where('name','Formateur')
+            ->first()['id'];
+
+        $trainers = $user_model
+            ->where('fk_user_type', $fk_user_type)
+            ->withDeleted($withDeleted)
+            ->orderBy('username', 'ASC')
+            ->findAll();
+
+        foreach ($trainers as $trainer)
             $indexedTrainers[$trainer['id']] = $trainer;
-        }
+
         return $indexedTrainers;
     }
 }

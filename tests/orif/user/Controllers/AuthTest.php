@@ -18,7 +18,7 @@ use CodeIgniter\HTTP\RedirectResponse;
 
 
 use User\Models\User_model;
- 
+
 class AuthTest extends CIUnitTestCase
 {
     use ControllerTestTrait;
@@ -85,14 +85,14 @@ class AuthTest extends CIUnitTestCase
             ->execute('login');
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Assertions
         $this->assert_reponse($result);
         $this->assertEquals($_SESSION['after_login_redirect'], 'test');
     }
-    
+
     /**
      * Asserts that the session variable is correctly set when posting the
      * login page (simulates a click on button login)
@@ -116,8 +116,8 @@ class AuthTest extends CIUnitTestCase
             ->execute('login');
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Assertions
         $this->assert_reponse($result);
@@ -156,12 +156,12 @@ class AuthTest extends CIUnitTestCase
         $result = $this->controller(Auth::class)
             ->execute('login');
 
-        // Deletes inserted user 
+        // Deletes inserted user
         $userModel->delete($userId, TRUE);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Assertions
         $this->assertEquals($_SESSION['user_id'], $userId);
@@ -200,12 +200,12 @@ class AuthTest extends CIUnitTestCase
         $result = $this->controller(Auth::class)
             ->execute('login');
 
-        // Deletes inserted user 
+        // Deletes inserted user
         $userModel->delete($userId, TRUE);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();     
+        $_POST = [];
+        $_REQUEST = [];
 
         // Assertions
         $this->assertEquals($_SESSION['user_id'], $userId);
@@ -214,7 +214,7 @@ class AuthTest extends CIUnitTestCase
     }
 
     /**
-     * Asserts that the login page is redirected 
+     * Asserts that the login page is redirected
      */
     public function testloginPageWithSession()
     {
@@ -270,7 +270,7 @@ class AuthTest extends CIUnitTestCase
         $result->assertSeeInField('new_password', '');
         $result->assertSeeLink(lang('common_lang.btn_cancel'));
     }
-    
+
     /**
      * Asserts that the change_password page redirects to the base url when the
      * password is changed successfully
@@ -313,8 +313,8 @@ class AuthTest extends CIUnitTestCase
         $userModel->delete($userId, TRUE);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Assertions
         $this->assert_redirect($result);
@@ -365,8 +365,8 @@ class AuthTest extends CIUnitTestCase
         $userModel->delete($userId, TRUE);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Assertions
         $this->assert_reponse($result);
@@ -418,8 +418,8 @@ class AuthTest extends CIUnitTestCase
         $userModel->delete($userId, TRUE);
 
         // Reset $_POST and $_REQUEST variables
-        $_POST = array();
-        $_REQUEST = array();
+        $_POST = [];
+        $_REQUEST = [];
 
         // Assertions
         $this->assert_reponse($result);
@@ -559,8 +559,8 @@ class AuthTest extends CIUnitTestCase
             d($this->get_cannot_github_action_message());
             return;
         }
-        $_GET["state"] = session_id(); 
-        $_GET["code"] = 'fake'; 
+        $_GET["state"] = session_id();
+        $_GET["code"] = 'fake';
         $result = $this->controller(Auth::class)->execute('azure_login');
         $result->assertSee(lang('user_lang.msg_err_azure_unauthorized'));
     }
@@ -622,5 +622,3 @@ class AuthTest extends CIUnitTestCase
 
 
 }
-
-

@@ -181,3 +181,8 @@ p.bg-primary {
     .responsiveTable td:nth-child(2){
     }
 }
+input[type="checkbox"]
+{
+    width: 20px;
+    height: 20px;
+}
