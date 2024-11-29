@@ -13,7 +13,8 @@ class addTrainerApprenticeDatas extends Seeder
     {
         //trainer_apprentice//
         $trainer_apprentice = array(
-            array('id' => '1','fk_trainer' => '2','fk_apprentice' => '3'),
+            array('id' => '1','fk_trainer' => '2','fk_apprentice' => '4'),
+            array('id' => '2','fk_trainer' => '3','fk_apprentice' => '5'),
         );
         foreach ($trainer_apprentice as $trainer_apprenticee)
         $this->db->table('trainer_apprentice')->insert($trainer_apprenticee);

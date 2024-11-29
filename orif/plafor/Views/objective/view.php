@@ -1,83 +1,71 @@
+<?php
+
+/**
+ * Shows the details of an objective.
+ *
+ * Called by CoursePlan/view_objective($objective_id)
+ *
+ * @author      Orif (ViDi, HeMa)
+ * @link        https://github.com/OrifInformatique
+ * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ *
+ */
+
+
+
+/**
+ * *** Data needed for this view ***
+ *
+ * @param array $course_plan Course plan containing the objective.
+ * All fields from table.
+ *
+ * @param array $competence_domain Competence domain containing the objective.
+ * All fields from table.
+ *
+ * @param array $operational_competence Operational competence containing the objective.
+ * All fields from table.
+ *
+ * @param array $objective Objective.
+ * All fields from table.
+ *
+ */
+
+
+
+/**
+ * No data is sent by this view.
+ *
+ */
+
+?>
+
 <div class="container">
-    <?=view('\Plafor\templates\navigator',['title'=>lang('plafor_lang.title_view_objective')])?>
-    <!-- TITLE -->
-    <div class="row">
-        <div class="col">
-            <h2 class="title-section"><?= $title; ?></h2>
-        </div>
-    </div>
-    <div class="row">
+    <?= view('\Plafor\templates\navigator', ['title' => lang('plafor_lang.title_view_objective')]) ?>
+
+    <!-- Page title -->
+    <?= view('\Plafor/common/page_title', ['title' => lang('plafor_lang.title_view_objective')]) ?>
+
+    <!-- Course plan details -->
+    <?= view('\Plafor/course_plan/details', $course_plan) ?>
+
+    <!-- Competence domain details -->
+    <?= view('\Plafor/competence_domain/details', $competence_domain) ?>
+
+    <!-- Operational competence details -->
+    <?= view('\Plafor/operational_competence/details', $operational_competence) ?>
+
+    <!-- Objective details -->
+    <div class="row mb-3">
         <div class="col-md-12">
-            <p class="bg-primary text-white"><?=lang('plafor_lang.title_view_course_plan')?></p>
+            <p class="bg-primary text-white"><?= lang('plafor_lang.title_view_objective') ?></p>
         </div>
-        <?php if(isset($course_plan)): ?>
-        <div class="col-md-6">
-            <p class="font-weight-bold"><?=lang('plafor_lang.field_course_plan_formation_number')?></p>
-            <a href="<?= base_url('plafor/courseplan/view_course_plan/'.$course_plan['id'])?>"><?=$course_plan['formation_number']?></a>
-        </div>
-        <div class="col-md-6">
-            <p class="font-weight-bold"><?=lang('plafor_lang.field_course_plan_official_name')?></p>
-            <a href="<?= base_url('plafor/courseplan/view_course_plan/'.$course_plan['id'])?>"><?=$course_plan['official_name']?></a>
-        </div>
-        <?php endif;?>
-    </div>
-    <div class="row">
+
         <div class="col-md-12">
-            <p class="bg-primary text-white"><?=lang('plafor_lang.title_view_competence_domain')?></p>
+            <p><strong><?= $objective['symbol'] ?></strong> : <?= $objective['name'] ?></p>
         </div>
-        <?php if (isset($competence_domain)): ?>
-        <div class="col-md-6">
-            <p class="font-weight-bold"><?=lang('plafor_lang.field_competence_domain_symbol')?></p>
-            <a href="<?= base_url('plafor/courseplan/view_competence_domain/'.$competence_domain['id']) ?>"><?=$competence_domain['symbol']?></a>
-        </div>
-        <div class="col-md-6">
-            <p class="font-weight-bold"><?=lang('plafor_lang.field_competence_domain_name')?></p>
-            <a href="<?= base_url('plafor/courseplan/view_competence_domain/'.$competence_domain['id']) ?>"><?=$competence_domain['name']?></a>
-        </div>
-        <?php endif; ?>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <p class="bg-primary text-white"><?=lang('plafor_lang.title_view_operational_competence')?></p>
-        </div>
-        <?php if (isset($operational_competence)): ?>
-        <div class="col-md-6">
-            <p class="font-weight-bold"><?=lang('plafor_lang.field_operational_competence_symbol')?></p>
-            <a href="<?= base_url('plafor/courseplan/view_operational_competence/'.$operational_competence['id']) ?>"><?=$operational_competence['symbol']?></a>
-        </div>
-        <div class="col-md-6">
-            <p class="font-weight-bold"><?=lang('plafor_lang.field_operational_competence_name')?></p>
-            <a href="<?= base_url('plafor/courseplan/view_operational_competence/'.$operational_competence['id']) ?>"><?=$operational_competence['name']?></a>
-        </div>
+
         <div class="col-md-4">
-            <p class="font-weight-bold"><?=lang('plafor_lang.field_operational_competence_methodologic')?></p>
-            <a href="<?= base_url('plafor/courseplan/view_operational_competence/'.$operational_competence['id']) ?>"><?=$operational_competence['methodologic']?></a>
-        </div>
-        <div class="col-md-4">
-            <p class="font-weight-bold"><?=lang('plafor_lang.field_operational_competence_social')?></p>
-            <a href="<?= base_url('plafor/courseplan/view_operational_competence/'.$operational_competence['id']) ?>"><?=$operational_competence['social']?></a>
-        </div>
-        <div class="col-md-4">
-            <p class="font-weight-bold"><?=lang('plafor_lang.field_operational_competence_personal')?></p>
-            <a href="<?= base_url('plafor/courseplan/view_operational_competence/'.$operational_competence['id']) ?>"><?=$operational_competence['personal']?></a>
-        </div>
-        <?php endif; ?>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <p class="bg-primary text-white"><?=lang('plafor_lang.title_view_objective')?></p>
-        </div>
-        <div class="col-md-4">
-            <p class="font-weight-bold"><?=lang('plafor_lang.field_objective_symbol')?></p>
-            <p><?=$objective['symbol']?></p>
-        </div>
-        <div class="col-md-4">
-            <p class="font-weight-bold"><?=lang('plafor_lang.field_objective_taxonomy')?></p>
-            <p><?=$objective['taxonomy']?></p>
-        </div>
-        <div class="col-md-4">
-            <p class="font-weight-bold"><?=lang('plafor_lang.field_objective_name')?></p>
-            <p><?=$objective['name']?></p>
+            <p><strong><?= lang('plafor_lang.field_objective_taxonomy') ?></strong> : <?= $objective['taxonomy'] ?></p>
         </div>
     </div>
 </div>

@@ -32,7 +32,7 @@ class AddTeachingSubject extends Migration{
             ],
             "subject_weight" => [
                 "type" => "DECIMAL",
-                "constraint" => "2,1",
+                "constraint" => "3,2",
                 "unsigned" => true,
             ],
             "archive TIMESTAMP NULL",

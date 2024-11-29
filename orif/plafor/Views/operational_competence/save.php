@@ -1,115 +1,139 @@
 <?php
+
 /**
- * Fichier de vue pour save_operational_competence
+ * Let the edition of a operational competence.
+ *
+ * Called by CoursePlan/save_operational_competence($competence_domain_id, $operational_competence_id)
  *
  * @author      Orif (ViDi, HeMa)
  * @link        https://github.com/OrifInformatique
  * @copyright   Copyright (c), Orif (https://www.orif.ch)
+ *
  */
-?>
-<?php
-$update = !is_null($operational_competence);
+
+
+
+/**
+ * *** Data needed fot this view ***
+ *
+ * @param string $title Page title.
+ * Should be lang('plafor_lang.title_operational_competence_new') or lang('plafor_lang.title_operational_competence_update').
+ *
+ * @param array $operational_competence Existing operational competence.
+ * All fields from table.
+ *
+ * @param array $parent_competence_domain Parent competence domain.
+ *
+ * @param ?array $errors operational_comp_model errors.
+ *
+ */
+
+
+
+/**
+ * *** Data sent by this view ***
+ *
+ * method POST
+ *
+ * action CoursePlan/save_operational_competence($competence_domain_id, $operational_competence_id)
+ *
+ * @param int $id ID of the operational competence.
+ * For plafor validation rules.
+ *
+ * @param int $parent_competence_domain_id ID of the parent competence domain.
+ *
+ * @param string $type Type of the entry.
+ * For plafor validation rules.
+ *
+ * @param string $symbol Symbol of the operational competence.
+ *
+ * @param string $name Name of the operational competence.
+ *
+ * @param string $methodologic Methologoic competence.
+ *
+ * @param string $social Social competence.
+ *
+ * @param string $personal Personal competence.
+ *
+ */
+
 helper('form');
-$validation=\CodeIgniter\Config\Services::validation();
-?>
-<?php
-    // For some reasons, you can only set a type to input made with form_input if done with only a array as param, may need to be checked for later uses.
 
-    $data_symbol = array(
-        'name' => 'symbol',
-        'value' => $operational_competence_symbol ?? $operational_competence['symbol'] ?? '',
-        'max' => config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH,
-        'class' => 'form-control',
-        'id' => 'operational_competence_symbol'
-    );
-    
-    $data_name = array(
-        'name' => 'name',
-        'value' => $operational_competence_name ?? $operational_competence['name'] ?? '',
-        'max' => config('\Plafor\Config\PlaforConfig')->OPERATIONAL_COMPETENCE_NAME_MAX_LENGTH,
-        'class' => 'form-control',
-        'id' => 'operational_competence_name'
-    );
-    
-    $data_methodologic = array(
-        'name' => 'methodologic',
-        'value' => $operational_competence_methodologic ?? $operational_competence['methodologic'] ?? '',
-        'max' => config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH,
-        'class' => 'form-control',
-        'id' => 'operational_competence_methodologic'
-    );
-    
-    $data_social = array(
-        'name' => 'social',
-        'value' => $operational_competence_social ?? $operational_competence['social'] ?? '',
-        'max' => config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH,
-        'class' => 'form-control',
-        'id' => 'operational_competence_social'
-    );
-    
-    $data_personal = array(
-        'name' => 'personal',
-        'value' => $operational_competence_personal ?? $operational_competence['personal'] ?? '',
-        'max' => config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH,
-        'class' => 'form-control',
-        'id' => 'operational_competence_personal'
-    );
+$symbol_max_length = config('\Plafor\Config\PlaforConfig')->SYMBOL_MAX_LENGTH;
+$name_max_length = config('\Plafor\Config\PlaforConfig')->OPERATIONAL_COMPETENCE_NAME_MAX_LENGTH;
+$textarea_max_length = config('\Plafor\Config\PlaforConfig')->SQL_TEXT_MAX_LENGTH;
+
 ?>
+
 <div class="container">
-    <!-- TITLE -->
-    <div class="row">
-        <div class="col">
-            <h1 class="title-section"><?= lang('plafor_lang.title_operational_competence_'.($update ? 'update' : 'new')); ?></h1>
-        </div>
-    </div>
-    
-    <!-- FORM OPEN -->
-    <?php
-    $attributes = array(
-        'id' => 'operational_competence_form',
-        'name' => 'operational_competence_form'
-    );
-    echo form_open(base_url('plafor/courseplan/save_operational_competence/'.$competence_domain['id'].'/'.($operational_competence['id'] ?? '0')), $attributes, [
-        'id' => $operational_competence['id'] ?? 0,
-        'type' => 'operational_competence',
-    ]);
-    ?>
+    <!-- Page title -->
+    <?= view('\Plafor/common/page_title', ['title' => $title]) ?>
 
-        <!-- ERROR MESSAGES -->
-        <?php
-        foreach ($errors!=null?$errors:[] as $error){ ?>
-        <div class="alert alert-danger">
-            <?= $error ?>
-        </div>
-        <?php } ?>
+    <?= form_open(base_url('plafor/courseplan/save_operational_competence/'.
+        $parent_competence_domain["id"].'/'.($operational_competence["id"] ?? '0')), null,
+        ['id' => $operational_competence["id"] ?? 0, 'parent_competence_domain_id' => $parent_competence_domain["id"],
+            'type' => 'operational_competence']) ?>
 
-        <!-- USER FIELDS -->
+        <!-- Form errors -->
+        <?= view('\Plafor/common/form_errors', ['errors' => $errors]) ?>
+
         <div class="row">
             <div class="col-sm-12 form-group">
-                <?= form_label(lang('plafor_lang.field_operational_competence_domain'), 'competence_domain', ['class' => 'form-label']); ?>
-                <br />
-                <?= form_dropdown('competence_domain',$competence_domains,$operational_competence['fk_competence_domain']?? '','id="competence_domain" class="form-control"')?>
+                <?= form_label(lang('plafor_lang.field_operational_competence_domain'), 'parent_competence_domain',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_input('competence_domain', $parent_competence_domain["name"],
+                    ['class' => 'form-control', 'id' => 'parent_competence_domain', 'disabled' => true])?>
             </div>
+
             <div class="col-sm-12 form-group">
-                <?= form_label(lang('plafor_lang.field_operational_competence_symbol'), 'operational_competence_symbol', ['class' => 'form-label']); ?>
-                <?= form_input($data_symbol); ?>
-                <?= form_label(lang('plafor_lang.field_operational_competence_name'), 'operational_competence_name', ['class' => 'form-label']); ?>
-                <?= form_input($data_name); ?>
-                <?= form_label(lang('plafor_lang.field_operational_competence_methodologic'), 'operational_competence_methodologic', ['class' => 'form-label']); ?>
-                <?= form_textarea($data_methodologic); ?>
-                <?= form_label(lang('plafor_lang.field_operational_competence_social'), 'operational_competence_social', ['class' => 'form-label']); ?>
-                <?= form_textarea($data_social); ?>
-                <?= form_label(lang('plafor_lang.field_operational_competence_personal'), 'operational_competence_personal', ['class' => 'form-label']); ?>
-                <?= form_textarea($data_personal); ?>
+                <?= form_label(lang('plafor_lang.field_operational_competence_symbol'), 'operational_competence_symbol',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_input('symbol', $operational_competence['symbol'] ?? '',
+                    ['class' => 'form-control', 'id' => 'operational_competence_symbol', 'maxlength' => $symbol_max_length]) ?>
+            </div>
+
+            <div class="col-sm-12 form-group">
+                <?= form_label(lang('plafor_lang.field_operational_competence_name'), 'operational_competence_name',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_input('name', $operational_competence['name'] ?? '',
+                    ['class' => 'form-control', 'id' => 'operational_competence_name', 'maxlength' => $name_max_length]) ?>
+            </div>
+
+            <div class="col-sm-12 form-group">
+                <?= form_label(lang('plafor_lang.field_operational_competence_methodologic'), 'operational_competence_methodologic', ['class' => 'form-label']) ?>
+
+                <?= form_textarea('methodologic', $operational_competence['methodologic'] ?? '',
+                    ['class' => 'form-control', 'id' => 'operational_competence_methodologic', 'maxlength' => $textarea_max_length]) ?>
+            </div>
+
+            <div class="col-sm-12 form-group">
+                <?= form_label(lang('plafor_lang.field_operational_competence_social'), 'operational_competence_social',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_textarea('social', $operational_competence['social'] ?? '',
+                    ['class' => 'form-control', 'id' => 'operational_competence_social', 'maxlength' => $textarea_max_length]) ?>
+            </div>
+
+            <div class="col-sm-12 form-group">
+                <?= form_label(lang('plafor_lang.field_operational_competence_personal'), 'operational_competence_personal',
+                    ['class' => 'form-label']) ?>
+
+                <?= form_textarea('personal', $operational_competence['personal'] ?? '',
+                    ['class' => 'form-control', 'id' => 'operational_competence_personal', 'maxlength' => $textarea_max_length]) ?>
             </div>
         </div>
-                    
-        <!-- FORM BUTTONS -->
+
         <div class="row">
             <div class="col text-right">
-                <a class="btn btn-secondary" href="<?= base_url('plafor/courseplan/view_competence_domain/'.$competence_domain['id']) ?>"><?= lang('common_lang.btn_cancel'); ?></a>
-                <?= form_submit('save', lang('common_lang.btn_save'), ['class' => 'btn btn-primary']); ?>
+                <a class="btn btn-secondary" href="<?= base_url('plafor/courseplan/view_competence_domain/'.$parent_competence_domain["id"]) ?>">
+                    <?= lang('common_lang.btn_cancel') ?>
+                </a>
+
+                <?= form_submit(null, lang('common_lang.btn_save'), ['class' => 'btn btn-primary']) ?>
             </div>
         </div>
-    <?= form_close(); ?>
+    <?= form_close() ?>
 </div>

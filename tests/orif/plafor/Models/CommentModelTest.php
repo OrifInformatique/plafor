@@ -1,6 +1,6 @@
 <?php
 /**
- * Unit / Integration tests CommentModelTest 
+ * Unit / Integration tests CommentModelTest
  *
  * @author      Orif (CaLa)
  * @link        https://github.com/OrifInformatique
@@ -9,6 +9,8 @@
 namespace Plafor\Models;
 
 use CodeIgniter\Test\CIUnitTestCase;
+
+helper("UnitTest_helper"); // The helper hold all Constants -> Plafor\orif\plafor\Helpers\UnitTest_helper.php
 
 class CommentModelTest extends CIUnitTestCase
 {
@@ -54,8 +56,8 @@ class CommentModelTest extends CIUnitTestCase
         // Assertions
         $this->assertIsArray($acquisitionStatus);
         $this->assertEquals($acquisitionStatus['id'], 1);
-        $this->assertEquals($acquisitionStatus['fk_objective'], 1);
+        $this->assertEquals($acquisitionStatus['fk_objective'], 333);
         $this->assertEquals($acquisitionStatus['fk_user_course'], 1);
-        $this->assertEquals($acquisitionStatus['fk_acquisition_level'], 2);
+        $this->assertEquals($acquisitionStatus['fk_acquisition_level'], 1);
     }
 }

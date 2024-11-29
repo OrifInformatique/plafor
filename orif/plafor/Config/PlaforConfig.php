@@ -10,6 +10,7 @@ namespace Config;
 
 use CodeIgniter\Config\BaseConfig;
 
+
 class PlaforConfig extends BaseConfig
 {
     public $FORMATION_NUMBER_MAX_LENGTH=5;
@@ -26,4 +27,8 @@ class PlaforConfig extends BaseConfig
     public $MODULE_OFFICIAL_NAME_MAX_LENGTH=100;
     public $GRADE_LOWEST=0;
     public $GRADE_HIGHEST=6;
+    public float $SCHOOL_WEIGHT = 0.8;
+    public float $EXTERN_WEIGHT = 0.2;
+    
 }
+

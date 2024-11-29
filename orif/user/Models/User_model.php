@@ -170,7 +170,7 @@ class User_model extends \CodeIgniter\Model {
      */
     public function getTrainers(bool $withDeleted = false)
     {
-        $indexedTrainers = array();
+        $indexedTrainers = [];
 
         $user_model = model('User_model');
         $user_type_model = model('User_type_model');

@@ -1,6 +1,6 @@
 <?php
 /**
- * Unit / Integration tests AcquisitionLevelModelTest 
+ * Unit / Integration tests AcquisitionLevelModelTest
  *
  * @author      Orif (CaLa)
  * @link        https://github.com/OrifInformatique
@@ -11,8 +11,11 @@ namespace Plafor\Models;
 use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
 
+helper("UnitTest_helper"); // The helper hold all Constants -> Plafor\orif\plafor\Helpers\UnitTest_helper.php
+
 class AcquisitionLevelModelTest extends CIUnitTestCase
 {
+
     const ACQUISITION_NOT_EXPLAINED = 1;
 
     use DatabaseTestTrait;
@@ -24,7 +27,7 @@ class AcquisitionLevelModelTest extends CIUnitTestCase
 
     protected $seedOnce = false;
     protected $basePath = 'tests/_support/Database';
-    protected $seed     = 'apprenticeTestSeed';
+    protected $seed     = 'ApprenticeTestSeed';
 
     /**
      * Asserts that getInstance method of AcquisitionLevelModel returns an

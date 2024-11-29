@@ -33,7 +33,7 @@ class AddTeachingDomain extends Migration{
             ],
             "domain_weight" => [
                 "type" => "DECIMAL",
-                "constraint" => "2,1",
+                "constraint" => "3,2",
                 "unsigned" => true,
             ],
             "is_eliminatory" => [

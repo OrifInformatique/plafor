@@ -11,7 +11,7 @@ helper("form");
 <div class="container">
     <div class="row">
         <div class="col">
-            <h1 class="title-section"><?= lang('user_lang.title_user_list'); ?></h1>
+            <h1><?= lang('user_lang.title_user_list'); ?></h1>
         </div>
     </div>
     <div class="row">

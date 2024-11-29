@@ -67,25 +67,25 @@ class addTeachingDomain extends Seeder {
             ],
             // ****** Operator ******
             [ // Compétences de base élargies
-                "fk_course_plan" => 7,
+                "fk_course_plan" => 4,
                 "fk_teaching_domain_title" => 1,
                 "domain_weight" => 0.1,
                 "is_eliminatory" => false,
             ],
             [ // Culture générale
-                "fk_course_plan" => 7,
+                "fk_course_plan" => 4,
                 "fk_teaching_domain_title" => 2,
                 "domain_weight" => 0.2,
                 "is_eliminatory" => false,
             ],
             [ // Informatique
-                "fk_course_plan" => 7,
+                "fk_course_plan" => 4,
                 "fk_teaching_domain_title" => 3,
                 "domain_weight" => 0.3,
                 "is_eliminatory" => true,
             ],
             [ // TPI
-                "fk_course_plan" => 7,
+                "fk_course_plan" => 4,
                 "fk_teaching_domain_title" => 5,
                 "domain_weight" => 0.4,
                 "is_eliminatory" => true,
@@ -93,6 +93,12 @@ class addTeachingDomain extends Seeder {
             // ****** Maturité professionnelle technique ******
             [
                 "fk_course_plan" => 5,
+                "fk_teaching_domain_title" => 4,
+                "domain_weight" => 0.0,
+                "is_eliminatory" => false,
+            ],
+            [
+                "fk_course_plan" => 6,
                 "fk_teaching_domain_title" => 4,
                 "domain_weight" => 0.0,
                 "is_eliminatory" => false,

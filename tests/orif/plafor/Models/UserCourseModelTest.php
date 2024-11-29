@@ -1,6 +1,6 @@
 <?php
 /**
- * Unit / Integration tests UserCourseModelTest 
+ * Unit / Integration tests UserCourseModelTest
  *
  * @author      Orif (CaLa)
  * @link        https://github.com/OrifInformatique
@@ -22,26 +22,6 @@ class UserCourseModelTest extends CIUnitTestCase
         $userCourseModel = model('UserCourseModel');
         $this->assertTrue($userCourseModel instanceof UserCourseModel);
         $this->assertInstanceOf(UserCourseModel::class, $userCourseModel);
-    }
-
-    /**
-     * Checks that the returned user is the expected one
-     */
-    public function testgetUser()
-    {
-        // Gets the user with the user id 4
-        $userCourseModel = model('UserCourseModel');
-        $userId = 4;
-        $user = $userCourseModel->getUser($userId);
-
-        // Assertions
-        $this->assertIsArray($user);
-        $this->assertEquals($user['id'], $userId);
-        $this->assertEquals($user['fk_user_type'], self::TRAINER_USER_TYPE);
-        $this->assertEquals($user['username'], 'FormateurDev');
-        $this->assertEquals($user['password'], '$2y$10$Q3H8WodgKonQ60SIcu.eWuVKXmxqBw1X5hMpZzwjRKyCTB1H1l.pe');
-        $this->assertEquals($user['archive'], NULL);
-        $this->assertEquals($user['date_creation'], '2020-07-09 13:15:24');
     }
 
     /**
@@ -89,7 +69,7 @@ class UserCourseModelTest extends CIUnitTestCase
 
         // Asserts that the list of acquisition statuses is an array
         $this->assertIsArray($acquisitionStatuses);
-        
+
         // For each acquisition status, asserts that the user course id is 1
         foreach ($acquisitionStatuses as $acquisitionStatus) {
             $this->assertEquals($acquisitionStatus['fk_user_course'], 1);

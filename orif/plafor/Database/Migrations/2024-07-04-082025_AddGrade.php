@@ -55,6 +55,8 @@ class AddGrade extends Migration{
         $this->forge->addForeignKey("fk_teaching_subject", "teaching_subject", "id");
         $this->forge->addForeignKey("fk_teaching_module", "teaching_module", "id");
         $this->forge->createTable("grade");
+        $seeder = \Config\Database::seeder();
+        $seeder->call('\Plafor\Database\Seeds\addTeachingGrades');
     }
 
     public function down(){
