@@ -73,7 +73,9 @@ function getSubjectsOrModulesListByGradeId(int $gradeId): array
 
 function getModulesInArrayKey(int $userCourseId): array
 {
-    $list[lang('Grades.modules')] = getModules($userCourseId);
+    $list[lang('Grades.modules')] = getModules($userCourseId,
+        willBeFiltered: true);
+
     return $list;
 }
 
