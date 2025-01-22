@@ -28,6 +28,58 @@ class SchoolReports extends ResourceController
     {
         $school_reports_summaries =
         [
+            "apprentices" => [],
+            "trainers"    => []
+        ];
+
+        $apprentices = model("User_model")->getApprentices();
+
+        foreach($apprentices as $apprentice)
+        {
+            $fk_trainer = model("TrainerApprenticeModel")
+                ->where("fk_apprentice", $apprentice["id"])
+                ->first()["fk_trainer"] ?? null;
+
+            $apprentice_data =
+            [
+                "user_id"      => intval($apprentice["id"]),
+                "username"     => $apprentice["username"],
+                "fk_trainer"   => intval($fk_trainer),
+                "user_courses" => []
+            ];
+
+            $user_courses = model("UserCourseModel")->getUserCourses($apprentice["id"]);
+
+            foreach($user_courses as $user_course)
+            {
+                $user_course_data =
+                [
+                    "id"             => intval($user_course["id"]),
+                    "official_name"  => $user_course["official_name"],
+                    "global_average" => model("GradeModel")->getApprenticeAverage($user_course["id"])
+                ];
+
+                array_push($apprentice_data["user_courses"], $user_course_data);
+            }
+
+            array_push($school_reports_summaries["apprentices"], $apprentice_data);
+        }
+
+        $trainers = model("user_model")->getTrainers();
+
+        foreach($trainers as $trainer)
+        {
+            $trainer_data =
+            [
+                "user_id"  => $trainer["id"],
+                "username" => $trainer["username"],
+            ];
+
+            array_push($school_reports_summaries["trainers"], $trainer_data);
+        }
+
+        /*$school_reports_summaries =
+        [
             "apprentices" =>
             [
                 [
@@ -38,7 +90,7 @@ class SchoolReports extends ResourceController
                     [
                         [
                             "id" => 1,
-                            "course_plan_id" => 88605,
+                            "formation_number" => 88605,
                             "official_name" => "Opératrice en informatique / Opérateur en informatique avec CFC",
                             "global_average" => 5.0
                         ]
@@ -52,13 +104,13 @@ class SchoolReports extends ResourceController
                     [
                         [
                             "id" => 2,
-                            "course_plan_id" => 88611,
+                            "formation_number" => 88611,
                             "official_name" => "Informaticienne / Informaticien avec CFC, orientation développement d'applications",
                             "global_average" => 1.5
                         ],
                         [
                             "id" => 3,
-                            "course_plan_id" => 88611,
+                            "formation_number" => 88611,
                             "official_name" => "Informaticienne / Informaticien avec CFC, orientation explotation et infrastructure",
                             "global_average" => 5.5
                         ]
@@ -72,7 +124,7 @@ class SchoolReports extends ResourceController
                     [
                         [
                             "id" => 4,
-                            "course_plan_id" => 329868168,
+                            "formation_number" => 329868168,
                             "official_name" => "Formation",
                             "global_average" => 6
                         ]
@@ -95,7 +147,7 @@ class SchoolReports extends ResourceController
                     "username" => "Je suis un nom de formateur un peu long."
                 ],
             ]
-        ];
+        ];*/
 
         return $this->response->setJSON($school_reports_summaries);
     }
@@ -117,7 +169,7 @@ class SchoolReports extends ResourceController
             "user_course" =>
             [
                 "id" => 101,
-                "course_plan_id" => 88605,
+                "formation_number" => 88605,
                 "official_name" => "Opératrice en informatique / Opérateur en informatique avec CFC",
                 "date_begin" => "2022-08-01",
                 "date_end" => "2026-07-31",
@@ -146,8 +198,8 @@ class SchoolReports extends ResourceController
                                 "name" => "Anglais",
                                 "average" => 3.5,
                                 "grades" => [
-                                    ["id" => 3, "grade" => 1, "date" => "2024-01-15"],
-                                    ["id" => 4, "grade" => 6, "date" => "2024-02-20"],
+                                    ["id" => 3, "grade" => 1],
+                                    ["id" => 4, "grade" => 6],
                                 ]
                             ]
                         ]
@@ -283,7 +335,7 @@ class SchoolReports extends ResourceController
                     ]
                 ]
             ]
-        ];
+        ];*/
 
         return $this->response->setJSON($apprentice_school_report);
     }
