@@ -206,11 +206,11 @@ class GradeModel extends Model
      * @param int $userCourseId ID of the user_course
      * @param int $moduleId ID of the module
      *
-     * @return array
+     * @return array|null
      *
      */
     public function getApprenticeModuleGrade(int $userCourseId,
-        int $moduleId): array
+        int $moduleId): array|null
     {
         $data = $this->select('grade.fk_user_course, '
             . 'grade.fk_teaching_module, grade.date, grade.grade, '
@@ -235,7 +235,7 @@ class GradeModel extends Model
      * grade is an associative array containing the grade data.
      * @return float The average grade.
      */
-    private function getAverageFromArray(array $grades): ?float
+    public function getAverageFromArray(array $grades): ?float
     {
         $onlyGrades = array_map(fn($row) => $row['grade'], $grades);
         $sum = array_sum($onlyGrades);
