@@ -68,7 +68,7 @@ class SchoolReports extends ResourceController
             array_push($school_reports_summaries["apprentices"], $apprentice_data);
         }
 
-        $trainers = model("user_model")->getTrainers();
+        $trainers = model("User_model")->getTrainers();
 
         foreach($trainers as $trainer)
         {
