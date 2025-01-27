@@ -194,19 +194,19 @@ class SchoolReports extends ResourceController
 
         for($i = 1; $i <= $number_of_years; $i++)
         {
-            array_push($apprentice_school_report["user_course"]["yearly_reports"],
+            $apprentice_school_report["user_course"]["yearly_reports"][] =
             [
                 "year" => $i,
                 "yearly_average" => null,
                 "teaching_domains" => []
-            ]);
+            ];
 
-            array_push($years,
+            $years[] =
             [
                 "index" => $i - 1,
                 "begin" => sprintf("%s-08-01", $year),
                 "end"   => sprintf("%s-07-31", $year + 1)
-            ]);
+            ];
 
             $year += 1;
         }
@@ -268,34 +268,43 @@ class SchoolReports extends ResourceController
                             {
                                 $yr_domains = &$apprentice_school_report["user_course"]["yearly_reports"][$year["index"]]["teaching_domains"];
 
-                                if(!in_array($teaching_domain_data, $yr_domains))
-                                {
-                                    array_push($yr_domains, $teaching_domain_data);
-                                }
+                                $domain_index = array_search(
+                                    $teaching_domain_id,
+                                    array_column($yr_domains, "id")
+                                );
 
-                                $domain_index = array_search($teaching_domain_data, $yr_domains);
+                                if($domain_index === false)
+                                {
+                                    $domain_index = count($yr_domains);
+                                    $yr_domains[] = $teaching_domain_data;
+                                }
 
                                 $yr_domain_subjects = &$yr_domains[$domain_index]["subjects"];
 
-                                if(!in_array($subject_data, $yr_domain_subjects))
+                                $subject_index = array_search(
+                                    $subject_id,
+                                    array_column($yr_domain_subjects, "id")
+                                );
+
+                                if($subject_index === false)
                                 {
-                                    array_push($yr_domain_subjects, $subject_data);
+                                    $subject_index = count($yr_domain_subjects);
+                                    $yr_domain_subjects[] = $subject_data;
                                 }
 
-                                $subject_index = array_search($subject_data, $yr_domain_subjects);
+                                $yr_domain_subjects[$subject_index]["grades"][] = $grade_data;
 
-                                array_push($yr_domain_subjects[$subject_index]["grades"], $grade_data);
+                                $yr_domain_subjects[$subject_index]["average"] = round(
+                                    model("GradeModel")->getAverageFromArray($yr_domain_subjects[$subject_index]["grades"]) * 10) / 10;
 
-                                $yr_domain_subjects[$subject_index]["average"] = model("GradeModel")
-                                    ->getAverageFromArray($yr_domain_subjects[$subject_index]["grades"]);
-
-                                $yr_domains[$domain_index]["average"] = array_reduce(
-                                    $yr_domain_subjects, fn($sum, $subject) => $sum + $subject["average"], 0)
-                                    / (count($yr_domain_subjects) ?: 1);
-
-                                $yr_domains[$domain_index]["average"] = round($yr_domains[$domain_index]["average"] * 10) / 10;
+                                $yr_domains[$domain_index]["average"] = round(
+                                    array_reduce(
+                                        $yr_domain_subjects, fn($sum, $subject) => $sum + $subject["average"], 0
+                                    ) / (count($yr_domain_subjects) ?: 1) * 10
+                                ) / 10;
                             }
                         }
+
 
                         array_push($subject_data["grades"], $grade_data);
                     }
@@ -339,34 +348,51 @@ class SchoolReports extends ResourceController
                             {
                                 $yr_domains = &$apprentice_school_report["user_course"]["yearly_reports"][$year["index"]]["teaching_domains"];
 
-                                if(!in_array($teaching_domain_data, $yr_domains))
-                                {
-                                    array_push($yr_domains, $teaching_domain_data);
-                                }
+                                $domain_index = array_search(
+                                    $teaching_domain_id,
+                                    array_column($yr_domains, "id")
+                                );
 
-                                $domain_index = array_search($teaching_domain_data, $yr_domains);
+                                if($domain_index === false)
+                                {
+                                    $domain_index = count($yr_domains);
+                                    $yr_domains[] = $teaching_domain_data;
+                                }
 
                                 $yr_domain_modules = &$yr_domains[$domain_index]["modules"];
 
-                                if(!in_array($module_data, $yr_domain_modules))
+                                $module_index = array_search(
+                                    $module["id"],
+                                    array_column($yr_domain_modules, "id")
+                                );
+
+                                if($module_index === false)
                                 {
-                                    array_push($yr_domain_modules, $module_data);
+                                    $yr_domain_modules[] = $module_data;
                                 }
                             }
+
+                            $school_modules = array_filter($yr_domain_modules, fn($module) => $module["is_school"]);
+                            $non_school_modules = array_filter($yr_domain_modules, fn($module) => !$module["is_school"]);
+
+                            $school_average = count($school_modules) > 0
+                                ? array_reduce($school_modules, fn($acc, $module) => $acc + $module["grade"], 0) / count($school_modules)
+                                : 0;
+
+                            $non_school_average = count($non_school_modules) > 0
+                                ? array_reduce($non_school_modules, fn($acc, $module) => $acc + $module["grade"], 0) / count($non_school_modules)
+                                : 0;
 
                             $school_weight = config('\Plafor\Config\PlaforConfig')->SCHOOL_WEIGHT;
                             $extern_weight = config('\Plafor\Config\PlaforConfig')->EXTERN_WEIGHT;
 
-                            $yr_domains[$domain_index]["school_modules_average"] = array_reduce($yr_domain_modules,
-                                fn($acc, $module) => $module["is_school"] ? $acc + $module["grade"] : null);
+                            $yr_domains[$domain_index]["school_modules_average"] = round($school_average * 10) / 10;
+                            $yr_domains[$domain_index]["non_school_modules_average"] = round($non_school_average * 10) / 10;
 
-                            $yr_domains[$domain_index]["non_school_modules_average"] = array_reduce($yr_domain_modules,
-                            fn($acc, $module) => !$module["is_school"] ? $acc + $module["grade"] : null);
-
-                            $yr_domains[$domain_index]["average"] = ($yr_domains[$domain_index]["school_modules_average"] * $school_weight +
-                                $yr_domains[$domain_index]["school_modules_average"] * $extern_weight) / ($school_weight + $extern_weight);
-
-                            $yr_domains[$domain_index]["average"] = round($yr_domains[$domain_index]["average"] * 10) / 10;
+                            $yr_domains[$domain_index]["average"] = round((
+                                $school_average * $school_weight +
+                                $non_school_average * $extern_weight
+                            ) / ($school_weight + $extern_weight) * 10) / 10;
                         }
                     }
 
@@ -378,7 +404,6 @@ class SchoolReports extends ResourceController
                 $teaching_domain_data["non_school_modules_average"] = model("GradeModel")->getApprenticeModuleAverage($user_course["id"], false);
             }
 
-            /*d($teaching_domain_data);*/
             foreach($years as $year)
             {
                 if(!empty($apprentice_school_report["user_course"]["yearly_reports"][$year["index"]]["teaching_domains"]))
@@ -395,6 +420,8 @@ class SchoolReports extends ResourceController
 
             array_push($apprentice_school_report["user_course"]["teaching_domains"], $teaching_domain_data);
         }
+
+        /*dd("end");*/
 
         /*$apprentice_school_report =
         [
