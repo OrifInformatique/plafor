@@ -383,8 +383,8 @@ class SchoolReports extends ResourceController
                                 ? array_reduce($non_school_modules, fn($acc, $module) => $acc + $module["grade"], 0) / count($non_school_modules)
                                 : 0;
 
-                            $school_weight = config('\Plafor\Config\PlaforConfig')->SCHOOL_WEIGHT;
-                            $extern_weight = config('\Plafor\Config\PlaforConfig')->EXTERN_WEIGHT;
+                            $school_weight = $school_average !== 0 ? config('\Plafor\Config\PlaforConfig')->SCHOOL_WEIGHT : 0;
+                            $extern_weight = $non_school_average !== 0 ? config('\Plafor\Config\PlaforConfig')->EXTERN_WEIGHT : 0;
 
                             $yr_domains[$domain_index]["school_modules_average"] = round($school_average * 10) / 10;
                             $yr_domains[$domain_index]["non_school_modules_average"] = round($non_school_average * 10) / 10;
